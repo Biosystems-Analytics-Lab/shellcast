@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+  <title>ShellCast</title>
+  <!-- NC State Bootstrap CSS -->
+  <link href="https://cdn.ncsu.edu/brand-assets/bootstrap-4/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Custom CSS -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+{% block body %}
+{% endblock %}
+</body>
+</html>

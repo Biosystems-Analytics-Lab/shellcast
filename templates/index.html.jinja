@@ -1,0 +1,26 @@
+{% extends "base.html.jinja" %}
+
+{% block body %}
+  <h1>ShellCast</h1>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Shellfish Growing Area</th>
+        <th scope="col">3-day Probability (%)</th>
+        <th scope="col">2-day Probability (%)</th>
+        <th scope="col">1-day Probability (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for region in regions %}
+        <tr>
+          <td>{{ region.id }}</td>
+          <td>{{ region.prob3Day }}</td>
+          <td>{{ region.prob2Day }}</td>
+          <td>{{ region.prob1Day }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
