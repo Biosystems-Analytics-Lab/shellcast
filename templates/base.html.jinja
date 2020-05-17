@@ -13,27 +13,37 @@
 <body>
 
 {# get the name of the current page #}
-{% set pageName = self._TemplateReference__context.name.split(".")[0] %}
-
-{# figure out which page is the active one #}
-{% set indexActive = "active" if pageName == "index" else "" %}
-{% set aboutActive = "active" if pageName == "about" else "" %}
-{% set notificationsActive = "active" if pageName == "notifications" else "" %}
+{% set curPageName = self._TemplateReference__context.name.split(".")[0] %}
 
 {# define the element used to indicate the current nav link for screen readers #}
 {% set srCurNav %}
   <span class="sr-only"> (current)</span>
 {% endset %}
 
+{# a macro for creating a nav item in the nav bar #}
+{% macro navLink(pageName, navRoute, navItemText) -%}
+  {% if curPageName == pageName %}
+    <a class="nav-item nav-link active" href="#">{{ navItemText ~ srCurNav }}</a>
+  {% else %}
+    <a class="nav-item nav-link" href="{{ navRoute }}">{{ navItemText }}</a>
+  {% endif %}
+{%- endmacro %}
+
+{# the set of nav items to display in the nav bar #}
+{% set navItems = [("index", "/", "Map"), ("about", "/about", "About"), ("notifications", "/notifications", "Notifications")] %}
+
+<!-- Navigation -->
 <nav class="navbar navbar-dark bg-primary">
-  <a class="navbar-brand" href="/">ShellCast</a>
+  <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">ShellCast</a>
   <div class="navbar-nav">
-    <a class="nav-item nav-link {{ indexActive }}" href="/">Map {{- srCurNav if pageName == "index" else "" -}} </a>
-    <a class="nav-item nav-link {{ aboutActive }}" href="/about">About {{- srCurNav if pageName == "about" else "" -}} </a>
-    <a class="nav-item nav-link {{ notificationsActive }}" href="/notifications">Notifications {{- srCurNav if pageName == "notifications" else "" -}} </a>
+    {# iterate through navItems to construct the nav bar#}
+    {% for pageName, navRoute, navItemText in navItems -%}
+      {{- navLink(pageName, navRoute, navItemText) -}}
+    {%- endfor %}
   </div>
 </nav>
 
+<!-- Content -->
 <div class="content">
   {% block content %}
   {% endblock %}
