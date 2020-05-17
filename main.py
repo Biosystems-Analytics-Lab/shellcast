@@ -11,6 +11,9 @@ def root():
 
   return render_template('index.html.jinja', regions=regions)
 
+@app.route('/about')
+def aboutPage():
+  return render_template('about.html.jinja')
 
 if __name__ == '__main__':
   # This is used when running locally only. When deploying to Google App
