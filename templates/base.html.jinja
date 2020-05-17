@@ -7,11 +7,37 @@
   <!-- Custom CSS -->
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-
+  <!-- Custom JavaScript -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 <body>
-{% block body %}
-{% endblock %}
+
+{# get the name of the current page #}
+{% set pageName = self._TemplateReference__context.name.split(".")[0] %}
+
+{# figure out which page is the active one #}
+{% set indexActive = "active" if pageName == "index" else "" %}
+{% set aboutActive = "active" if pageName == "about" else "" %}
+{% set notificationsActive = "active" if pageName == "notifications" else "" %}
+
+{# define the element used to indicate the current nav link for screen readers #}
+{% set srCurNav %}
+  <span class="sr-only"> (current)</span>
+{% endset %}
+
+<nav class="navbar navbar-dark bg-primary">
+  <a class="navbar-brand" href="/">ShellCast</a>
+  <div class="navbar-nav">
+    <a class="nav-item nav-link {{ indexActive }}" href="/">Map {{- srCurNav if pageName == "index" else "" -}} </a>
+    <a class="nav-item nav-link {{ aboutActive }}" href="/about">About {{- srCurNav if pageName == "about" else "" -}} </a>
+    <a class="nav-item nav-link {{ notificationsActive }}" href="/notifications">Notifications {{- srCurNav if pageName == "notifications" else "" -}} </a>
+  </div>
+</nav>
+
+<div class="content">
+  {% block content %}
+  {% endblock %}
+</div>
+
 </body>
 </html>
