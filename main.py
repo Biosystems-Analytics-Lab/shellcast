@@ -5,7 +5,7 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 @app.route('/')
-def root():
+def indexPage():
   regions = [{"id": "A1", "prob1Day": 0, "prob2Day": 35, "prob3Day": 75},
               {"id": "A2", "prob1Day": 2, "prob2Day": 37, "prob3Day": 77}]
 
@@ -14,6 +14,10 @@ def root():
 @app.route('/about')
 def aboutPage():
   return render_template('about.html.jinja')
+
+@app.route('/notifications')
+def notificationsPage():
+  return render_template('notifications.html.jinja')
 
 if __name__ == '__main__':
   # This is used when running locally only. When deploying to Google App
