@@ -2,6 +2,10 @@
   padding: 1rem;
 }
 
+#map {
+  height: 50vh;
+}
+
 /* .navbar {
   justify-content: flex-start;
 }
