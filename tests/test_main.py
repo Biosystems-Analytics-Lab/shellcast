@@ -2,9 +2,11 @@ import pytest
 
 import main
 
+from config import TestConfig
+
 @pytest.fixture
 def client():
-  main.app.config['TESTING'] = True
+  main.app.config.from_object(TestConfig())
 
   with main.app.test_client() as client:
     yield client
