@@ -10,7 +10,7 @@ ShellCast web app repository
 
 ### Run Python app locally
 1. With the virtual environment activated, you can run the Python app with `python main.py`.
-2. Now you can navigate to [http://localhost:8080](http//:localhost:8080) in your browser to see the web app.
+2. Now you can navigate to [http://localhost:3361](http//:localhost:3361) in your browser to see the web app.
 
 ### Run tests
 1. With the virtual environment activated, you can run the tests with `python -m pytest`.
