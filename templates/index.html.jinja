@@ -1,17 +1,19 @@
 {% extends "base.html.jinja" %}
 
 {% block content %}
-  <div>Insert map</div>
-  <br/>
-  <br/>
-  <br/>
+  <div id="map"></div>
+  <script src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} &callback=initMap" async defer></script>
+
+  <br>
+
+  <h3>Closure Probabilities</h3>
   <table class="table">
     <thead>
       <tr>
-        <th scope="col">Shellfish Growing Area</th>
-        <th scope="col">3-day Probability (%)</th>
-        <th scope="col">2-day Probability (%)</th>
-        <th scope="col">1-day Probability (%)</th>
+        <th scope="col">Growing Area</th>
+        <th scope="col">3-day (%)</th>
+        <th scope="col">2-day (%)</th>
+        <th scope="col">1-day (%)</th>
       </tr>
     </thead>
     <tbody>
