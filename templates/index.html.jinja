@@ -1,13 +1,13 @@
 {% extends "base.html.jinja" %}
 
 {% block content %}
-  <div id="map"></div>
+  <div id="closure-map"></div>
   <script src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} &callback=initMap" async defer></script>
 
   <br>
 
   <h3>Closure Probabilities</h3>
-  <table class="table">
+  <table id="closure-table" class="table">
     <thead>
       <tr>
         <th scope="col">Growing Area</th>
@@ -17,14 +17,6 @@
       </tr>
     </thead>
     <tbody>
-      {% for region in regions %}
-        <tr>
-          <td>{{ region.id }}</td>
-          <td>{{ region.prob3Day }}</td>
-          <td>{{ region.prob2Day }}</td>
-          <td>{{ region.prob1Day }}</td>
-        </tr>
-      {% endfor %}
     </tbody>
   </table>
 {% endblock %}
