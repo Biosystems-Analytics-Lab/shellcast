@@ -7,3 +7,5 @@ __pycache__
 venv
 # ignore the configuration file (avoid pushing keys or passwords to version control)
 config.py
+# ignore local testing Unix socket folder
+cloudsql
