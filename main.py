@@ -1,26 +1,12 @@
 import datetime
 from flask import Flask, render_template, jsonify
-from flask_sqlalchemy import SQLAlchemy
+
+from models import db
+from models.ClosureProbability import ClosureProbability
 
 from config import Config, DevConfig
 
 app = Flask(__name__)
-
-db = SQLAlchemy()
-
-class SGAClosureProbability(db.Model):
-  __tablename__ = 'sga_closure_probabilities'
-  id = db.Column(db.Integer, primary_key=True)
-  sga_id = db.Column(db.Integer)
-  day = db.Column(db.Integer)
-  rain_forecast = db.Column(db.Float)
-  prob_percent = db.Column(db.Float)
-  color = db.Column(db.String(6))
-  created = db.Column(db.DateTime)
-  updated = db.Column(db.DateTime)
-
-  def __repr__(self):
-    return '<SGAClosureProbability: {}>'.format(self.id)
 
 @app.route('/')
 def indexPage():
@@ -29,7 +15,7 @@ def indexPage():
 
 @app.route('/test')
 def test():
-  print(SGAClosureProbability.query.all())
+  print(ClosureProbability.query.all())
   return 'blah'
 
 @app.route('/about')
