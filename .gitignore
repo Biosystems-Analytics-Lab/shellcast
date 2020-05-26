@@ -5,3 +5,5 @@ __pycache__
 .pytest_cache
 # ignore virtual environment
 venv
+# ignore the configuration file (avoid pushing keys or passwords to version control)
+config.py
