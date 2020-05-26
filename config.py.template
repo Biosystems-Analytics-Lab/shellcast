@@ -1,7 +1,11 @@
 class Config(object):
   DEBUG = False
   TESTING = False
-  MAPS_API_KEY = "REDACTED"
+  MAPS_API_KEY = 'api-key-goes-here'
+  DB_USER = 'user'
+  DB_PASS = 'password'
+  DB_NAME = 'database-name'
+  CLOUD_SQL_INSTANCE_NAME = 'instance-name'
 
 class DevConfig(Config):
   DEBUG = True
