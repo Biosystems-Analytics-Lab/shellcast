@@ -1,14 +1,36 @@
 import datetime
 from flask import Flask, render_template, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
 from config import Config, DevConfig
 
 app = Flask(__name__)
-app.config.from_object(Config())
+
+db = SQLAlchemy()
+
+class SGAClosureProbability(db.Model):
+  __tablename__ = 'sga_closure_probabilities'
+  id = db.Column(db.Integer, primary_key=True)
+  sga_id = db.Column(db.Integer)
+  day = db.Column(db.Integer)
+  rain_forecast = db.Column(db.Float)
+  prob_percent = db.Column(db.Float)
+  color = db.Column(db.String(6))
+  created = db.Column(db.DateTime)
+  updated = db.Column(db.DateTime)
+
+  def __repr__(self):
+    return '<SGAClosureProbability: {}>'.format(self.id)
 
 @app.route('/')
 def indexPage():
   return render_template('index.html.jinja', mapsAPIKey=Config.MAPS_API_KEY)
+
+
+@app.route('/test')
+def test():
+  print(SGAClosureProbability.query.all())
+  return 'blah'
 
 @app.route('/about')
 def aboutPage():
@@ -389,13 +411,16 @@ def areaData():
   }
   return jsonify(growingAreas)
 
+def initialize(configObj):
+  app.config.from_object(configObj)
+  db.init_app(app)
+
+# if running the file directly
 if __name__ == '__main__':
-  app.config.from_object(DevConfig())
-  # This is used when running locally only. When deploying to Google App
-  # Engine, a webserver process such as Gunicorn will serve the app. This
-  # can be configured by adding an `entrypoint` to app.yaml.
-  # Flask's development server will automatically serve static files in
-  # the "static" directory. See:
-  # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
-  # App Engine itself will serve those files as configured in app.yaml.
+  # setup for running locally (development configuration)
+  initialize(DevConfig())
+  # run the app locally
   app.run(host=DevConfig.HOST, port=DevConfig.PORT, debug=True)
+else: # else the app is being run from a WSGI application such as gunicorn
+  # setup for production configuration
+  initialize(Config())
