@@ -7,11 +7,11 @@ class Config(object):
   # whether or not to setup Flask in testing mode
   TESTING = False
   # Google Maps JavaScript API Key
-  MAPS_API_KEY = ''
+  MAPS_API_KEY = 'ADD_VALUE_HERE'
   # the username to use to access the database
-  DB_USER = ''
+  DB_USER = 'ADD_VALUE_HERE'
   # the password for the user
-  DB_PASS = ''
+  DB_PASS = 'ADD_VALUE_HERE'
   # the name of the database
   DB_NAME = 'shellcast'
   # the path prefix to the location of the Unix socket used to connect to the Cloud SQL database
