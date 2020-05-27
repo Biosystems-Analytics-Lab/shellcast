@@ -1,6 +1,17 @@
 # shellcast
 ShellCast web app repository
 
+## Code Structure
+- main.py - This file is the root of the Python Flask application.
+- app.yaml - This file contains all of the configuration needed to deploy the app to Google Cloud.
+- .gcloudignore - This file is similar to a .gitignore file in the sense that it specifies all of the files that will __not__ be uploaded to Google Cloud during deployments.
+- config-template.py - This is a template that should be copied to make a local config.py file.
+- __templates__ - This folder contains all of the Jinja templates.
+- __static__ - This folder contains all of the static content that will be served like CSS and JS files.
+- __models__ - This folder contains all of the ORM models that are used to interact with the database.
+- __routes__ - This folder contains all of the routes that are registered with the Flask application.
+- __tests__ - This folder contains all of the unit tests for the application.
+
 ## Development Environment Setup
 
 ### Install Google Cloud SDK
@@ -46,4 +57,4 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 
 ### Deploy the app to Google App Engine
 1. Make sure that you are signed in and using the correct project (ncsu-shellcast) by running `gcloud info`.
-2. From the root directory of the repository, you can deploy the application to Google App Engine by running `gcloud app deploy`. The app.yaml file contains all of the configuration needed to deploy the app correctly. The .gcloudignore file is similar to a .gitignore file in the sense that it specifies all of the files that will *not* be uploaded to Google Cloud during deployments.
+2. From the root directory of the repository, you can deploy the application to Google App Engine by running `gcloud app deploy`.
