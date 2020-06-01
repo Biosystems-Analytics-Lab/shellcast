@@ -1,14 +1,14 @@
 from flask import Blueprint, jsonify
 from models import db
 from models.ClosureProbability import ClosureProbability
-from models.SGAInfo import SGAInfo
+from models.LeaseInfo import LeaseInfo
 
 import time
 
 areaData = Blueprint('areaData', __name__)
 
 def queryClosureProbabilities():
-  results = db.session.query(ClosureProbability, SGAInfo.shellfish_growing_area).join(SGAInfo).all()
+  results = db.session.query(ClosureProbability, LeaseInfo.grow_area_name).join(LeaseInfo).all()
   dictOfCPs = {}
   for r in results:
     sgaName = r[1]
