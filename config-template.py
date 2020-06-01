@@ -44,7 +44,7 @@ class DevConfig(Config):
   # the port that the web server should listen on
   PORT = 3361
   # the name of the database
-  DB_NAME = 'shellcast'
+  DB_NAME = 'shellcast_dev'
   # the path prefix to the location of the Unix socket used to connect to the Cloud SQL database
   DB_UNIX_SOCKET_PATH_PREFIX = './cloudsql/'
 
