@@ -1,4 +1,4 @@
-INSERT INTO `sga_closure_probabilities` (`sga_id`, `day`, `prob_percent`)
+INSERT INTO `closure_probabilities` (`lease_info_id`, `day`, `prob_1d_perc`)
 VALUES
   (1, 1, 16),
   (2, 1, 76),
