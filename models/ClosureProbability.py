@@ -10,8 +10,8 @@ class ClosureProbability(db.Model):
   prob_1d_perc = db.Column(db.Integer)
   prob_2d_perc = db.Column(db.Integer)
   prob_3d_perc = db.Column(db.Integer)
-  created = db.Column(db.DateTime)
-  updated = db.Column(db.DateTime)
+  created = db.Column(db.DateTime, server_default=db.func.now())
+  updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
   leaseInfo = db.relationship('LeaseInfo', back_populates='closureProbabilities')
 
