@@ -27,3 +27,5 @@ requirements-test.txt
 config.py.template
 # ignore local testing Unix socket folder
 cloudsql
+# ignore database scripts
+db-scripts
