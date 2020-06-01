@@ -1,93 +1,75 @@
 /* This script creates all of the tables for the database. */
 
-CREATE TABLE `alert_logging` (
-  `id` int(4) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `subscriber_id` mediumint(4) NULL,
-  `sga_id` mediumint(4) NULL,
-  `alert_text` varchar(80) NULL,
-  `send_success` BOOLEAN NULL,
-  `created` datetime NULL,
+CREATE TABLE `notification_log` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `closure_prob_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `notification_text` varchar(80) NULL,
+  `send_success` boolean NULL,
+  `created` datetime DEFAULT NOW(),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `sga_closure_probabilities` (
-  `id` int(4) NOT NULL AUTO_INCREMENT,
-  `sga_id` mediumint(4) NULL,
-  `day` tinyint(1) NULL,
-  `rain_forecast` decimal(5, 2) NULL,
-  `prob_percent` decimal(5, 2) NULL,
-  `created` datetime NULL,
-  `updated` datetime NULL,
+CREATE TABLE `closure_probabilities` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `lease_info_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `rain_forecast_1d_in` decimal(3, 2) NULL,
+  `rain_forecast_2d_in` decimal(3, 2) NULL,
+  `rain_forecast_3d_in` decimal(3, 2) NULL,
+  `prob_1d_perc` tinyint(3) NULL,
+  `prob_2d_perc` tinyint(3) NULL,
+  `prob_3d_perc` tinyint(3) NULL,
+  `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `sga_info` (
-  `id` int(4) NOT NULL AUTO_INCREMENT,
-  `shellfish_growing_area` varchar(3) NULL,
-  `status_id` tinyint(1) NULL,
+CREATE TABLE `lease_info` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `lease_id` varchar(10) NULL,
+  `grow_area_name` varchar(3) NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
-  `spatial_data_path` varchar(255) NULL,
-  `created` datetime NULL,
-  `updated` datetime NULL,
+  `geo_boundary` json NULL,
+  `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `sga_subscriptions` (
-  `id` int(4) NOT NULL AUTO_INCREMENT,
-  `subscriber_id` mediumint(4) NULL,
-  `sga_id` mediumint(4) NULL,
-  `sms_pref` tinyint(1) NULL,
-  `email_pref` tinyint(1) NULL,
-  `duration_pref` tinyint(1) NULL,
-  `prob_pref` decimal(3, 1) NULL,
-  `created` datetime NULL,
-  `updated` datetime NULL,
-  PRIMARY KEY (`id`)
-);
-
-CREATE TABLE `statuses` (
-  `id` int(1) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `description` varchar(40) NULL,
-  `created` datetime NULL,
-  `updated` datetime NULL,
-  PRIMARY KEY (`id`)
-);
-
-CREATE TABLE `subscription_log` (
-  `id` int(4) NOT NULL AUTO_INCREMENT,
-  `subscriber_id` mediumint(4) NULL,
-  `sga_id` mediumint(4) NULL,
-  `comm_method` tinyint(1) NULL,
-  `action` tinyint(1) NULL,
-  `created` datetime NULL,
+CREATE TABLE `subscriptions` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `lease_info_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `window_pref` tinyint(1) NULL,
+  `prob_pref` tinyint(3) NULL,
+  `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `text_disclaimers` (
-  `id` int(2) NOT NULL AUTO_INCREMENT,
-  `webapp_page` varchar(255) NULL,
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `webapp_page` varchar(50) NULL,
   `disclaimer_text` mediumtext NULL,
-  `created` datetime NULL,
-  `updated` datetime NULL,
+  `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `user_contact_info` (
-  `id` int(4) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `first_name` varchar(50) NULL,
   `last_name` varchar(50) NULL,
   `phone_number` varchar(11) NULL,
-  `email` varchar(50) NULL,
-  `created` datetime NOT NULL,
-  `updated` datetime NULL,
+  `email` varchar(50) NOT NULL,
+  `sms_pref` boolean DEFAULT false,
+  `email_pref` boolean DEFAULT false,
+  `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
-ALTER TABLE `alert_logging` ADD CONSTRAINT `subscriber_fk` FOREIGN KEY (`subscriber_id`) REFERENCES `user_contact_info` (`id`);
-ALTER TABLE `alert_logging` ADD CONSTRAINT `sga_fk` FOREIGN KEY (`sga_id`) REFERENCES `sga_info` (`id`);
-ALTER TABLE `sga_closure_probabilities` ADD CONSTRAINT `sga2_fk` FOREIGN KEY (`sga_id`) REFERENCES `sga_info` (`id`);
-ALTER TABLE `sga_info` ADD CONSTRAINT `status_fk` FOREIGN KEY (`status_id`) REFERENCES `statuses` (`id`);
-ALTER TABLE `sga_subscriptions` ADD CONSTRAINT `subscriber2_fk` FOREIGN KEY (`subscriber_id`) REFERENCES `user_contact_info` (`id`);
-ALTER TABLE `sga_subscriptions` ADD CONSTRAINT `sga3_fk` FOREIGN KEY (`sga_id`) REFERENCES `sga_info` (`id`);
-ALTER TABLE `subscription_log` ADD CONSTRAINT `subscriber3_fk` FOREIGN KEY (`subscriber_id`) REFERENCES `user_contact_info` (`id`);
-ALTER TABLE `subscription_log` ADD CONSTRAINT `sga4_fk` FOREIGN KEY (`sga_id`) REFERENCES `sga_info` (`id`);
+ALTER TABLE `closure_probabilities` ADD CONSTRAINT `lease_info_fk` FOREIGN KEY (`lease_info_id`) REFERENCES `lease_info` (`id`);
+ALTER TABLE `subscriptions` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `subscriptions` ADD CONSTRAINT `lease_info2_fk` FOREIGN KEY (`lease_info_id`) REFERENCES `lease_info` (`id`);
+ALTER TABLE `notification_log` ADD CONSTRAINT `user2_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `notification_log` ADD CONSTRAINT `closure_prob_fk` FOREIGN KEY (`closure_prob_id`) REFERENCES `closure_probabilities` (`id`);
