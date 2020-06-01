@@ -1,7 +1,0 @@
-INSERT INTO `statuses` (`description`)
-VALUES
-  ('restricted'),
-  ('prohibited'),
-  ('conditional_approv'),
-  ('approv')
-;
