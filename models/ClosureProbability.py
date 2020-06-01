@@ -1,22 +1,24 @@
 from models import db
 
 class ClosureProbability(db.Model):
-  __tablename__ = 'sga_closure_probabilities'
+  __tablename__ = 'closure_probabilities'
   id = db.Column(db.Integer, primary_key=True)
-  sga_id = db.Column(db.Integer, db.ForeignKey('sga_info.id'))
-  day = db.Column(db.Integer)
-  rain_forecast = db.Column(db.Float)
-  prob_percent = db.Column(db.Float)
-  color = db.Column(db.String(6))
+  lease_info_id = db.Column(db.Integer, db.ForeignKey('lease_info.id'))
+  rain_forecast_1d_in = db.Column(db.Float)
+  rain_forecast_2d_in = db.Column(db.Float)
+  rain_forecast_3d_in = db.Column(db.Float)
+  prob_1d_perc = db.Column(db.Integer)
+  prob_2d_perc = db.Column(db.Integer)
+  prob_3d_perc = db.Column(db.Integer)
   created = db.Column(db.DateTime)
   updated = db.Column(db.DateTime)
 
-  sgaInfo = db.relationship('SGAInfo', back_populates='closureProbabilities')
+  leaseInfo = db.relationship('LeaseInfo', back_populates='closureProbabilities')
 
   def to_dict(self):
     return {
-      'prob1Day': self.prob_percent,
+      'prob1Day': self.prob_1d_perc,
     }
 
   def __repr__(self):
-    return '<ClosureProbability(id={},sga_id={},perc={})>'.format(self.id, self.sga_id, self.prob_percent)
+    return '<ClosureProbability(id={},lease_info_id={},perc={})>'.format(self.id, self.lease_info_id, self.prob_1d_perc)
