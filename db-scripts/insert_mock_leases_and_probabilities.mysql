@@ -1,0 +1,17 @@
+INSERT INTO `lease_info` (`lease_id`, `grow_area_name`, `rainfall_thresh_in`)
+VALUES
+  ('45678', 'A01', 1.5),
+  ('12345', 'B02', 2.5),
+  ('82945', 'C01', 1.5),
+  ('74929', 'F02', 2.5),
+  ('96854', 'F03', 0.5)
+;
+
+INSERT INTO `closure_probabilities` (`lease_info_id`, `prob_1d_perc`)
+VALUES
+  ((SELECT id FROM `lease_info` WHERE `lease_id` = '45678'), 60),
+  ((SELECT id FROM `lease_info` WHERE `lease_id` = '12345'), 45),
+  ((SELECT id FROM `lease_info` WHERE `lease_id` = '82945'), 32),
+  ((SELECT id FROM `lease_info` WHERE `lease_id` = '74929'), 97),
+  ((SELECT id FROM `lease_info` WHERE `lease_id` = '96854'), 22)
+;
