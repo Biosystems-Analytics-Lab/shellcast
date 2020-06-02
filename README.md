@@ -7,10 +7,11 @@ ShellCast web app repository
 - .gcloudignore - This file is similar to a .gitignore file in the sense that it specifies all of the files that will __not__ be uploaded to Google Cloud during deployments.
 - config-template.py - This is a template that should be copied to make a local config.py file.
 - __templates__ - This folder contains all of the Jinja templates.
-- __static__ - This folder contains all of the static content that will be served like CSS and JS files.
+- __static__ - This folder contains all of the static content that is served like CSS and JS files.
 - __models__ - This folder contains all of the ORM models that are used to interact with the database.
 - __routes__ - This folder contains all of the routes that are registered with the Flask application.
 - __tests__ - This folder contains all of the unit tests for the application.
+- __db-scripts__ - This folder contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
 
 ## Development Environment Setup
 
