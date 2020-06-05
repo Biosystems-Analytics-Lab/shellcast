@@ -1,15 +1,32 @@
 /* This script creates all of the tables for the database. */
 
-CREATE TABLE `notification_log` (
+/* Stores user information. */
+CREATE TABLE `users` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `closure_prob_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `notification_text` varchar(80) NULL,
-  `send_success` boolean NULL,
+  `first_name` varchar(50) NULL,
+  `last_name` varchar(50) NULL,
+  `phone_number` varchar(11) NULL,
+  `email` varchar(50) NOT NULL,
+  `sms_pref` boolean DEFAULT false,
+  `email_pref` boolean DEFAULT false,
   `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
+/* Stores information about leases. */
+CREATE TABLE `lease_info` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `lease_id` varchar(10) NULL,
+  `grow_area_name` varchar(3) NULL,
+  `rainfall_thresh_in` decimal(3, 2) NULL,
+  `geo_boundary` json NULL,
+  `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
+  PRIMARY KEY (`id`)
+);
+
+/* Stores calculated closure probabilities for each lease. */
 CREATE TABLE `closure_probabilities` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `lease_info_id` int(5) UNSIGNED ZEROFILL NOT NULL,
@@ -24,17 +41,7 @@ CREATE TABLE `closure_probabilities` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `lease_info` (
-  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `lease_id` varchar(10) NULL,
-  `grow_area_name` varchar(3) NULL,
-  `rainfall_thresh_in` decimal(3, 2) NULL,
-  `geo_boundary` json NULL,
-  `created` datetime DEFAULT NOW(),
-  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
-  PRIMARY KEY (`id`)
-);
-
+/* Stores all user subscriptions to lease closure probabilities. */
 CREATE TABLE `subscriptions` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
@@ -46,6 +53,18 @@ CREATE TABLE `subscriptions` (
   PRIMARY KEY (`id`)
 );
 
+/* Stores a log of all notifications that are sent to users. */
+CREATE TABLE `notification_log` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `closure_prob_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `notification_text` varchar(80) NULL,
+  `send_success` boolean NULL,
+  `created` datetime DEFAULT NOW(),
+  PRIMARY KEY (`id`)
+);
+
+/* Stores text disclaimers that are displayed on various pages of the web app. */
 CREATE TABLE `text_disclaimers` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `webapp_page` varchar(50) NULL,
@@ -55,19 +74,18 @@ CREATE TABLE `text_disclaimers` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `users` (
+/* Stores the min and max lease closure probabilities within each growing area. */
+CREATE TABLE `sga_min_max` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(50) NULL,
-  `last_name` varchar(50) NULL,
-  `phone_number` varchar(11) NULL,
-  `email` varchar(50) NOT NULL,
-  `sms_pref` boolean DEFAULT false,
-  `email_pref` boolean DEFAULT false,
+  `grow_area_name` varchar(3) NOT NULL,
+  `min_probability` tinyint(3) NULL,
+  `max_probability` tinyint(3) NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
+/* Add foreign key relations. */
 ALTER TABLE `closure_probabilities` ADD CONSTRAINT `lease_info_fk` FOREIGN KEY (`lease_info_id`) REFERENCES `lease_info` (`id`);
 ALTER TABLE `subscriptions` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `subscriptions` ADD CONSTRAINT `lease_info2_fk` FOREIGN KEY (`lease_info_id`) REFERENCES `lease_info` (`id`);
