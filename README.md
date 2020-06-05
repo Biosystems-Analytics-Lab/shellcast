@@ -13,6 +13,16 @@ ShellCast web app repository
 - __tests__ - This folder contains all of the unit tests for the application.
 - __db-scripts__ - This folder contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
 
+## Third-party Services
+Various third-party are used as part of the ShellCast web app.
+
+Google Cloud Platform
+- App Engine - The app is deployed on Google App Engine in a standard Python 3 environment.
+- Cloud SQL - The app uses a MySQL database for storing all persistent information.  The database is managed by Google Cloud SQL.
+- Logging - All logs related to the App Engine and Cloud SQL instances are recorded with Google Logging.  Additional custom logs from within the app itself are also recorded.
+- Firebase
+  - Authentication - The app uses Firebase authentication to manage most of the aspects of users.
+
 ## Development Environment Setup
 
 ### Install Google Cloud SDK
