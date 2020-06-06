@@ -55,4 +55,6 @@ class TestConfig(Config):
   """
   # whether or not to setup Flask in testing mode
   TESTING = True
+  # various configuration options for SQLAlchemy
+  SQLALCHEMY_ENGINE_OPTIONS = {}
   SQLALCHEMY_DATABASE_URI = 'sqlite://'
