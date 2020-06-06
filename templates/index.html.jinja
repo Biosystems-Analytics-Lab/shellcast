@@ -1,5 +1,11 @@
 {% extends "base.html.jinja" %}
 
+{% block head %}
+  {{ super() }}
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='index.js') }}"></script>
+{% endblock %}
+
 {% block content %}
   <div id="closure-map"></div>
   <script src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} &callback=initMap" async defer></script>
