@@ -3,6 +3,8 @@ import logging
 
 from flask import Flask, render_template, jsonify
 
+import firebase_admin
+
 from models import db
 
 from routes.pages import pages
@@ -34,6 +36,9 @@ def createApp(configObj):
 
   # initialize database connection
   db.init_app(app)
+
+  # initialize Firebase Admin SDK
+  firebase_admin.initialize_app()
 
   return app
 
