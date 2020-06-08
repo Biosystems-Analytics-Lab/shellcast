@@ -29,3 +29,5 @@ config.py.template
 cloudsql
 # ignore database scripts
 db-scripts
+# ignore Firebase Admin SDK credentials (these will already be present in the App Engine environment)
+firebase-admin-sdk-credentials.json

@@ -9,3 +9,5 @@ venv
 config.py
 # ignore local testing Unix socket folder
 cloudsql
+# ignore Firebase Admin SDK credentials
+firebase-admin-sdk-credentials.json
