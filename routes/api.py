@@ -5,7 +5,7 @@ from models.LeaseInfo import LeaseInfo
 
 import time
 
-areaData = Blueprint('areaData', __name__)
+api = Blueprint('api', __name__)
 
 def queryClosureProbabilities():
   results = db.session.query(ClosureProbability, LeaseInfo.grow_area_name).join(LeaseInfo).all()
@@ -15,7 +15,7 @@ def queryClosureProbabilities():
     dictOfCPs[sgaName] = r[0].to_dict()
   return dictOfCPs
 
-@areaData.route('/areaData')
+@api.route('/areaData')
 def getAreaData():
   # t0 = time.perf_counter_ns()
   dictOfCPs = queryClosureProbabilities()
