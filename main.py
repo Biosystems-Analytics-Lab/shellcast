@@ -23,6 +23,9 @@ if ('GAE_APPLICATION' in os.environ):
 
   logging.info('Running on Google App Engine')
 
+# initialize Firebase Admin SDK
+firebase_admin.initialize_app()
+
 def createApp(configObj):
   """
   Returns a Flask app configured with the given configuration object.
@@ -36,9 +39,6 @@ def createApp(configObj):
 
   # initialize database connection
   db.init_app(app)
-
-  # initialize Firebase Admin SDK
-  firebase_admin.initialize_app()
 
   return app
 
