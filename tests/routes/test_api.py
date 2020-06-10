@@ -3,6 +3,15 @@ import pytest
 from models.LeaseInfo import LeaseInfo
 from models.ClosureProbability import ClosureProbability
 
+from firebase_admin import auth
+
+def test_newUser(client, dbSession):
+  # I have no way of generating a JWT in this test, so I can only
+  # test the case when an invalid JWT is sent to the endpoint.
+  res = client.post('/newUser', headers={'Authorization': 'notAValidJWT'})
+  assert res.status_code == 401
+  assert res.get_json()['message'] == 'ID token is invalid'
+
 def test_areaData(client, dbSession):
   # add some leases to the database
   leases = [
