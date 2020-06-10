@@ -16,6 +16,8 @@ def test_User(dbSession):
 
   assert len(res) == 1
   assert res[0].firebase_uid == validUser1.firebase_uid
+  assert res[0].sms_pref == False
+  assert res[0].email_pref == False
 
 def test_LeaseInfo(dbSession):
   geoJson = {
