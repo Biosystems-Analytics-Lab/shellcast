@@ -8,7 +8,7 @@ import firebase_admin
 from models import db
 
 from routes.pages import pages
-from routes.areaData import areaData
+from routes.api import api
 
 from config import Config, DevConfig
 
@@ -32,7 +32,7 @@ def createApp(configObj):
 
   # register blueprints
   app.register_blueprint(pages)
-  app.register_blueprint(areaData)
+  app.register_blueprint(api)
 
   # initialize database connection
   db.init_app(app)
