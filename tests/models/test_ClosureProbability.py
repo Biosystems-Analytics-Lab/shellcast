@@ -3,19 +3,7 @@ import pytest
 from models.LeaseInfo import LeaseInfo
 from models.ClosureProbability import ClosureProbability
 
-def test_index(client):
-  res = client.get('/')
-  assert res.status_code == 200
-
-def test_about(client):
-  res = client.get('/about')
-  assert res.status_code == 200
-
-def test_notifications(client):
-  res = client.get('/notifications')
-  assert res.status_code == 200
-
-def test_areaData(client, dbSession):
+def test_ClosureProbability(dbSession):
   # add some leases to the database
   leases = [
     LeaseInfo(lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
@@ -29,7 +17,7 @@ def test_areaData(client, dbSession):
   dbSession.commit()
 
   # add some closure probabilities to the database
-  probabilities = [
+  probs = [
     ClosureProbability(lease_info_id=leases[0].id, prob_1d_perc=60),
     ClosureProbability(lease_info_id=leases[1].id, prob_1d_perc=45),
     ClosureProbability(lease_info_id=leases[2].id, prob_1d_perc=32),
@@ -37,17 +25,20 @@ def test_areaData(client, dbSession):
     ClosureProbability(lease_info_id=leases[4].id, prob_1d_perc=22),
   ]
 
-  dbSession.add_all(probabilities)
+  dbSession.add_all(probs)
   dbSession.commit()
 
-  res = client.get('/areaData')
-  assert res.status_code == 200
+  assert probs[0].id == 1
+  assert probs[1].id == 2
+  assert probs[2].id == 3
+  assert probs[3].id == 4
+  assert probs[4].id == 5
 
-  json = res.get_json()
-  assert len(json) == 5
+  res = ClosureProbability.query.all()
 
-  assert json['A01']['prob1Day'] == 60
-  assert json['B02']['prob1Day'] == 45
-  assert json['C01']['prob1Day'] == 32
-  assert json['F02']['prob1Day'] == 97
-  assert json['F03']['prob1Day'] == 22
+  assert len(res) == len(probs)
+  assert res[0].lease_info_id == probs[0].lease_info_id
+  assert res[1].lease_info_id == probs[1].lease_info_id
+  assert res[2].lease_info_id == probs[2].lease_info_id
+  assert res[3].lease_info_id == probs[3].lease_info_id
+  assert res[4].lease_info_id == probs[4].lease_info_id
