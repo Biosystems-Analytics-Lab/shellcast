@@ -21,5 +21,15 @@ class User(db.Model):
   # subscriptions = db.relationship('Subscription', order_by=Subscription.created, back_populates='user')
   # notifications = db.relationship('Notification', order_by=Notification.created, back_populates='user')
 
+  def asDict(self):
+    return {
+      'first_name': self.first_name,
+      'last_name': self.last_name,
+      'phone_number': self.phone_number,
+      'email': self.email,
+      'sms_pref': self.sms_pref,
+      'email_pref': self.email_pref
+    }
+
   def __repr__(self):
     return '<User: {}>'.format(self.email)
