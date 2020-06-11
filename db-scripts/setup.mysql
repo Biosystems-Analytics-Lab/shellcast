@@ -16,12 +16,15 @@ CREATE TABLE `users` (
 );
 
 /* Stores information about leases. */
-CREATE TABLE `lease_info` (
+CREATE TABLE `leases` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `lease_id` varchar(10) NULL,
+  `ncdmf_lease_id` varchar(20) NULL,
   `grow_area_name` varchar(3) NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
   `geo_boundary` json NULL,
+  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `window_pref` tinyint(1) NULL,
+  `prob_pref` tinyint(3) NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
@@ -30,25 +33,13 @@ CREATE TABLE `lease_info` (
 /* Stores calculated closure probabilities for each lease. */
 CREATE TABLE `closure_probabilities` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `lease_info_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `rain_forecast_1d_in` decimal(3, 2) NULL,
-  `rain_forecast_2d_in` decimal(3, 2) NULL,
-  `rain_forecast_3d_in` decimal(3, 2) NULL,
+  `lease_id` int(5) UNSIGNED ZEROFILL NOT NULL,
+  `rain_forecast_1d_in` decimal(3, 1) NULL,
+  `rain_forecast_2d_in` decimal(3, 1) NULL,
+  `rain_forecast_3d_in` decimal(3, 1) NULL,
   `prob_1d_perc` tinyint(3) NULL,
   `prob_2d_perc` tinyint(3) NULL,
   `prob_3d_perc` tinyint(3) NULL,
-  `created` datetime DEFAULT NOW(),
-  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
-  PRIMARY KEY (`id`)
-);
-
-/* Stores all user subscriptions to lease closure probabilities. */
-CREATE TABLE `subscriptions` (
-  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `lease_info_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `window_pref` tinyint(1) NULL,
-  `prob_pref` tinyint(3) NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
@@ -87,8 +78,7 @@ CREATE TABLE `sga_min_max` (
 );
 
 /* Add foreign key relations. */
-ALTER TABLE `closure_probabilities` ADD CONSTRAINT `lease_info_fk` FOREIGN KEY (`lease_info_id`) REFERENCES `lease_info` (`id`);
-ALTER TABLE `subscriptions` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-ALTER TABLE `subscriptions` ADD CONSTRAINT `lease_info2_fk` FOREIGN KEY (`lease_info_id`) REFERENCES `lease_info` (`id`);
+ALTER TABLE `closure_probabilities` ADD CONSTRAINT `lease_fk` FOREIGN KEY (`lease_id`) REFERENCES `leases` (`id`);
+ALTER TABLE `leases` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `notification_log` ADD CONSTRAINT `user2_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `notification_log` ADD CONSTRAINT `closure_prob_fk` FOREIGN KEY (`closure_prob_id`) REFERENCES `closure_probabilities` (`id`);
