@@ -3,7 +3,7 @@ from models import db
 class ClosureProbability(db.Model):
   __tablename__ = 'closure_probabilities'
   id = db.Column(db.Integer, primary_key=True)
-  lease_info_id = db.Column(db.Integer, db.ForeignKey('lease_info.id'))
+  lease_id = db.Column(db.Integer, db.ForeignKey('leases.id'))
   rain_forecast_1d_in = db.Column(db.Float)
   rain_forecast_2d_in = db.Column(db.Float)
   rain_forecast_3d_in = db.Column(db.Float)
@@ -13,7 +13,7 @@ class ClosureProbability(db.Model):
   created = db.Column(db.DateTime, server_default=db.func.now())
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
-  leaseInfo = db.relationship('LeaseInfo', back_populates='closureProbabilities')
+  lease = db.relationship('Lease', back_populates='closureProbabilities')
 
   def to_dict(self):
     return {
@@ -21,4 +21,4 @@ class ClosureProbability(db.Model):
     }
 
   def __repr__(self):
-    return '<ClosureProbability(id={},lease_info_id={},perc={})>'.format(self.id, self.lease_info_id, self.prob_1d_perc)
+    return '<ClosureProbability(id={},lease_id={},perc={})>'.format(self.id, self.lease_id, self.prob_1d_perc)

@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request
 from models import db
 from models.User import User
 from models.ClosureProbability import ClosureProbability
-from models.LeaseInfo import LeaseInfo
+from models.Lease import Lease
 
 import time
 
@@ -57,7 +57,7 @@ def newUser():
   return {'message': 'User already exists'}
 
 def queryClosureProbabilities():
-  results = db.session.query(ClosureProbability, LeaseInfo.grow_area_name).join(LeaseInfo).all()
+  results = db.session.query(ClosureProbability, Lease.grow_area_name).join(Lease).all()
   dictOfCPs = {}
   for r in results:
     sgaName = r[1]
