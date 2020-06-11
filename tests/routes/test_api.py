@@ -1,6 +1,6 @@
 import pytest
 
-from models.LeaseInfo import LeaseInfo
+from models.Lease import Lease
 from models.ClosureProbability import ClosureProbability
 
 from firebase_admin import auth
@@ -15,11 +15,11 @@ def test_newUser(client, dbSession):
 def test_areaData(client, dbSession):
   # add some leases to the database
   leases = [
-    LeaseInfo(lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
-    LeaseInfo(lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5),
-    LeaseInfo(lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5),
-    LeaseInfo(lease_id='74929', grow_area_name='F02', rainfall_thresh_in=2.5),
-    LeaseInfo(lease_id='96854', grow_area_name='F03', rainfall_thresh_in=0.5),
+    Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
+    Lease(ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5),
+    Lease(ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5),
+    Lease(ncdmf_lease_id='74929', grow_area_name='F02', rainfall_thresh_in=2.5),
+    Lease(ncdmf_lease_id='96854', grow_area_name='F03', rainfall_thresh_in=0.5),
   ]
 
   dbSession.add_all(leases)
@@ -27,11 +27,11 @@ def test_areaData(client, dbSession):
 
   # add some closure probabilities to the database
   probabilities = [
-    ClosureProbability(lease_info_id=leases[0].id, prob_1d_perc=60),
-    ClosureProbability(lease_info_id=leases[1].id, prob_1d_perc=45),
-    ClosureProbability(lease_info_id=leases[2].id, prob_1d_perc=32),
-    ClosureProbability(lease_info_id=leases[3].id, prob_1d_perc=97),
-    ClosureProbability(lease_info_id=leases[4].id, prob_1d_perc=22),
+    ClosureProbability(lease_id=leases[0].id, prob_1d_perc=60),
+    ClosureProbability(lease_id=leases[1].id, prob_1d_perc=45),
+    ClosureProbability(lease_id=leases[2].id, prob_1d_perc=32),
+    ClosureProbability(lease_id=leases[3].id, prob_1d_perc=97),
+    ClosureProbability(lease_id=leases[4].id, prob_1d_perc=22),
   ]
 
   dbSession.add_all(probabilities)
