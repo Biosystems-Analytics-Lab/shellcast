@@ -1,6 +1,6 @@
 from models import db
-# from models.Subscription import Subscription
-# from models.Notification import Notification
+from models.Lease import Lease
+from models.Notification import Notification
 
 from sqlalchemy.sql import expression
 
@@ -18,11 +18,12 @@ class User(db.Model):
   created = db.Column(db.DateTime, server_default=db.func.now())
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
-  # subscriptions = db.relationship('Subscription', order_by=Subscription.created, back_populates='user')
-  # notifications = db.relationship('Notification', order_by=Notification.created, back_populates='user')
+  leases = db.relationship('Lease', order_by=Lease.created, back_populates='user')
+  notifications = db.relationship('Notification', order_by=Notification.created, back_populates='user')
 
   def asDict(self):
     return {
+      'firebase_uid': self.firebase_uid,
       'first_name': self.first_name,
       'last_name': self.last_name,
       'phone_number': self.phone_number,
