@@ -1,0 +1,7 @@
+[run]
+# specifies which Python files should be measured for coverage
+source =
+  main
+  models
+  routes
+
