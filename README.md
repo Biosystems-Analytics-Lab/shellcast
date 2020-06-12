@@ -59,7 +59,7 @@ So what you need to do at this point is:
 
 ## Common Development Tasks
 
-### Using the Cloud SQL proxy (TCP and Unix socket)
+### Use the Cloud SQL proxy (TCP and Unix socket)
 By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database instances using any tool that can connect with a TCP connection or a Unix socket (you can't use Unix sockets on Windows).  The Cloud SQL proxy also allows the web application to reach the Cloud SQL database for use with local development and testing.
 - To use the Cloud SQL proxy with a TCP connection, run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306`.
 - To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -dir=<PATH TO UNIX SOCKET DIRECTORY> -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database`.
@@ -73,7 +73,8 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 ### Run unit tests
 1. Make sure the Python virtual environment is activated.
 2. Make sure the Cloud SQL proxy is started with a Unix socket (run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -dir=./cloudsql -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database`).
-3. Run the tests by running `python -m pytest`. You should see the test output in the console.
+3. Run the tests by running `python -m pytest -v`. You should see the test output in the console.
+4. If you'd like to see code coverage information as well, then you can run `python -m pytest -v --cov`.  You can then also see more in-depth coverage information by running `coverage html` which will generate web pages in the "htmlcov" directory.  If you open "htmlcov/index.html" in a web browser, then you can click through all of the Python files that were measured and see the exact lines that were run or missed.
 
 ### Deploy the app to Google App Engine
 1. Make sure that you are signed in and using the correct project (ncsu-shellcast) by running `gcloud info`.
