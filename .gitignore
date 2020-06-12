@@ -11,3 +11,6 @@ config.py
 cloudsql
 # ignore Firebase Admin SDK credentials
 firebase-admin-sdk-credentials.json
+# ignore generated code coverage files
+.coverage
+htmlcov
