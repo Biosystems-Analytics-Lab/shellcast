@@ -15,10 +15,16 @@ class ClosureProbability(db.Model):
 
   lease = db.relationship('Lease', back_populates='closureProbabilities')
 
-  def to_dict(self):
+  def asDict(self):
     return {
-      'prob1Day': self.prob_1d_perc,
+      'lease_id': self.lease_id,
+      'rain_forecast_1d_in': self.rain_forecast_1d_in,
+      'rain_forecast_2d_in': self.rain_forecast_2d_in,
+      'rain_forecast_3d_in': self.rain_forecast_3d_in,
+      'prob_1d_perc': self.prob_1d_perc,
+      'prob_2d_perc': self.prob_2d_perc,
+      'prob_3d_perc': self.prob_3d_perc
     }
 
   def __repr__(self):
-    return '<ClosureProbability(id={},lease_id={},perc={})>'.format(self.id, self.lease_id, self.prob_1d_perc)
+    return '<ClosureProbability({}, {}, {}, {})>'.format(self.lease_id, self.prob_1d_perc, self.prob_2d_perc, self.prob_3d_perc)

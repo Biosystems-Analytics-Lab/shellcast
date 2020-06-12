@@ -43,8 +43,8 @@ def test_areaData(client, dbSession):
   json = res.get_json()
   assert len(json) == 5
 
-  assert json['A01']['prob1Day'] == 60
-  assert json['B02']['prob1Day'] == 45
-  assert json['C01']['prob1Day'] == 32
-  assert json['F02']['prob1Day'] == 97
-  assert json['F03']['prob1Day'] == 22
+  assert json['A01']['prob_1d_perc'] == 60
+  assert json['B02']['prob_1d_perc'] == 45
+  assert json['C01']['prob_1d_perc'] == 32
+  assert json['F02']['prob_1d_perc'] == 97
+  assert json['F03']['prob_1d_perc'] == 22
