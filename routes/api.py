@@ -21,7 +21,7 @@ def queryClosureProbabilities():
   dictOfCPs = {}
   for r in results:
     sgaName = r[1]
-    dictOfCPs[sgaName] = r[0].to_dict()
+    dictOfCPs[sgaName] = r[0].asDict()
   return dictOfCPs
 
 @api.route('/areaData')
