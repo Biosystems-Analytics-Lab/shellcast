@@ -70,8 +70,12 @@ CREATE TABLE `text_disclaimers` (
 CREATE TABLE `sga_min_max` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `grow_area_name` varchar(3) NOT NULL,
-  `min_probability` tinyint(3) NULL,
-  `max_probability` tinyint(3) NULL,
+  `min_1d_prob` tinyint(3) NULL,
+  `max_1d_prob` tinyint(3) NULL,
+  `min_2d_prob` tinyint(3) NULL,
+  `max_2d_prob` tinyint(3) NULL,
+  `min_3d_prob` tinyint(3) NULL,
+  `max_3d_prob` tinyint(3) NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
