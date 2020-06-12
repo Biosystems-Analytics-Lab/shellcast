@@ -8,6 +8,11 @@ from config import TestConfig
 from firebase_admin import auth
 from firebase_admin.auth import ExpiredIdTokenError, InvalidIdTokenError
 
+import random
+import string
+
+RNG_SEED = 8375
+
 # will be run once at the beginning of the testing session
 @pytest.fixture(scope='session')
 def app():
@@ -77,3 +82,12 @@ def addMockFbUser():
 
   # restore true token verification
   auth.verify_id_token = realTokenVerification
+
+@pytest.fixture(scope='function', autouse=True)
+def genRandomString():
+  random.seed(RNG_SEED)
+
+  def generator(chars=string.printable, length=10):
+    return ''.join(random.choice(chars) for _ in range(length))
+
+  yield generator
