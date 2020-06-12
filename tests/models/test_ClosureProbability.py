@@ -3,7 +3,7 @@ import pytest
 from models.Lease import Lease
 from models.ClosureProbability import ClosureProbability
 
-def test_ClosureProbability(dbSession):
+def test_valid(dbSession):
   # add some leases to the database
   leases = [
     Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
@@ -48,7 +48,6 @@ def test_asDict():
 
   dictForm = prob.asDict()
 
-  assert dictForm['lease_id'] == prob.lease_id
   assert dictForm['rain_forecast_1d_in'] == prob.rain_forecast_1d_in
   assert dictForm['rain_forecast_2d_in'] == prob.rain_forecast_2d_in
   assert dictForm['rain_forecast_3d_in'] == prob.rain_forecast_3d_in

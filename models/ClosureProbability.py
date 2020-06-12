@@ -1,4 +1,5 @@
 from models import db
+from models.Notification import Notification
 
 class ClosureProbability(db.Model):
   __tablename__ = 'closure_probabilities'
@@ -14,10 +15,10 @@ class ClosureProbability(db.Model):
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
   lease = db.relationship('Lease', back_populates='closureProbabilities')
+  notifications = db.relationship('Notification', order_by=Notification.created, back_populates='closureProbability')
 
   def asDict(self):
     return {
-      'lease_id': self.lease_id,
       'rain_forecast_1d_in': self.rain_forecast_1d_in,
       'rain_forecast_2d_in': self.rain_forecast_2d_in,
       'rain_forecast_3d_in': self.rain_forecast_3d_in,
