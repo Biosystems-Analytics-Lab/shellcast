@@ -6,15 +6,15 @@
   height: 60vh;
 }
 
-/* .navbar {
-  justify-content: flex-start;
+.navbar-nav .dropdown-menu {
+  float: left;
+  min-width: 0;
 }
 
-.navbar-nav {
-  flex-direction: row;
+.dropdown {
+  cursor: pointer;
 }
 
-.navbar-nav .nav-link {
-  display: block;
-  padding: 0.5rem;
-} */
+.dropdown-item {
+  cursor: pointer;
+}
