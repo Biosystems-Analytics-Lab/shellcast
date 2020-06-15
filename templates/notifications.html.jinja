@@ -6,21 +6,21 @@
   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
   <!-- FirebaseUI JS -->
-  <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+  <script defer src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
 
   <!-- Custom JS -->
-  <script src="{{ url_for('static', filename='notifications.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='notifications.js') }}"></script>
 {% endblock %}
 
 {% block content %}
   <h1>Notifications</h1>
-  <p>You can sign up with this application to add information about your own leases and receive personalized notifications about closure probabilities for those leases.</p>
+  <div id="user-signed-out" style="display: none">
+    <p>Creating an account with ShellCast allows you to add your own lease information and receive personalized notifications about potential lease closures.</p>
+    <a role="button" class="btn btn-primary" id="sign-in" href="/signin?mode=select&signInSuccessUrl=/notifications">Sign in</a>
+  </div>
   <div id="user-signed-in" style="display: none">
     <p>You are signed in.</p>
     <button type="button" class="btn btn-primary" id="sign-out">Sign out</button>
-  </div>
-  <div id="user-signed-out" style="display: none">
-    <p>You are signed out.</p>
-    <div id="firebaseui-container"></div>
+    <button type="button" class="btn btn-primary" id="test-btn">Test button</button>
   </div>
 {% endblock %}
