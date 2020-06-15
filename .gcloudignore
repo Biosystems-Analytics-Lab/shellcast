@@ -35,3 +35,5 @@ firebase-admin-sdk-credentials.json
 .coveragerc
 .coverage
 htmlcov
+# ignore Mac backup stuff
+.DS_Store
