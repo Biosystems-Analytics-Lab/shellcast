@@ -11,16 +11,19 @@
   <!-- NC State Bootstrap CSS -->
   <link href="https://cdn.ncsu.edu/brand-assets/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script defer src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
   <!-- Firebase JS -->
-  <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
 
   <!-- Custom CSS -->
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Custom JS -->
+  <script defer src="{{ url_for('static', filename='common.js') }}"></script>
 {% endblock %}
 </head>
 <body>
@@ -46,18 +49,34 @@
 {% set navItems = [("index", "/", "Map"), ("about", "/about", "About"), ("notifications", "/notifications", "Notifications")] %}
 
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="navigation-bar">
   <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">ShellCast</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+  <div class="collapse navbar-collapse justify-content-stretch" id="navbar">
+    {# Navbar for navigation links #}
     <div class="navbar-nav">
       {# iterate through navItems to construct the nav bar#}
       {% for pageName, navRoute, navItemText in navItems -%}
         {{- navLink(pageName, navRoute, navItemText) -}}
       {%- endfor %}
     </div>
+
+    {# Navbar for account dropdown menu #}
+    <div class="navbar-nav ml-auto">
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="account-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Account
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
+          <a class="dropdown-item" id="account-dropdown-notifications" href="/notifications">Manage notifications</a>
+          <button class="dropdown-item" id="account-dropdown-sign-out">Sign out</button>
+          <a class="dropdown-item" id="account-dropdown-sign-in" href="/signin">Sign in</a>
+        </div>
+      </div>
+    </div>
+
   </div>
 </nav>
 
