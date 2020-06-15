@@ -18,11 +18,11 @@ CREATE TABLE `users` (
 /* Stores information about leases. */
 CREATE TABLE `leases` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
   `ncdmf_lease_id` varchar(20) NULL,
   `grow_area_name` varchar(3) NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
   `geo_boundary` json NULL,
-  `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
   `window_pref` tinyint(1) NULL,
   `prob_pref` tinyint(3) NULL,
   `created` datetime DEFAULT NOW(),
@@ -51,7 +51,7 @@ CREATE TABLE `notification_log` (
   `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
   `closure_prob_id` int(5) UNSIGNED ZEROFILL NOT NULL,
   `notification_text` varchar(80) NULL,
-  `send_success` boolean NULL,
+  `send_success` boolean DEFAULT true,
   `created` datetime DEFAULT NOW(),
   PRIMARY KEY (`id`)
 );
