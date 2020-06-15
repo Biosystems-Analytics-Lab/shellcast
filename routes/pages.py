@@ -16,6 +16,10 @@ def aboutPage():
 def notificationsPage():
   return render_template('notifications.html.jinja')
 
+@pages.route('/signin')
+def signinPage():
+  return render_template('signin.html.jinja')
+
 @pages.route('/super-special-extra-secret-test-route')
 def test():
   print('Test print: blah blah')
