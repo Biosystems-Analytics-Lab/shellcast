@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Sign in - ShellCast</title>
+  <link rel="icon" type="image/x-icon" href="https://www.ncsu.edu/favicon.ico">
+
+  <!-- NC State Bootstrap CSS -->
+  <link href="https://cdn.ncsu.edu/brand-assets/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Firebase JS -->
+  <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+
+  <!-- FirebaseUI CSS -->
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+  <!-- FirebaseUI JS -->
+  <script defer src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+
+  <!-- Custom JS -->
+  <script defer src="{{ url_for('static', filename='common.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='signin.js') }}"></script>
+  <style>
+    .content {
+      padding: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>NCSU ShellCast</h1>
+    <p>Creating an account with ShellCast allows you to add your own lease information and receive personalized notifications about potential lease closures.</p>
+    <p>Please sign in to the ShellCast application using one of the authentication options below.</p>
+    <div id="firebaseui-container"></div>
+  </div>
+</body>
+</html>
