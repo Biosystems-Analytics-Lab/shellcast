@@ -1,7 +1,7 @@
 .content {
   height: 100%;
   display: grid;
-  grid-gap: 5px;
+  grid-gap: 10px;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: auto 50vh auto;
   grid-template-areas:
@@ -24,9 +24,16 @@
 
 @media only screen and (min-width: 992px)  {
   .content {
-    grid-template-rows: 50vh auto;
+    /* Template area that mimics wireframes. */
+    /* grid-template-rows: 50vh auto;
     grid-template-areas:
       "d m m m m m"
-      "t t t t t t";
+      "t t t t t t"; */
+    
+    /* Template area that shows map and table side-by-side. */
+    grid-template-rows: auto 80vh;
+    grid-template-areas:
+      "d d d d d d"
+      "m m m t t t";
   }
 }
