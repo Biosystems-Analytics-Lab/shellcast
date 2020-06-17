@@ -2,10 +2,6 @@
   padding: 1rem;
 }
 
-#closure-map {
-  height: 60vh;
-}
-
 .navbar-nav .dropdown-menu {
   float: left;
   min-width: 0;

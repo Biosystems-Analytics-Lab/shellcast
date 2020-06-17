@@ -5,6 +5,8 @@
   <!-- Custom JS -->
   <script defer src="{{ url_for('static', filename='index.js') }}"></script>
   <script defer src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} &callback=initMap"></script>
+  <!-- Custom CSS -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -12,17 +14,19 @@
 
   <br>
 
-  <h3>Closure Probabilities</h3>
-  <table id="closure-table" class="table">
-    <thead>
-      <tr>
-        <th scope="col">Growing Area</th>
-        <th scope="col">3-day (%)</th>
-        <th scope="col">2-day (%)</th>
-        <th scope="col">1-day (%)</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
+  <div id="closure-tables">
+    <h3>Closure Probabilities</h3>
+    <table id="closure-table" class="table">
+      <thead>
+        <tr>
+          <th scope="col">Growing Area</th>
+          <th scope="col">3-day (%)</th>
+          <th scope="col">2-day (%)</th>
+          <th scope="col">1-day (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
