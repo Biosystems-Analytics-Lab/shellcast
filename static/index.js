@@ -5,12 +5,28 @@ const MAP_EL_ID = "closure-map";
 /** Options for the map. */
 const MAP_OPTIONS = {
   center: {
-    lat: 35.1013734,
-    lng: -76.5595641
+    lat: 35.2,
+    lng: -77.2
   },
-  zoom: 8
+  zoom: 7,
+  restriction: {
+    latLngBounds: {
+      north: 36.85,
+      south: 33.67,
+      east: -74,
+      west: -79
+    },
+    strictBounds: false
+  },
+  clickableIcons: false,
+  streetViewControl: false,
+  mapTypeControl: true,
+  mapTypeControlOptions: {
+    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+  },
+  mapTypeId: 'hybrid' // 'roadmap', 'satellite', 'hybrid', 'terrain'
 };
-/** The ID of the table element. */
+/** The ID of the grow area table element. */
 const TABLE_ID = "grow-area-table";
 
 let areaDataPromise;
@@ -19,7 +35,7 @@ let areaData;
   areaDataPromise = getAreaData();
   areaData = await areaDataPromise;
   initTable();
-  // the map is intialized after the Google Maps API library loads
+  initMap();
 })();
 
 /**
@@ -101,6 +117,7 @@ async function initMap() {
  */
 function styleFeature(feature) {
   const RED_HSL = [5, 69, 54]; // red in HSL
+  // const GREEN_HSL = [151, 83, 34]; // green in HSL
   const GREEN_HSL = [151, 83, 34]; // green in HSL
 
   // calculate the closure probability as a floating point
@@ -117,9 +134,11 @@ function styleFeature(feature) {
   }
 
   return {
+    strokeColor: '#000',
     strokeWeight: 1,
-    fillColor: `hsl(${areaColor[0]},${areaColor[1]}%,${areaColor[2]}%)`,
-    fillOpacity: 0.75
+    strokeOpacity: 0.5,
+    fillColor: 'hsl(360,100%,100%', // `hsl(${areaColor[0]},${areaColor[1]}%,${areaColor[2]}%)`,
+    fillOpacity: 0.5
   };
 }
 
