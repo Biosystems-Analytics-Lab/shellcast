@@ -11,7 +11,7 @@ const MAP_OPTIONS = {
   zoom: 8
 };
 /** The ID of the table element. */
-const TABLE_ID = "closure-table";
+const TABLE_ID = "grow-area-table";
 
 let areaDataPromise;
 let areaData;
