@@ -13,8 +13,8 @@ const FIREBASE_UI_CONFIG = {
       requireDisplayName: false
     },
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-    firebase.auth.TwitterAuthProvider.PROVIDER_ID
+    // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+    // firebase.auth.TwitterAuthProvider.PROVIDER_ID
   ],
   credentialHelper: firebaseui.auth.CredentialHelper.NONE
 };
