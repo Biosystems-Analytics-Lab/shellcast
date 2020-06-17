@@ -10,22 +10,53 @@
 {% endblock %}
 
 {% block content %}
+  <p id="disclaimer">Disclaimer: The predictions shown within this app are in no way indicative of whether or not your lease will be closed.  Please use this only as a planning tool and seek out proper closure information from {blank}.</p>
+
   <div id="closure-map"></div>
 
   <br>
 
   <div id="closure-tables">
-    <h3>Closure Probabilities</h3>
-    <table id="closure-table" class="table">
+    <div id="lease-table-div">
+      <h4>My Lease Closure Probabilities</h4>
+      {# <p style="display: none">Sign up to get email and/or text notifications for closure forecast for your aquaculture leases and view lease specific closure forecasts on the map.</p> #}
+      <table id="lease-table" class="table">
+        <thead>
+          <tr>
+            <th scope="col">Lease Number</th>
+            <th scope="col">3-day (%)</th>
+            <th scope="col">2-day (%)</th>
+            <th scope="col">1-day (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>123456</td>
+            <td>81</td>
+            <td>54</td>
+            <td>30</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Grow Area Closure Probabilities</h4>
+    <table id="grow-area-table" class="table">
       <thead>
         <tr>
-          <th scope="col">Growing Area</th>
-          <th scope="col">3-day (%)</th>
-          <th scope="col">2-day (%)</th>
-          <th scope="col">1-day (%)</th>
+          <th scope="col">Grow Area</th>
+          <th scope="col">3-day Min/Max (%)</th>
+          <th scope="col">2-day Min/Max (%)</th>
+          <th scope="col">1-day Min/Max (%)</th>
         </tr>
       </thead>
       <tbody>
+        <tr>
+            <td>A01</td>
+            <td>22/81</td>
+            <td>20/54</td>
+            <td>14/30</td>
+          </tr>
       </tbody>
     </table>
   </div>
