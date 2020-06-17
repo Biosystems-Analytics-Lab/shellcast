@@ -20,6 +20,10 @@
 
 #closure-tables {
   grid-area: t;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
 }
 
 @media only screen and (min-width: 992px)  {
@@ -31,7 +35,8 @@
       "t t t t t t"; */
     
     /* Template area that shows map and table side-by-side. */
-    grid-template-rows: auto 80vh;
+    height: calc(100vh - 56px); /* full height minus the height of the navbar */
+    grid-template-rows: auto 1fr;
     grid-template-areas:
       "d d d d d d"
       "m m m t t t";
