@@ -1,6 +1,10 @@
 {% extends "base.html.jinja" %}
 
 {% block additional_head %}
+  <!-- Bootstrap Table -->
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+  <script defer src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+
   <!-- Custom JS -->
   <script defer src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} "></script>
   <script defer src="{{ url_for('static', filename='index.js') }}"></script>
@@ -16,16 +20,24 @@
   <br>
 
   <div id="closure-tables">
+
     <div id="lease-table-div">
-      <h4>My Lease Closure Probabilities</h4>
-      {# <p style="display: none">Sign up to get email and/or text notifications for closure forecast for your aquaculture leases and view lease specific closure forecasts on the map.</p> #}
-      <table id="lease-table" class="table">
+      <div id="lease-table-toolbar">
+        <h4>My Lease Closure Probabilities</h4>
+      </div>
+      <table
+        id="lease-table"
+        data-classes="table table-bordered table-hover table-sm"
+        data-toggle="table"
+        data-search="true"
+        data-height="200"
+        data-toolbar="#lease-table-toolbar">
         <thead>
           <tr>
-            <th scope="col">Lease Number</th>
-            <th scope="col">3-day (%)</th>
-            <th scope="col">2-day (%)</th>
-            <th scope="col">1-day (%)</th>
+            <th data-sortable="true" data-field="ncdmf_lease_id">Lease ID</th>
+            <th data-field="prob_3d_perc">3-day (%)</th>
+            <th data-field="prob_2d_perc">2-day (%)</th>
+            <th data-field="prob_1d_perc">1-day (%)</th>
           </tr>
         </thead>
         <tbody>
@@ -36,30 +48,56 @@
             <td>30</td>
           </tr>
           <tr>
-            <td>123456</td>
-            <td>81</td>
-            <td>54</td>
+            <td>999999</td>
+            <td>42</td>
+            <td>33</td>
+            <td>11</td>
+          </tr>
+          <tr>
+            <td>83032</td>
+            <td>32</td>
             <td>30</td>
+            <td>5</td>
           </tr>
           <tr>
             <td>123456</td>
             <td>81</td>
             <td>54</td>
             <td>30</td>
+          </tr>
+          <tr>
+            <td>999999</td>
+            <td>42</td>
+            <td>33</td>
+            <td>11</td>
+          </tr>
+          <tr>
+            <td>83032</td>
+            <td>32</td>
+            <td>30</td>
+            <td>5</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div id="grow-area-table-div">
-    <h4>Grow Area Closure Probabilities</h4>
-      <table id="grow-area-table" class="table">
+    <div id="area-table-div">
+      <div id="area-table-toolbar">
+        <h4>Grow Area Closure Probabilities</h4>
+      </div>
+      <table
+        id="area-table"
+        data-classes="table table-bordered table-hover table-sm"
+        data-toggle="table"
+        data-search="true"
+        data-height="200"
+        data-toolbar="#area-table-toolbar">
         <thead>
           <tr>
-            <th scope="col">Grow Area</th>
-            <th scope="col">3-day Min/Max (%)</th>
-            <th scope="col">2-day Min/Max (%)</th>
-            <th scope="col">1-day Min/Max (%)</th>
+            <th data-sortable="true" data-field="grow_area">Grow Area</th>
+            <th data-field="min_max_3d_prob">3-day Min/Max (%)</th>
+            <th data-field="min_max_2d_prob">2-day Min/Max (%)</th>
+            <th data-field="min_max_1d_prob">1-day Min/Max (%)</th>
           </tr>
         </thead>
         <tbody>
@@ -70,10 +108,16 @@
             <td>14/30</td>
           </tr>
           <tr>
-            <td>A01</td>
-            <td>22/81</td>
-            <td>20/54</td>
-            <td>14/30</td>
+            <td>A02</td>
+            <td>17/60</td>
+            <td>16/54</td>
+            <td>16/22</td>
+          </tr>
+          <tr>
+            <td>C08</td>
+            <td>78/81</td>
+            <td>43/50</td>
+            <td>37/42</td>
           </tr>
           <tr>
             <td>A01</td>
@@ -81,8 +125,21 @@
             <td>20/54</td>
             <td>14/30</td>
           </tr>
+          <tr>
+            <td>A02</td>
+            <td>17/60</td>
+            <td>16/54</td>
+            <td>16/22</td>
+          </tr>
+          <tr>
+            <td>C08</td>
+            <td>78/81</td>
+            <td>43/50</td>
+            <td>37/42</td>
+          </tr>
         </tbody>
       </table>
     </div>
+
   </div>
 {% endblock %}

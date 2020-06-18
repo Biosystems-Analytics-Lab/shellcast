@@ -27,7 +27,7 @@ const MAP_OPTIONS = {
   mapTypeId: 'hybrid' // 'roadmap', 'satellite', 'hybrid', 'terrain'
 };
 /** The ID of the grow area table element. */
-const TABLE_ID = "grow-area-table";
+const TABLE_ID = "area-table";
 
 let areaDataPromise;
 let areaData;
