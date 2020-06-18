@@ -24,7 +24,7 @@ __pycache__
 tests
 requirements-test.txt
 # ignore the configuration file template (but not the real one!)
-config.py.template
+config-template.py
 # ignore local testing Unix socket folder
 cloudsql
 # ignore database scripts
