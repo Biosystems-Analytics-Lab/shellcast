@@ -1,30 +1,41 @@
 <!doctype html>
 <html lang="en">
 <head>
-{% block head %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>ShellCast</title>
+  <title>{% block title %}ShellCast{% endblock %}</title>
   <link rel="icon" type="image/x-icon" href="https://www.ncsu.edu/favicon.ico">
 
+{% block ncsu_bootstrap_css %}
   <!-- NC State Bootstrap CSS -->
   <link href="https://cdn.ncsu.edu/brand-assets/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block bootstrap_js %}
   <!-- Bootstrap JS -->
   <script defer src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock %}
 
+{% block firebase_js %}
   <!-- Firebase JS -->
   <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+{% endblock %}
 
+{% block common_css %}
   <!-- Custom CSS -->
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+{% endblock %}
 
+{% block common_js %}
   <!-- Custom JS -->
   <script defer src="{{ url_for('static', filename='common.js') }}"></script>
 {% endblock %}
+
+{% block additional_head %}{% endblock %}
 </head>
 <body>
 
@@ -48,6 +59,7 @@
 {# the set of nav items to display in the nav bar #}
 {% set navItems = [("index", "/", "Map"), ("about", "/about", "About"), ("notifications", "/notifications", "Notifications")] %}
 
+{% block navigation %}
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="navigation-bar">
   <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">ShellCast</a>
@@ -79,6 +91,7 @@
 
   </div>
 </nav>
+{% endblock %}
 
 <!-- Content -->
 <div class="content">
