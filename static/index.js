@@ -99,12 +99,20 @@ async function initMap() {
   const infoWindow = new google.maps.InfoWindow();
   map.data.addListener('click', function(event) {
     const pos = event.latLng;
-    const areaId = event.feature.getProperty('grow_area');
-    const prob1Day = event.feature.getProperty('prob1Day');
-    const prob2Day = event.feature.getProperty('prob2Day');
-    const prob3Day = event.feature.getProperty('prob3Day');
+    const grow_area = event.feature.getProperty('grow_area');
+    const min_3d_prob = event.feature.getProperty('min_3d_prob');
+    const max_3d_prob = event.feature.getProperty('max_3d_prob');
+    const min_2d_prob = event.feature.getProperty('min_2d_prob');
+    const max_2d_prob = event.feature.getProperty('max_2d_prob');
+    const min_1d_prob = event.feature.getProperty('min_1d_prob');
+    const max_1d_prob = event.feature.getProperty('max_1d_prob');
     infoWindow.setPosition(pos);
-    infoWindow.setContent(`<div>Area: ${areaId}<br>1-day %: ${prob1Day}<br>2-day %: ${prob2Day}<br>3-day %: ${prob3Day}</div>`);
+    infoWindow.setContent(`
+      <div>Area: ${grow_area}
+      <br>3-day Min/Max %: ${min_3d_prob}/${max_3d_prob}
+      <br>2-day Min/Max %: ${min_2d_prob}/${max_2d_prob}
+      <br>1-day Min/Max %: ${min_1d_prob}/${max_1d_prob}
+      </div>`);
     infoWindow.open(map);
   });
 
