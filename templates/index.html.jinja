@@ -1,7 +1,6 @@
 {% extends "base.html.jinja" %}
 
-{% block head %}
-  {{ super() }}
+{% block additional_head %}
   <!-- Custom JS -->
   <script defer src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} "></script>
   <script defer src="{{ url_for('static', filename='index.js') }}"></script>
