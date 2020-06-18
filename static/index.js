@@ -43,12 +43,13 @@ let areaData;
  */
 async function getAreaData() {
   let res = await fetch("/areaData");
-  if (res.ok) {
-    return await res.json();
-  }
-  console.log("Problem retrieving growing area data.");
-  console.log(res);
-  return null;
+  // if (res.ok) {
+  //   return await res.json();
+  // }
+  // console.log("Problem retrieving growing area data.");
+  // console.log(res);
+  // return null;
+  return {};
 }
 
 /**
