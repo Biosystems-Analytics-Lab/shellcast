@@ -21,11 +21,15 @@
 #closure-tables {
   grid-area: t;
 
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
 }
 
+.fixed-table-container.fixed-height {
+  height: 30vh !important;
+}
+
+/* Changes for wide screens */
 @media only screen and (min-width: 992px)  {
   .content {
     /* Template area that mimics wireframes. */
