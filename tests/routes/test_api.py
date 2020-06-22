@@ -12,7 +12,10 @@ def test_userInfo(client, dbSession, addMockFbUser):
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
 
-def test_areaData(client, dbSession):
+def test_leaseProbs(client, dbSession, addMockFbUser):
+  # add a mock Firebase user
+  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='11234567890', display_name='Blah Bleh'), 'validUser1')
+
   # add some leases to the database
   leases = [
     Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
@@ -37,7 +40,7 @@ def test_areaData(client, dbSession):
   dbSession.add_all(probabilities)
   dbSession.commit()
 
-  res = client.get('/areaData')
+  res = client.get('/leaseProbs', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
 
   json = res.get_json()
