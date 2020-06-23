@@ -26,7 +26,7 @@ def test_asDict():
 
   dictForm = sga.asDict()
 
-  assert dictForm['grow_area_name'] == sga.grow_area_name
+  assert dictForm.get('grow_area_name') == None
   assert dictForm['min_1d_prob'] == sga.min_1d_prob
   assert dictForm['max_1d_prob'] == sga.max_1d_prob
   assert dictForm['min_2d_prob'] == sga.min_2d_prob

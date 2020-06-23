@@ -5,7 +5,7 @@ from models.ClosureProbability import ClosureProbability
 
 from firebase_admin import auth
 
-def test_leaseProbs(client, dbSession, addMockFbUser):
+def test_valid(client, dbSession, addMockFbUser):
   # add a mock Firebase user
   addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='11234567890', display_name='Blah Bleh'), 'validUser1')
 

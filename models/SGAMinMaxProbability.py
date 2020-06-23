@@ -16,7 +16,6 @@ class SGAMinMaxProbability(db.Model):
 
   def asDict(self):
     return {
-      'grow_area_name': self.grow_area_name,
       'min_1d_prob': self.min_1d_prob,
       'max_1d_prob': self.max_1d_prob,
       'min_2d_prob': self.min_2d_prob,

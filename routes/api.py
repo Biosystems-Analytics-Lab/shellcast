@@ -34,8 +34,8 @@ def queryGrowAreaProbabilities():
   results = db.session.query(SGAMinMaxProbability).all()
   dictOfCPs = {}
   for r in results:
-    sgaName = r[1]
-    dictOfCPs[sgaName] = r[0].asDict()
+    sgaName = r.grow_area_name
+    dictOfCPs[sgaName] = r.asDict()
   return dictOfCPs
 
 @api.route('/growAreaProbs')
