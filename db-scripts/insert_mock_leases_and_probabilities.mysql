@@ -1,17 +1,19 @@
-INSERT INTO `lease_info` (`lease_id`, `grow_area_name`, `rainfall_thresh_in`)
+-- Inserts several leases for the user with the user id, 2
+INSERT INTO `leases` (`user_id`, `ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`)
 VALUES
-  ('45678', 'A01', 1.5),
-  ('12345', 'B02', 2.5),
-  ('82945', 'C01', 1.5),
-  ('74929', 'F02', 2.5),
-  ('96854', 'F03', 0.5)
+  (2, '45678', 'A01', 1.5),
+  (2, '12345', 'B02', 2.5),
+  (2, '82945', 'C01', 1.5),
+  (2, '74929', 'F02', 2.5),
+  (2, '96854', 'F03', 0.5)
 ;
 
-INSERT INTO `closure_probabilities` (`lease_info_id`, `prob_1d_perc`)
+-- Inserts a closure probability for each of the leases above
+INSERT INTO `closure_probabilities` (`lease_id`, `prob_1d_perc`, `prob_2d_perc`, `prob_3d_perc`)
 VALUES
-  ((SELECT id FROM `lease_info` WHERE `lease_id` = '45678'), 60),
-  ((SELECT id FROM `lease_info` WHERE `lease_id` = '12345'), 45),
-  ((SELECT id FROM `lease_info` WHERE `lease_id` = '82945'), 32),
-  ((SELECT id FROM `lease_info` WHERE `lease_id` = '74929'), 97),
-  ((SELECT id FROM `lease_info` WHERE `lease_id` = '96854'), 22)
+  ((SELECT id FROM `leases` WHERE `ncdmf_lease_id` = '45678'), 60, 63, 78),
+  ((SELECT id FROM `leases` WHERE `ncdmf_lease_id` = '12345'), 45, 54, 98),
+  ((SELECT id FROM `leases` WHERE `ncdmf_lease_id` = '82945'), 32, 35, 40),
+  ((SELECT id FROM `leases` WHERE `ncdmf_lease_id` = '74929'), 97, 97, 98),
+  ((SELECT id FROM `leases` WHERE `ncdmf_lease_id` = '96854'), 22, 30, 65)
 ;
