@@ -7,9 +7,9 @@
 
   <!-- Custom JS -->
   <script defer src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} "></script>
-  <script defer src="{{ url_for('static', filename='index.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='index/index.js') }}"></script>
   <!-- Custom CSS -->
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index/index.css') }}">
 {% endblock %}
 
 {% block content %}

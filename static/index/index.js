@@ -27,7 +27,7 @@ const MAP_OPTIONS = {
   mapTypeId: 'hybrid' // 'roadmap', 'satellite', 'hybrid', 'terrain'
 };
 /** The ID of the grow area table element. */
-const TABLE_ID = "area-table";
+const GROW_AREA_TABLE_ID = "area-table";
 
 let areaDataPromise;
 let areaData;
@@ -56,7 +56,7 @@ async function getAreaData() {
  * Fills the table with the growing area data.
  */
 function initTable() {
-  const table = document.getElementById(TABLE_ID).getElementsByTagName("tbody")[0];
+  const table = document.getElementById(GROW_AREA_TABLE_ID).getElementsByTagName("tbody")[0];
   for (let [areaId, data] of Object.entries(areaData)) {
     let row = table.insertRow();
     row.insertCell().appendChild(document.createTextNode(areaId));
