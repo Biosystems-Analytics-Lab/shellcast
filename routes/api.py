@@ -17,18 +17,20 @@ api = Blueprint('api', __name__)
 def getUserInfo(user):
   return user.asDict()
 
-def queryLeaseClosureProbabilities():
-  results = db.session.query(ClosureProbability, Lease.grow_area_name).join(Lease).all()
-  dictOfCPs = {}
-  for r in results:
-    sgaName = r[1]
-    dictOfCPs[sgaName] = r[0].asDict()
-  return dictOfCPs
+def queryLeaseClosureProbabilities(user):
+  leases = db.session.query(Lease).filter_by(user_id=user.id).all()
+  probs = []
+  for lease in leases:
+    closureProb = db.session.query(ClosureProbability).filter_by(lease_id=lease.id).first()
+    probDict = closureProb.asDict()
+    probDict['ncdmf_lease_id'] = lease.ncdmf_lease_id
+    probs.append(closureProb.asDict())
+  return probs
 
 @api.route('/leaseProbs')
 @userRequired
 def getLeaseClosureProbabilities(user):
-  return queryLeaseClosureProbabilities()
+  return jsonify(queryLeaseClosureProbabilities(user))
 
 def queryGrowAreaProbabilities():
   results = db.session.query(SGAMinMaxProbability).all()

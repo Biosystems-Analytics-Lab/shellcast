@@ -1,5 +1,6 @@
 import pytest
 
+from models.User import User
 from models.Lease import Lease
 from models.ClosureProbability import ClosureProbability
 
@@ -7,15 +8,19 @@ from firebase_admin import auth
 
 def test_valid(client, dbSession, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='11234567890', display_name='Blah Bleh'), 'validUser1')
+  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890', display_name='Blah Bleh'), 'validUser1')
+
+  # add the user to the db
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890', first_name='Blah', last_name='Bleh')
+
+  dbSession.add(user)
+  dbSession.commit()
 
   # add some leases to the database
   leases = [
-    Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
-    Lease(ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5),
-    Lease(ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5),
-    Lease(ncdmf_lease_id='74929', grow_area_name='F02', rainfall_thresh_in=2.5),
-    Lease(ncdmf_lease_id='96854', grow_area_name='F03', rainfall_thresh_in=0.5),
+    Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
+    Lease(user_id=user.id, ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5),
+    Lease(user_id=user.id, ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5)
   ]
 
   dbSession.add_all(leases)
@@ -23,11 +28,9 @@ def test_valid(client, dbSession, addMockFbUser):
 
   # add some closure probabilities to the database
   probabilities = [
-    ClosureProbability(lease_id=leases[0].id, prob_1d_perc=60),
-    ClosureProbability(lease_id=leases[1].id, prob_1d_perc=45),
-    ClosureProbability(lease_id=leases[2].id, prob_1d_perc=32),
-    ClosureProbability(lease_id=leases[3].id, prob_1d_perc=97),
-    ClosureProbability(lease_id=leases[4].id, prob_1d_perc=22),
+    ClosureProbability(lease_id=leases[0].id, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80),
+    ClosureProbability(lease_id=leases[1].id, prob_1d_perc=45, prob_2d_perc=54, prob_3d_perc=57),
+    ClosureProbability(lease_id=leases[2].id, prob_1d_perc=32, prob_2d_perc=33, prob_3d_perc=69)
   ]
 
   dbSession.add_all(probabilities)
@@ -37,10 +40,14 @@ def test_valid(client, dbSession, addMockFbUser):
   assert res.status_code == 200
 
   json = res.get_json()
-  assert len(json) == 5
+  assert len(json) == 3
 
-  assert json['A01']['prob_1d_perc'] == 60
-  assert json['B02']['prob_1d_perc'] == 45
-  assert json['C01']['prob_1d_perc'] == 32
-  assert json['F02']['prob_1d_perc'] == 97
-  assert json['F03']['prob_1d_perc'] == 22
+  assert json[0]['prob_1d_perc'] == 60
+  assert json[0]['prob_2d_perc'] == 70
+  assert json[0]['prob_3d_perc'] == 80
+  assert json[1]['prob_1d_perc'] == 45
+  assert json[1]['prob_2d_perc'] == 54
+  assert json[1]['prob_3d_perc'] == 57
+  assert json[2]['prob_1d_perc'] == 32
+  assert json[2]['prob_2d_perc'] == 33
+  assert json[2]['prob_3d_perc'] == 69
