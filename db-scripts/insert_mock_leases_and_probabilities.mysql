@@ -1,11 +1,11 @@
 -- Inserts several leases for the user with the user id, 2
-INSERT INTO `leases` (`user_id`, `ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`)
+INSERT INTO `leases` (`user_id`, `ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geo_boundary`)
 VALUES
-  (2, '45678', 'A01', 1.5),
-  (2, '12345', 'B02', 2.5),
-  (2, '82945', 'C01', 1.5),
-  (2, '74929', 'F02', 2.5),
-  (2, '96854', 'F03', 0.5)
+  (2, '45678', 'A01', 1.5, '{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-75.864693, 36.303915]}}'),
+  (2, '12345', 'B02', 2.5, '{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-75.927864, 36.164344]}}'),
+  (2, '82945', 'C01', 1.5, '{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-75.754829, 35.868877]}}'),
+  (2, '74929', 'F02', 2.5, '{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-77.567573, 34.404497]}}'),
+  (2, '96854', 'F03', 0.5, '{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-76.523872, 35.207332]}}')
 ;
 
 -- Inserts a closure probability for each of the leases above
