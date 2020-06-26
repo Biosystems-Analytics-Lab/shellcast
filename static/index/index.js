@@ -11,7 +11,7 @@ const MAP_OPTIONS = {
   zoom: 7,
   restriction: {
     latLngBounds: {
-      north: 36.85,
+      north: 38,
       south: 33.67,
       east: -74,
       west: -79
@@ -28,8 +28,15 @@ const MAP_OPTIONS = {
 };
 /** The ID of the grow area table element. */
 const GROW_AREA_TABLE_ID = 'area-table';
+/** The ID of the lease table element. */
+const LEASE_TABLE_ID = 'lease-table';
 /** The path to the grow area bound file. */
 const GROW_AREA_BOUNDS_PATH = 'static/growing_area_bounds.geojson';
+
+// a reference to the Google map object
+let map;
+// a reference to the Google map info window
+let mapInfoWindow;
 
 /**
  * Fetches the growing area data from the server and returns it.
@@ -45,7 +52,20 @@ async function getGrowAreaData() {
 }
 
 /**
- * Fills the table with the growing area data.
+ * Fetches the current user's lease data from the server and returns it.
+ */
+async function getLeaseData() {
+  let res = await authorizedFetch('/leaseProbs');
+  if (res.ok) {
+    return await res.json();
+  }
+  console.log('Problem retrieving growing area data.');
+  console.log(res);
+  return null;
+}
+
+/**
+ * Fills the grow area table with the grow area records.
  */
 function initGrowAreaTable(growAreaData) {
   const rows = [];
@@ -62,6 +82,21 @@ function initGrowAreaTable(growAreaData) {
 }
 
 /**
+ * Fills the lease table with lease records.
+ */
+function initLeaseTable(leaseData) {
+  // const rows = [];
+  // for (let lease of leaseData) {
+  //   const rowData = {
+  //     ncdmf_lease_id: areaId,
+  //     prob_1d_perc: leaseData.prob_1d_perc,
+  //   };
+  //   rows.push(rowData);
+  // }
+  $(`#${LEASE_TABLE_ID}`).bootstrapTable('load', leaseData);
+}
+
+/**
  * Loads a GeoJSON file at the given URL into the given map object.
  * @param {google.maps.Map} map the map object to load the GeoJSON into
  * @param {string} url the URL of the GeoJSON to load
@@ -75,12 +110,18 @@ async function loadGeoJson(map, url) {
 /**
  * Initializes the map.
  */
-async function initMap(growAreaData) {
+async function initMap() {
   const mapEl = document.getElementById(MAP_EL_ID);
-  const map = new google.maps.Map(mapEl, MAP_OPTIONS);
-  await loadGeoJson(map, GROW_AREA_BOUNDS_PATH);
+  map = new google.maps.Map(mapEl, MAP_OPTIONS);
+  // set the map's style
+  map.data.setStyle(styleFeature);
+  mapInfoWindow = new google.maps.InfoWindow();
 
-  // set feature properties based on the gowing area data
+  return loadGeoJson(map, GROW_AREA_BOUNDS_PATH);
+}
+
+function addGrowAreaDataToMap(growAreaData) {
+  // set feature properties based on the grow area data
   for (let [areaId, data] of Object.entries(growAreaData)) {
     const curFeature = map.data.getFeatureById(areaId);
     curFeature.setProperty('min_1d_prob', data.min_1d_prob);
@@ -91,8 +132,8 @@ async function initMap(growAreaData) {
     curFeature.setProperty('max_3d_prob', data.max_3d_prob);
   }
 
-  // set up info windows to appear when clicking on growing areas
-  const infoWindow = new google.maps.InfoWindow();
+  // set up an info window to appear when clicking on any grow area
+  // const growAreaInfoWindow = new google.maps.InfoWindow();
   map.data.addListener('click', (event) => {
     const pos = event.latLng;
     const grow_area = event.feature.getProperty('grow_area');
@@ -102,19 +143,57 @@ async function initMap(growAreaData) {
     const max_2d_prob = event.feature.getProperty('max_2d_prob');
     const min_3d_prob = event.feature.getProperty('min_3d_prob');
     const max_3d_prob = event.feature.getProperty('max_3d_prob');
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(`
+    mapInfoWindow.setPosition(pos);
+    mapInfoWindow.setContent(`
       <div>Area: ${grow_area}
       <br>3-day Min/Max %: ${min_3d_prob}/${max_3d_prob}
       <br>2-day Min/Max %: ${min_2d_prob}/${max_2d_prob}
       <br>1-day Min/Max %: ${min_1d_prob}/${max_1d_prob}
       </div>
     `);
-    infoWindow.open(map);
+    mapInfoWindow.open(map);
   });
+}
 
-  // set the map's style
-  map.data.setStyle(styleFeature);
+function addLeaseDataToMap(leaseData) {
+  // const leaseInfoWindow = new google.maps.InfoWindow();
+
+  // create a marker for each lease
+  for (let lease of leaseData) {
+    const leaseInfoContent = (`
+      <div>Lease ID: ${lease.ncdmf_lease_id}
+      <br>3-day %: ${lease.prob_3d_perc}
+      <br>2-day %: ${lease.prob_2d_perc}
+      <br>1-day %: ${lease.prob_1d_perc}
+      </div>
+    `);
+    const marker = new google.maps.Marker({
+      position: getLatLngFromGeoJSON(lease.geo_boundary),//{lat: 35.2, lng: -77.2},//getLatLngFromGeoJSON(lease.geo_boundary),
+      map: map,
+      title: lease.ncdmf_lease_id
+      // icon: {
+      //   path: "M182.9,551.7c0,0.1,0.2,0.3,0.2,0.3S358.3,283,358.3,194.6c0-130.1-88.8-186.7-175.4-186.9C96.3,7.9,7.5,64.5,7.5,194.6c0,88.4,175.3,357.4,175.3,357.4S182.9,551.7,182.9,551.7z M122.2,187.2c0-33.6,27.2-60.8,60.8-60.8c33.6,0,60.8,27.2,60.8,60.8S216.5,248,182.9,248C149.4,248,122.2,220.8,122.2,187.2z",
+      //   strokeColor: "#FFF",
+      //   strokeWeight: 1,
+      //   fillColor: "#00AEEF",
+      //   fillOpacity: 1,
+      //   scale: .1
+      // }
+    });
+    marker.addListener('click', () => {
+      mapInfoWindow.setContent(leaseInfoContent);
+      mapInfoWindow.open(map, marker);
+    });
+  }
+}
+
+function getLatLngFromGeoJSON(geoJSON) {
+  // for Point geometries
+  const coords = geoJSON.geometry.coordinates;
+  return {
+    lat: coords[1],
+    lng: coords[0]
+  };
 }
 
 /**
@@ -158,13 +237,17 @@ function lerp(lowVal, highVal, factor) {
 }
 
 (async () => {
+  await initMap();
+
   const growAreaData = await getGrowAreaData();
   initGrowAreaTable(growAreaData);
+  addGrowAreaDataToMap(growAreaData);
 
-  // let leaseData = {};
-  // firebase.auth().onAuthStateChanged((user) => {
-  //   user ? loadLeaseProbs(user) : () => {};
-  // });
-
-  initMap(growAreaData);
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+      const leaseData = await getLeaseData();
+      initLeaseTable(leaseData);
+      addLeaseDataToMap(leaseData);
+    }
+  });
 })();
