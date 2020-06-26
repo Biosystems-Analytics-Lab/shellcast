@@ -63,3 +63,29 @@ async function signOut() {
     document.getElementById('account-dropdown-sign-in').href = `/signin?mode=select&signInSuccessUrl=${window.location.pathname}`;
   }
 })();
+
+async function authorizedFetch(url, options={}) {
+  // request the token which may potentially be expired
+  // (don't get an updated token just yet because you are unnecessarily refreshing tokens with sign-in service providers and this might drive you over your daily quotas)
+  // TODO actually verify the statement above; it may no longer apply?!?!
+  const userIdToken = await firebase.auth().currentUser.getIdToken(false);
+  // add the auth token to the headers
+  if (!options.headers) {
+    options.headers = {};
+  }
+  options.headers.Authorization = userIdToken;
+  // send the request
+  let request = fetch(url, options);
+  let result = await request;
+  // if the response says that the token expired
+  if (result.status === 401 /*&& json.message === 'Token expired'*/) {
+    // get an updated token
+    const userIdToken = await firebase.auth().currentUser.getIdToken(false);
+    // add the auth token to the headers
+    options.headers.Authorization = userIdToken;
+    // resend the request
+    request = fetch(url, options);
+  }
+
+  return request;
+}
