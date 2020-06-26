@@ -24,7 +24,8 @@ def queryLeaseClosureProbabilities(user):
     closureProb = db.session.query(ClosureProbability).filter_by(lease_id=lease.id).first()
     probDict = closureProb.asDict()
     probDict['ncdmf_lease_id'] = lease.ncdmf_lease_id
-    probs.append(closureProb.asDict())
+    probDict['geo_boundary'] = lease.geo_boundary
+    probs.append(probDict)
   return probs
 
 @api.route('/leaseProbs')
