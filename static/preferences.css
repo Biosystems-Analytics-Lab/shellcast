@@ -1,0 +1,12 @@
+#forms {
+  margin: auto;
+  max-width: 900px;
+}
+
+#lease-search-results {
+  max-height: 175px;
+  overflow: hidden;
+  overflow-y: scroll;
+  border: 1px solid #999;
+  border-top: 0 solid #fff;
+}
