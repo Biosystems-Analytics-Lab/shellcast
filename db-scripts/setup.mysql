@@ -7,7 +7,7 @@ CREATE TABLE `users` (
   `first_name` varchar(50) NULL,
   `last_name` varchar(50) NULL,
   `phone_number` varchar(11) NULL,
-  `email` varchar(50) NOT NULL,
+  `email` varchar(50) NULL,
   `sms_pref` boolean DEFAULT false,
   `email_pref` boolean DEFAULT false,
   `created` datetime DEFAULT NOW(),
