@@ -49,8 +49,4 @@ async function testBtn() {
   firebase.auth().onAuthStateChanged((user) => {
     user ? handleSignedInUser(user) : handleSignedOutUser();
   });
-
-  // init event listeners
-  document.getElementById('sign-out').addEventListener('click', signOut);
-  document.getElementById('test-btn').addEventListener('click', testBtn);
 })();

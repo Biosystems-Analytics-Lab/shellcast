@@ -11,17 +11,91 @@
 
   <!-- Custom JS -->
   <script defer src="{{ url_for('static', filename='preferences.js') }}"></script>
+  <!-- Custom CSS -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='preferences.css') }}">
 {% endblock %}
 
 {% block content %}
-  <h1>Preferences</h1>
+  <h1 class="page-main-header">Preferences</h1>
+
   <div id="user-signed-out" style="display: none">
     <p>Creating an account with ShellCast allows you to add your own lease information and receive personalized notifications about potential lease closures.</p>
     <a role="button" class="btn btn-primary" id="sign-in" href="/signin?mode=select&signInSuccessUrl=/preferences">Sign in</a>
   </div>
+
   <div id="user-signed-in" style="display: none">
-    <p>You are signed in.</p>
-    <button type="button" class="btn btn-primary" id="sign-out">Sign out</button>
-    <button type="button" class="btn btn-primary" id="test-btn">Test button</button>
+    <div id="forms">
+
+      {# Generic profile information #}
+      <form class="needs-validation mb-4">
+        <h4>Your profile information</h4>
+        <div class="mb-3">
+          <label for="firstName">First name</label>
+          <input type="text" class="form-control" id="firstName" placeholder="First name" value="Bob" readonly>
+          <div class="invalid-feedback">
+            Valid first name is required.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="lastName">Last name</label>
+          <input type="text" class="form-control" id="lastName" placeholder="Last name" value="Smith" readonly>
+          <div class="invalid-feedback">
+            Valid last name is required.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control" id="email" placeholder="you@example.com" aria-describedby="emailHelp">
+          <div class="invalid-feedback">
+            Please enter a valid email address for shipping updates.
+          </div>
+          <small id="emailHelp" class="form-text text-muted">
+            This email address will be used for account updates as well as probable closure notifications (if you opt into them below).
+          </small>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone">Mobile phone number</label>
+          <div class="input-group">
+            <div class="input-group-prepend"><div class="input-group-text">+1</div></div>
+            <input type="tel" class="form-control" id="phone" pattern="\d{10}" placeholder="1112223333" aria-describedby="phoneHelp">
+            <div class="invalid-feedback" style="width: 100%;">
+              Please enter a valid phone number.
+            </div>
+            <small id="phoneHelp" class="form-text text-muted" style="width: 100%;">
+              This phone number must be able to receive text (SMS/MMS) messages. This phone number will receive probable closure notifications if you opt into them below.
+            </small>
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+
+      {# Lease preferences #}
+      <h4>Your leases</h4>
+      <p>You can add a lease by searching for it by its NCDMF ID.</p>
+
+      <div class="mb-3">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search for a lease" aria-label="Search for a lease" aria-describedby="lease-search-btn">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
+          </div>
+        </div>
+
+        <div class="list-group" id="lease-search-results">
+          <button type="button" class="list-group-item list-group-item-action">Cras justo odio</button>
+          <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+          <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+          <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+          <button type="button" class="list-group-item list-group-item-action">Vestibulum at eros</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 {% endblock %}
