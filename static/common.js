@@ -21,8 +21,8 @@ function handleNavbarSignedIn(user) {
 
   // remove the "Sign in" option from the dropdown menu
   document.getElementById('account-dropdown-sign-in').style.display = 'none';
-  // add the "Manage notifications" and "Sign out" options to the dropdown menu
-  document.getElementById('account-dropdown-notifications').style.display = 'block';
+  // add the "Manage preferences" and "Sign out" options to the dropdown menu
+  document.getElementById('account-dropdown-preferences').style.display = 'block';
   document.getElementById('account-dropdown-sign-out').style.display = 'block';
 };
 
@@ -35,8 +35,8 @@ function handleNavbarSignedOut() {
 
   // add the "Sign in" option to the dropdown menu
   document.getElementById('account-dropdown-sign-in').style.display = 'block';
-  // remove the "Manage notifications" and "Sign out" options from the dropdown menu
-  document.getElementById('account-dropdown-notifications').style.display = 'none';
+  // remove the "Manage preferences" and "Sign out" options from the dropdown menu
+  document.getElementById('account-dropdown-preferences').style.display = 'none';
   document.getElementById('account-dropdown-sign-out').style.display = 'none';
 };
 

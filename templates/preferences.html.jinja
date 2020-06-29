@@ -1,6 +1,6 @@
 {% extends "base.html.jinja" %}
 
-{% block title %}Notifications - ShellCast{% endblock %}
+{% block title %}Preferences - ShellCast{% endblock %}
 
 {% block additional_head %}
   <!-- FirebaseUI CSS -->
@@ -10,14 +10,14 @@
   <script defer src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
 
   <!-- Custom JS -->
-  <script defer src="{{ url_for('static', filename='notifications.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='preferences.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-  <h1>Notifications</h1>
+  <h1>Preferences</h1>
   <div id="user-signed-out" style="display: none">
     <p>Creating an account with ShellCast allows you to add your own lease information and receive personalized notifications about potential lease closures.</p>
-    <a role="button" class="btn btn-primary" id="sign-in" href="/signin?mode=select&signInSuccessUrl=/notifications">Sign in</a>
+    <a role="button" class="btn btn-primary" id="sign-in" href="/signin?mode=select&signInSuccessUrl=/preferences">Sign in</a>
   </div>
   <div id="user-signed-in" style="display: none">
     <p>You are signed in.</p>

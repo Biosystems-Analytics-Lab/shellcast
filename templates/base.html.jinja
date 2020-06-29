@@ -57,7 +57,7 @@
 {%- endmacro %}
 
 {# the set of nav items to display in the nav bar #}
-{% set navItems = [("index", "/", "Map"), ("about", "/about", "About"), ("notifications", "/notifications", "Notifications")] %}
+{% set navItems = [("index", "/", "Map"), ("about", "/about", "About")] %}
 
 {% block navigation %}
 <!-- Navigation -->
@@ -85,7 +85,7 @@
           Account
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
-          <a class="dropdown-item" id="account-dropdown-notifications" href="/notifications">Manage notifications</a>
+          <a class="dropdown-item" id="account-dropdown-preferences" href="/preferences">Manage preferences</a>
           <button class="dropdown-item" id="account-dropdown-sign-out">Sign out</button>
           <a class="dropdown-item" id="account-dropdown-sign-in" href="/signin">Sign in</a>
         </div>
