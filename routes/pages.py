@@ -12,9 +12,9 @@ def indexPage():
 def aboutPage():
   return render_template('about.html.jinja')
 
-@pages.route('/notifications')
-def notificationsPage():
-  return render_template('notifications.html.jinja')
+@pages.route('/preferences')
+def preferencesPage():
+  return render_template('preferences.html.jinja')
 
 @pages.route('/signin')
 def signinPage():
