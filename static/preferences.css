@@ -3,10 +3,28 @@
   max-width: 900px;
 }
 
-#lease-search-results {
+.search-bar {
+  position: relative;
+}
+
+.search-results {
+  display:none;
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
   max-height: 175px;
   overflow: hidden;
   overflow-y: scroll;
   border: 1px solid #999;
   border-top: 0 solid #fff;
+}
+
+.notification-options {
+  margin-left: 20px;
+}
+
+.notification-options > label {
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 0;
 }
