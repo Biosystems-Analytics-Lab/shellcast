@@ -9,6 +9,11 @@
 
 3. ndfd_analyze_forecast_data_script.R
 
+### shellcast_analysis.sh will run all of daily scripts in order
+
+```
+# sh shellcast_daily_analysis.sh
+```
 
 ## script run order (weekly, when REST API is available)
 
