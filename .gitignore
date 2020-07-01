@@ -18,3 +18,5 @@ htmlcov
 .DS_Store
 # ignore data folder
 analysis/data
+# ignore r history file
+.Rhistory
