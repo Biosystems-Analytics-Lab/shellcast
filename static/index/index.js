@@ -42,7 +42,7 @@ let mapInfoWindow;
  * Fetches the growing area data from the server and returns it.
  */
 async function getGrowAreaData() {
-  let res = await fetch('/growAreaProbs');
+  const res = await fetch('/growAreaProbs');
   if (res.ok) {
     return await res.json();
   }
@@ -55,7 +55,7 @@ async function getGrowAreaData() {
  * Fetches the current user's lease data from the server and returns it.
  */
 async function getLeaseData() {
-  let res = await authorizedFetch('/leaseProbs');
+  const res = await authorizedFetch('/leaseProbs');
   if (res.ok) {
     return await res.json();
   }
