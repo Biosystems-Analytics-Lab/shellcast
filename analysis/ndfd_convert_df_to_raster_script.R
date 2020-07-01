@@ -120,7 +120,7 @@ ndfd_pop12_albers <- st_as_sf(ndfd_pop12_data,
 # check pop12 projection
 # st_crs(ndfd_pop12_albers)
 # look good!
-ˆ
+
 # pop12 periods available
 # unique(ndfd_pop12_albers$valid_period_hrs)
 
