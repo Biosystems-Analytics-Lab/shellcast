@@ -8,6 +8,6 @@ def test_about(client):
   res = client.get('/about')
   assert res.status_code == 200
 
-def test_notifications(client):
-  res = client.get('/notifications')
+def test_preferences(client):
+  res = client.get('/preferences')
   assert res.status_code == 200
