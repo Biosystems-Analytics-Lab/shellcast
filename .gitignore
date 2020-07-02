@@ -16,3 +16,7 @@ firebase-admin-sdk-credentials.json
 htmlcov
 # ignore Mac backup stuff
 .DS_Store
+# ignore data folder
+analysis/data
+# ignore r history file
+.Rhistory
