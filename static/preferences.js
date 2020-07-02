@@ -3,7 +3,112 @@
 const NOTIFICATION_WINDOW_PREFS = [1, 2, 3];
 const NOTIFICATION_PROB_PREFS = [60, 75, 90];
 
+let profileInfo = {};
 let leases = [];
+
+/**
+ * Retrieves the current user's profile information from the server.
+ * @return {object} the user's profile information (email and phone number)
+ */
+async function getProfileInfo() {
+  const res = await authorizedFetch('/userInfo');
+  if (res.ok) {
+    return await res.json();
+  }
+  console.log('Problem retrieving user profile information.');
+  console.log(res);
+  return null;
+}
+
+/**
+ * Initializes the profile form with the given profile information.
+ * @param {object} profInfo the profile information to initialize the form with
+ * @param {boolean} ignoreAddingEventListeners whether or not to ignore adding
+ *    event listeners as part of the form initialization. This is useful if the
+ *    form has already been created, but you are resetting the values.
+ */
+function initProfileForm(profInfo, ignoreAddingEventListeners) {
+  // setup profile information form
+  const profForm = document.forms['profile-information-form'];
+  const emailInput = profForm.elements['email-address'];
+  const phoneNumberInput = profForm.elements['phone-number'];
+  const cancelBtn = profForm.elements['prof-form-cancel-btn'];
+  const saveBtn = profForm.elements['prof-form-save-btn'];
+
+  // set values
+  emailInput.value = profInfo.email;
+  phoneNumberInput.value = profInfo.phone_number;
+
+  // disable cancel and save buttons
+  cancelBtn.disabled = true;
+  saveBtn.disabled = true;
+
+  // add event listeners
+  if (!ignoreAddingEventListeners) {
+    profForm.addEventListener('input', onProfileFormChange);
+    cancelBtn.addEventListener('click', cancelProfileFormChanges);
+    saveBtn.addEventListener('click', saveProfileFormChanges);
+    phoneNumberInput.addEventListener('input', (e) => (phoneNumberInput.value = maskPhoneNumber(e.target.value)));
+  }
+}
+
+/**
+ * Formats a given string into a phone number (pulls out all digits and formats them).
+ * @param {string} phoneNumber the string to format
+ */
+function maskPhoneNumber(phoneNumber) {
+  // get the digits from the input
+  const digits = phoneNumber.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+  
+  // format the digits based on how many there are
+  const numDigitsEntered = digits[0].length;
+  if (numDigitsEntered > 0) {
+    if (numDigitsEntered > 3) {
+      if (numDigitsEntered > 6) {
+        return `(${digits[1]}) ${digits[2]}-${digits[3]}`;
+      }
+      return `(${digits[1]}) ${digits[2]}`;
+    }
+    return `(${digits[1]}`;
+  }
+  return '';
+}
+
+/**
+ * Enables the cancel and save buttons on the profile info form.
+ * @param {object} e the change event
+ */
+function onProfileFormChange(e) {
+  const profForm = e.target.form;
+  profForm.elements['prof-form-cancel-btn'].disabled = false;
+  profForm.elements['prof-form-save-btn'].disabled = false;
+}
+
+/**
+ * Resets the form that's associated with the lease with the given id.
+ */
+function cancelProfileFormChanges() {
+  initProfileForm(profileInfo, true);
+}
+
+/**
+ * Saves the changes made to the user's profile info and uploads the data to the server.
+ */
+async function saveProfileFormChanges() {
+  const profForm = document.forms['profile-information-form'];
+
+  // gather data from form
+  const phoneNumber = profForm.elements['phone-number'].value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
+  const newProfileInfo = {
+    email: profForm.elements['email-address'].value,
+    phone_number: phoneNumber
+  };
+
+  // upload data to server and re-init form
+  console.log('TODO upload data to server', newProfileInfo);
+  profileInfo = newProfileInfo;
+  initProfileForm(newProfileInfo, true);
+}
 
 /**
  * Returns an HTML string describing a collapsible lease info form.
@@ -95,8 +200,8 @@ function createLeaseInfoEl(lease) {
             </div>
 
             <div style="text-align: right;">
-              <button class="btn btn-primary" type="button" name="lease-form-cancel-btn">Cancel</button>
-              <button class="btn btn-primary" type="button" name="lease-form-save-btn">Save</button>
+              <button class="btn btn-primary" type="button" name="lease-form-cancel-btn" disabled>Cancel</button>
+              <button class="btn btn-primary" type="button" name="lease-form-save-btn" disabled>Save</button>
             </div>
           </form>
         </div>
@@ -105,26 +210,6 @@ function createLeaseInfoEl(lease) {
   `;
   return LEASE_INFO_EL;
 }
-
-/**
- * Displays the UI for a signed in user and initializes the lease forms.
- * @param {!firebase.User} user
- */
-async function handleSignedInUser(user) {
-  document.getElementById('user-signed-in').style.display = 'block';
-  document.getElementById('user-signed-out').style.display = 'none';
-
-  // TODO get user's leases
-  console.log('TODO get user\'s leases from server');
-  leases = [
-    {id: 0, ncdmf_lease_id: '4-C-89', grow_area_name: 'A03', rainfall_thresh_in: 1.5, email_pref: false, text_pref: false, window_pref: undefined, prob_pref: undefined},
-    {id: 1, ncdmf_lease_id: '819401', grow_area_name: 'B05', rainfall_thresh_in: 2.5, email_pref: true, text_pref: false, window_pref: 2, prob_pref: 75},
-    {id: 2, ncdmf_lease_id: '82-389B', grow_area_name: 'C11', rainfall_thresh_in: 3.5, email_pref: false, text_pref: true, window_pref: 3, prob_pref: 90},
-    {id: 3, ncdmf_lease_id: '123456', grow_area_name: 'D05', rainfall_thresh_in: 4.5, email_pref: true, text_pref: true, window_pref: 2, prob_pref: 90},
-  ];
-
-  buildLeaseForms();
-};
 
 /**
  * Resets the form that's associated with the lease with the given id.
@@ -143,6 +228,8 @@ function cancelLeaseFormChanges(leaseId) {
 async function saveLeaseFormChanges(leaseForm, leaseId) {
   const leaseIdx = leases.findIndex((lease) => lease.id === leaseId);
   const originalLeaseData = leases[leaseIdx];
+
+  // gather data from form inputs
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
   const probRadios = leaseForm.elements[`lease-notification-prob`];
@@ -160,6 +247,7 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
     }
   }
 
+  // construct new lease data object
   const newLeaseData = {
     id: originalLeaseData.id,
     ncdmf_lease_id: originalLeaseData.ncdmf_lease_id,
@@ -171,7 +259,8 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
     prob_pref: selectedProb
   };
 
-  console.log('TOOD upload data to server', newLeaseData);
+  // upload data to server and re-init form
+  console.log('TODO upload data to server', newLeaseData);
   leases[leaseIdx] = newLeaseData;
   initLeaseForm(newLeaseData, true);
 }
@@ -180,7 +269,7 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
  * Enables the cancel and save buttons and disables the notification inputs if necessary.
  * @param {object} e the change event
  */
-function onFormChange(e) {
+function onLeaseFormChange(e) {
   const leaseForm = e.target.form;
   leaseForm.elements['lease-form-cancel-btn'].disabled = false;
   leaseForm.elements['lease-form-save-btn'].disabled = false;
@@ -270,11 +359,36 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
-    leaseForm.addEventListener('change', onFormChange);
+    leaseForm.addEventListener('change', onLeaseFormChange);
     cancelBtn.addEventListener('click', () => cancelLeaseFormChanges(lease.id));
     saveBtn.addEventListener('click', () => saveLeaseFormChanges(leaseForm, lease.id));
   }
 }
+
+/**
+ * Displays the UI for a signed in user and initializes the lease forms.
+ * @param {firebase.User} user
+ */
+async function handleSignedInUser(user) {
+  document.getElementById('user-signed-in').style.display = 'block';
+  document.getElementById('user-signed-out').style.display = 'none';
+
+  // get user's profile information
+  profileInfo = await getProfileInfo();
+  initProfileForm(profileInfo);
+
+  // get user's leases
+  console.log('TODO get user\'s leases from server');
+  leases = [
+    {id: 0, ncdmf_lease_id: '4-C-89', grow_area_name: 'A03', rainfall_thresh_in: 1.5, email_pref: false, text_pref: false, window_pref: undefined, prob_pref: undefined},
+    {id: 1, ncdmf_lease_id: '819401', grow_area_name: 'B05', rainfall_thresh_in: 2.5, email_pref: true, text_pref: false, window_pref: 2, prob_pref: 75},
+    {id: 2, ncdmf_lease_id: '82-389B', grow_area_name: 'C11', rainfall_thresh_in: 3.5, email_pref: false, text_pref: true, window_pref: 3, prob_pref: 90},
+    {id: 3, ncdmf_lease_id: '123456', grow_area_name: 'D05', rainfall_thresh_in: 4.5, email_pref: true, text_pref: true, window_pref: 2, prob_pref: 90},
+  ];
+
+  // setup lease forms
+  buildLeaseForms();
+};
 
 /**
  * Displays the UI for a signed out user.

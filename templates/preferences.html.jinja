@@ -27,9 +27,9 @@
     <div id="forms">
 
       {# Generic profile information #}
-      <form class="needs-validation mb-4">
+      <form class="needs-validation mb-4" id="profile-information-form">
         <h4>My profile information</h4>
-        <div class="mb-3">
+        {# <div class="mb-3">
           <label for="firstName">First name</label>
           <input type="text" class="form-control" id="firstName" placeholder="First name" value="Bob" readonly>
         </div>
@@ -37,11 +37,11 @@
         <div class="mb-3">
           <label for="lastName">Last name</label>
           <input type="text" class="form-control" id="lastName" placeholder="Last name" value="Smith" readonly>
-        </div>
+        </div> #}
 
         <div class="mb-3">
           <label for="email">Email address</label>
-          <input type="email" class="form-control" id="email" placeholder="you@example.com" aria-describedby="emailHelp">
+          <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com" aria-describedby="emailHelp">
           <div class="invalid-feedback">
             Please enter a valid email address for shipping updates.
           </div>
@@ -54,7 +54,7 @@
           <label for="phone">Mobile phone number</label>
           <div class="input-group">
             <div class="input-group-prepend"><div class="input-group-text">+1</div></div>
-            <input type="tel" class="form-control" id="phone" pattern="\d{10}" placeholder="1112223333" aria-describedby="phoneHelp">
+            <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(111) 222-3333" aria-describedby="phoneHelp">
             <div class="invalid-feedback" style="width: 100%;">
               Please enter a valid phone number.
             </div>
@@ -65,7 +65,8 @@
         </div>
 
         <div style="text-align: right;">
-          <button class="btn btn-primary" type="submit">Save</button>
+          <button class="btn btn-primary" type="button" name="prof-form-cancel-btn" disabled>Cancel</button>
+          <button class="btn btn-primary" type="button" name="prof-form-save-btn" disabled>Save</button>
         </div>
       </form>
 
