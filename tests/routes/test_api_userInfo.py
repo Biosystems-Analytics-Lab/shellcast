@@ -18,13 +18,14 @@ def test_valid(client, dbSession, addMockFbUser):
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert json['firebase_uid'] == 'blah'
-  assert json['first_name'] == 'Blah'
-  assert json['last_name'] == 'Bleh'
+  assert len(json) == 2
+  assert json.get('firebase_uid') == None
+  assert json.get('first_name') == None
+  assert json.get('last_name') == None
+  assert json.get('sms_pref') == None
+  assert json.get('email_pref') == None
   assert json['phone_number'] == '11234567890'
   assert json['email'] == 'blah@gmail.com'
-  assert json['sms_pref'] == False
-  assert json['email_pref'] == False
 
   # check that the user is now created in the database
   results = dbSession.query(User).all()
@@ -34,13 +35,14 @@ def test_valid(client, dbSession, addMockFbUser):
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert json['firebase_uid'] == 'blah'
-  assert json['first_name'] == 'Blah'
-  assert json['last_name'] == 'Bleh'
+  assert len(json) == 2
+  assert json.get('firebase_uid') == None
+  assert json.get('first_name') == None
+  assert json.get('last_name') == None
+  assert json.get('sms_pref') == None
+  assert json.get('email_pref') == None
   assert json['phone_number'] == '11234567890'
   assert json['email'] == 'blah@gmail.com'
-  assert json['sms_pref'] == False
-  assert json['email_pref'] == False
 
   # check that the user is not created again
   results = dbSession.query(User).all()

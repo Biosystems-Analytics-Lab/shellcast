@@ -15,7 +15,10 @@ api = Blueprint('api', __name__)
 @api.route('/userInfo')
 @userRequired
 def getUserInfo(user):
-  return user.asDict()
+  return {
+    'email': user.email,
+    'phone_number': user.phone_number,
+  }
 
 def queryLeaseClosureProbabilities(user):
   leases = db.session.query(Lease).filter_by(user_id=user.id).all()
