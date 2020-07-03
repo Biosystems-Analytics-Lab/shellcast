@@ -146,9 +146,9 @@ function addGrowAreaDataToMap(growAreaData) {
     mapInfoWindow.setPosition(pos);
     mapInfoWindow.setContent(`
       <div>Area: ${grow_area}
-      <br>3-day Min/Max %: ${min_3d_prob}/${max_3d_prob}
-      <br>2-day Min/Max %: ${min_2d_prob}/${max_2d_prob}
       <br>1-day Min/Max %: ${min_1d_prob}/${max_1d_prob}
+      <br>2-day Min/Max %: ${min_2d_prob}/${max_2d_prob}
+      <br>3-day Min/Max %: ${min_3d_prob}/${max_3d_prob}
       </div>
     `);
     mapInfoWindow.open(map);
@@ -162,9 +162,9 @@ function addLeaseDataToMap(leaseData) {
   for (let lease of leaseData) {
     const leaseInfoContent = (`
       <div>Lease ID: ${lease.ncdmf_lease_id}
-      <br>3-day %: ${lease.prob_3d_perc}
-      <br>2-day %: ${lease.prob_2d_perc}
       <br>1-day %: ${lease.prob_1d_perc}
+      <br>2-day %: ${lease.prob_2d_perc}
+      <br>3-day %: ${lease.prob_3d_perc}
       </div>
     `);
     const marker = new google.maps.Marker({
