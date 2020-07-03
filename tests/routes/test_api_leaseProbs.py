@@ -8,10 +8,10 @@ from firebase_admin import auth
 
 def test_valid(client, dbSession, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890', display_name='Blah Bleh'), 'validUser1')
+  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890'), 'validUser1')
 
   # add the user to the db
-  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890', first_name='Blah', last_name='Bleh')
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890')
 
   dbSession.add(user)
   dbSession.commit()

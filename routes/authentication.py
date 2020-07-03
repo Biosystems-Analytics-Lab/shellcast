@@ -17,22 +17,13 @@ def ensureUserExists(fbUserInfo):
   fbUid = fbUserInfo.get('uid')
   email = fbUserInfo.get('email')
   phoneNum = fbUserInfo.get('phone_number')
-  displayName = fbUserInfo.get('display_name')
-  firstName = None
-  lastName = None
-  if (displayName != None):
-    splitName = displayName.split(' ')
-    if (len(splitName) >= 1):
-      firstName = splitName[0]
-    if (len(splitName) >= 2):
-      lastName = splitName[1]
 
   # check if the user with this Firebase UID already exists
   user = User.query.filter_by(firebase_uid=fbUid).first()
   if (user != None):
     return user
 
-  newUser = User(firebase_uid=fbUid, email=email, phone_number=phoneNum, first_name=firstName, last_name=lastName)
+  newUser = User(firebase_uid=fbUid, email=email, phone_number=phoneNum)
   db.session.add(newUser)
   db.session.commit()
 

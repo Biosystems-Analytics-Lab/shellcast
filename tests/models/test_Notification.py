@@ -6,7 +6,7 @@ from models.ClosureProbability import ClosureProbability
 from models.Notification import Notification
 
 def test_valid(dbSession):
-  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='asdf@adf.com', phone_number='11234567890', first_name='as', last_name='df')
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='asdf@adf.com', phone_number='11234567890')
 
   dbSession.add(user)
   dbSession.commit()
