@@ -1,0 +1,47 @@
+<!-- com.sheila.shellcastdaily.cronjob.plist -->
+<!-- will have a weekly one too once rest api is up -->
+<!-- in the /Library/LaunchDeamons folder? have to use sudo? where will outputs go? -->
+<!-- what to do with standard error path and standard output path? -->
+<!-- launchd man: https://www.manpagez.com/man/5/launchd.plist/ -->
+<!-- Nice - priority of scheduler -->
+<!-- StartInterval - number of sections for interval but maybe I want to use StartCalendarInterval -->
+<!-- StartCalendarInterval help: https://alvinalexander.com/mac-os-x/launchd-plist-examples-startinterval-startcalendarinterval/ -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.sheila.shellcastdaily.cronjob</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/shellcast_daily_analysis.sh</string>
+  </array>
+
+<!-- priority of scheduler -->
+  <key>Nice</key>
+  <integer>1</integer>
+
+<!-- runs at 4:00 every day -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>4</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+<!-- do i need this? -->
+  <key>StandardErrorPath</key>
+  <string>/tmp/AlTest1.err</string>
+
+<!-- do i need this? -->
+  <key>StandardOutPath</key>
+  <string>/tmp/AlTest1.out</string>
+
+</dict>
+</plist>
