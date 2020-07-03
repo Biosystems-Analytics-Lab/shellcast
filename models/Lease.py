@@ -1,6 +1,8 @@
 from models import db
 from models.ClosureProbability import ClosureProbability
 
+from sqlalchemy.sql import expression
+
 class Lease(db.Model):
   __tablename__ = 'leases'
 
@@ -10,8 +12,10 @@ class Lease(db.Model):
   grow_area_name = db.Column(db.String(3))
   rainfall_thresh_in = db.Column(db.Float)
   geo_boundary = db.Column(db.JSON)
-  window_pref = db.Column(db.Integer)
-  prob_pref = db.Column(db.Integer)
+  email_pref = db.Column(db.Boolean, server_default=expression.false(), default=False)
+  text_pref = db.Column(db.Boolean, server_default=expression.false(), default=False)
+  prob_pref = db.Column(db.Integer, server_default=expression.literal(80), default=80)
+  window_pref = db.Column(db.Integer, server_default=expression.literal(1), default=1)
   created = db.Column(db.DateTime, server_default=db.func.now())
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
@@ -24,8 +28,10 @@ class Lease(db.Model):
       'grow_area_name': self.grow_area_name,
       'rainfall_thresh_in': self.rainfall_thresh_in,
       'geo_boundary': self.geo_boundary,
-      'window_pref': self.window_pref,
-      'prob_pref': self.prob_pref
+      'email_pref': self.email_pref,
+      'text_pref': self.text_pref,
+      'prob_pref': self.prob_pref,
+      'window_pref': self.window_pref
     }
 
   def __repr__(self):

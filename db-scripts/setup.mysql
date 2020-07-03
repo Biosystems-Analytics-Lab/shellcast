@@ -4,12 +4,8 @@
 CREATE TABLE `users` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `firebase_uid` varchar(28) NULL,
-  `first_name` varchar(50) NULL,
-  `last_name` varchar(50) NULL,
   `phone_number` varchar(11) NULL,
   `email` varchar(50) NULL,
-  `sms_pref` boolean DEFAULT false,
-  `email_pref` boolean DEFAULT false,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
@@ -23,8 +19,10 @@ CREATE TABLE `leases` (
   `grow_area_name` varchar(3) NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
   `geo_boundary` json NULL,
-  `window_pref` tinyint(1) NULL,
-  `prob_pref` tinyint(3) NULL,
+  `email_pref` boolean DEFAULT false,
+  `text_pref` boolean DEFAULT false,
+  `prob_pref` tinyint(3) DEFAULT 80,
+  `window_pref` tinyint(1) DEFAULT 1,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
