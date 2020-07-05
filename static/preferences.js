@@ -1,7 +1,7 @@
 'use strict';
 
 const NOTIFICATION_WINDOW_PREFS = [1, 2, 3];
-const NOTIFICATION_PROB_PREFS = [60, 75, 90];
+const NOTIFICATION_PROB_PREFS = [60, 70, 80, 90];
 
 let profileInfo = {};
 let leases = [];
@@ -37,7 +37,7 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
 
   // set values
   emailInput.value = profInfo.email;
-  phoneNumberInput.value = profInfo.phone_number;
+  phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
 
   // disable cancel and save buttons
   cancelBtn.disabled = true;
@@ -56,7 +56,7 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
  * Formats a given string into a phone number (pulls out all digits and formats them).
  * @param {string} phoneNumber the string to format
  */
-function maskPhoneNumber(phoneNumber) {
+function maskPhoneNumber(phoneNumber='') {
   // get the digits from the input
   const digits = phoneNumber.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
   
@@ -105,9 +105,22 @@ async function saveProfileFormChanges() {
   };
 
   // upload data to server and re-init form
-  console.log('TODO upload data to server', newProfileInfo);
-  profileInfo = newProfileInfo;
-  initProfileForm(newProfileInfo, true);
+  console.log('Uploading data to server', newProfileInfo);
+  const res = await authorizedFetch('/userInfo', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json;charset=utf-8'},
+    body: JSON.stringify(newProfileInfo)
+  });
+  if (res.ok) {
+    // overwrite the client copy of the profile info
+    profileInfo = newProfileInfo;
+    // reset the form with the new info
+    initProfileForm(newProfileInfo, true);
+  } else {
+    console.log('There was an error while saving the profile changes.');
+    // reset the form with the old info
+    initProfileForm(profileInfo, true);
+  }
 }
 
 /**
@@ -176,6 +189,10 @@ function createLeaseInfoEl(lease) {
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}" value="${NOTIFICATION_PROB_PREFS[2]}" ${disabledOrNah}>
                 <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]} %</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[3]}" value="${NOTIFICATION_PROB_PREFS[3]}" ${disabledOrNah}>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[3]}">${NOTIFICATION_PROB_PREFS[3]} %</label>
               </div>
               <small class="form-text text-muted notification-window-help">
                 The minimum probability that you want to be notified at for this lease.
