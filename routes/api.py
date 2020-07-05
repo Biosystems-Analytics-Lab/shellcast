@@ -23,8 +23,6 @@ def userInfo(user):
       userInfo['phone_number'] = user.phone_number
     return userInfo
   else: # request.method == 'POST'
-    print(request.form)
-    print(request.json)
     form = ProfileInfoForm.from_json(request.json)
     if (form.validate()):
       user.email = form.email.data
@@ -67,3 +65,22 @@ def getAreaData():
   # print('Total query time: {} ms'.format((t1 - t0) / 1000000))
 
   return jsonify(dictOfCPs)
+
+@api.route('/searchLeases', methods=['POST'])
+@userRequired
+def searchLeases(user):
+  searchTerm = str(request.json.get('search'))
+  # TODO return the pre-collected leases from the Griffin API with a fuzzy search on the ncdmf lease id
+  print('TODO return leases from database with a fuzzy search on the ncdmf lease id')
+  leases = ['4-C-89', '819401', '82-389B', '123456']
+  def matchesSearchTerm(item):
+    return searchTerm in str(item)
+  return filter(matchesSearchTerm, leases)
+
+@api.route('/addLease', methods=['POST'])
+@userRequired
+def addLease(user):
+  newLease = Lease(ncdmf_lease_id=request.json.get('ncdmf_lease_id'), user_id=user.id)
+  db.session.add(newLease)
+  db.session.commit()
+  return {'message': 'Success'}, 200
