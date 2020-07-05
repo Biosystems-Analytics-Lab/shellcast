@@ -23,6 +23,7 @@ def ensureUserExists(fbUserInfo):
   if (user != None):
     return user
 
+  # otherwise we need to create a new user
   newUser = User(firebase_uid=fbUid, email=email, phone_number=phoneNum)
   db.session.add(newUser)
   db.session.commit()

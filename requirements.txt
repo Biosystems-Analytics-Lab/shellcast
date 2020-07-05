@@ -3,3 +3,5 @@ Flask-SQLAlchemy==2.4.2
 PyMySQL==0.9.3
 google-cloud-logging==1.15.0
 firebase-admin==4.3.0
+WTForms==2.3.1
+email_validator==1.1.1

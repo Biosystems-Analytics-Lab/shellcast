@@ -6,19 +6,34 @@ from models.ClosureProbability import ClosureProbability
 from models.SGAMinMaxProbability import SGAMinMaxProbability
 from models.Lease import Lease
 
-# import time
+from routes.forms.ProfileInfoForm import ProfileInfoForm
 
 from routes.authentication import userRequired
 
 api = Blueprint('api', __name__)
 
-@api.route('/userInfo')
+@api.route('/userInfo', methods=['GET', 'POST'])
 @userRequired
-def getUserInfo(user):
-  return {
-    'email': user.email,
-    'phone_number': user.phone_number,
-  }
+def userInfo(user):
+  if (request.method == 'GET'):
+    userInfo = {}
+    if (user.email != None):
+      userInfo['email'] = user.email
+    if (user.phone_number != None):
+      userInfo['phone_number'] = user.phone_number
+    return userInfo
+  else: # request.method == 'POST'
+    print(request.form)
+    print(request.json)
+    form = ProfileInfoForm.from_json(request.json)
+    if (form.validate()):
+      user.email = form.email.data
+      user.phone_number = form.phone_number.data
+      db.session.add(user)
+      db.session.commit()
+      return {'message': 'Success'}, 200
+    return {'message': 'Bad form input'}, 400
+
 
 def queryLeaseClosureProbabilities(user):
   leases = db.session.query(Lease).filter_by(user_id=user.id).all()
