@@ -8,7 +8,7 @@
 
 # ---- notes ----
 # notes:
- 
+
 
 # ---- to do ----
 # to do list
@@ -34,13 +34,13 @@ library(lubridate)
 
 # ---- 3. defining paths and projections ----
 # path to data
-ndfd_data_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/tabular/ndfd_sco_data_raw/"
+ndfd_data_path <- ".../analysis/data/tabular/ndfd_sco_data_raw/"
 
 # nc buffer data path
-nc_bounds_buffer_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/region_state_bounds/"
+nc_bounds_buffer_path <- ".../analysis/data/spatial/generated/region_state_bounds/"
 
 # exporting ndfd raster spatial data path
-ndfd_sco_spatial_data_export_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/ndfd_sco_data/"
+ndfd_sco_spatial_data_export_path <- ".../analysis/data/spatial/generated/ndfd_sco_data/"
 
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"
@@ -111,9 +111,9 @@ ndfd_qpf_data <- ndfd_qpf_data_raw %>%
 # ---- 7. convert tabular ndfd data to (vector) spatial data ----
 # pop12
 # convert pop12 to spatial data
-ndfd_pop12_albers <- st_as_sf(ndfd_pop12_data, 
-                              coords = c("longitude_m", "latitude_m"), 
-                              crs = ndfd_proj4, 
+ndfd_pop12_albers <- st_as_sf(ndfd_pop12_data,
+                              coords = c("longitude_m", "latitude_m"),
+                              crs = ndfd_proj4,
                               dim = "XY") %>%
   st_transform(crs = na_albers_epsg)
 
@@ -138,9 +138,9 @@ ndfd_pop12_albers_3day <- ndfd_pop12_albers %>%
 
 # qpf
 # convert qpf to spatial data
-ndfd_qpf_albers <- st_as_sf(ndfd_qpf_data, 
-                            coords = c("longitude_m", "latitude_m"), 
-                            crs = ndfd_proj4, 
+ndfd_qpf_albers <- st_as_sf(ndfd_qpf_data,
+                            coords = c("longitude_m", "latitude_m"),
+                            crs = ndfd_proj4,
                             dim = "XY") %>%
   st_transform(crs = na_albers_epsg)
 
@@ -166,30 +166,30 @@ ndfd_qpf_albers_3day <- ndfd_qpf_albers %>%
 
 # ---- 8. convert vector ndfd data to raster data ----
 # make empty pop12 raster for 1-day, 2-day, and 3-day forecasts
-ndfd_pop12_grid_1day <- raster(ncol = length(unique(ndfd_pop12_albers_1day$longitude_km)), 
-                               nrows = length(unique(ndfd_pop12_albers_1day$latitude_km)), 
+ndfd_pop12_grid_1day <- raster(ncol = length(unique(ndfd_pop12_albers_1day$longitude_km)),
+                               nrows = length(unique(ndfd_pop12_albers_1day$latitude_km)),
                                crs = na_albers_proj4,
                                ext = extent(ndfd_pop12_albers_1day))
-ndfd_pop12_grid_2day <- raster(ncol = length(unique(ndfd_pop12_albers_2day$longitude_km)), 
-                               nrows = length(unique(ndfd_pop12_albers_2day$latitude_km)), 
+ndfd_pop12_grid_2day <- raster(ncol = length(unique(ndfd_pop12_albers_2day$longitude_km)),
+                               nrows = length(unique(ndfd_pop12_albers_2day$latitude_km)),
                                crs = na_albers_proj4,
                                ext = extent(ndfd_pop12_albers_2day))
-ndfd_pop12_grid_3day <- raster(ncol = length(unique(ndfd_pop12_albers_3day$longitude_km)), 
-                               nrows = length(unique(ndfd_pop12_albers_3day$latitude_km)), 
+ndfd_pop12_grid_3day <- raster(ncol = length(unique(ndfd_pop12_albers_3day$longitude_km)),
+                               nrows = length(unique(ndfd_pop12_albers_3day$latitude_km)),
                                crs = na_albers_proj4,
                                ext = extent(ndfd_pop12_albers_3day))
 
 # make empty qpf raster for 1-day, 2-day, and 3-day forecasts
-ndfd_qpf_grid_1day <- raster(ncol = length(unique(ndfd_qpf_albers_1day$longitude_km)), 
-                             nrows = length(unique(ndfd_qpf_albers_1day$latitude_km)), 
+ndfd_qpf_grid_1day <- raster(ncol = length(unique(ndfd_qpf_albers_1day$longitude_km)),
+                             nrows = length(unique(ndfd_qpf_albers_1day$latitude_km)),
                              crs = na_albers_proj4,
                              ext = extent(ndfd_qpf_albers_1day))
-ndfd_qpf_grid_2day <- raster(ncol = length(unique(ndfd_qpf_albers_2day$longitude_km)), 
-                             nrows = length(unique(ndfd_qpf_albers_2day$latitude_km)), 
+ndfd_qpf_grid_2day <- raster(ncol = length(unique(ndfd_qpf_albers_2day$longitude_km)),
+                             nrows = length(unique(ndfd_qpf_albers_2day$latitude_km)),
                              crs = na_albers_proj4,
                              ext = extent(ndfd_qpf_albers_2day))
-ndfd_qpf_grid_3day <- raster(ncol = length(unique(ndfd_qpf_albers_3day$longitude_km)), 
-                             nrows = length(unique(ndfd_qpf_albers_3day$latitude_km)), 
+ndfd_qpf_grid_3day <- raster(ncol = length(unique(ndfd_qpf_albers_3day$longitude_km)),
+                             nrows = length(unique(ndfd_qpf_albers_3day$latitude_km)),
                              crs = na_albers_proj4,
                              ext = extent(ndfd_qpf_albers_3day))
 
@@ -274,5 +274,3 @@ writeRaster(ndfd_qpf_raster_3day_nc_albers, paste0(ndfd_sco_spatial_data_export_
 # writeRaster(ndfd_qpf_raster_1day_nc_wgs84, paste0(ndfd_sco_spatial_data_export_path, "qpf_", latest_uct_str, "_24hr_nc_wgs84.tif"), overwrite = TRUE)
 # writeRaster(ndfd_qpf_raster_2day_nc_wgs84, paste0(ndfd_sco_spatial_data_export_path, "qpf_", latest_uct_str, "_48hr_nc_wgs84.tif"), overwrite = TRUE)
 # writeRaster(ndfd_qpf_raster_3day_nc_wgs84, paste0(ndfd_sco_spatial_data_export_path, "qpf_", latest_uct_str, "_72hr_nc_wgs84.tif"), overwrite = TRUE)
-
-
