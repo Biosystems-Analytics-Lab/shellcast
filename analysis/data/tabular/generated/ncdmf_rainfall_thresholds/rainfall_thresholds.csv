@@ -1,0 +1,212 @@
+HA_CLASS,ha_class_desc,sheilagoogle_ha_class_desc,grow_area,rainfall_threshold_in,rainfall_threshold_class,notes
+Bruns_1,Brunswick County,Tubbs Inlet,A01,1,depth_defined,NA
+Bruns_2,Brunswick County,Shallot Inlet Intracoastal Waterway,A01,1,depth_defined,NA
+Bruns_3,Brunswick County,Shallot River,A02,1.5,depth_defined,NA
+Bruns_3A,Brunswick County,Shallot River,A02,1.5,depth_defined,NA
+Bruns_4,Brunswick County,Shallot Inlet Intracoastal Waterway,A02,2.5,depth_defined,NA
+Bruns_4A,Brunswick County,Shallot Inlet Intracoastal Waterway,A02,2,depth_defined,NA
+Bruns_5,Brunswick County,Lockwoods Folloy River Intracoastal Waterway,A02,2,depth_defined,NA
+Bruns_6,Brunswick County,Lockwoods Folloy River Intracoastal Waterway,A02,2,depth_defined,NA
+Bruns_6,Brunswick County,Lockwoods Folloy River Intracoastal Waterway,A03,2,depth_defined,NA
+Bruns_7,Brunswick County,Lockwoods Folly River,A03,1,depth_defined,NA
+Bruns_8,Brunswick County,Bald Head Island,B02,4,emergency,rainfall depth from A. Haines email on 20200604
+Bruns_8,Brunswick County,Bald Head Island,B03,4,emergency,rainfall depth from A. Haines email on 20200604
+Bruns_8,Brunswick County,Bald Head Island,B04,4,emergency,rainfall depth from A. Haines email on 20200604
+BS_1,Bouge Sound,Bogue Sound Deer Creek,D04,2.5,depth_defined,NA
+BS_10,Bouge Sound,Bogue Sound Morehead City,E02,2.5,depth_defined,was labeled B_1 on original CMU map from NCDMF
+BS_10,Bouge Sound,Bogue Sound Morehead City,E03,2.5,depth_defined,was labeled B_1 on original CMU map from NCDMF
+BS_11,Bouge Sound,Bogue Sound Morehead City,E02,3,depth_defined,NA
+BS_11,Bouge Sound,Bogue Sound Morehead City,E03,3,depth_defined,NA
+BS_12,Bouge Sound,Bogue Sound Morehead City,E03,2.5,depth_defined,NA
+BS_13,Bouge Sound,Bogue Sound Morehead City,E03,3,depth_defined,NA
+BS_13B,Bouge Sound,Bogue Sound Morehead City,E03,3,depth_defined,NA
+BS_14,Bouge Sound,Bogue Sound Morehead City,E03,2.5,depth_defined,NA
+BS_15,Bouge Sound,Bogue Sound Morehead City,E03,3,depth_defined,NA
+BS_2,Bouge Sound,Bogue Sound Deer Creek,D04,3,depth_defined,NA
+BS_3,Bouge Sound,Bogue Sound,D04,2.5,depth_defined,NA
+BS_4,Bouge Sound,Bogue Sound,D04,3,depth_defined,NA
+BS_5,Bouge Sound,Bogue Sound,D04,2.5,depth_defined,NA
+BS_6,Bouge Sound,Bogue Sound,D04,3,depth_defined,NA
+BS_7,Bouge Sound,Broad Creek Bogue Sound,D04,2.5,depth_defined,NA
+BS_7,Bouge Sound,Broad Creek Bogue Sound,E01,2.5,depth_defined,NA
+BS_8,Bouge Sound,Broad Creek Bogue Sound,E01,2.5,depth_defined,NA
+BS_8,Bouge Sound,Broad Creek Bogue Sound,E02,2.5,depth_defined,NA
+BS_9,Bouge Sound,Bogue Sound,D04,3,depth_defined,NA
+BS_9,Bouge Sound,Bogue Sound,E01,3,depth_defined,NA
+BS_9,Bouge Sound,Bogue Sound,E02,3,depth_defined,NA
+CL_1,Cedar Creek Cedar Island,Thorofare Bay Ceder Island,E09,4,emergency,rainfall depth from A. Haines email on 20200604
+CL_1,Cedar Creek Cedar Island,Thorofare Bay Ceder Island,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+CL_2,Cedar Creek Cedar Island,Cedar Island,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+CL_3,Cedar Creek Cedar Island,Cedar Island Cedar Island Bay,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+CL_4A,Cedar Creek Cedar Island,Cedar Island Bay Core Bay,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+CL_4B,Cedar Creek Cedar Island,Cedar Island Bay Core Bay,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+Hyde_1,Hyde County,Middle Creek Pamilco Sound,G04,4,emergency,rainfall depth from A. Haines email on 20200604
+Hyde_2,Hyde County,Juniper Bay West Bluff Bay Pamilco Sound,G03,4,emergency,rainfall depth from A. Haines email on 20200604
+Hyde_2,Hyde County,Juniper Bay West Bluff Bay Pamilco Sound,G04,4,emergency,rainfall depth from A. Haines email on 20200604
+Hyde_3,Hyde County,Swanquarter Bay Pamilco Sound,G03,4,emergency,rainfall depth from A. Haines email on 20200604
+Hyde_4,Hyde County,Rose Bay Pamilco Sound,G03,4,emergency,rainfall depth from A. Haines email on 20200604
+Hyde_5,Hyde County,Spencer Bay Germantown Bay Pamilco Sound,G03,4,emergency,rainfall depth from A. Haines email on 20200604
+Hyde_6,Hyde County,Deep Bay Pamilco Sound,G03,4,emergency,rainfall depth from A. Haines email on 20200604
+JB_1,Jarret Bay,Jarrett Bay,E08,2,depth_defined,NA
+JB_1A,Jarret Bay,Wade Creek Jarrett Bay,E08,2,depth_defined,NA
+JB_2,Jarret Bay,Core Sound Jarrett Bay,E08,2,depth_defined,NA
+JB_3,Jarret Bay,Core Sound Jarrett Bay,E08,4,emergency,rainfall depth from A. Haines email on 20200604
+JB_3,Jarret Bay,Core Sound Jarrett Bay,E09,4,emergency,rainfall depth from A. Haines email on 20200604
+JB_4,Jarret Bay,Core Sound Jarrett Bay,E07,4,emergency,rainfall depth from A. Haines email on 20200604
+JB_4,Jarret Bay,Core Sound Jarrett Bay,E08,4,emergency,rainfall depth from A. Haines email on 20200604
+JB_4,Jarret Bay,Core Sound Jarrett Bay,E09,4,emergency,rainfall depth from A. Haines email on 20200604
+LS_1,Long Shoal River,Englehard Pamilco Sound Long Shoal River,G04,4,emergency,rainfall depth from A. Haines email on 20200604
+LS_1,Long Shoal River,Englehard Pamilco Sound Long Shoal River,G05,4,emergency,rainfall depth from A. Haines email on 20200604
+MU_1,NA,Salliers Bay Browns Creek,C04,1.5,depth_defined,needs sheila_desc
+MU_10,NA,Queens Creek Bear Island,D02,3,depth_defined,needs sheila_desc
+MU_11,NA,Queens Creek,D02,1,depth_defined,needs sheila_desc
+MU_12,NA,Queens Creek,D02,1.5,depth_defined,needs sheila_desc
+MU_13,NA,Queens Creek White Oak River Bear Island,D02,3,depth_defined,needs sheila_desc
+MU_13,NA,Queens Creek White Oak River Bear Island,D03,3,depth_defined,needs sheila_desc
+MU_14,NA,Swansboro Area Hawkins Bay,D03,3,depth_defined,needs sheila_desc
+MU_15,NA,White Oak River,D03,1.5,depth_defined,needs sheila_desc
+MU_15A,NA,White Oak River,D03,1.5,depth_defined,needs sheila_desc
+MU_16A,NA,White Oak River,D03,2,depth_defined,needs sheila_desc
+MU_16B,NA,Deer Creek Bear Island Bogue Sound,D03,2,depth_defined,needs sheila_desc
+MU_16B,NA,Deer Creek Bear Island Bogue Sound,D04,2,depth_defined,needs sheila_desc
+MU_17,NA,Deer Creek Bear Island Bogue Sound,D03,3,depth_defined,needs sheila_desc
+MU_17,NA,Deer Creek Bear Island Bogue Sound,D04,3,depth_defined,needs sheila_desc
+MU_2,NA,Salliers Bay Browns Creek,C04,1.5,depth_defined,needs sheila_desc
+MU_3,NA,Salliers Bay Browns Creek,C04,3,depth_defined,needs sheila_desc
+MU_4,NA,Freemans Creek Salliers Bay,C04,1.5,depth_defined,needs sheila_desc
+MU_5A,NA,Salliers Bay Browns Creek,C04,1.5,depth_defined,needs sheila_desc
+MU_5B,NA,Salliers Bay Browns Creek,C04,1.5,depth_defined,needs sheila_desc
+MU_5B,NA,Salliers Bay Browns Creek,D01,1.5,depth_defined,needs sheila_desc
+MU_6A,NA,Salliers Bay Browns Creek Browns Island,C04,3,depth_defined,needs sheila_desc
+MU_6B,NA,Salliers Bay Browns Creek,C04,3,depth_defined,needs sheila_desc
+MU_6C,NA,Salliers Bay Browns Creek,C04,3,depth_defined,needs sheila_desc
+MU_7,NA,Bear Creek,D01,1.5,depth_defined,needs sheila_desc
+MU_8,NA,Bear Creek,C04,1.5,depth_defined,needs sheila_desc
+MU_8,NA,Bear Creek,D01,1.5,depth_defined,needs sheila_desc
+MU_9,NA,Bear Creek Saunders Island,D01,3,depth_defined,needs sheila_desc
+NB_1,Nelson Bay,Oyster Creek Core Sound,E09,1.5,depth_defined,NA
+NB_2,Nelson Bay,Oyster Creek Core Sound,E09,2,depth_defined,NA
+NB_3,Nelson Bay,Core Sound,E09,2,depth_defined,NA
+NB_4,Nelson Bay,Nelson Bay,E09,2,depth_defined,NA
+NB_5,Nelson Bay,Nelson Bay Core Sound,E09,4,emergency,rainfall depth from A. Haines email on 20200604
+NB_5,Nelson Bay,Nelson Bay Core Sound,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+NB_6,Nelson Bay,Core Sound,E09,4,emergency,rainfall depth from A. Haines email on 20200604
+NB_6,Nelson Bay,Core Sound,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_1,Neuse River,Neuse River,F05,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_1,Neuse River,Neuse River,F07,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_2,Neuse River,Neuse River Adams Creek,F02,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_3,Neuse River,South River Neuse River,F02,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_4,Neuse River,Turnagain Bay Neuse River,F02,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_4,Neuse River,Turnagain Bay Neuse River,F03,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_4,Neuse River,Turnagain Bay Neuse River,F07,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_6,Neuse River,Long Bay Neuse River,F03,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_7,Neuse River,West Thorofare Bay Neuse River,F03,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_8,Neuse River,West Bay Neuse River,F02,4,emergency,rainfall depth from A. Haines email on 20200604
+Neuse_8,Neuse River,West Bay Neuse River,F03,4,emergency,rainfall depth from A. Haines email on 20200604
+NH_1,New Hanover County,Masonboro Sound Freemans Park,B05,2,depth_defined,NA
+NH_2,New Hanover County,Masonboro Sound,B05,2,depth_defined,NA
+NH_3,New Hanover County,Masonboro Sound Masonboro Island,B05,3,emergency,rainfall depth from A. Haines email on 20200604
+NH_4,New Hanover County,Masonboro Sound Masonboro Island,B05,2.5,depth_defined,NA
+NH_4,New Hanover County,Masonboro Sound Masonboro Island,B06,2.5,depth_defined,NA
+NH_4,New Hanover County,Masonboro Sound Masonboro Island,B07,2.5,depth_defined,NA
+NH_5,New Hanover County,Masonboro Sound Masonboro Island,B05,3,emergency,rainfall depth from A. Haines email on 20200604
+NH_5,New Hanover County,Masonboro Sound Masonboro Island,B06,3,emergency,rainfall depth from A. Haines email on 20200604
+NH_5,New Hanover County,Masonboro Sound Masonboro Island,B07,3,emergency,rainfall depth from A. Haines email on 20200604
+NH_6,New Hanover County,Bradley Creek Shinn Creek Wrightsville Beach,B06,2,depth_defined,NA
+NH_6,New Hanover County,Bradley Creek Shinn Creek Wrightsville Beach,B07,2,depth_defined,NA
+NH_7,New Hanover County,Wrightsville Beach Middle Sound Topsail Sound,B07,2,depth_defined,NA
+NHP_1,New Hanover Pender Counties,Topsail Sound,B07,2.5,depth_defined,NA
+NHP_1,New Hanover Pender Counties,Topsail Sound,B08,2.5,depth_defined,NA
+NHP_2,New Hanover Pender Counties,Topsail Sound,B07,3,emergency,rainfall depth from A. Haines email on 20200604
+NHP_2,New Hanover Pender Counties,Topsail Sound,B08,3,emergency,rainfall depth from A. Haines email on 20200604
+NPT_1,Newport River,Newport River,E04,1,depth_defined,NA
+NPT_2A,Newport River,Newport River,E04,1,depth_defined,NA
+NPT_2B,Newport River,Newport River,E04,1,depth_defined,NA
+NPT_3,Newport River,Newport River,E04,1.5,depth_defined,NA
+NPT_4,Newport River,Newport River,E04,1.5,depth_defined,NA
+NPT_5,Newport River,Newport River,E04,1.5,depth_defined,NA
+NR_1,North River,North River,E05,1.5,depth_defined,NA
+NR_1,North River,North River,E06,1.5,depth_defined,NA
+NR_10,North River,North River Back Sound,E07,4,emergency,rainfall depth from A. Haines email on 20200604
+NR_2,North River,North River,E06,1.5,depth_defined,NA
+NR_3,North River,North River,E06,1.5,depth_defined,NA
+NR_4,North River,Wards Creek North River,E06,1.5,depth_defined,NA
+NR_5,North River,North River,E06,1.5,depth_defined,NA
+NR_6,North River,Whitehurst Creek North River,E06,1.5,depth_defined,NA
+NR_7,North River,Sleepy Creek North River,E06,1.5,depth_defined,NA
+NR_8A,North River,North River,E05,3,depth_defined,NA
+NR_8A,North River,North River,E06,3,depth_defined,NA
+NR_8A,North River,North River,E07,3,depth_defined,NA
+NR_8B,North River,The Straits North River,E06,3,depth_defined,NA
+NR_8B,North River,The Straits North River,E08,3,depth_defined,NA
+NR_9,North River,Beaufort Area,E05,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10A,Outer Banks,Pamilco Sound Southern Pamilco Sound,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10A,Outer Banks,Pamilco Sound Southern Pamilco Sound,F07,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10A,Outer Banks,Pamilco Sound Southern Pamilco Sound,G03,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10A,Outer Banks,Pamilco Sound Southern Pamilco Sound,G04,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10A,Outer Banks,Pamilco Sound Southern Pamilco Sound,G06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10A,Outer Banks,Pamilco Sound Southern Pamilco Sound,G07,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10B,Outer Banks,Cedar Island Porstmouth Island Souther Pamilco Sound,F04,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_10B,Outer Banks,Cedar Island Porstmouth Island Souther Pamilco Sound,G06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_1,Outer Banks,Croatan Sound,H02,4,emergency,was not included in original rainfall thresh sheet rainfall depths from A. Haines email on 20200604
+OBX_2,Outer Banks,Roanoke Sound,H01,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_3,Outer Banks,Roanoke Sound,H01,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_4A,Outer Banks,Croatan Sound,H06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_4B,Outer Banks,Croatan Sound Roanoke Sound,H01,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_4B,Outer Banks,Croatan Sound Roanoke Sound,H02,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_4B,Outer Banks,Croatan Sound Roanoke Sound,H06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_5,Outer Banks,Outer Banks Pea Island,H01,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_5,Outer Banks,Outer Banks Pea Island,H05,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_5,Outer Banks,Outer Banks Pea Island,H06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_5A,Outer Banks,Outer Banks Salvo,H05,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_6,Outer Banks,Avon Buxton Outer Banks,H05,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_7,Outer Banks,Hatteras Outer Banks,G06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_7,Outer Banks,Hatteras Outer Banks,H04,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_8,Outer Banks,Silver Lake Ocracoke,G06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9A,Outer Banks,Pamilco Sound,G04,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9A,Outer Banks,Pamilco Sound,G05,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9A,Outer Banks,Pamilco Sound,G06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9A,Outer Banks,Pamilco Sound,G07,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9A,Outer Banks,Pamilco Sound,H06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9B,Outer Banks,Pamilco Sound,G06,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9B,Outer Banks,Pamilco Sound,G07,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9B,Outer Banks,Pamilco Sound,H01,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9B,Outer Banks,Pamilco Sound,H04,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9B,Outer Banks,Pamilco Sound,H05,4,emergency,rainfall depth from A. Haines email on 20200604
+OBX_9B,Outer Banks,Pamilco Sound,H06,4,emergency,rainfall depth from A. Haines email on 20200604
+Onsl_1,Onslow County,New River,C03,3,depth_defined,NA
+Onsl_2,Onslow County,New River Stones Bay,C03,3,depth_defined,NA
+Onsl_3,Onslow County,New River,C02,3,depth_defined,NA
+Onsl_4,Onslow County,New River Chadwick Bay,C01,1.5,depth_defined,NA
+Onsl_4,Onslow County,New River Chadwick Bay,C02,1.5,depth_defined,NA
+Onsl_5,Onslow County,Alligator Bay,C01,1.5,depth_defined,NA
+Onsl_6A,Onslow County,Stump Sound,B09,1.5,depth_defined,NA
+Onsl_6B,Onslow County,Stump Sound,B09,1.5,depth_defined,NA
+Onsl_7,Onslow County,Waters Bay Stump Sound,B08,1.5,depth_defined,NA
+Onsl_7,Onslow County,Waters Bay Stump Sound,B09,1.5,depth_defined,NA
+PAM_1,Pamlico Sound,Goose Creek Pamlico River,G01,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_1,Pamlico Sound,Goose Creek Pamlico River,G02,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_2,Pamlico Sound,Clark Creeks Pamilco Sound,G02,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_3,Pamlico Sound,Pamilco Sound,G02,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_4,Pamlico Sound,Southern Pamilco Sound,F07,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_4,Pamlico Sound,Southern Pamilco Sound,G02,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_5,Pamlico Sound,Jones Bay Pamilco Sound,F06,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_6,Pamlico Sound,Bay River Pamilco Sound,F06,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_6A,Pamlico Sound,Bay River Pamilco Sound,F06,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_6B,Pamlico Sound,Bay River Pamilco Sound,F06,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_7,Pamlico Sound,Southern Pamilco Sound,F06,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_7,Pamlico Sound,Southern Pamilco Sound,F07,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_7,Pamlico Sound,Southern Pamilco Sound,G02,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_7,Pamlico Sound,Southern Pamilco Sound,G03,4,emergency,rainfall depth from A. Haines email on 20200604
+PAM_7,Pamlico Sound,Southern Pamilco Sound,G07,4,emergency,rainfall depth from A. Haines email on 20200604
+PND_1,Pender County,Topsail Sound,B08,2.5,depth_defined,NA
+PND_2,Pender County,Topsail Sound,B08,3,emergency,rainfall depth from A. Haines email on 20200604
+PND_3,Pender County,Topsail Sound Old Topsail Creek,B08,2.5,depth_defined,NA
+PND_4,Pender County,Topsail Sound,B08,3,emergency,rainfall depth from A. Haines email on 20200604
+PND_5,Pender County,Topsail Sound,B08,2.5,depth_defined,NA
+PND_5,Pender County,Topsail Sound,B09,2.5,depth_defined,NA
+PND_6,Pender County,Topsail Sound,B08,3,emergency,rainfall depth from A. Haines email on 20200604
+Pungo_1,Pungo River,Pungo River Wright Creek Slade Creek,G02,4,emergency,rainfall depth from A. Haines email on 20200604
+Pungo_1,Pungo River,Pungo River Wright Creek Slade Creek,G08,4,emergency,rainfall depth from A. Haines email on 20200604
+Sandy_1,Sandy Bay,Parched Corn Bay Pamilco Sound,G05,4,emergency,rainfall depth from A. Haines email on 20200604
+Stump_1,Stumpy Point,Stumpy Point Pamilco Sound,H03,4,emergency,rainfall depth from A. Haines email on 20200604
