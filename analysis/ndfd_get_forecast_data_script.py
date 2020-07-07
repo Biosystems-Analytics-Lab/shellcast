@@ -38,10 +38,10 @@ from csv import writer
 # %% set paths
 
 # define data directory path (for export)
-data_dir = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/tabular/ndfd_sco_data_raw/"
+data_dir = ".../analysis/data/tabular/ndfd_sco_data_raw/"
 
 # define function directory path
-functions_dir = "/Users/sheila/Documents/github/shellcast-analysis/functions/"
+functions_dir = ".../analysis/functions/"
 
 
 # %% load custom functions

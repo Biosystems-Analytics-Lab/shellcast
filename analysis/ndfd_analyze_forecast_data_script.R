@@ -1,14 +1,14 @@
 # ---- script header ----
 # script name: ndfd_analyze_forecast_data_script.R
 # purpose of script: takes raw ndfd tabular data and calculates probability of closure
-# author: sheila saia 
+# author: sheila saia
 # date created: 20200525
 # email: ssaia@ncsu.edu
 
 
 # ---- notes ----
 # notes:
- 
+
 
 # ---- to do ----
 # to do list
@@ -36,31 +36,31 @@ library(lubridate)
 
 # ---- 3. define paths and projections ----
 # path to data
-ndfd_data_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/ndfd_sco_data/"
+ndfd_data_path <- ".../analysis/data/spatial/generated/ndfd_sco_data/"
 
 # sga buffer data path
-sga_data_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/sga_bounds/"
+sga_data_path <- ".../analysis/data/spatial/generated/sga_bounds/"
 
 # cmu data path
-cmu_data_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/cmu_bounds/"
+cmu_data_path <- ".../analysis/data/spatial/generated/cmu_bounds/"
 
 # lease data path
-lease_data_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/lease_bounds/leases_albers/"
+lease_data_path <- ".../analysis/data/spatial/generated/lease_bounds/leases_albers/"
 
 # lease ignored data path (for keeping track of ignored leases)
-lease_ignored_data_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/lease_bounds/leases_ignored/"
+lease_ignored_data_path <- ".../analysis/data/spatial/generated/lease_bounds/leases_ignored/"
 
 # rainfall threshold path
-rainfall_thresh_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/tabular/generated/ncdmf_rainfall_thresholds/"
+rainfall_thresh_path <- ".../analysis/data/tabular/generated/ncdmf_rainfall_thresholds/"
 
 # figure export path
 # figure_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/results/figures/"
 
 # exporting ndfd spatial data path
-ndfd_sco_spatial_data_export_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/spatial/generated/ndfd_sco_data/"
+ndfd_sco_spatial_data_export_path <- ".../analysis/data/spatial/generated/ndfd_sco_data/"
 
 # exporting ndfd tabular data path
-ndfd_sco_tabular_data_export_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/data/web_app_data/tabular/generated/ndfd_sco_data/"
+ndfd_sco_tabular_data_export_path <- ".../analysis/data/tabular/generated/ndfd_sco_data/"
 
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"
@@ -346,49 +346,49 @@ for (i in 1:length(valid_period_list)) {
   for (j in 1:num_cmu) {
     # valid period
     temp_valid_period <- valid_period_list[i]
-    
+
     # save raster
     temp_pop12_raster <- pop12_cmu_raster_list[i][[1]]
     temp_qpf_raster <- qpf_cmu_raster_list[i][[1]]
-    
+
     # save raster resolution
     temp_pop12_raster_res <- raster::res(temp_pop12_raster)
     temp_qpf_raster_res <- raster::res(temp_qpf_raster)
-    
+
     # save cmu name
     temp_cmu_name <- as.character(cmu_bounds_albers$HA_CLASS[j])
-    
+
     # save cmu rainfall threshold value
     temp_cmu_rain_in <- as.numeric(cmu_bounds_albers$rain_in[j])
-    
+
     # get cmu bounds vector
     temp_cmu_bounds <- cmu_bounds_albers %>%
       dplyr::filter(HA_CLASS == temp_cmu_name)
-    
+
     # cmu bounds area
     temp_cmu_area <- as.numeric(st_area(temp_cmu_bounds)) # in m^2
-    
+
     # make this a funciton that takes ndfd raster and temp_cmu_bounds and gives area wtd raster result
     # pop12
     temp_pop12_cmu_raster_empty <- raster()
     raster::extent(temp_pop12_cmu_raster_empty) <- raster::extent(temp_pop12_raster)
     raster::res(temp_pop12_cmu_raster_empty) <- raster::res(temp_pop12_raster)
     raster::crs(temp_pop12_cmu_raster_empty) <- raster::crs(temp_pop12_raster)
-    
+
     #qpf
     temp_qpf_cmu_raster_empty <- raster()
     raster::extent(temp_qpf_cmu_raster_empty) <- raster::extent(temp_qpf_raster)
     raster::res(temp_qpf_cmu_raster_empty) <- raster::res(temp_qpf_raster)
     raster::crs(temp_qpf_cmu_raster_empty) <- raster::crs(temp_qpf_raster)
-    
+
     # calculate percent cover cmu over raster
     temp_pop12_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_pop12_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
     temp_qpf_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_qpf_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
-    
+
     # convert raster to dataframe
     temp_pop12_cmu_df <- data.frame(perc_cover = temp_pop12_cmu_raster_perc_cover@data@values, raster_value = temp_pop12_raster@data@values)
     temp_qpf_cmu_df <- data.frame(perc_cover = temp_qpf_cmu_raster_perc_cover@data@values, raster_value = temp_qpf_raster@data@values)
-    
+
     # keep only dataframe entries with values and do spatial averaging calcs
     # pop12
     temp_pop12_cmu_df_short <- temp_pop12_cmu_df %>%
@@ -397,7 +397,7 @@ for (i in 1:length(valid_period_list)) {
       dplyr::filter(flag == "data") %>%
       dplyr::select(-flag) %>%
       dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
-    
+
     # qpf
     temp_qpf_cmu_df_short <- temp_qpf_cmu_df %>%
       na.omit() %>%
@@ -405,11 +405,11 @@ for (i in 1:length(valid_period_list)) {
       dplyr::filter(flag == "data") %>%
       dplyr::select(-flag) %>%
       dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
-    
+
     # find total area of raster represented
     temp_pop12_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
     temp_qpf_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
-    
+
     # use total area to calculated weighted value
     temp_pop12_cmu_df_fin <- temp_pop12_cmu_df_short %>%
       dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_pop12_cmu_raster_area_sum_m2,
@@ -417,14 +417,14 @@ for (i in 1:length(valid_period_list)) {
     temp_qpf_cmu_df_fin <- temp_qpf_cmu_df_short %>%
       dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_qpf_cmu_raster_area_sum_m2,
                     raster_value_wtd = cmu_raster_area_perc * raster_value)
-    
+
     # sum weighted values to get result
     temp_cmu_pop12_result <- round(sum(temp_pop12_cmu_df_fin$raster_value_wtd), 2)
     temp_cmu_qpf_result <- round(sum(temp_qpf_cmu_df_fin$raster_value_wtd), 2)
-    
+
     # calculate probability of closure
     temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
-    
+
     # save data
     temp_ndfd_cmu_calcs_data <- data.frame(row_num = cmu_row_num,
                                            HA_CLASS = temp_cmu_name,
@@ -434,10 +434,10 @@ for (i in 1:length(valid_period_list)) {
                                            pop12_perc = temp_cmu_pop12_result,
                                            qpf_in = temp_cmu_qpf_result,
                                            prob_close_perc = temp_cmu_prob_close_result)
-    
+
     # bind results
     ndfd_cmu_calcs_data <-  rbind(ndfd_cmu_calcs_data, temp_ndfd_cmu_calcs_data)
-    
+
     # next row
     print(paste0("finished row: ", cmu_row_num))
     cmu_row_num <- cmu_row_num + 1
@@ -524,7 +524,7 @@ ndfd_lease_calcs_data_raw_no_duplicates <- ndfd_lease_calcs_data_raw %>%
 # length(unique(ndfd_lease_calcs_data_raw$lease_id)) # 493
 # length(unique(lease_data_albers$lease_id)) # 513
 # ignoring some leases that are outside cmus
-  
+
 # final tidy up of lease calcs for database
 ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw_no_duplicates %>%
   dplyr::mutate(day = ymd(datetime_uct),
@@ -544,7 +544,7 @@ ndfd_leases_ignored_list <- lease_data_albers %>%
   dplyr::select(lease_id)
 
 # create dataframe to bind to ndfd_lease_calcs_data_spread
-ndfd_leases_ignored <- data.frame(lease_id = ndfd_leases_ignored_list$lease_id, 
+ndfd_leases_ignored <- data.frame(lease_id = ndfd_leases_ignored_list$lease_id,
                                   day = latest_ndfd_date_uct,
                                   prob_1d_perc = NA,
                                   prob_2d_perc = NA,
@@ -566,7 +566,7 @@ write_csv(ndfd_lease_calcs_data, paste0(ndfd_sco_tabular_data_export_path, "leas
 
 # save ignored leases
 ndfd_leases_ignored_data <- lease_data_albers %>%
-  dplyr::anti_join(ndfd_lease_calcs_data_spread, by = "lease_id") 
+  dplyr::anti_join(ndfd_lease_calcs_data_spread, by = "lease_id")
 
 # check crs
 # st_crs(ndfd_leases_ignored_data)
@@ -589,7 +589,7 @@ st_write(ndfd_leases_ignored_data, paste0(lease_ignored_data_path, "leases_ignor
 
 # max(ndfd_pop12_data_raw$x_index)/2 # = 96.5 so set cutoff at 96?
 # mirroring_fix = 96
-# 
+#
 # # both diagonals of the matrix are being plotted (just want one)
 # ndfd_pop12_data <- ndfd_pop12_data_raw %>%
 #   mutate(longitude_fix = -(360 - longitude)) %>%
@@ -597,11 +597,11 @@ st_write(ndfd_leases_ignored_data, paste0(lease_ignored_data_path, "leases_ignor
 #   arrange(x_index, y_index) %>%
 #   #mutate(row_id = seq(1, 38800)) %>%
 #   filter(x_index > mirroring_fix)
-# 
+#
 # ggplot(data = ndfd_pop12_data) +
 #   geom_point(aes(x = x_index, y = y_index, color = pop12_value_perc)) +
 #   scale_color_gradient(low = "white", high = "blue", na.value = "grey90", limits = c(0, 100))
-# 
+#
 # ggplot(data = ndfd_pop12_data) +
 #   geom_point(aes(x = longitude_fix, y = latitude, color = pop12_value_perc)) +
 #   scale_color_gradient(low = "white", high = "blue", na.value = "grey90", limits = c(0, 100))
@@ -611,13 +611,12 @@ st_write(ndfd_leases_ignored_data, paste0(lease_ignored_data_path, "leases_ignor
 
 # ggplot(data = ndfd_pop12_data_raw %>% filter(step_index == "0 days 12:00:00.000000000")) +
 #   geom_point(aes(x = x_index, y = y_index, fill = pop12_value_perc))
-# 
+#
 # ggplot(data = ndfd_pop12_data_raw %>% filter(step_index == "0 days 12:00:00.000000000")) +
 #   geom_point(aes(x = x_index, y = y_index, color = pop12_value_perc)) +
 #   scale_color_gradient(low = "white", high = "blue", na.value = "grey90", limits = c(0, 100))# +
 #   #scale_x_reverse()
-# 
+#
 # ggplot(data = ndfd_qpf_data_raw %>% filter(step_index == "0 days 12:00:00.000000000")) +
 #   geom_point(aes(x = -(longitude), y = latitude, color = qpf_value_in)) +
 #   scale_color_gradient(low = "white", high = "blue", na.value = "grey90")
-
