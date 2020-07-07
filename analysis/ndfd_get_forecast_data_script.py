@@ -64,14 +64,20 @@ ndfd_sco_server_url = 'https://tds.climate.ncsu.edu/thredds/dodsC/nws/ndfd/'
 # keep track of available dates
 data_available_pd = pandas.DataFrame(columns = ['datetime_uct_str', 'status'])
 
-# get time now
-datetime_now_nyc = pandas.to_datetime(dt.datetime.now(), format = "%Y-%m-%d %H:%M").tz_localize(tz = "America/New_York") # this is local time (ET) but server is in UCT
+# hardcode current day at 7am UCT
+today = dt.date.today()
+today_str = today.strftime("%Y%m%d") + "07"
+today_uct = pandas.to_datetime(dt.datetime.strptime(today_str, "%Y%m%d%H"))
+datetime_now_uct = today_uct.tz_localize(tz = "UCT")
 
-# if need to hardcode time (because it's after 8am ET), uncomment this
+# hardcode exact time
 # datetime_now_nyc = pandas.to_datetime("2020-07-01 07:00", format = "%Y-%m-%d %H:%M").tz_localize(tz = "America/New_York") # force midnight uct grab at 8am et
+# datetime_now_uct = datetime_now_nyc.tz_convert(tz = "UCT") # convert to uct
 
-# convert to uct
-datetime_now_uct = datetime_now_nyc.tz_convert(tz = "UCT")
+# to run in real-time
+# datetime_now_nyc = pandas.to_datetime(dt.datetime.now(), format = "%Y-%m-%d %H:%M").tz_localize(tz = "America/New_York") # this is local time (ET) but server is in UCT
+# datetime_now_uct = datetime_now_nyc.tz_convert(tz = "UCT") # convert to uct
+
 # datetime_now_uct_str_full = datetime_now_uct.strftime("%Y-%m-%d %H:%M")
 # datetime_now_uct_str_short = datetime_now_uct.strftime("%Y-%m-%d")
 # datetime_now_uct
