@@ -33,14 +33,17 @@ library(lubridate)
 
 
 # ---- 3. defining paths and projections ----
+# base path
+data_base_path = ".../analysis/data/" # pertaining to directory structure on github analysis > data
+
 # path to data
-ndfd_data_path <- ".../analysis/data/tabular/ndfd_sco_data_raw/"
+ndfd_data_path <- paste0(data_base_path, "tabular/ndfd_sco_data_raw/")
 
 # nc buffer data path
-nc_bounds_buffer_path <- ".../analysis/data/spatial/generated/region_state_bounds/"
+nc_bounds_buffer_path <- paste0(data_base_path, "spatial/generated/region_state_bounds/")
 
 # exporting ndfd raster spatial data path
-ndfd_sco_spatial_data_export_path <- ".../analysis/data/spatial/generated/ndfd_sco_data/"
+ndfd_sco_spatial_data_export_path <- paste0(base_path, "spatial/generated/ndfd_sco_data/")
 
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"
