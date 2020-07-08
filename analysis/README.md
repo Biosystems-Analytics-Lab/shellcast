@@ -13,6 +13,9 @@
 
 ```
 # sh shellcast_daily_analysis.sh
+
+# this will save outputs to a text file with the date of the run
+# sh shellcast_daily_analysis.sh > ...data/tabular/generated/terminal/output_$(date '+%Y%m%d').txt
 ```
 
 ## script run order (weekly, when REST API is available)
