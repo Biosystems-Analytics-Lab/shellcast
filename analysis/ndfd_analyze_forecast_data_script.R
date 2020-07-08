@@ -35,32 +35,35 @@ library(lubridate)
 
 
 # ---- 3. define paths and projections ----
+# base path
+data_base_path = ".../analysis/data/" # pertaining to directory structure on github analysis > data
+
 # path to data
-ndfd_data_path <- ".../analysis/data/spatial/generated/ndfd_sco_data/"
+ndfd_data_path <- paste0(data_base_path, "spatial/generated/ndfd_sco_data/")
 
 # sga buffer data path
-sga_data_path <- ".../analysis/data/spatial/generated/sga_bounds/"
+sga_data_path <- paste0(data_base_path, "spatial/generated/sga_bounds/")
 
 # cmu data path
-cmu_data_path <- ".../analysis/data/spatial/generated/cmu_bounds/"
+cmu_data_path <- paste0(data_base_path, "spatial/generated/cmu_bounds/")
 
 # lease data path
-lease_data_path <- ".../analysis/data/spatial/generated/lease_bounds/leases_albers/"
+lease_data_path <- paste0(data_base_path, "spatial/generated/lease_bounds/leases_albers/")
 
 # lease ignored data path (for keeping track of ignored leases)
-lease_ignored_data_path <- ".../analysis/data/spatial/generated/lease_bounds/leases_ignored/"
+lease_ignored_data_path <- paste0(data_base_path, "spatial/generated/lease_bounds/leases_ignored/")
 
 # rainfall threshold path
-rainfall_thresh_path <- ".../analysis/data/tabular/generated/ncdmf_rainfall_thresholds/"
+rainfall_thresh_path <- paste0(data_base_path, "tabular/generated/ncdmf_rainfall_thresholds/")
 
 # figure export path
 # figure_path <- "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/results/figures/"
 
 # exporting ndfd spatial data path
-ndfd_sco_spatial_data_export_path <- ".../analysis/data/spatial/generated/ndfd_sco_data/"
+ndfd_sco_spatial_data_export_path <- paste0(data_base_path, "spatial/generated/ndfd_sco_data/")
 
 # exporting ndfd tabular data path
-ndfd_sco_tabular_data_export_path <- ".../analysis/data/tabular/generated/ndfd_sco_data/"
+ndfd_sco_tabular_data_export_path <- paste0(data_base_path, "tabular/generated/ndfd_sco_data/")
 
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"
