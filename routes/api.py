@@ -23,6 +23,9 @@ api = Blueprint('api', __name__)
 @api.route('/userInfo', methods=['GET', 'POST'])
 @userRequired
 def userInfo(user):
+  """
+  Returns the user's info if a GET request.  Updates the user's info if a POST request.
+  """
   if (request.method == 'GET'):
     userInfo = {}
     if (user.email != None):
@@ -31,6 +34,7 @@ def userInfo(user):
       userInfo['phone_number'] = user.phone_number
     return userInfo
   else: # request.method == 'POST'
+    # validate the uploaded info
     form = ProfileInfoForm.from_json(request.json)
     if (form.validate()):
       user.email = form.email.data
@@ -40,8 +44,12 @@ def userInfo(user):
       return {'message': 'Success'}, 200
     return {'message': 'Bad form input'}, 400
 
-
-def queryLeaseClosureProbabilities(user):
+@api.route('/leaseProbs')
+@userRequired
+def getLeaseClosureProbabilities(user):
+  """
+  Returns the user's lease closure probabilities.
+  """
   leases = db.session.query(Lease).filter_by(user_id=user.id).all()
   probs = []
   for lease in leases:
@@ -50,34 +58,32 @@ def queryLeaseClosureProbabilities(user):
     probDict['ncdmf_lease_id'] = lease.ncdmf_lease_id
     probDict['geo_boundary'] = lease.geo_boundary
     probs.append(probDict)
-  return probs
-
-@api.route('/leaseProbs')
-@userRequired
-def getLeaseClosureProbabilities(user):
-  return jsonify(queryLeaseClosureProbabilities(user))
-
-def queryGrowAreaProbabilities():
-  results = db.session.query(SGAMinMaxProbability).all()
-  dictOfCPs = {}
-  for r in results:
-    sgaName = r.grow_area_name
-    dictOfCPs[sgaName] = r.asDict()
-  return dictOfCPs
+  return jsonify(probs)
 
 @api.route('/growAreaProbs')
-def getAreaData():
+def getGrowAreaProbabilities():
+  """
+  Returns the min/max closure probabilties for each grow area.
+  """
   # t0 = time.perf_counter_ns()
-  dictOfCPs = queryGrowAreaProbabilities()
+  # TODO make sure this returns one (and only one) closure probability for each grow area
+  growAreaProbs = db.session.query(SGAMinMaxProbability).all()
+  growAreaProbsAsDicts = {}
+  for area in growAreaProbs:
+    sgaName = area.grow_area_name
+    growAreaProbsAsDicts[sgaName] = area.asDict()
   # t1 = time.perf_counter_ns()
   # print('Total query time: {} ms'.format((t1 - t0) / 1000000))
 
-  return jsonify(dictOfCPs)
+  return jsonify(growAreaProbsAsDicts)
 
-@api.route('/leases')
+@api.route('/leases', methods=['GET', 'POST', 'DELETE'])
 @userRequired
-def getLeases(user):
-  leases = db.session.query(Lease).filter_by(user_id=user.id).all()
+def userLeases(user):
+  """
+  Returns the user's leases if a GET request.  Adds a new lease or updates
+  an existing one if a POST request.  Deletes a lease if a DELETE request.
+  """
   def leaseToDict(lease):
     return {
       'id': lease.id,
@@ -90,11 +96,31 @@ def getLeases(user):
       'window_pref': lease.window_pref,
       'prob_pref': lease.prob_pref,
     }
-  return jsonify(list(map(leaseToDict, leases)))
+  if (request.method == 'GET'):
+    leases = db.session.query(Lease).filter_by(user_id=user.id).all()
+    return jsonify(list(map(leaseToDict, leases)))
+  elif (request.method == 'POST'):
+    ncdmfLeaseId = request.json.get('ncdmf_lease_id')
+    # find the NCDMF lease record
+    ncdmfLease = {'ncdmf_lease_id': ncdmfLeaseId}
+    for lease in NCDMF_LEASES:
+      if (lease['ncdmf_lease_id'] == ncdmfLeaseId):
+        ncdmfLease = lease
+        break
+    newLease = Lease(user_id=user.id, **ncdmfLease)
+    db.session.add(newLease)
+    db.session.commit()
+    return leaseToDict(newLease)
+  else: # request.method == 'DELETE'
+    print('TODO delete lease')
+    return {'message': 'Success'}, 200
 
 @api.route('/searchLeases', methods=['POST'])
 @userRequired
 def searchLeases(user):
+  """
+  Returns leases based on a search term.
+  """
   searchTerm = str(request.json.get('search'))
   # TODO return the pre-collected leases from the Griffin API with a fuzzy search on the ncdmf lease id
   print('TODO return leases from database with a fuzzy search on the ncdmf lease id')
@@ -102,27 +128,3 @@ def searchLeases(user):
   filteredLeases = filter(lambda x: searchTerm in str(x['ncdmf_lease_id']), leases)
   leaseIdsOnly = map(lambda x: x['ncdmf_lease_id'], filteredLeases)
   return jsonify(list(leaseIdsOnly))
-
-@api.route('/addLease', methods=['POST'])
-@userRequired
-def addLease(user):
-  ncdmfLeaseId = request.json.get('ncdmf_lease_id')
-  # find the NCDMF lease record
-  ncdmfLease = {'ncdmf_lease_id': ncdmfLeaseId}
-  for lease in NCDMF_LEASES:
-    if (lease['ncdmf_lease_id'] == ncdmfLeaseId):
-      ncdmfLease = lease
-      break
-  newLease = Lease(user_id=user.id, **ncdmfLease)
-  db.session.add(newLease)
-  db.session.commit()
-  return {
-    'id': newLease.id,
-    'ncdmf_lease_id': newLease.ncdmf_lease_id,
-    'grow_area_name': newLease.grow_area_name,
-    'rainfall_thresh_in': newLease.rainfall_thresh_in,
-    'email_pref': newLease.email_pref,
-    'text_pref': newLease.text_pref,
-    'window_pref': newLease.window_pref,
-    'prob_pref': newLease.prob_pref,
-  }
