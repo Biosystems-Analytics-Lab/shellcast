@@ -29,16 +29,6 @@
       {# Generic profile information #}
       <form class="needs-validation mb-4" id="profile-information-form">
         <h4>My profile information</h4>
-        {# <div class="mb-3">
-          <label for="firstName">First name</label>
-          <input type="text" class="form-control" id="firstName" placeholder="First name" value="Bob" readonly>
-        </div>
-
-        <div class="mb-3">
-          <label for="lastName">Last name</label>
-          <input type="text" class="form-control" id="lastName" placeholder="Last name" value="Smith" readonly>
-        </div> #}
-
         <div class="mb-3">
           <label for="email">Email address</label>
           <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com" aria-describedby="emailHelp">
@@ -76,20 +66,14 @@
 
       <div class="mb-3 search-bar">
         <div class="input-group">
-          <input type="text" class="form-control search-input" placeholder="Add a lease by searching for it by its NCDMF ID..." aria-label="Add a lease by searching for it by its NCDMF ID" aria-describedby="lease-search-btn">
+          <input id="lease-search-text-input" type="text" class="form-control search-input" placeholder="Add a lease by searching for it by its NCDMF ID..." aria-label="Add a lease by searching for it by its NCDMF ID" aria-describedby="lease-search-btn">
           <div class="input-group-append">
             <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
             <button class="btn btn-primary" type="button" id="lease-clear-btn">Clear</button>
           </div>
         </div>
 
-        <div class="list-group search-results" id="lease-search-results">
-          <button type="button" class="list-group-item list-group-item-action">684</button>
-          <button type="button" class="list-group-item list-group-item-action">4-C-89</button>
-          <button type="button" class="list-group-item list-group-item-action">9613</button>
-          <button type="button" class="list-group-item list-group-item-action">1860139</button>
-          <button type="button" class="list-group-item list-group-item-action">1948054</button>
-        </div>
+        <div class="list-group search-results" id="lease-search-results"></div>
       </div>
 
       <div id="leases">

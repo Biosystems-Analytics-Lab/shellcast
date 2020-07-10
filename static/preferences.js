@@ -383,10 +383,71 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
 }
 
 /**
+ * Adds the given lease to the user's leases.
+ * @param {string} leaseId the NCDMF lease id of the lease to add
+ */
+async function addLease(leaseId) {
+  const res = await authorizedFetch('/addLease', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json;charset=utf-8'},
+    body: JSON.stringify({ncdmf_lease_id: leaseId})
+  });
+  if (res.ok) {
+    const lease = await res.json();
+    leases.push(lease);
+    buildLeaseForms();
+  } else {
+    console.log('There was a problem while adding a lease.');
+  }
+
+  clearLeaseSearch();
+}
+
+/**
+ * Searches through leases by the NCDMF lease id with the text entered by the user.
+ */
+async function searchLeases() {
+  const searchResultsDiv = document.getElementById('lease-search-results');
+  const userInput = document.getElementById('lease-search-text-input').value;
+  const res = await authorizedFetch('/searchLeases', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json;charset=utf-8'},
+    body: JSON.stringify({search: userInput})
+  });
+  if (res.ok) {
+    const returnedLeases = await res.json();
+    searchResultsDiv.innerHTML = '';
+    for (let lease of returnedLeases) {
+      searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action" onclick="addLease('${lease}')">${lease}</button>`;
+    }
+    searchResultsDiv.style.display = 'flex';
+  } else {
+    console.log('There was an error while searching for leases.');
+    // clear results
+    const searchResultsDiv = document.getElementById('lease-search-results');
+    searchResultsDiv.innerHTML = '';
+    searchResultsDiv.style.display = 'none';
+  }
+}
+
+/**
+ * Clears the search box and removes all search results from the UI.
+ */
+function clearLeaseSearch() {
+  // clear search input
+  document.getElementById('lease-search-text-input').value = '';
+  // clear results
+  const searchResultsDiv = document.getElementById('lease-search-results');
+  searchResultsDiv.innerHTML = '';
+  searchResultsDiv.style.display = 'none';
+}
+
+/**
  * Displays the UI for a signed in user and initializes the lease forms.
  * @param {firebase.User} user
  */
 async function handleSignedInUser(user) {
+  // hide signed-out view and show signed-in view
   document.getElementById('user-signed-in').style.display = 'block';
   document.getElementById('user-signed-out').style.display = 'none';
 
@@ -394,14 +455,17 @@ async function handleSignedInUser(user) {
   profileInfo = await getProfileInfo();
   initProfileForm(profileInfo);
 
+  // setup lease search bar
+  document.getElementById('lease-search-btn').addEventListener('click', searchLeases);
+  document.getElementById('lease-clear-btn').addEventListener('click', clearLeaseSearch);
+
   // get user's leases
-  console.log('TODO get user\'s leases from server');
-  leases = [
-    {id: 0, ncdmf_lease_id: '4-C-89', grow_area_name: 'A03', rainfall_thresh_in: 1.5, email_pref: false, text_pref: false, window_pref: undefined, prob_pref: undefined},
-    {id: 1, ncdmf_lease_id: '819401', grow_area_name: 'B05', rainfall_thresh_in: 2.5, email_pref: true, text_pref: false, window_pref: 2, prob_pref: 75},
-    {id: 2, ncdmf_lease_id: '82-389B', grow_area_name: 'C11', rainfall_thresh_in: 3.5, email_pref: false, text_pref: true, window_pref: 3, prob_pref: 90},
-    {id: 3, ncdmf_lease_id: '123456', grow_area_name: 'D05', rainfall_thresh_in: 4.5, email_pref: true, text_pref: true, window_pref: 2, prob_pref: 90},
-  ];
+  const res = await authorizedFetch('/leases');
+  if (res.ok) {
+    leases = await res.json();
+  } else {
+    console.log('There was a problem while retrieving the user\'s leases');
+  }
 
   // setup lease forms
   buildLeaseForms();
