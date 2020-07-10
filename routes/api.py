@@ -12,10 +12,10 @@ from routes.authentication import userRequired
 
 # just a temporary filler for the Mike Griffin API
 NCDMF_LEASES = [
-  {'ncdmf_lease_id': '4-C-89', 'grow_area_name': 'A01', 'rainfall_thresh_in': 1.5},
-  {'ncdmf_lease_id': '819401', 'grow_area_name': 'B02', 'rainfall_thresh_in': 2.5},
-  {'ncdmf_lease_id': '82-389B', 'grow_area_name': 'C03', 'rainfall_thresh_in': 3.5},
-  {'ncdmf_lease_id': '123456', 'grow_area_name': 'D04', 'rainfall_thresh_in': 4.5}
+  {'ncdmf_lease_id': '4-C-89', 'grow_area_name': 'A01', 'rainfall_thresh_in': 1.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.864693, 36.303915]}}},
+  {'ncdmf_lease_id': '819401', 'grow_area_name': 'B02', 'rainfall_thresh_in': 2.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.927864, 36.164344]}}},
+  {'ncdmf_lease_id': '82-389B', 'grow_area_name': 'C03', 'rainfall_thresh_in': 3.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.754829, 35.868877]}}},
+  {'ncdmf_lease_id': '123456', 'grow_area_name': 'D04', 'rainfall_thresh_in': 4.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-77.567573, 34.404497]}}}
 ]
 
 api = Blueprint('api', __name__)
@@ -51,14 +51,15 @@ def getLeaseClosureProbabilities(user):
   Returns the user's lease closure probabilities.
   """
   leases = db.session.query(Lease).filter_by(user_id=user.id).all()
-  probs = []
-  for lease in leases:
+  def getLeaseProbForLease(lease):
+    probDict = {'ncdmf_lease_id': lease.ncdmf_lease_id, 'geo_boundary': lease.geo_boundary}
     closureProb = db.session.query(ClosureProbability).filter_by(lease_id=lease.id).first()
-    probDict = closureProb.asDict()
-    probDict['ncdmf_lease_id'] = lease.ncdmf_lease_id
-    probDict['geo_boundary'] = lease.geo_boundary
-    probs.append(probDict)
-  return jsonify(probs)
+    if (closureProb):
+      probDict['prob_1d_perc'] = closureProb.prob_1d_perc
+      probDict['prob_2d_perc'] = closureProb.prob_2d_perc
+      probDict['prob_3d_perc'] = closureProb.prob_3d_perc
+    return probDict
+  return jsonify(list(map(getLeaseProbForLease, leases)))
 
 @api.route('/growAreaProbs')
 def getGrowAreaProbabilities():

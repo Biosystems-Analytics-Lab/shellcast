@@ -133,7 +133,6 @@ function addGrowAreaDataToMap(growAreaData) {
   }
 
   // set up an info window to appear when clicking on any grow area
-  // const growAreaInfoWindow = new google.maps.InfoWindow();
   map.data.addListener('click', (event) => {
     const pos = event.latLng;
     const grow_area = event.feature.getProperty('grow_area');
@@ -156,19 +155,17 @@ function addGrowAreaDataToMap(growAreaData) {
 }
 
 function addLeaseDataToMap(leaseData) {
-  // const leaseInfoWindow = new google.maps.InfoWindow();
-
   // create a marker for each lease
   for (let lease of leaseData) {
     const leaseInfoContent = (`
       <div>Lease ID: ${lease.ncdmf_lease_id}
-      <br>1-day %: ${lease.prob_1d_perc}
-      <br>2-day %: ${lease.prob_2d_perc}
-      <br>3-day %: ${lease.prob_3d_perc}
+      <br>1-day %: ${lease.prob_1d_perc ? lease.prob_1d_perc : '-'}
+      <br>2-day %: ${lease.prob_2d_perc ? lease.prob_2d_perc : '-'}
+      <br>3-day %: ${lease.prob_3d_perc ? lease.prob_3d_perc : '-'}
       </div>
     `);
     const marker = new google.maps.Marker({
-      position: getLatLngFromGeoJSON(lease.geo_boundary),//{lat: 35.2, lng: -77.2},//getLatLngFromGeoJSON(lease.geo_boundary),
+      position: getLatLngFromGeoJSON(lease.geo_boundary),
       map: map,
       title: lease.ncdmf_lease_id
       // icon: {
