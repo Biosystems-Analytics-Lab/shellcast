@@ -387,7 +387,7 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
  * @param {string} leaseId the NCDMF lease id of the lease to add
  */
 async function addLease(leaseId) {
-  const res = await authorizedFetch('/addLease', {
+  const res = await authorizedFetch('/leases', {
     method: 'POST',
     headers: {'Content-Type': 'application/json;charset=utf-8'},
     body: JSON.stringify({ncdmf_lease_id: leaseId})
