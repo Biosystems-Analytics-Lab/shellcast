@@ -11,3 +11,7 @@ def test_about(client):
 def test_preferences(client):
   res = client.get('/preferences')
   assert res.status_code == 200
+
+def test_signin(client):
+  res = client.get('/signin')
+  assert res.status_code == 200
