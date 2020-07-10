@@ -10,6 +10,14 @@ from routes.forms.ProfileInfoForm import ProfileInfoForm
 
 from routes.authentication import userRequired
 
+# just a temporary filler for the Mike Griffin API
+NCDMF_LEASES = [
+  {'ncdmf_lease_id': '4-C-89', 'grow_area_name': 'A01', 'rainfall_thresh_in': 1.5},
+  {'ncdmf_lease_id': '819401', 'grow_area_name': 'B02', 'rainfall_thresh_in': 2.5},
+  {'ncdmf_lease_id': '82-389B', 'grow_area_name': 'C03', 'rainfall_thresh_in': 3.5},
+  {'ncdmf_lease_id': '123456', 'grow_area_name': 'D04', 'rainfall_thresh_in': 4.5}
+]
+
 api = Blueprint('api', __name__)
 
 @api.route('/userInfo', methods=['GET', 'POST'])
@@ -66,21 +74,55 @@ def getAreaData():
 
   return jsonify(dictOfCPs)
 
+@api.route('/leases')
+@userRequired
+def getLeases(user):
+  leases = db.session.query(Lease).filter_by(user_id=user.id).all()
+  def leaseToDict(lease):
+    return {
+      'id': lease.id,
+      'ncdmf_lease_id': lease.ncdmf_lease_id,
+      'grow_area_name': lease.grow_area_name,
+      'rainfall_thresh_in': lease.rainfall_thresh_in,
+      'geo_boundary': lease.geo_boundary,
+      'email_pref': lease.email_pref,
+      'text_pref': lease.text_pref,
+      'window_pref': lease.window_pref,
+      'prob_pref': lease.prob_pref,
+    }
+  return jsonify(list(map(leaseToDict, leases)))
+
 @api.route('/searchLeases', methods=['POST'])
 @userRequired
 def searchLeases(user):
   searchTerm = str(request.json.get('search'))
   # TODO return the pre-collected leases from the Griffin API with a fuzzy search on the ncdmf lease id
   print('TODO return leases from database with a fuzzy search on the ncdmf lease id')
-  leases = ['4-C-89', '819401', '82-389B', '123456']
-  def matchesSearchTerm(item):
-    return searchTerm in str(item)
-  return filter(matchesSearchTerm, leases)
+  leases = NCDMF_LEASES
+  filteredLeases = filter(lambda x: searchTerm in str(x['ncdmf_lease_id']), leases)
+  leaseIdsOnly = map(lambda x: x['ncdmf_lease_id'], filteredLeases)
+  return jsonify(list(leaseIdsOnly))
 
 @api.route('/addLease', methods=['POST'])
 @userRequired
 def addLease(user):
-  newLease = Lease(ncdmf_lease_id=request.json.get('ncdmf_lease_id'), user_id=user.id)
+  ncdmfLeaseId = request.json.get('ncdmf_lease_id')
+  # find the NCDMF lease record
+  ncdmfLease = {'ncdmf_lease_id': ncdmfLeaseId}
+  for lease in NCDMF_LEASES:
+    if (lease['ncdmf_lease_id'] == ncdmfLeaseId):
+      ncdmfLease = lease
+      break
+  newLease = Lease(user_id=user.id, **ncdmfLease)
   db.session.add(newLease)
   db.session.commit()
-  return {'message': 'Success'}, 200
+  return {
+    'id': newLease.id,
+    'ncdmf_lease_id': newLease.ncdmf_lease_id,
+    'grow_area_name': newLease.grow_area_name,
+    'rainfall_thresh_in': newLease.rainfall_thresh_in,
+    'email_pref': newLease.email_pref,
+    'text_pref': newLease.text_pref,
+    'window_pref': newLease.window_pref,
+    'prob_pref': newLease.prob_pref,
+  }
