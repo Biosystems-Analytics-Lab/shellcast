@@ -10,6 +10,8 @@ from routes.forms.ProfileInfoForm import ProfileInfoForm
 
 from routes.authentication import userRequired
 
+NUMBER_OF_GROW_AREAS = 73
+
 # just a temporary filler for the Mike Griffin API
 NCDMF_LEASES = [
   {'ncdmf_lease_id': '4-C-89', 'grow_area_name': 'A01', 'rainfall_thresh_in': 1.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.864693, 36.303915]}}},
@@ -68,7 +70,7 @@ def getGrowAreaProbabilities():
   """
   # t0 = time.perf_counter_ns()
   # TODO make sure this returns one (and only one) closure probability for each grow area
-  growAreaProbs = db.session.query(SGAMinMaxProbability).all()
+  growAreaProbs = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).limit(NUMBER_OF_GROW_AREAS)
   growAreaProbsAsDicts = {}
   for area in growAreaProbs:
     sgaName = area.grow_area_name
