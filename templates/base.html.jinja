@@ -27,12 +27,12 @@
 
 {% block common_css %}
   <!-- Custom CSS -->
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='common/common.css') }}">
 {% endblock %}
 
 {% block common_js %}
   <!-- Custom JS -->
-  <script defer src="{{ url_for('static', filename='common.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='common/common.js') }}"></script>
 {% endblock %}
 
 {% block additional_head %}{% endblock %}
