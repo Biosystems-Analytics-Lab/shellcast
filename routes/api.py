@@ -105,15 +105,13 @@ def userLeases(user):
   elif (request.method == 'POST'):
     ncdmfLeaseId = request.json.get('ncdmf_lease_id')
     # find the NCDMF lease record
-    ncdmfLease = {'ncdmf_lease_id': ncdmfLeaseId}
     for lease in NCDMF_LEASES:
       if (lease['ncdmf_lease_id'] == ncdmfLeaseId):
-        ncdmfLease = lease
-        break
-    newLease = Lease(user_id=user.id, **ncdmfLease)
-    db.session.add(newLease)
-    db.session.commit()
-    return leaseToDict(newLease)
+        newLease = Lease(user_id=user.id, **lease)
+        db.session.add(newLease)
+        db.session.commit()
+        return leaseToDict(newLease)
+    return {'message': 'The given lease id does not exist.'}, 400
   else: # request.method == 'DELETE'
     print('TODO delete lease')
     return {'message': 'Success'}, 200
