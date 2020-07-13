@@ -27,11 +27,21 @@
 
 
 # ---- 2. load libraries ----
-library(tidyverse)
-library(raster)
-library(sf)
-library(lubridate)
+# library(tidyverse)
+# library(raster)
+# library(sf)
+# library(lubridate)
 # library(here)
+
+
+# ---- 1 & 2. Install and load packages as necessary ----
+packages <- c("tidyverse", "raster", "sf", "lubridate")
+for (package in packages) {
+  if (! package %in% installed.packages()) {
+    install.packages(package, dependencies = TRUE)
+  }
+  library(package)
+}
 
 
 # ---- 3. define paths and projections ----
