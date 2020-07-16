@@ -1,0 +1,3 @@
+tidied qpf data on 2020071500
+tidied pop12 data on 2020071500
+exported 2020-07-15 00:00 data
