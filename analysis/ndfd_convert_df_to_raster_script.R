@@ -38,7 +38,7 @@ for (package in packages) {
   if (! package %in% installed.packages()) {
     install.packages(package, dependencies = TRUE)
   }
-  library(package)
+  library(package, character.only = TRUE)
 }
 
 
@@ -53,7 +53,7 @@ ndfd_data_path <- paste0(data_base_path, "tabular/ndfd_sco_data_raw/")
 nc_bounds_buffer_path <- paste0(data_base_path, "spatial/generated/region_state_bounds/")
 
 # exporting ndfd raster spatial data path
-ndfd_sco_spatial_data_export_path <- paste0(base_path, "spatial/generated/ndfd_sco_data/")
+ndfd_sco_spatial_data_export_path <- paste0(data_base_path, "spatial/generated/ndfd_sco_data/")
 
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"

@@ -35,12 +35,12 @@
 
 
 # ---- 1 & 2. Install and load packages as necessary ----
-packages <- c("tidyverse", "raster", "sf", "lubridate")
+packages <- c("tidyverse", "raster", "sf", "lubridate", "rgdal")
 for (package in packages) {
   if (! package %in% installed.packages()) {
     install.packages(package, dependencies = TRUE)
   }
-  library(package)
+  library(package, character.only = TRUE)
 }
 
 
