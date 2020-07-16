@@ -103,14 +103,26 @@ def userLeases(user):
     leases = db.session.query(Lease).filter_by(user_id=user.id).all()
     return jsonify(list(map(leaseToDict, leases)))
   elif (request.method == 'POST'):
-    ncdmfLeaseId = request.json.get('ncdmf_lease_id')
+    clientData = request.json
     # find the NCDMF lease record
     for lease in NCDMF_LEASES:
-      if (lease['ncdmf_lease_id'] == ncdmfLeaseId):
-        newLease = Lease(user_id=user.id, **lease)
-        db.session.add(newLease)
+      if (lease['ncdmf_lease_id'] == clientData.get('ncdmf_lease_id')):
+        # assertion: at this point we know that the given ncdmf_lease_id is valid
+        # now we need to check if this lease already exists for the current user
+        leaseRecord = db.session.query(Lease).filter_by(id=clientData.get('id'), user_id=user.id, ncdmf_lease_id=clientData.get('ncdmf_lease_id')).first()
+        if (leaseRecord):
+          # update the existing record
+          # TODO need to add checks for invalid values
+          leaseRecord.email_pref = request.json.get('email_pref')
+          leaseRecord.text_pref = request.json.get('text_pref')
+          leaseRecord.prob_pref = request.json.get('prob_pref')
+          leaseRecord.window_pref = request.json.get('window_pref')
+        else:
+          # create a new lease record
+          leaseRecord = Lease(user_id=user.id, **lease)
+        db.session.add(leaseRecord)
         db.session.commit()
-        return leaseToDict(newLease)
+        return leaseToDict(leaseRecord)
     return {'message': 'The given lease id does not exist.'}, 400
   else: # request.method == 'DELETE'
     print('TODO delete lease')
