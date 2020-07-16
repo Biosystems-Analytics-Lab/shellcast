@@ -528,7 +528,7 @@ ndfd_sga_calcs_data <- ndfd_cmu_calcs_join_data %>%
 # ---- 14. export min and max ndfd sga calcs ----
 # export sga min and max calcs for 1-day, 2-day, and 3-day forecasts
 # write_csv(ndfd_sga_calcs_data,  paste0(ndfd_tabular_data_output_path, "sga_calcs/ndfd_sga_calcs_", latest_ndfd_date_uct_str, ".csv")) # includes date in file name
-write_csv(ndfd_cmu_calcs_data, paste0(ndfd_tabular_data_output_path, "sga_calcs/ndfd_sga_calcs.csv"))
+write_csv(ndfd_sga_calcs_data, paste0(ndfd_tabular_data_output_path, "sga_calcs/ndfd_sga_calcs.csv"))
 
 
 # ---- 15. select area weighted ndfd cmu calcs for leases ----
