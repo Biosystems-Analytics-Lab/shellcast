@@ -276,10 +276,32 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
     prob_pref: selectedProb
   };
 
+  const dataToUpload = {
+    id: newLeaseData.id,
+    ncdmf_lease_id: newLeaseData.ncdmf_lease_id,
+    email_pref: newLeaseData.email_pref,
+    text_pref: newLeaseData.text_pref,
+    window_pref: newLeaseData.window_pref,
+    prob_pref: newLeaseData.prob_pref
+  };
+
   // upload data to server and re-init form
-  console.log('TODO upload data to server', newLeaseData);
-  leases[leaseIdx] = newLeaseData;
-  initLeaseForm(newLeaseData, true);
+  console.log('Uploading data to server', dataToUpload);
+  const res = await authorizedFetch('/leases', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json;charset=utf-8'},
+    body: JSON.stringify(dataToUpload)
+  });
+  if (res.ok) {
+    // overwrite the client copy of the lease info
+    leases[leaseIdx] = newLeaseData;
+    // reset the form with the new info
+    initLeaseForm(newLeaseData, true);
+  } else {
+    console.log('There was an error while saving the lease data.');
+    // reset the form with the old info
+    initLeaseForm(originalLeaseData, true);
+  }
 }
 
 /**
