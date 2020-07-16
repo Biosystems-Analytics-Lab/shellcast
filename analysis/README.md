@@ -9,13 +9,11 @@
 
 3. ndfd_analyze_forecast_data_script.R
 
-### shellcast_analysis.sh will run all of daily scripts in order
+### shellcast_analysis.sh will run all of daily scripts in order and save updates to the termina\_data directory
 
 ```
 # sh shellcast_daily_analysis.sh
 
-# this will save outputs to a text file with the date of the run
-# sh shellcast_daily_analysis.sh > ...data/tabular/generated/terminal/output_$(date '+%Y%m%d').txt
 ```
 
 ## script run order (weekly, when REST API is available)
