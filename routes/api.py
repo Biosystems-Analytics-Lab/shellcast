@@ -96,8 +96,7 @@ def userLeases(user):
       'geo_boundary': lease.geo_boundary,
       'email_pref': lease.email_pref,
       'text_pref': lease.text_pref,
-      'window_pref': lease.window_pref,
-      'prob_pref': lease.prob_pref,
+      'prob_pref': lease.prob_pref
     }
   if (request.method == 'GET'):
     leases = db.session.query(Lease).filter_by(user_id=user.id).all()
@@ -116,7 +115,6 @@ def userLeases(user):
           leaseRecord.email_pref = request.json.get('email_pref')
           leaseRecord.text_pref = request.json.get('text_pref')
           leaseRecord.prob_pref = request.json.get('prob_pref')
-          leaseRecord.window_pref = request.json.get('window_pref')
         else:
           # create a new lease record
           leaseRecord = Lease(user_id=user.id, **lease)

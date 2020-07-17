@@ -15,7 +15,6 @@ class Lease(db.Model):
   email_pref = db.Column(db.Boolean, server_default=expression.false(), default=False)
   text_pref = db.Column(db.Boolean, server_default=expression.false(), default=False)
   prob_pref = db.Column(db.Integer, server_default=expression.literal(80), default=80)
-  window_pref = db.Column(db.Integer, server_default=expression.literal(1), default=1)
   created = db.Column(db.DateTime, server_default=db.func.now())
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
@@ -30,8 +29,7 @@ class Lease(db.Model):
       'geo_boundary': self.geo_boundary,
       'email_pref': self.email_pref,
       'text_pref': self.text_pref,
-      'prob_pref': self.prob_pref,
-      'window_pref': self.window_pref
+      'prob_pref': self.prob_pref
     }
 
   def __repr__(self):
