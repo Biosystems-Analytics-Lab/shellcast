@@ -23,6 +23,7 @@ to see the nc sco catalog website: https://tds.climate.ncsu.edu/thredds/catalog/
 # %% to do list
 
 # TODO this need to run everyday at 5am ET
+# TODO (wishlist) could try to run this using the xarray library
 
 
 # %% load libraries
@@ -35,23 +36,32 @@ import requests # to check if website exists
 from csv import writer
 
 
-# %% set paths
-# base path
-analysis_base_path = ".../analysis/" # pertaining to directory structure on github
+# %% set paths here
 
-# define data directory path (for export)
-data_dir = analysis_base_path + "data/tabular/ndfd_sco_data_raw/"
+# base path to analysis
+# analysis_base_path = ".../analysis/" # set this and uncomment!
+analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
 
-# define function directory path
-functions_dir = analysis_base_path + "functions/"
+# base path to data
+# data_base_path = ".../analysis/data/" # set this and uncomment!
+data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
+
+
+# %% use set paths
+
+# path to ndfd tabular outputs
+tabular_output_path = data_base_path + "tabular/outputs/ndfd_sco_data/ndfd_sco_data_raw/"
+
+# path to custom functions needed for this script
+functions_path = analysis_base_path + "functions/"
 
 
 # %% load custom functions
 
-exec(open((functions_dir + "convert_sco_ndfd_datetime_str.py")).read())
-exec(open((functions_dir + "get_sco_ndfd_data.py")).read())
-exec(open((functions_dir + "tidy_sco_ndfd_data.py")).read())
-exec(open((functions_dir + "append_list_as_row.py")).read())
+exec(open((functions_path + "convert_sco_ndfd_datetime_str.py")).read())
+exec(open((functions_path + "get_sco_ndfd_data.py")).read())
+exec(open((functions_path + "tidy_sco_ndfd_data.py")).read())
+exec(open((functions_path + "append_list_as_row.py")).read())
 
 
 # %% get data and export
@@ -66,7 +76,7 @@ ndfd_sco_server_url = 'https://tds.climate.ncsu.edu/thredds/dodsC/nws/ndfd/'
 # keep track of available dates
 data_available_pd = pandas.DataFrame(columns = ['datetime_uct_str', 'status'])
 
-# hardcode current day at 7am UCT
+# hardcode current day at 7am UCT for now
 today = dt.date.today()
 today_str = today.strftime("%Y%m%d") + "07"
 today_uct = pandas.to_datetime(dt.datetime.strptime(today_str, "%Y%m%d%H"))
@@ -120,8 +130,11 @@ if (len(temp_data) > 0):
     if ((len(temp_qpf_data_pd) > 0) and (len(temp_pop12_data_pd) > 0)):
 
         # define export path
-        temp_qpf_data_path = data_dir + "qpf_" + temp_qpf_datetime_ymdh_str +  ".csv" # data_dir definited at top of script
-        temp_pop12_data_path = data_dir + "pop12_" + temp_pop12_datetime_ymdh_str + ".csv" # data_dir definited at top of script
+        # temp_qpf_data_path = tabular_output_path + "qpf_" + temp_qpf_datetime_ymdh_str +  ".csv" # includes date in file name
+        # temp_pop12_data_path = tabular_output_path + "pop12_" + temp_pop12_datetime_ymdh_str + ".csv" # includes date in file name
+        temp_qpf_data_path = tabular_output_path + "qpf.csv"
+        temp_pop12_data_path = tabular_output_path + "pop12.csv"
+
 
         # export results
         temp_qpf_data_pd.to_csv(temp_qpf_data_path, index = False)
@@ -133,9 +146,9 @@ if (len(temp_data) > 0):
         temp_data_log = [temp_datetime_uct_str, "available"]
 
         # export data availability (i.e., append new row to data_log.csv)
-        # data_availability_path = data_dir + "data_available_" + temp_datetime_ymdh_str +  ".csv"
+        # data_availability_path = tabular_output_path + "data_available_" + temp_datetime_ymdh_str +  ".csv"
         # data_available_pd.to_csv(data_availability_path, index = False)
-        data_log_path = data_dir + "data_log.csv"
+        data_log_path = tabular_output_path + "data_log.csv" 
         append_list_as_row(data_log_path, temp_data_log)
 
         # print status
@@ -148,9 +161,9 @@ if (len(temp_data) > 0):
         temp_data_log = [temp_datetime_uct_str, "not_available"]
 
         # export data availability (i.e., append new row to data_log.csv)
-        # data_availability_path = data_dir + "data_available_" + temp_datetime_ymdh_str +  ".csv"
+        # data_availability_path = tabular_output_path + "data_available_" + temp_datetime_ymdh_str +  ".csv"
         # data_available_pd.to_csv(data_availability_path, index = False)
-        data_log_path = data_dir + "data_log.csv"
+        data_log_path = tabular_output_path + "data_log.csv"
         append_list_as_row(data_log_path, temp_data_log)
 
         # print status
@@ -163,9 +176,9 @@ else:
     temp_data_log = [temp_datetime_uct_str, "not_available"]
 
     # export data availability (i.e., append new row to data_log.csv)
-    # data_availability_path = data_dir + "data_available_" + temp_datetime_ymdh_str +  ".csv"
+    # data_availability_path = tabular_output_path + "data_available_" + temp_datetime_ymdh_str +  ".csv"
     # data_available_pd.to_csv(data_availability_path, index = False)
-    data_log_path = data_dir + "data_log.csv"
+    data_log_path = tabular_output_path + "data_log.csv"
     append_list_as_row(data_log_path, temp_data_log)
 
     # print status
