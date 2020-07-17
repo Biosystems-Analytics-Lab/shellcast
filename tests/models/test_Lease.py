@@ -10,7 +10,7 @@ def test_Lease(dbSession):
       'coordinates': [-75.985285, 35.803644] # lon, lat
     }
   }
-  validLease1 = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, window_pref=1, prob_pref=50, geo_boundary=geoJson)
+  validLease1 = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, prob_pref=50, geo_boundary=geoJson)
 
   dbSession.add(validLease1)
   dbSession.commit()
@@ -26,7 +26,6 @@ def test_Lease(dbSession):
   assert res[0].email_pref == False
   assert res[0].text_pref == False
   assert res[0].prob_pref == validLease1.prob_pref
-  assert res[0].window_pref == validLease1.window_pref
   assert res[0].geo_boundary == validLease1.geo_boundary
 
 def test_asDict(genRandomString):
@@ -37,7 +36,7 @@ def test_asDict(genRandomString):
       'coordinates': [-75.985285, 35.803644] # lon, lat
     }
   }
-  lease = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, email_pref=True, text_pref=True, prob_pref=50, window_pref=1, geo_boundary=geoJson)
+  lease = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, email_pref=True, text_pref=True, prob_pref=50, geo_boundary=geoJson)
 
   dictForm = lease.asDict()
 
@@ -47,7 +46,6 @@ def test_asDict(genRandomString):
   assert dictForm['email_pref'] == lease.email_pref
   assert dictForm['text_pref'] == lease.text_pref
   assert dictForm['prob_pref'] == lease.prob_pref
-  assert dictForm['window_pref'] == lease.window_pref
   assert dictForm['geo_boundary'] == lease.geo_boundary
 
 def test_repr(genRandomString):

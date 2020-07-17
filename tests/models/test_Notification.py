@@ -11,7 +11,7 @@ def test_valid(dbSession):
   dbSession.add(user)
   dbSession.commit()
 
-  lease = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, window_pref=1, prob_pref=50)
+  lease = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, prob_pref=50)
 
   dbSession.add(lease)
   dbSession.commit()

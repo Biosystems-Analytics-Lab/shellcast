@@ -22,7 +22,6 @@ CREATE TABLE `leases` (
   `email_pref` boolean DEFAULT false,
   `text_pref` boolean DEFAULT false,
   `prob_pref` tinyint(3) DEFAULT 80,
-  `window_pref` tinyint(1) DEFAULT 1,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)

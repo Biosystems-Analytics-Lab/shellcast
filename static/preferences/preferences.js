@@ -1,6 +1,5 @@
 'use strict';
 
-const NOTIFICATION_WINDOW_PREFS = [1, 2, 3];
 const NOTIFICATION_PROB_PREFS = [60, 70, 80, 90];
 
 let profileInfo = {};
@@ -173,7 +172,7 @@ function createLeaseInfoEl(lease) {
                 <input class="form-check-input" type="checkbox" name="lease-text" id="lease-${lease.id}-text" ${disabledOrNah}>
                 <label class="form-check-label" for="lease-${lease.id}-text">Text</label>
               </div>
-              <small class="form-text text-muted notification-window-help">
+              <small class="form-text text-muted">
                 Choose whether you want to receive email and/or text notifications for this lease.
               </small>
 
@@ -194,27 +193,9 @@ function createLeaseInfoEl(lease) {
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[3]}" value="${NOTIFICATION_PROB_PREFS[3]}" ${disabledOrNah}>
                 <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[3]}">${NOTIFICATION_PROB_PREFS[3]} %</label>
               </div>
-              <small class="form-text text-muted notification-window-help">
+              <small class="form-text text-muted">
                 The minimum probability that you want to be notified at for this lease.
               </small>
-
-              <label>Notification Window</label>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="lease-notification-window" id="lease-${lease.id}-notification-window-${NOTIFICATION_WINDOW_PREFS[0]}" value="${NOTIFICATION_WINDOW_PREFS[0]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-window-${NOTIFICATION_WINDOW_PREFS[0]}">${NOTIFICATION_WINDOW_PREFS[0]}-day</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="lease-notification-window" id="lease-${lease.id}-notification-window-${NOTIFICATION_WINDOW_PREFS[1]}" value="${NOTIFICATION_WINDOW_PREFS[1]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-window-${NOTIFICATION_WINDOW_PREFS[1]}">${NOTIFICATION_WINDOW_PREFS[1]}-day</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="lease-notification-window" id="lease-${lease.id}-notification-window-${NOTIFICATION_WINDOW_PREFS[2]}" value="${NOTIFICATION_WINDOW_PREFS[2]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-window-${NOTIFICATION_WINDOW_PREFS[2]}">${NOTIFICATION_WINDOW_PREFS[2]}-day</label>
-              </div>
-              <small class="form-text text-muted notification-window-help">
-                The period of time over which a closure probability is calculated for this lease.
-              </small>
-            </div>
 
             <div style="text-align: right;">
               <button class="btn btn-primary" type="button" name="lease-form-cancel-btn" disabled>Cancel</button>
@@ -250,17 +231,10 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
   const probRadios = leaseForm.elements[`lease-notification-prob`];
-  const windowRadios = leaseForm.elements[`lease-notification-window`];
   let selectedProb;
   for (let radio of probRadios) {
     if (radio.checked) {
       selectedProb = Number(radio.value);
-    }
-  }
-  let selectedWindow;
-  for (let radio of windowRadios) {
-    if (radio.checked) {
-      selectedWindow = Number(radio.value);
     }
   }
 
@@ -272,7 +246,6 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
     rainfall_thresh_in: originalLeaseData.rainfall_thresh_in,
     email_pref: emailCheckbox.checked,
     text_pref: textCheckbox.checked,
-    window_pref: selectedWindow,
     prob_pref: selectedProb
   };
 
@@ -281,7 +254,6 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
     ncdmf_lease_id: newLeaseData.ncdmf_lease_id,
     email_pref: newLeaseData.email_pref,
     text_pref: newLeaseData.text_pref,
-    window_pref: newLeaseData.window_pref,
     prob_pref: newLeaseData.prob_pref
   };
 
@@ -326,14 +298,10 @@ function enableDisableLeaseNotificationInputs(leaseForm) {
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
   const probRadios = leaseForm.elements[`lease-notification-prob`];
-  const windowRadios = leaseForm.elements[`lease-notification-window`];
   // enable/disable notification inputs appropriately
   const notificationsEnabled = notificationsCheckbox.checked;
   emailCheckbox.disabled = textCheckbox.disabled = !notificationsEnabled;
   for (let radio of probRadios) {
-    radio.disabled = !notificationsEnabled;
-  }
-  for (let radio of windowRadios) {
     radio.disabled = !notificationsEnabled;
   }
   if (!notificationsEnabled) {
@@ -372,7 +340,6 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
   const probRadios = leaseForm.elements[`lease-notification-prob`];
-  const windowRadios = leaseForm.elements[`lease-notification-window`];
   const cancelBtn = leaseForm.elements[`lease-form-cancel-btn`];
   const saveBtn = leaseForm.elements[`lease-form-save-btn`];
   // set values for checkboxes
@@ -382,10 +349,6 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   // set values for radio buttons
   for (let radio of probRadios) {
     const value = lease.prob_pref && lease.prob_pref.toString();
-    radio.checked = (radio.value === value);
-  }
-  for (let radio of windowRadios) {
-    const value = lease.window_pref && lease.window_pref.toString();
     radio.checked = (radio.value === value);
   }
 
