@@ -13,27 +13,27 @@
 
 ```
 # sh shellcast_daily_analysis.sh
-
 ```
+
+## R packages needed to run these scripts
+
+1. tidyverse - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/tidyverse)
+
+2. lubridate - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/lubridate)
+
+3. sf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/sf)
+
+4. raster - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/raster)
+
+5. geojsonsf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/geojsonsf)
+
+
+
+
 
 
 ## script run order (weekly, when REST API is available)
 
-4. ncdmf_get_lease_data_script.R (when REST API is available)
+ncdmf_get_lease_data_script.R (when REST API is available)
 
-5. ncdmf_tidy_lease_data_script.R (when REST API is available)
-
- 
-## R packages needed to run these scripts
-
-- tidyverse - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/tidyverse)
-
-- lubridate - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/lubridate)
-
-- sf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/sf)
-
-- raster - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/raster)
-
-- geojsonsf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/geojsonsf)
-
-
+ncdmf_tidy_lease_data_script.R (when REST API is available)
