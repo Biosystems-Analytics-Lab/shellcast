@@ -16,6 +16,7 @@
 
 ```
 
+
 ## script run order (weekly, when REST API is available)
 
 4. ncdmf_get_lease_data_script.R (when REST API is available)
@@ -23,4 +24,16 @@
 5. ncdmf_tidy_lease_data_script.R (when REST API is available)
 
  
-# test
+## R packages needed to run these scripts
+
+- tidyverse - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/tidyverse)
+
+- lubridate - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/lubridate)
+
+- sf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/sf)
+
+- raster - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/raster)
+
+- geojsonsf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/geojsonsf)
+
+
