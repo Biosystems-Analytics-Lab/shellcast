@@ -7,7 +7,7 @@
 # NOTE! need to define folder output paths below
 
 # step 1
-python ndfd_get_forecast_data_script.py | tee ...data/tabular/output/terminal_data/01_python_output_$(date '+%Y%m%d').txt
+python3 ndfd_get_forecast_data_script.py | tee ...data/tabular/output/terminal_data/01_python_output_$(date '+%Y%m%d').txt
 
 # step 2
 Rscript ndfd_convert_df_to_raster_script.R | tee ...data/tabular/outputs/terminal_data/02_convert_df_out_$(date '+%Y%m%d').txt
