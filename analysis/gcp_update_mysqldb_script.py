@@ -28,7 +28,7 @@ https://pymysql.readthedocs.io/en/latest/
 import pandas
 import pymysql
 from sqlalchemy import create_engine
-import config from Config DevConfig # see config.py file
+from config import Config, DevConfig # see config.py file
 
 
 # %% set paths here
@@ -105,10 +105,26 @@ engine.dispose()
 
 # %% update leases table
 
+# find leases that are there
+# SELECT ncdmf_lease_id FROM leases # will give a list of lease ids in the # db
+# need to save this as a python variable
+# then use this python variable to filter out leases from lease_data
+# then only push that lease data to closure_probabilities table
+
+db_leases = ['1-C-89', '9803', '8-C-91']
+
+lease_data_sel_init = lease_data[lease_data.lease_id.isin(db_leases)]
+lease_data_sel = lease_data_sel_init.drop(columns = 'day').reset_index(drop=True)
+
+# this has to go into closure probabilities
+
+
+# %%
+
 # create cursor
 lease_cursor = connection.cursor()
 # Execute the to_sql for writting DF into SQL
-lease_data.to_sql('leases', lease_engine, if_exists='append', index=False)
+lease_data_sel.to_sql('leases', lease_engine, if_exists='append', index=False)
 
 # Execute query
 lease_sql = "SELECT * FROM `leases`"
