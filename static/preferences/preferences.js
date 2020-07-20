@@ -164,11 +164,11 @@ function createLeaseInfoEl(lease) {
 
             <div class="notification-options" id="lease-${lease.id}-notification-options">
               <label>Notification Type</label>
-              <div class="form-check form-check-inline">
+              <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="lease-email" id="lease-${lease.id}-email" ${disabledOrNah}>
                 <label class="form-check-label" for="lease-${lease.id}-email">Email</label>
               </div>
-              <div class="form-check form-check-inline">
+              <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="lease-text" id="lease-${lease.id}-text" ${disabledOrNah}>
                 <label class="form-check-label" for="lease-${lease.id}-text">Text</label>
               </div>
@@ -177,20 +177,20 @@ function createLeaseInfoEl(lease) {
               </small>
 
               <label>Notification Probability</label>
-              <div class="form-check form-check-inline">
+              <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}" value="${NOTIFICATION_PROB_PREFS[0]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}">${NOTIFICATION_PROB_PREFS[0]} %</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}">${NOTIFICATION_PROB_PREFS[0]}% or higher</label>
               </div>
-              <div class="form-check form-check-inline">
+              <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}" value="${NOTIFICATION_PROB_PREFS[1]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}">${NOTIFICATION_PROB_PREFS[1]} %</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}">${NOTIFICATION_PROB_PREFS[1]}% or higher</label>
               </div>
-              <div class="form-check form-check-inline">
+              <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}" value="${NOTIFICATION_PROB_PREFS[2]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]} %</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]}% or higher</label>
               </div>
               <small class="form-text text-muted">
-                The minimum probability that you want to be notified at for this lease.
+                This is the minimum probability that you will be notified at for this lease.  For example, if you choose "50% or higher", then you will be notified whenever your lease has a 50% or higher chance of being closed.
               </small>
 
             <div style="text-align: right;">
