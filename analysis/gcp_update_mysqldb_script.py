@@ -28,6 +28,7 @@ https://pymysql.readthedocs.io/en/latest/
 import pandas
 import pymysql
 from sqlalchemy import create_engine
+import config from Config DevConfig # see config.py file
 
 
 # %% set paths here
@@ -71,29 +72,16 @@ lease_data = pandas.read_csv(lease_data_path)
 # %% open connection to MySQL database
 
 # define connection
-# define gcp connection variables
-#gcp_host = 
-#gcp_user = 
-#gcp_password =
-#gcp_db = 
-#gcp_charset = 
-# how do i fill this in?
-
 # connect to the MySQL database
-connection = pymysql.connect(host = gcp_host,
-                             user = gcp_user,
-                             password = gcp_password,
-                             db = gcp_db,
-                             charset = gcp_charset,
+# see config.py for these
+connection = pymysql.connect(host = config.DevConfig.HOST,
+                             user = config.Config.DB_USER,
+                             password = config.Config.DB_PASS,
+                             database = config.DevConfig.DB_NAME,
+                             port = config.DevConfig.PORT,
+                             charset = 'utf8mb4',
                              cursorclass = pymysql.cursors.DictCursor)
-
-## define connection
-#connection = pymysql.connect(host='localhost',
-#                             user='user',
-#                             password='passwd',
-#                             db='db',
-#                             charset='utf8mb4',
-#                             cursorclass=pymysql.cursors.DictCursor)
+# see rest of connection options: https://pymysql.readthedocs.io/en/latest/modules/connections.html?highlight=connect#pymysql.connections.Connection
 
 
 # %% update sga_min_max table
@@ -101,7 +89,7 @@ connection = pymysql.connect(host = gcp_host,
 # create cursor
 sga_cursor = connection.cursor()
 # Execute the to_sql for writting DF into SQL
-sga_data.to_sql('sga_min_max', sga_engine, if_exists='append', index=False)    
+sga_data.to_sql('sga_min_max', sga_engine, if_exists='append', index=False)
 
 # Execute query
 sga_sql = "SELECT * FROM `sga_min_max`"
@@ -120,7 +108,7 @@ engine.dispose()
 # create cursor
 lease_cursor = connection.cursor()
 # Execute the to_sql for writting DF into SQL
-lease_data.to_sql('leases', lease_engine, if_exists='append', index=False)    
+lease_data.to_sql('leases', lease_engine, if_exists='append', index=False)
 
 # Execute query
 lease_sql = "SELECT * FROM `leases`"
@@ -154,12 +142,12 @@ engine.dispose()
 #connection = pymysql.connect(host='localhost',
 #                         user='root',
 #                         password='12345',
-#                         db='book')    
+#                         db='book')
 #
 ## create cursor
 #cursor=connection.cursor()
 ## Execute the to_sql for writting DF into SQL
-#data.to_sql('book_details', engine, if_exists='append', index=False)    
+#data.to_sql('book_details', engine, if_exists='append', index=False)
 #
 ## Execute query
 #sql = "SELECT * FROM `book_details`"
