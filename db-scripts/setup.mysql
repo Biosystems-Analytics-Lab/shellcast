@@ -21,7 +21,7 @@ CREATE TABLE `leases` (
   `geo_boundary` json NULL,
   `email_pref` boolean DEFAULT false,
   `text_pref` boolean DEFAULT false,
-  `prob_pref` tinyint(3) DEFAULT 80,
+  `prob_pref` tinyint(3) DEFAULT 75,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)

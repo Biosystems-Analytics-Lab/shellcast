@@ -14,7 +14,7 @@ class Lease(db.Model):
   geo_boundary = db.Column(db.JSON)
   email_pref = db.Column(db.Boolean, server_default=expression.false(), default=False)
   text_pref = db.Column(db.Boolean, server_default=expression.false(), default=False)
-  prob_pref = db.Column(db.Integer, server_default=expression.literal(80), default=80)
+  prob_pref = db.Column(db.Integer, server_default=expression.literal(75), default=75)
   created = db.Column(db.DateTime, server_default=db.func.now())
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 

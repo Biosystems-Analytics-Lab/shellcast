@@ -1,6 +1,6 @@
 'use strict';
 
-const NOTIFICATION_PROB_PREFS = [60, 70, 80, 90];
+const NOTIFICATION_PROB_PREFS = [25, 50, 75];
 
 let profileInfo = {};
 let leases = [];
@@ -188,10 +188,6 @@ function createLeaseInfoEl(lease) {
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}" value="${NOTIFICATION_PROB_PREFS[2]}" ${disabledOrNah}>
                 <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]} %</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[3]}" value="${NOTIFICATION_PROB_PREFS[3]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[3]}">${NOTIFICATION_PROB_PREFS[3]} %</label>
               </div>
               <small class="form-text text-muted">
                 The minimum probability that you want to be notified at for this lease.
