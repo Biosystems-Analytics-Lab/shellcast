@@ -1,14 +1,14 @@
 # ---- script header ----
 # script name: ndfd_analyze_forecast_data_script.R
 # purpose of script: takes raw ndfd tabular data and calculates probability of closure
-# author: sheila saia 
+# author: sheila saia
 # date created: 20200525
 # email: ssaia@ncsu.edu
 
 
 # ---- notes ----
 # notes:
- 
+
 
 # ---- to do ----
 # to do list
@@ -35,7 +35,7 @@ for (package in packages) {
 # ---- 2. define base paths ----
 # base path to data
 # data_base_path = "...analysis/data/" # set this and uncomment!
-data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/" 
+data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
 
 
 # ---- 3. use base paths and define projections ----
@@ -165,7 +165,7 @@ ndfd_qpf_raster_3day_albers <- raster::raster(paste0(ndfd_spatial_data_input_pat
 
 # spatial data
 # sga buffer bounds
-sga_buffer_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_buffer_albers.shp"))  %>%
+sga_buffer_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_10kmbuf_albers.shp"))  %>%
   st_set_crs(na_albers_epsg) # epsg code wasn't assigned if this code isn't included
 
 # sga data
@@ -173,7 +173,7 @@ sga_bounds_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_sim
   st_set_crs(na_albers_epsg) # epsg code wasn't assigned if this code isn't included
 
 # cmu buffer bounds
-cmu_buffer_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_buffer_albers.shp"))  %>%
+cmu_buffer_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_10kmbuf_albers.shp"))  %>%
   st_set_crs(na_albers_epsg) # epsg code wasn't assigned if this code isn't included
 
 # cmu bounds
@@ -363,63 +363,63 @@ for (i in 1:length(valid_period_list)) {
   for (j in 1:num_cmu) {
     # valid period
     temp_valid_period <- valid_period_list[i]
-    
+
     # save raster
     temp_pop12_raster <- pop12_cmu_raster_list[i][[1]]
     temp_qpf_raster <- qpf_cmu_raster_list[i][[1]]
-    
+
     # save raster resolution
     temp_pop12_raster_res <- raster::res(temp_pop12_raster)
     temp_qpf_raster_res <- raster::res(temp_qpf_raster)
-    
+
     # save cmu name
     temp_cmu_name <- as.character(cmu_bounds_albers$HA_CLASS[j])
-    
+
     # save cmu rainfall threshold value
     temp_cmu_rain_in <- as.numeric(cmu_bounds_albers$rain_in[j])
-    
+
     # get cmu bounds vector
     temp_cmu_bounds <- cmu_bounds_albers %>%
       dplyr::filter(HA_CLASS == temp_cmu_name)
-    
+
     # cmu bounds area
     temp_cmu_area <- as.numeric(st_area(temp_cmu_bounds)) # in m^2
-    
+
     # make this a funciton that takes ndfd raster and temp_cmu_bounds and gives area wtd raster result
     # pop12
     temp_pop12_cmu_raster_empty <- raster()
     raster::extent(temp_pop12_cmu_raster_empty) <- raster::extent(temp_pop12_raster)
     raster::res(temp_pop12_cmu_raster_empty) <- raster::res(temp_pop12_raster)
     raster::crs(temp_pop12_cmu_raster_empty) <- raster::crs(temp_pop12_raster)
-    
+
     #qpf
     temp_qpf_cmu_raster_empty <- raster()
     raster::extent(temp_qpf_cmu_raster_empty) <- raster::extent(temp_qpf_raster)
     raster::res(temp_qpf_cmu_raster_empty) <- raster::res(temp_qpf_raster)
     raster::crs(temp_qpf_cmu_raster_empty) <- raster::crs(temp_qpf_raster)
-    
+
     # calculate percent cover cmu over raster
     temp_pop12_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_pop12_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
     temp_qpf_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_qpf_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
-    
+
     # define percent cover values
     # every once in a while randomly get the error: "Error in data.frame(perc_cover = temp_pop12_cmu_raster_perc_cover@data@values,: arguments imply differing number of rows: 0, 3933"
     # not sure how stable the rasterize getCover option is (which might be the issue here, watch fasterize for updates but right now no ability to get percent cover)
     temp_pop12_perc_cov_values <- as.numeric(temp_pop12_cmu_raster_perc_cover@data@values)
     temp_qpf_perc_cov_values <- as.numeric(temp_qpf_cmu_raster_perc_cover@data@values)
-    
+
     # define raster values
     # every once in a while randomly get the error: "Error in data.frame(perc_cover = temp_pop12_cmu_raster_perc_cover@data@values,: arguments imply differing number of rows: 0, 3933"
     # not sure how stable the rasterize getCover option is (which might be the issue here, watch fasterize for updates but right now no ability to get percent cover)
     temp_pop12_raster_values <- as.numeric(temp_pop12_raster@data@values)
     temp_qpf_raster_values <- as.numeric(temp_qpf_raster@data@values)
-    
+
     # convert raster to dataframe
     temp_pop12_cmu_df <- data.frame(perc_cover = temp_pop12_perc_cov_values,
                                     raster_value = temp_pop12_raster_values)
-    temp_qpf_cmu_df <- data.frame(perc_cover = temp_qpf_perc_cov_values, 
+    temp_qpf_cmu_df <- data.frame(perc_cover = temp_qpf_perc_cov_values,
                                   raster_value = temp_qpf_raster_values)
-    
+
     # keep only dataframe entries with values and do spatial averaging calcs
     # pop12
     temp_pop12_cmu_df_short <- temp_pop12_cmu_df %>%
@@ -428,7 +428,7 @@ for (i in 1:length(valid_period_list)) {
       dplyr::filter(flag == "data") %>%
       dplyr::select(-flag) %>%
       dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
-    
+
     # qpf
     temp_qpf_cmu_df_short <- temp_qpf_cmu_df %>%
       na.omit() %>%
@@ -436,11 +436,11 @@ for (i in 1:length(valid_period_list)) {
       dplyr::filter(flag == "data") %>%
       dplyr::select(-flag) %>%
       dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
-    
+
     # find total area of raster represented
     temp_pop12_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
     temp_qpf_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
-    
+
     # use total area to calculated weighted value
     temp_pop12_cmu_df_fin <- temp_pop12_cmu_df_short %>%
       dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_pop12_cmu_raster_area_sum_m2,
@@ -448,14 +448,14 @@ for (i in 1:length(valid_period_list)) {
     temp_qpf_cmu_df_fin <- temp_qpf_cmu_df_short %>%
       dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_qpf_cmu_raster_area_sum_m2,
                     raster_value_wtd = cmu_raster_area_perc * raster_value)
-    
+
     # sum weighted values to get result
     temp_cmu_pop12_result <- round(sum(temp_pop12_cmu_df_fin$raster_value_wtd), 2)
     temp_cmu_qpf_result <- round(sum(temp_qpf_cmu_df_fin$raster_value_wtd), 2)
-    
+
     # calculate probability of closure
     temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
-    
+
     # save data
     temp_ndfd_cmu_calcs_data <- data.frame(row_num = cmu_row_num,
                                            HA_CLASS = temp_cmu_name,
@@ -465,10 +465,10 @@ for (i in 1:length(valid_period_list)) {
                                            pop12_perc = temp_cmu_pop12_result,
                                            qpf_in = temp_cmu_qpf_result,
                                            prob_close_perc = temp_cmu_prob_close_result)
-    
+
     # bind results
     ndfd_cmu_calcs_data <-  rbind(ndfd_cmu_calcs_data, temp_ndfd_cmu_calcs_data)
-    
+
     # next row
     print(paste0("finished row: ", cmu_row_num))
     cmu_row_num <- cmu_row_num + 1
@@ -523,7 +523,7 @@ ndfd_sga_calcs_data <- ndfd_cmu_calcs_join_data %>%
                                              valid_period_hrs == 72 ~ "3d_prob")) %>%
   tidyr::pivot_wider(id_cols = "grow_area", names_from = valid_period_hrs, values_from = c(min, max)) %>%
   dplyr::right_join(sga_full_list, by = "grow_area") %>% # fills in missing sgas
-  dplyr::select(grow_area_name = grow_area, min_1d_prob, max_1d_prod, min_2d_prob, max_2d_prob, min_3d_prob, max_3d_prob)
+  dplyr::select(grow_area_name = grow_area, min_1d_prob, max_1d_prob, min_2d_prob, max_2d_prob, min_3d_prob, max_3d_prob)
 
 # ---- 14. export min and max ndfd sga calcs ----
 # export sga min and max calcs for 1-day, 2-day, and 3-day forecasts
@@ -560,7 +560,7 @@ ndfd_lease_calcs_data_raw_no_duplicates <- ndfd_lease_calcs_data_raw %>%
 # length(unique(ndfd_lease_calcs_data_raw$lease_id)) # 493
 # length(unique(lease_data_albers$lease_id)) # 513
 # ignoring some leases that are outside cmus
-  
+
 # final tidy up of lease calcs for database
 ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw_no_duplicates %>%
   dplyr::mutate(day = ymd(datetime_uct),
@@ -580,7 +580,7 @@ ndfd_leases_ignored_list <- lease_data_albers %>%
   dplyr::select(lease_id)
 
 # create dataframe to bind to ndfd_lease_calcs_data_spread
-ndfd_leases_ignored <- data.frame(lease_id = ndfd_leases_ignored_list$lease_id, 
+ndfd_leases_ignored <- data.frame(lease_id = ndfd_leases_ignored_list$lease_id,
                                   day = ndfd_date_uct,
                                   prob_1d_perc = NA,
                                   prob_2d_perc = NA,
@@ -603,7 +603,7 @@ write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_ca
 
 # save ignored leases
 # ndfd_leases_ignored_data <- lease_data_albers %>%
-#   dplyr::anti_join(ndfd_lease_calcs_data_spread, by = "lease_id") 
+#   dplyr::anti_join(ndfd_lease_calcs_data_spread, by = "lease_id")
 
 # check crs
 # st_crs(ndfd_leases_ignored_data)
