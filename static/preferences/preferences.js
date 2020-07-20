@@ -157,40 +157,39 @@ function createLeaseInfoEl(lease) {
               <input type="text" class="form-control" id="lease-${lease.id}-rainfall-threshold" value="${lease.rainfall_thresh_in}" readonly>
             </div>
 
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="lease-enable-notifications" id="lease-${lease.id}-enable-notifications">
-              <label class="form-check-label" for="lease-${lease.id}-enable-notifications">Enable notifications</label>
-            </div>
-
             <div class="notification-options" id="lease-${lease.id}-notification-options">
-              <label>Notification Type</label>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="lease-email" id="lease-${lease.id}-email" ${disabledOrNah}>
+              <label>How do you want to receive notifications?</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="lease-none" id="lease-${lease.id}-none">
+                <label class="form-check-label" for="lease-${lease.id}-none">None</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="lease-email" id="lease-${lease.id}-email">
                 <label class="form-check-label" for="lease-${lease.id}-email">Email</label>
               </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="lease-text" id="lease-${lease.id}-text" ${disabledOrNah}>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="lease-text" id="lease-${lease.id}-text">
                 <label class="form-check-label" for="lease-${lease.id}-text">Text</label>
               </div>
               <small class="form-text text-muted">
-                Choose whether you want to receive email and/or text notifications for this lease.
+                Choose whether you want to receive email and/or text notifications for this lease.  To receive text notifications, you must provide your mobile phone number and phone provider at the top of this page.
               </small>
 
-              <label>Notification Probability</label>
-              <div class="form-check form-check-inline">
+              <label>When do you want to receive notifications?</label>
+              <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}" value="${NOTIFICATION_PROB_PREFS[0]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}">${NOTIFICATION_PROB_PREFS[0]} %</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}">${NOTIFICATION_PROB_PREFS[0]}% or higher probability of closure</label>
               </div>
-              <div class="form-check form-check-inline">
+              <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}" value="${NOTIFICATION_PROB_PREFS[1]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}">${NOTIFICATION_PROB_PREFS[1]} %</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}">${NOTIFICATION_PROB_PREFS[1]}% or higher probability of closure</label>
               </div>
-              <div class="form-check form-check-inline">
+              <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}" value="${NOTIFICATION_PROB_PREFS[2]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]} %</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]}% or higher probability of closure</label>
               </div>
               <small class="form-text text-muted">
-                The minimum probability that you want to be notified at for this lease.
+                This is the minimum closure probability that you will be notified at for this lease.  For example, if you choose "50% or higher", then you will be notified whenever your lease has a 50% or higher chance of being closed.
               </small>
 
             <div style="text-align: right;">
@@ -278,6 +277,16 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
  */
 function onLeaseFormChange(e) {
   const leaseForm = e.target.form;
+  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
+  const emailCheckbox = leaseForm.elements[`lease-email`];
+  const textCheckbox = leaseForm.elements[`lease-text`];
+  if (e.target === noNotificationsCheckbox) {
+    noNotificationsCheckbox.checked = true;
+    emailCheckbox.checked = textCheckbox.checked = false;
+  } else if (e.target === emailCheckbox || e.target === textCheckbox) {
+    noNotificationsCheckbox.checked = !emailCheckbox.checked && !textCheckbox.checked;
+  }
+  // enable cancel and save buttons
   leaseForm.elements['lease-form-cancel-btn'].disabled = false;
   leaseForm.elements['lease-form-save-btn'].disabled = false;
   // enable/disable notification inputs as appropriate
@@ -290,18 +299,12 @@ function onLeaseFormChange(e) {
  * @param {object} leaseForm the form to enable or disable
  */
 function enableDisableLeaseNotificationInputs(leaseForm) {
-  const notificationsCheckbox = leaseForm.elements[`lease-enable-notifications`];
-  const emailCheckbox = leaseForm.elements[`lease-email`];
-  const textCheckbox = leaseForm.elements[`lease-text`];
+  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
   const probRadios = leaseForm.elements[`lease-notification-prob`];
   // enable/disable notification inputs appropriately
-  const notificationsEnabled = notificationsCheckbox.checked;
-  emailCheckbox.disabled = textCheckbox.disabled = !notificationsEnabled;
+  const notificationsEnabled = !noNotificationsCheckbox.checked;
   for (let radio of probRadios) {
     radio.disabled = !notificationsEnabled;
-  }
-  if (!notificationsEnabled) {
-    emailCheckbox.checked = textCheckbox.checked = false;
   }
 }
 
@@ -332,14 +335,14 @@ function buildLeaseForms() {
  */
 function initLeaseForm(lease, ignoreAddingEventListeners) {
   const leaseForm = document.forms[`form-${lease.id}`];
-  const notificationsCheckbox = leaseForm.elements[`lease-enable-notifications`];
+  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
   const probRadios = leaseForm.elements[`lease-notification-prob`];
   const cancelBtn = leaseForm.elements[`lease-form-cancel-btn`];
   const saveBtn = leaseForm.elements[`lease-form-save-btn`];
   // set values for checkboxes
-  notificationsCheckbox.checked = lease.email_pref || lease.text_pref;
+  noNotificationsCheckbox.checked = !lease.email_pref && !lease.text_pref;
   emailCheckbox.checked = lease.email_pref;
   textCheckbox.checked = lease.text_pref;
   // set values for radio buttons
