@@ -49,7 +49,7 @@ sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data
 cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
 
 # path to lease bounds spatial inputs
-lease_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_albers/")
+lease_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds/")
 
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
@@ -62,7 +62,7 @@ ndfd_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ndfd_sc
 ndfd_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/")
 
 # path to ignored lease bounds spatial outputs
-lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_ignored_albers/")
+lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_ignored/")
 
 # path to ignored lease bounds tabular outputs
 lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
@@ -86,7 +86,7 @@ wgs84_proj4 <- "+proj=longlat +datum=WGS84 +no_defs"
 # ndfd_files <- list.files(ndfd_spatial_data_input_path, pattern = "pop12_*") # if there is a pop12 dataset there's a qpf dataset
 
 # find files with 24 hr data (just need one time period to check dates)
-# ndfd_files_sel <- ndfd_files[stringr::str_detect(ndfd_files, "_24hr_")]
+# ndfd_files_sel <- ndfd_files[stringr::str_detect(ndfd_files, "_24hr_nc_albers")]
 
 # pull out dates
 # ndfd_file_dates_str <- gsub("pop12_", "", gsub("00_24hr_nc_albers.tif", "", ndfd_files_sel)) # assumes midnight
@@ -522,8 +522,8 @@ ndfd_sga_calcs_data <- ndfd_cmu_calcs_join_data %>%
                                              valid_period_hrs == 48 ~ "2d_prob",
                                              valid_period_hrs == 72 ~ "3d_prob")) %>%
   tidyr::pivot_wider(id_cols = "grow_area", names_from = valid_period_hrs, values_from = c(min, max)) %>%
-  dplyr::right_join(sga_full_list, by = "grow_area") # fills in missing sgas
-
+  dplyr::right_join(sga_full_list, by = "grow_area") %>% # fills in missing sgas
+  dplyr::select(grow_area_name = grow_area, min_1d_prob, max_1d_prod, min_2d_prob, max_2d_prob, min_3d_prob, max_3d_prob)
 
 # ---- 14. export min and max ndfd sga calcs ----
 # export sga min and max calcs for 1-day, 2-day, and 3-day forecasts
@@ -616,10 +616,10 @@ write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_ca
 # ---- 18. export data for ignored leases ----
 
 # export ignored lease data
-# st_write(ndfd_leases_ignored_data, paste0(lease_spatial_data_output_path, "leases_ignored_albers_", latest_ndfd_date_uct_str, ".shp"))
+# st_write(ndfd_leases_ignored_data, paste0(lease_spatial_data_output_path, "lease_bounds_ignored_", latest_ndfd_date_uct_str, ".shp"))
 
 # export ignored lease data (tabular)
-# write_csv(ndfd_leases_ignored_tab_data, paste0(lease_tabular_data_output_path, "leases_ignored_", latest_ndfd_date_uct_str, ".csv"))
+# write_csv(ndfd_leases_ignored_tab_data, paste0(lease_tabular_data_output_path, "lease_bounds_ignored_", latest_ndfd_date_uct_str, ".csv"))
 
 
 print("finished analyzing forecast data")
