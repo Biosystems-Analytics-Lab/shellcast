@@ -26,8 +26,8 @@ https://pymysql.readthedocs.io/en/latest/
 # %% load libraries
 
 import pandas
-import pymysql
-from sqlalchemy import create_engine
+import pymysql.cursors
+# from sqlalchemy import create_engine
 from config import Config, DevConfig # see config.py file
 
 
@@ -74,14 +74,17 @@ lease_data = pandas.read_csv(lease_data_path)
 # define connection
 # connect to the MySQL database
 # see config.py for these
-connection = pymysql.connect(host = config.DevConfig.HOST,
-                             user = config.Config.DB_USER,
-                             password = config.Config.DB_PASS,
-                             database = config.DevConfig.DB_NAME,
-                             port = config.DevConfig.PORT,
+connection = pymysql.connect(host = DevConfig.HOST,
+                             user = Config.DB_USER,
+                             password = Config.DB_PASS,
+                             db = DevConfig.DB_NAME,
+                             port = DevConfig.PORT,
                              charset = 'utf8mb4',
                              cursorclass = pymysql.cursors.DictCursor)
 # see rest of connection options: https://pymysql.readthedocs.io/en/latest/modules/connections.html?highlight=connect#pymysql.connections.Connection
+
+# not working
+# try: https://cloud.google.com/sql/docs/mysql/connect-app-engine-standard
 
 
 # %% update sga_min_max table
