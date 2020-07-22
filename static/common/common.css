@@ -33,3 +33,23 @@
 .page-main-header {
   text-align: center;
 }
+
+footer {
+  text-align: center;
+  background-color: #c00;
+  color: white;
+  padding: 0.5rem;
+  margin-top: 2rem;
+}
+
+.support-logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.support-logos img {
+  height: 100px;
+  margin: 1rem;
+}
