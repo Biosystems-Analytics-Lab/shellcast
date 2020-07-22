@@ -12,22 +12,24 @@ date created: 20200716
 notes:
 
 help:
-https://github.com/PyMySQL/PyMySQL
-https://pymysql.readthedocs.io/en/latest/
+pymysql help: https://github.com/PyMySQL/PyMySQL
+pymysql docs: https://pymysql.readthedocs.io/en/latest/
+gcp docs: https://cloud.google.com/sql/docs/mysql/connect-app-engine-standard
 
 
 """
 
 # %% to do list
 
-# TODO how do I connect to mysql db from python
+# TODO update leases
 
 
 # %% load libraries
 
 import pandas
-import pymysql.cursors
+import pymysql
 # from sqlalchemy import create_engine
+import sqlalchemy
 from config import Config, DevConfig # see config.py file
 
 
@@ -56,136 +58,124 @@ sga_data = pandas.read_csv(sga_data_path)
 lease_data = pandas.read_csv(lease_data_path)
 
 
-# %% create data engines
+# %% create engine collection (for sqlalchemy)
 
-# create sga data engine
-# sga_db_data = 'mysql+mysqldb://' + 'root' + ':' + '12345' + '@' + 'localhost' + ':3306/' + 'sga' + '?charset=utf8mb4'
-# sga_engine = create_engine(sga_db_data)
-# how do i fill this in?
+# define engine variables
+# see config.py for these
+db_user = Config.DB_USER
+db_pass = Config.DB_PASS
+db_name = DevConfig.DB_NAME
+db_socket_dir = DevConfig.DB_UNIX_SOCKET_PATH_PREFIX
+cloud_sql_connection_name = Config.CLOUD_SQL_INSTANCE_NAME
 
-# create lease data engine
-# lease_db_data = 'mysql+mysqldb://' + 'root' + ':' + '12345' + '@' + 'localhost' + ':3306/' + 'lease' + '?charset=utf8mb4'
-# lease_engine = create_engine(lease_db_data)
-# how do i fill this in?
+# create collection
+collection = sqlalchemy.create_engine(
+    # Equivalent URL:
+    # mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_path>/<cloud_sql_instance_name>
+    sqlalchemy.engine.url.URL(
+        drivername="mysql+pymysql",
+        username=db_user,  # e.g. "my-database-user"
+        password=db_pass,  # e.g. "my-database-password"
+        database=db_name,  # e.g. "my-database-name"
+        query={
+            "unix_socket": "{}/{}".format(
+                db_socket_dir,  # e.g. "/cloudsql"
+                cloud_sql_connection_name)  # i.e "<PROJECT-NAME>:<INSTANCE-REGION>:<INSTANCE-NAME>"
+        }
+    ),
+    # ... Specify additional properties here.
+)
+        
+# collection
+        
 
-
-# %% open connection to MySQL database
+# %% open connection (for pymysql)
 
 # define connection
-# connect to the MySQL database
 # see config.py for these
 connection = pymysql.connect(host = DevConfig.HOST,
                              user = Config.DB_USER,
                              password = Config.DB_PASS,
                              db = DevConfig.DB_NAME,
-                             port = DevConfig.PORT,
                              charset = 'utf8mb4',
                              cursorclass = pymysql.cursors.DictCursor)
-# see rest of connection options: https://pymysql.readthedocs.io/en/latest/modules/connections.html?highlight=connect#pymysql.connections.Connection
+# see rest of connection parameters: https://pymysql.readthedocs.io/en/latest/modules/connections.html?highlight=connect#pymysql.connections.Connection
 
-# not working
-# try: https://cloud.google.com/sql/docs/mysql/connect-app-engine-standard
-
-
-# %% update sga_min_max table
-
-# create cursor
-sga_cursor = connection.cursor()
-# Execute the to_sql for writting DF into SQL
-sga_data.to_sql('sga_min_max', sga_engine, if_exists='append', index=False)
-
-# Execute query
-sga_sql = "SELECT * FROM `sga_min_max`"
-sga_cursor.execute(sga_sql)
-
-# Fetch all the records
-sga_result = sga_cursor.fetchall()
-for i in sga_result:
-    print(i)
-
-engine.dispose()
+# connection
 
 
-# %% update leases table
+# %% update sga min and max table
 
-# find leases that are there
-# SELECT ncdmf_lease_id FROM leases # will give a list of lease ids in the # db
-# need to save this as a python variable
-# then use this python variable to filter out leases from lease_data
-# then only push that lease data to closure_probabilities table
+# add df to mysql db
+sga_data.to_sql('sga_min_max', collection, if_exists = 'append', index = False)
 
-db_leases = ['1-C-89', '9803', '8-C-91']
+# print status
+print("added sga min and max data to mysql db")
 
-lease_data_sel_init = lease_data[lease_data.lease_id.isin(db_leases)]
+# create cursor to print out status of update
+# sga_cursor = connection.cursor()
+# execute query
+# sga_sql = "SELECT * FROM `sga_min_max`"
+# sga_cursor.execute(sga_sql)
+
+# fetch all records and print them
+# sga_result = sga_cursor.fetchall()
+# for i in sga_result:
+#    print(i)
+
+
+# %% update closure_probabilities table
+
+# create a cursor to get current leases in db
+lease_cursor = connection.cursor()
+
+# execute query
+lease_current_sql = "SELECT id, ncdmf_lease_id FROM leases"
+lease_cursor.execute(lease_current_sql)
+
+# save result
+lease_current_result = lease_cursor.fetchall()
+
+# convert to pandas df
+lease_current_df = pandas.DataFrame(lease_current_result)
+
+# get ncdmf lease ids
+lease_ids_current = lease_current_df['ncdmf_lease_id']
+lease_db_ids_current = lease_current_df['id']
+
+# find lease results for leases in db
+lease_data_sel_init = lease_data[lease_data.lease_id.isin(lease_ids_current)]
+# lease_data_sel_init = lease_data[0:3] # for testing
+
+# final cleaned up version of lease_dato push to db
 lease_data_sel = lease_data_sel_init.drop(columns = 'day').reset_index(drop=True)
 
-# this has to go into closure probabilities
+# use lease data to create closure probabilities dataset
+closure_prob_data = pandas.DataFrame({'lease_id' : lease_db_ids_current, # key is actually id column
+                                     'prob_1d_perc' : lease_data_sel['prob_1d_perc'],
+                                     'prob_2d_perc' : lease_data_sel['prob_2d_perc'],
+                                     'prob_3d_perc' : lease_data_sel['prob_3d_perc']})
 
+# add df to mysql db
+closure_prob_data.to_sql('closure_probabilities', collection, if_exists = 'append', index = False)
 
-# %%
+# print status
+print("added lease data to mysql db")
 
-# create cursor
-lease_cursor = connection.cursor()
-# Execute the to_sql for writting DF into SQL
-lease_data_sel.to_sql('leases', lease_engine, if_exists='append', index=False)
+# create cursor to print out status of update
+# lease_cursor = connection.cursor()
+# execute query
+# lease_sql = "SELECT * FROM `leases`"
+# lease_cursor.execute(lease_sql)
 
-# Execute query
-lease_sql = "SELECT * FROM `leases`"
-lease_cursor.execute(lease_sql)
-
-# Fetch all the records
-lease_result = lease_cursor.fetchall()
-for i in lease_result:
-    print(i)
-
-engine.dispose()
-
-
-# %%
-
-
-# help
-# from https://stackoverflow.com/questions/58232218/how-to-insert-a-pandas-dataframe-into-mysql-using-pymysql
-# Create dataframe
-#data = pd.DataFrame({
-#    'book_id':[12345, 12346, 12347],
-#    'title':['Python Programming', 'Learn MySQL', 'Data Science Cookbook'],
-#    'price':[29, 23, 27]
-#})
-#
-#db_data = 'mysql+mysqldb://' + 'root' + ':' + '12345' + '@' + 'localhost' + ':3306/' \
-#       + 'book' + '?charset=utf8mb4'
-#engine = create_engine(db_data)
-#
-## Connect to the database
-#connection = pymysql.connect(host='localhost',
-#                         user='root',
-#                         password='12345',
-#                         db='book')
-#
-## create cursor
-#cursor=connection.cursor()
-## Execute the to_sql for writting DF into SQL
-#data.to_sql('book_details', engine, if_exists='append', index=False)
-#
-## Execute query
-#sql = "SELECT * FROM `book_details`"
-#cursor.execute(sql)
-#
-## Fetch all the records
-#result = cursor.fetchall()
-#for i in result:
+# fetch all records and print them
+# lease_result = lease_cursor.fetchall()
+# for i in lease_result:
 #    print(i)
-#
-#engine.dispose()
 
 
-# alternative
-#data.to_csv("import-data.csv", header=False, index=False, quoting=2, na_rep="\\N")
-#
-#And then load it at once into the SQL table.
-#
-#sql = "LOAD DATA LOCAL INFILE \'import-data.csv\' \
-#    INTO TABLE book_details FIELDS TERMINATED BY \',\' ENCLOSED BY \'\"\' \
-#    (`" +cols + "`)"
-#cursor.execute(sql)
+# %% dispose engine and close connection
+
+collection.dispose()
+connection.close()
+
