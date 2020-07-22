@@ -459,8 +459,7 @@ async function handleSignedInUser(user) {
  * Displays the UI for a signed out user.
  */
 function handleSignedOutUser() {
-  document.getElementById('user-signed-in').style.display = 'none';
-  document.getElementById('user-signed-out').style.display = 'block';
+  window.location.replace('/');
 };
 
 (async () => {
