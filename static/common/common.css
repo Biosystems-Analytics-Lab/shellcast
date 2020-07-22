@@ -15,9 +15,19 @@
   cursor: pointer;
 }
 
+.navbar-brand {
+  padding-bottom: 0;
+}
+
 .navbar-logo {
-  border-radius: 25%;
-  background: white;
+  position: relative;
+  top: -5px;
+}
+
+@media only screen and (min-width: 992px) {
+  .navbar-logo {
+    top: -8px;
+  }
 }
 
 .page-main-header {
