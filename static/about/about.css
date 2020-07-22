@@ -1,0 +1,29 @@
+.team-bio {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.card-title {
+  margin-bottom: 0;
+}
+
+.website-link {
+  margin-bottom: 0.75rem;
+}
+
+.bio-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.bio-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.container {
+  max-width: 800px;
+}
