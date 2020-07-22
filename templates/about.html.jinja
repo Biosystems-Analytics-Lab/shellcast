@@ -2,6 +2,125 @@
 
 {% block title %}About - ShellCast{% endblock %}
 
+{% block additional_head %}
+  <!-- Custom CSS -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='about/about.css') }}">
+{% endblock %}
+
 {% block content %}
-  <h1 class="page-main-header">About</h1>
+  <div class="container">
+    <h1>What is ShellCast?</h1>
+    <p>
+      ShellCast is a forecast tool that helps North Carolina shellfish
+      growers anticipate temporary harvest area closures due to excess rainfall
+      and make data-driven management decisions. Forecast information on temporary
+      closures is helpful because closures impact business: shellfish growers cannot
+      harvest shellfish when a temporary closure is in effect.
+    <p>
+    <p>
+      ShellCast only offers forecasts of the probability of a growing area
+      temporarily closing, and does not provide information on closures currently
+      in effect. For more information on active closures, refer to proclamations
+      posted by the
+      <a href="http://portal.ncdenr.org/web/mf/proclamations-polluted-areas">North Carolina Division of Marine Fisheries</a>
+      or the <a href="https://ncdenr.maps.arcgis.com/apps/webappviewer/index.html?id=5759aa19d7484a3b82a8e440fba643aa">Shellfish Sanitation Temporary Closure Public Viewer</a>.
+    </p>
+
+    <h1>Why use ShellCast?</h1>
+
+    <p>Once they sign up and log into their ShellCast account, shellfish growers can add their lease sites and view forecast information for each of their leases on the ShellCat map page. They can also see forecasts for nearby growing areas on this same map. The forecasts provide estimates on the probability (i.e., % chance) that a lease site or growing area will temporarily close in the next 1-, 2-, or 3-days due to excess rainfall.</p>
+
+    <p>While adding their leases to ShellCast, shellfish growers can also sign up to receive email or text message notifications if their shellfish lease sites are likely to be temporarily closed in the next 1-, 2-, or 3-days.</p>
+
+    <p>ShellCast is free to use, but carrier messaging rates may apply for those who subscribe to email or text notifications.</p>
+
+    <h1>How does ShellCast work?</h1>
+    <p>Each day, we combine National Weather Service rainfall forecasts gathered through the <a href="https://climate.ncsu.edu/">North Carolina State Climate Office</a> with shellfish harvest area and grower lease information from the <a href="https://bit.ly/3e5mzxl">North Carolina Division of Marine Fisheries</a>
+    to calculate probabilities of closure for each lease registered in ShellCast. We calculate the probability of closure using rainfall thresholds applied by the Office of Shellfish Sanitation and Recreational Water Quality. Shellfish growers using ShellCast can select a threshold above which they would like to receive email or text message notifications - for example, if they select a threshold of 75%, they will receive email or text notifications when one of their leases has a 75% or more chance of closing within the next 1 to 3 days.</p>
+
+    <p>ShellCast is part of an ongoing research project led by NC State that focuses on improving the accuracy of rainfall forecasts for coastal North Carolina. Results of this study will be used to improve the ShellCast algorithm.</p>
+
+    <h1>Questions and Feedback</h1>
+    <p>If you have any questions for us or feedback regarding the ShellCast web application, please email us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.</p>
+
+    <h1>ShellCast Team</h1>
+    {# Sheila Saia #}
+    <div class="card mb-3">
+      <div class="row team-bio">
+        <div class="col-md-4 bio-image-container">
+          <img src="{{ url_for('static', filename='img/sheila_saia.jpg') }}" class="bio-image" alt="Sheila Saia">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Sheila Saia, Ph.D., Data Scientist</h5>
+            <h5 class="website-link"><a href="https://sheilasaia.rbind.io/">sheilasaia.rbind.io</a></h5>
+            <p class="card-text">
+              Sheila is a postdoctoral researcher in the Biological and Agricultural
+              Engineering Department at NC State. She received her BS degree in Biological
+              Engineering from Binghamton University and MS and PhD degrees in Biological and
+              Environmental Engineering from Cornell University. Clams are her favorite
+              shellfish, especially in chowder or on top of linguini.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Stanton Parham #}
+    <div class="card mb-3">
+      <div class="row team-bio">
+        <div class="col-md-4 bio-image-container">
+          <img src="{{ url_for('static', filename='img/stanton_parham.jpg') }}" class="bio-image" alt="Stanton Parham">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Stanton Parham, Web Developer</h5>
+            <h5 class="website-link"><a href="https://stparham.com">stparham.com</a></h5>
+            <p class="card-text">
+              Stanton is a Master’s student in the Department of Computer Science at NC State.
+              He received his BS degree in Computer Science and BA degree in International Studies
+              from North Carolina State University.  Shrimp are his favorite shellfish, especially
+              when added to jambalaya.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Natalie Nelson #}
+    <div class="card mb-3">
+      <div class="row team-bio">
+        <div class="col-md-4 bio-image-container">
+          <img src="{{ url_for('static', filename='img/natalie_nelson.jpg') }}" class="bio-image" alt="Natalie Nelson">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Natalie Nelson, Ph.D., Principal Investigator</h5>
+            <h5 class="website-link"><a href="https://nelson.rbind.io/">nelson.rbind.io</a></h5>
+            <p class="card-text">
+              Natalie is an Assistant Professor in the Biological and Agricultural Engineering
+              Department at NC State. She received her degrees in Agricultural and Biological
+              Engineering from the University of Florida with a focus on predictive modeling and
+              water quality. Oysters are her favorite shellfish, especially on the half shell
+              with mignonette sauce.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <h1>ShellCast Support</h1>
+    <p>ShellCast is funded by <a href="https://ncseagrant.ncsu.edu/">North Carolina Sea Grant</a>.</p>
+
+    <p>
+      We would also like to thank collaborators at the
+      <a href="http://portal.ncdenr.org/web/mf/">North Carolina Division of Marine Fisheries</a>, National Weather Service, 
+      <a href="https://climate.ncsu.edu/">North Carolina State Climate Office</a>, North Carolina Shellfish Growers Association,
+      <a href="https://oit.ncsu.edu/about/units/occ/">Outreach, Communications, and Consulting (OCC) Unit of the NC State Office of Information Technology Office</a>,
+      <a href="https://projects.ncsu.edu/hpc/main.php">NC State High Performance Computing (HPC) Services</a>, and
+      <a href="https://vcl.ncsu.edu/">NC State Virtual Computing Lab (VCL) Services</a>. We are grateful for help from
+      Everette Allen, Walt Turner, and Crystal Tenan of OCC, Lisa Lowe of HPC, and Aaron Peeler, and Josh Thompson of VCL.
+    </p>
+  </div>
 {% endblock %}
