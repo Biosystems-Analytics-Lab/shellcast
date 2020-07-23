@@ -36,8 +36,8 @@ from config import Config, DevConfig # see config.py file
 # %% set paths here
 
 # base path to data
-# data_base_path = ".../analysis/data/" # set this and uncomment!
-data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
+data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
+# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
 
 
 # %% use base path
@@ -85,9 +85,9 @@ collection = sqlalchemy.create_engine(
     ),
     # ... Specify additional properties here.
 )
-        
+
 # collection
-        
+
 
 # %% open connection (for pymysql)
 
@@ -178,4 +178,3 @@ print("added lease data to mysql db")
 
 collection.dispose()
 connection.close()
-

@@ -8,7 +8,7 @@
 
 # ---- notes ----
 # notes:
- 
+
 # raw data column metadata
 # ProductNbr - lease id
 # Assoc_ID - another id associated with the lease id (we don't need to worry about this)
@@ -47,8 +47,8 @@ for (package in packages) {
 
 # ---- 2. define base paths ----
 # base path to data
-# data_base_path = "...analysis/data/" # set this and uncomment!
-data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/" 
+data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
+# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/" 
 
 
 # ---- 3. defining paths and projections ----
@@ -225,4 +225,3 @@ st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_pat
 # write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/leases_centroids_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
 write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84.geojson"))
 write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/leases_centroids_wgs84.geojson"))
-

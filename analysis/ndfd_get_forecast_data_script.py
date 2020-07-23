@@ -43,8 +43,8 @@ from csv import writer
 analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
 
 # base path to data
-# data_base_path = ".../analysis/data/" # set this and uncomment!
-data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
+data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
+# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
 
 
 # %% use set paths
@@ -148,7 +148,7 @@ if (len(temp_data) > 0):
         # export data availability (i.e., append new row to data_log.csv)
         # data_availability_path = tabular_output_path + "data_available_" + temp_datetime_ymdh_str +  ".csv"
         # data_available_pd.to_csv(data_availability_path, index = False)
-        data_log_path = tabular_output_path + "data_log.csv" 
+        data_log_path = tabular_output_path + "data_log.csv"
         append_list_as_row(data_log_path, temp_data_log)
 
         # print status
