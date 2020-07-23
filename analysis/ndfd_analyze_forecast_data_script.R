@@ -34,8 +34,8 @@ for (package in packages) {
 
 # ---- 2. define base paths ----
 # base path to data
-# data_base_path = "...analysis/data/" # set this and uncomment!
-data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
+data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
+# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
 
 
 # ---- 3. use base paths and define projections ----
