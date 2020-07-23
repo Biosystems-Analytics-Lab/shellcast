@@ -61,7 +61,8 @@ def getLeaseClosureProbabilities(user):
       probDict['prob_2d_perc'] = closureProb.prob_2d_perc
       probDict['prob_3d_perc'] = closureProb.prob_3d_perc
     return probDict
-  return jsonify(list(map(getLeaseProbForLease, leases)))
+  leaseList = list(map(getLeaseProbForLease, leases))
+  return jsonify(leaseList)
 
 @api.route('/growAreaProbs')
 def getGrowAreaProbabilities():
