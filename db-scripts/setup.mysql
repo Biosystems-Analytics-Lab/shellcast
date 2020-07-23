@@ -31,9 +31,6 @@ CREATE TABLE `leases` (
 CREATE TABLE `closure_probabilities` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `lease_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `rain_forecast_1d_in` decimal(3, 1) NULL,
-  `rain_forecast_2d_in` decimal(3, 1) NULL,
-  `rain_forecast_3d_in` decimal(3, 1) NULL,
   `prob_1d_perc` tinyint(3) NULL,
   `prob_2d_perc` tinyint(3) NULL,
   `prob_3d_perc` tinyint(3) NULL,

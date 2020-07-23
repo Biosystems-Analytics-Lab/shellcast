@@ -16,7 +16,7 @@ def test_valid(dbSession):
   dbSession.add(lease)
   dbSession.commit()
 
-  prob = ClosureProbability(lease_id=lease.id, rain_forecast_1d_in=2, rain_forecast_2d_in=3.2, rain_forecast_3d_in=4.5, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80)
+  prob = ClosureProbability(lease_id=lease.id, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80)
   
   dbSession.add(prob)
   dbSession.commit()

@@ -44,19 +44,16 @@ def test_valid(dbSession):
   assert res[4].lease_id == probs[4].lease_id
 
 def test_asDict():
-  prob = ClosureProbability(lease_id=1, rain_forecast_1d_in=2, rain_forecast_2d_in=3.2, rain_forecast_3d_in=4.5, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80)
+  prob = ClosureProbability(lease_id=1, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80)
 
   dictForm = prob.asDict()
 
-  assert dictForm['rain_forecast_1d_in'] == prob.rain_forecast_1d_in
-  assert dictForm['rain_forecast_2d_in'] == prob.rain_forecast_2d_in
-  assert dictForm['rain_forecast_3d_in'] == prob.rain_forecast_3d_in
   assert dictForm['prob_1d_perc'] == prob.prob_1d_perc
   assert dictForm['prob_2d_perc'] == prob.prob_2d_perc
   assert dictForm['prob_3d_perc'] == prob.prob_3d_perc
 
 def test_repr():
-  prob = ClosureProbability(lease_id=1, rain_forecast_1d_in=2, rain_forecast_2d_in=3.2, rain_forecast_3d_in=4.5, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80)
+  prob = ClosureProbability(lease_id=1, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80)
 
   stringForm = prob.__repr__()
 
