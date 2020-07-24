@@ -4,7 +4,7 @@ from models.Notification import Notification
 class ClosureProbability(db.Model):
   __tablename__ = 'closure_probabilities'
   id = db.Column(db.Integer, primary_key=True)
-  lease_id = db.Column(db.Integer, db.ForeignKey('leases.id'))
+  lease_id = db.Column(db.Integer, db.ForeignKey('user_leases.id'))
   prob_1d_perc = db.Column(db.Integer)
   prob_2d_perc = db.Column(db.Integer)
   prob_3d_perc = db.Column(db.Integer)

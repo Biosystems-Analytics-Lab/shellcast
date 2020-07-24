@@ -4,7 +4,7 @@ from models.ClosureProbability import ClosureProbability
 from sqlalchemy.sql import expression
 
 class Lease(db.Model):
-  __tablename__ = 'leases'
+  __tablename__ = 'user_leases'
 
   id = db.Column(db.Integer, primary_key=True)
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
