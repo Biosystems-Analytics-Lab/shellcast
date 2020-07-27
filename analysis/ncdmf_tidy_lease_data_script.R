@@ -208,9 +208,16 @@ lease_data_wgs94 <- lease_data_albers_join %>%
 lease_data_centroid_wgs94 <- lease_data_centroids_albers_final %>%
   st_transform(crs = wgs84_epsg)
 
+# keep a simplified copy of the centroids that can be pushed to the mysql db
+lease_data_centroid_wgs94_simple <- lease_data_centroid_wgs94 %>%
+  select(ncdmf_lease_id = lease_id,
+         grow_area_name = grow_area,
+         rainfall_thresh_in = rain_in)
+
 # project data to geojson file type (need this for the web app)
 lease_data_wgs94_geojson <- sf_geojson(lease_data_wgs94, atomise = FALSE, simplify = TRUE, digits = 5)
 lease_data_centroid_wgs94_geojson <- sf_geojson(lease_data_centroid_wgs94, atomise = FALSE, simplify = TRUE, digits = 5)
+lease_data_centroid_wgs94_simple_geojson <- sf_geojson(lease_data_centroid_wgs94_simple, atomise = FALSE, simplify = TRUE, digits = 5)
 
 
 # ---- 9. export data ----
@@ -224,4 +231,5 @@ st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_pat
 # write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
 # write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/leases_centroids_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
 write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84.geojson"))
-write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/leases_centroids_wgs84.geojson"))
+write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_wgs84.geojson"))
+write_file(lease_data_centroid_wgs94_simple_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_simple_wgs84.geojson"))
