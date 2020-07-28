@@ -13,7 +13,10 @@
 {% endblock %}
 
 {% block content %}
-  <p id="disclaimer">Disclaimer: The predictions shown within this app are in no way indicative of whether or not your lease will be closed.  Please use this only as a planning tool and seek out proper closure information from {blank}.</p>
+  <div class="container">
+    <p id="disclaimer">Disclaimer: The predictions shown within this app are in no way indicative of whether or not your lease will be closed.  Please use this only as a planning tool and seek out proper closure information from {blank}.</p>
+    <p>Last updated: {{lastUpdated}} ({{hoursAgo}} hours ago)</p>
+  </div>
 
   <div id="closure-map"></div>
 
