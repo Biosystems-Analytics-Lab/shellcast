@@ -1,48 +1,53 @@
-.content {
-  height: 100%;
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: auto 50vh auto;
-  grid-template-areas:
-    "d d d d d d"
-    "m m m m m m"
-    "t t t t t t";
-}
-
 #disclaimer {
-  grid-area: d;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #closure-map {
-  grid-area: m;
+  height: 70vh;
 }
 
 #closure-tables {
-  grid-area: t;
-
   display: flex;
   flex-direction: column;
 }
 
-.fixed-table-container.fixed-height {
+#lease-table-div {
+  grid-area: l;
+}
+
+#area-table-div {
+  grid-area: a;
+}
+
+#lease-table-div .fixed-table-container.fixed-height {
+  height: 20vh !important;
+}
+
+#area-table-div .fixed-table-container.fixed-height {
   height: 30vh !important;
+}
+
+#lease-table-explanation {
+  grid-area: il;
+  padding: 10px;
+}
+
+#area-table-explanation {
+  grid-area: ia;
+  padding: 10px;
 }
 
 /* Changes for wide screens */
 @media only screen and (min-width: 992px) {
-  .content {
-    /* Template area that mimics wireframes. */
-    /* grid-template-rows: 50vh auto;
+  #closure-tables {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
     grid-template-areas:
-      "d m m m m m"
-      "t t t t t t"; */
-    
-    /* Template area that shows map and table side-by-side. */
-    height: calc(100vh - 56px); /* full height minus the height of the navbar */
-    grid-template-rows: auto 1fr;
-    grid-template-areas:
-      "d d d d d d"
-      "m m m t t t";
+      "il l l"
+      "ia a a";
   }
 }
