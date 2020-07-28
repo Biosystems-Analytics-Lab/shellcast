@@ -36,7 +36,7 @@
 
 footer {
   text-align: center;
-  background-color: #c00;
+  background-color: #009fd7;
   color: white;
   padding: 0.5rem;
   margin-top: 2rem;
@@ -45,11 +45,42 @@ footer {
 .support-logos {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   flex-wrap: wrap;
+}
+
+.support-logos a {
+  margin: 1rem;
 }
 
 .support-logos img {
   height: 100px;
-  margin: 1rem;
+}
+
+/* Bootstrap overrides */
+.bg-primary {
+  background-color: #009fd7!important;
+}
+
+a, .btn-link {
+  color: #0070d7;
+}
+
+a:hover, .btn-link:hover {
+  color: #009fd7;
+}
+
+.btn-primary, .btn-primary:disabled {
+  background-color: #009fd7;
+  border-color: #009fd7;
+}
+
+.btn-primary:hover {
+  background-color: #0070d7;
+  border-color: #0070d7;
+}
+
+.dropdown-item:active {
+  background-color: #009fd7;
+  color: white;
 }
