@@ -11,6 +11,11 @@
   margin-bottom: 0.75rem;
 }
 
+.infographic {
+  width: 100%;
+  height: 100%;
+}
+
 .bio-image-container {
   display: flex;
   align-items: center;
