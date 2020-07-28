@@ -11,8 +11,8 @@ class SGAMinMaxProbability(db.Model):
   max_2d_prob = db.Column(db.Integer)
   min_3d_prob = db.Column(db.Integer)
   max_3d_prob = db.Column(db.Integer)
-  created = db.Column(db.DateTime)
-  updated = db.Column(db.DateTime)
+  created = db.Column(db.DateTime, server_default=db.func.now())
+  updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
   def asDict(self):
     return {
