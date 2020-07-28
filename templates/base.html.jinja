@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <title>{% block title %}ShellCast{% endblock %}</title>
-  <link rel="icon" type="image/x-icon" href="https://www.ncsu.edu/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icon/favicon.ico') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+
+  <meta name="description" content="Temporary closure forecasts for NC shellfish waters">
+  <meta name="keywords" content="shellfish,rainfall,conditionally approved,growing area,waters,harvest,temporary,closure,closed,north carolina,nc,nc state,ncsu,biosystems,analytics">
 
 {% block ncsu_bootstrap_css %}
   {# <!-- NC State Bootstrap CSS --> #}
