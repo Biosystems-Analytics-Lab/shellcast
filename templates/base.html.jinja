@@ -67,7 +67,7 @@
 {# <!-- Navigation --> #}
 <nav class="navbar navbar-expand-lg" id="navigation-bar">
   <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">
-    <img src="{{ url_for('static', filename='img/shellcast_logo.png') }}" height="60" width="205" class="navbar-logo" alt="ShellCast logo" loading="lazy">
+    <img src="{{ url_for('static', filename='img/shellcast_logo.png') }}" alt="ShellCast logo" class="navbar-logo"  loading="lazy" height="60" width="205">
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -110,8 +110,8 @@
 <footer>
   <p>ShellCast is supported by</p>
   <div class="support-logos">
-    <a href="https://ncseagrant.ncsu.edu/"><img src="{{ url_for('static', filename='img/nc_sea_grant_logo.png') }}" alt="NC Sea Grant" loading="lazy"></a>
-    <a href="https://www.bae.ncsu.edu/"><img src="{{ url_for('static', filename='img/nc_state_bae_logo.png') }}" alt="NC State Biological and Agricultural Engineering" loading="lazy"></a>
+    <a href="https://ncseagrant.ncsu.edu/"><img src="{{ url_for('static', filename='img/nc_sea_grant_logo.png') }}" alt="NC Sea Grant" loading="lazy" height="100"></a>
+    <a href="https://www.bae.ncsu.edu/"><img src="{{ url_for('static', filename='img/nc_state_bae_logo.png') }}" alt="NC State Biological and Agricultural Engineering" loading="lazy" height="100"></a>
   </div>
 
   <p>Contact us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a></p>
