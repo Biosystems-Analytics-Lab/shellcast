@@ -42,6 +42,14 @@ footer {
   margin-top: 2rem;
 }
 
+footer a {
+  color: white;
+}
+
+footer a:hover {
+  color: #0070d7;
+}
+
 .support-logos {
   display: flex;
   align-items: center;
