@@ -23,8 +23,10 @@
 {% block navigation %}{% endblock %}
 
 {% block content %}
-  <h1>NCSU ShellCast</h1>
-  <p>Creating an account with ShellCast allows you to add your own lease information and receive personalized notifications about potential lease closures.</p>
-  <p>Please sign in to the ShellCast application using one of the authentication options below.</p>
-  <div id="firebaseui-container"></div>
+  <div class="container">
+    <img src="{{ url_for('static', filename='img/shellcast_logo.png') }}" height="80" width="273" alt="ShellCast logo" loading="lazy">
+    <p>Creating an account with ShellCast allows you to add your own lease information and receive personalized notifications about potential lease closures.</p>
+    <p>Please sign in to the ShellCast application using one of the authentication options below.</p>
+    <div id="firebaseui-container"></div>
+  </div>
 {% endblock %}

@@ -66,6 +66,10 @@ footer a:hover {
 }
 
 /* Bootstrap overrides */
+.container {
+  max-width: 800px;
+}
+
 .bg-primary {
   background-color: #009fd7!important;
 }
