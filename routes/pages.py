@@ -12,13 +12,16 @@ pages = Blueprint('', __name__)
 @pages.route('/')
 def indexPage():
   lastGrowAreaProb = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).first()
-  lastUpdatedTimeUTC = lastGrowAreaProb.updated.replace(tzinfo=timezone.utc)
-  curTimeUTC = datetime.now(timezone.utc)
-  duration = curTimeUTC - lastUpdatedTimeUTC
-  durationSecs = duration.total_seconds()
-  durationHours = int(divmod(durationSecs, SECONDS_IN_HOURS)[0])
-  lastUpdatedTimeESTFormatted = lastUpdatedTimeUTC.astimezone(pytz.timezone('US/Eastern')).strftime("%B %d, %Y %I:%M %p") # ex: July 24, 2020 04:14 PM
-  return render_template('index.html.jinja', mapsAPIKey=current_app.config['MAPS_API_KEY'], lastUpdated=lastUpdatedTimeESTFormatted, hoursAgo=durationHours)
+  if (lastGrowAreaProb):
+    lastUpdatedTimeUTC = lastGrowAreaProb.updated.replace(tzinfo=timezone.utc)
+    curTimeUTC = datetime.now(timezone.utc)
+    duration = curTimeUTC - lastUpdatedTimeUTC
+    durationSecs = duration.total_seconds()
+    durationHours = int(divmod(durationSecs, SECONDS_IN_HOURS)[0])
+    lastUpdatedTimeESTFormatted = lastUpdatedTimeUTC.astimezone(pytz.timezone('US/Eastern')).strftime("%B %d, %Y %I:%M %p") # ex: July 24, 2020 04:14 PM
+    return render_template('index.html.jinja', mapsAPIKey=current_app.config['MAPS_API_KEY'], lastUpdated=lastUpdatedTimeESTFormatted, hoursAgo=durationHours)
+  else:
+    return render_template('index.html.jinja', mapsAPIKey=current_app.config['MAPS_API_KEY'], lastUpdated="No calculations run yet", hoursAgo="?")
 
 @pages.route('/about')
 def aboutPage():
