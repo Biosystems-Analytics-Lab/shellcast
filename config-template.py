@@ -55,6 +55,7 @@ class TestConfig(Config):
   """
   # whether or not to setup Flask in testing mode
   TESTING = True
-  # various configuration options for SQLAlchemy
-  SQLALCHEMY_ENGINE_OPTIONS = {}
-  SQLALCHEMY_DATABASE_URI = 'sqlite://'
+  # the name of the database
+  DB_NAME = 'shellcast_testing'
+  # the path prefix to the location of the Unix socket used to connect to the Cloud SQL database
+  DB_UNIX_SOCKET_PATH_PREFIX = './cloudsql/'
