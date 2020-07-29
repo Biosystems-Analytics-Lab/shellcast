@@ -144,7 +144,7 @@ function createLeaseInfoEl(lease) {
           <form class="needs-validation mb-4" id="form-${lease.id}">
             <div class="mb-3 inline-text-input">
               <label for="lease-${lease.id}-lease-ncdmf-id">Lease ID</label>
-              <input type="text" class="form-control" id="lease-${lease.id}-lease-ncdmf-id" value="${lease.ncdmf_lease_id}" readonly>
+              <input type="text" class="form-control" id="lease-${lease.id}-lease-ncdmf-id" value="${lease.ncdmf_lease_id}" name="lease-ncdmf-id" readonly>
             </div>
 
             <div class="mb-3">
@@ -192,6 +192,12 @@ function createLeaseInfoEl(lease) {
                 This is the minimum closure probability that you will be notified at for this lease.  For example, if you choose "50% or higher", then you will be notified whenever your lease has a 50% or higher chance of being closed.
               </small>
 
+              <label for="lease-${lease.id}-sample-notification">Example notification</label>
+              <textarea class="form-control" id="lease-${lease.id}-sample-notification" name="sample-notification" rows="4" readonly></textarea>
+              <small class="form-text text-muted">
+                This is an example of a notification you might receive for this lease.
+              </small>
+
             <div style="text-align: right;">
               <button class="btn btn-primary" type="button" name="lease-form-cancel-btn" disabled>Cancel</button>
               <button class="btn btn-primary" type="button" name="lease-form-save-btn" disabled>Save</button>
@@ -202,6 +208,22 @@ function createLeaseInfoEl(lease) {
     </div>
   `;
   return LEASE_INFO_EL;
+}
+
+function generateExampleNotification(leaseForm) {
+  const ncdmfId = leaseForm.elements['lease-ncdmf-id'].value;
+  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
+  if (noNotificationsCheckbox.checked) {
+    return '<<You will not receive any notifications for this lease.>>'
+  }
+  const probRadios = leaseForm.elements[`lease-notification-prob`];
+  let selectedProb;
+  for (let radio of probRadios) {
+    if (radio.checked) {
+      selectedProb = Number(radio.value);
+    }
+  }
+  return `Lease: ${ncdmfId}\n  1-day: ${selectedProb + 10}%\n  2-day: ${selectedProb + 13}%\n  3-day: ${selectedProb + 19}%`;
 }
 
 /**
@@ -291,6 +313,8 @@ function onLeaseFormChange(e) {
   leaseForm.elements['lease-form-save-btn'].disabled = false;
   // enable/disable notification inputs as appropriate
   enableDisableLeaseNotificationInputs(leaseForm);
+  // show sample notification
+  leaseForm.elements['sample-notification'].value = generateExampleNotification(leaseForm);
 }
 
 /**
@@ -357,6 +381,9 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   // disable cancel and save buttons
   cancelBtn.disabled = true;
   saveBtn.disabled = true;
+
+  // show sample notification
+  leaseForm.elements['sample-notification'].value = generateExampleNotification(leaseForm);
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
