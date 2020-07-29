@@ -1,8 +1,6 @@
 import pytest
 
 from models.User import User
-from models.Lease import Lease
-from models.ClosureProbability import ClosureProbability
 
 from firebase_admin import auth
 
