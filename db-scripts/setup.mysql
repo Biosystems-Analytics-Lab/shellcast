@@ -18,7 +18,7 @@ CREATE TABLE `user_leases` (
   `ncdmf_lease_id` varchar(20) NULL,
   `grow_area_name` varchar(3) NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
-  `geo_boundary` json NULL,
+  `geometry` point NULL,
   `email_pref` boolean DEFAULT false,
   `text_pref` boolean DEFAULT false,
   `prob_pref` tinyint(3) DEFAULT 75,
@@ -34,7 +34,7 @@ CREATE TABLE `ncdmf_leases` (
   `ncdmf_lease_id` varchar(20) NULL,
   `grow_area_name` varchar(3) NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
-  `geo_boundary` json NULL,
+  `geometry` point NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
