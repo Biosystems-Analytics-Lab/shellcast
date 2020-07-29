@@ -3,14 +3,7 @@ import pytest
 from models.Lease import Lease
 
 def test_Lease(dbSession):
-  geoJson = {
-    'type': 'Feature',
-    'geometry': {
-      'type': 'Point',
-      'coordinates': [-75.985285, 35.803644] # lon, lat
-    }
-  }
-  validLease1 = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, prob_pref=50, geo_boundary=geoJson)
+  validLease1 = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, prob_pref=50, geometry=(35.803644, -75.985285))
 
   dbSession.add(validLease1)
   dbSession.commit()
@@ -26,17 +19,10 @@ def test_Lease(dbSession):
   assert res[0].email_pref == False
   assert res[0].text_pref == False
   assert res[0].prob_pref == validLease1.prob_pref
-  assert res[0].geo_boundary == validLease1.geo_boundary
+  assert res[0].geometry == validLease1.geometry
 
-def test_asDict(genRandomString):
-  geoJson = {
-    'type': 'Feature',
-    'geometry': {
-      'type': 'Point',
-      'coordinates': [-75.985285, 35.803644] # lon, lat
-    }
-  }
-  lease = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, email_pref=True, text_pref=True, prob_pref=50, geo_boundary=geoJson)
+def test_asDict():
+  lease = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, email_pref=True, text_pref=True, prob_pref=50, geometry=(35.803644, -75.985285))
 
   dictForm = lease.asDict()
 
@@ -46,9 +32,9 @@ def test_asDict(genRandomString):
   assert dictForm['email_pref'] == lease.email_pref
   assert dictForm['text_pref'] == lease.text_pref
   assert dictForm['prob_pref'] == lease.prob_pref
-  assert dictForm['geo_boundary'] == lease.geo_boundary
+  assert dictForm['geometry'] == lease.geometry
 
-def test_repr(genRandomString):
+def test_repr():
   lease = Lease(user_id=9, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5)
 
   stringForm = lease.__repr__()

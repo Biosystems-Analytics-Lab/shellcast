@@ -14,10 +14,10 @@ NUMBER_OF_GROW_AREAS = 73
 
 # just a temporary filler for the Mike Griffin API
 NCDMF_LEASES = [
-  {'ncdmf_lease_id': '4-C-89', 'grow_area_name': 'A01', 'rainfall_thresh_in': 1.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.864693, 36.303915]}}},
-  {'ncdmf_lease_id': '819401', 'grow_area_name': 'B02', 'rainfall_thresh_in': 2.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.927864, 36.164344]}}},
-  {'ncdmf_lease_id': '82-389B', 'grow_area_name': 'C03', 'rainfall_thresh_in': 3.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.754829, 35.868877]}}},
-  {'ncdmf_lease_id': '123456', 'grow_area_name': 'D04', 'rainfall_thresh_in': 4.5, 'geo_boundary': {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-77.567573, 34.404497]}}}
+  {'ncdmf_lease_id': '4-C-89', 'grow_area_name': 'A01', 'rainfall_thresh_in': 1.5, 'geometry': (36.303915, -75.864693)},
+  {'ncdmf_lease_id': '819401', 'grow_area_name': 'B02', 'rainfall_thresh_in': 2.5, 'geometry': (36.164344, -75.927864)},
+  {'ncdmf_lease_id': '82-389B', 'grow_area_name': 'C03', 'rainfall_thresh_in': 3.5, 'geometry': (35.868877, -75.754829)},
+  {'ncdmf_lease_id': '123456', 'grow_area_name': 'D04', 'rainfall_thresh_in': 4.5, 'geometry': (34.404497, -77.567573)}
 ]
 
 api = Blueprint('api', __name__)
@@ -54,7 +54,7 @@ def getLeaseClosureProbabilities(user):
   """
   leases = db.session.query(Lease).filter_by(user_id=user.id).all()
   def getLeaseProbForLease(lease):
-    probDict = {'ncdmf_lease_id': lease.ncdmf_lease_id, 'geo_boundary': lease.geo_boundary}
+    probDict = {'ncdmf_lease_id': lease.ncdmf_lease_id, 'geometry': lease.geometry}
     closureProb = db.session.query(ClosureProbability).filter_by(lease_id=lease.id).first()
     if (closureProb):
       probDict['prob_1d_perc'] = closureProb.prob_1d_perc
@@ -94,7 +94,7 @@ def userLeases(user):
       'ncdmf_lease_id': lease.ncdmf_lease_id,
       'grow_area_name': lease.grow_area_name,
       'rainfall_thresh_in': lease.rainfall_thresh_in,
-      'geo_boundary': lease.geo_boundary,
+      'geometry': lease.geometry,
       'email_pref': lease.email_pref,
       'text_pref': lease.text_pref,
       'prob_pref': lease.prob_pref

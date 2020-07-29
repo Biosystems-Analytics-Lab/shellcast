@@ -18,9 +18,9 @@ def test_get_leases(client, dbSession, addMockFbUser):
 
   # add some leases to the database
   leases = [
-    Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geo_boundary={"type": "Feature", "geometry": {"type": "Point", "coordinates": [-77.567573, 34.404497]}}),
-    Lease(user_id=user.id, ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5, geo_boundary={"type": "Feature", "geometry": {"type": "Point", "coordinates": [-76.523872, 35.207332]}}),
-    Lease(user_id=user.id, ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5, geo_boundary={"type": "Feature", "geometry": {"type": "Point", "coordinates": [-75.927864, 36.164344]}})
+    Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geometry=(34.404497, -77.567573)),
+    Lease(user_id=user.id, ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5, geometry=(35.207332, -76.523872)),
+    Lease(user_id=user.id, ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5, geometry=(36.164344, -75.927864))
   ]
 
   dbSession.add_all(leases)
@@ -35,15 +35,15 @@ def test_get_leases(client, dbSession, addMockFbUser):
   assert json[0]['ncdmf_lease_id'] == '45678'
   assert json[0]['grow_area_name'] == 'A01'
   assert json[0]['rainfall_thresh_in'] == 1.5
-  assert json[0]['geo_boundary'] == {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-77.567573, 34.404497]}}
+  assert json[0]['geometry'] == [34.404497, -77.567573]
   assert json[1]['ncdmf_lease_id'] == '12345'
   assert json[1]['grow_area_name'] == 'B02'
   assert json[1]['rainfall_thresh_in'] == 2.5
-  assert json[1]['geo_boundary'] == {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-76.523872, 35.207332]}}
+  assert json[1]['geometry'] == [35.207332, -76.523872]
   assert json[2]['ncdmf_lease_id'] == '82945'
   assert json[2]['grow_area_name'] == 'C01'
   assert json[2]['rainfall_thresh_in'] == 1.5
-  assert json[2]['geo_boundary'] == {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-75.927864, 36.164344]}}
+  assert json[2]['geometry'] == [36.164344, -75.927864]
 
 def test_add_lease(client, dbSession, addMockFbUser):
   # add a mock Firebase user
@@ -56,7 +56,7 @@ def test_add_lease(client, dbSession, addMockFbUser):
   dbSession.commit()
 
   # add one existing lease for the user
-  lease = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geo_boundary={"type": "Feature", "geometry": {"type": "Point", "coordinates": [-77.567573, 34.404497]}})
+  lease = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geometry=(34.404497, -77.567573))
 
   dbSession.add(lease)
   dbSession.commit()
@@ -70,7 +70,7 @@ def test_add_lease(client, dbSession, addMockFbUser):
   assert json['ncdmf_lease_id'] == '4-C-89'
   assert json['grow_area_name'] == 'A01'
   assert json['rainfall_thresh_in'] == 1.5
-  assert json['geo_boundary'] == {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.864693, 36.303915]}}
+  assert json['geometry'] == [36.303915, -75.864693]
 
   # get the user's leases
   res = client.get('/leases', headers={'Authorization': 'validUser1'})
@@ -81,11 +81,11 @@ def test_add_lease(client, dbSession, addMockFbUser):
   assert json[0]['ncdmf_lease_id'] == '45678'
   assert json[0]['grow_area_name'] == 'A01'
   assert json[0]['rainfall_thresh_in'] == 1.5
-  assert json[0]['geo_boundary'] == {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-77.567573, 34.404497]}}
+  assert json[0]['geometry'] == [34.404497, -77.567573]
   assert json[1]['ncdmf_lease_id'] == '4-C-89'
   assert json[1]['grow_area_name'] == 'A01'
   assert json[1]['rainfall_thresh_in'] == 1.5
-  assert json[1]['geo_boundary'] == {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-75.864693, 36.303915]}}
+  assert json[1]['geometry'] == [36.303915, -75.864693]
 
 def test_add_invalid_lease(client, dbSession, addMockFbUser):
   # add a mock Firebase user
@@ -98,7 +98,7 @@ def test_add_invalid_lease(client, dbSession, addMockFbUser):
   dbSession.commit()
 
   # add one existing lease for the user
-  lease = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geo_boundary={"type": "Feature", "geometry": {"type": "Point", "coordinates": [-77.567573, 34.404497]}})
+  lease = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geometry=(34.404497, -77.567573))
 
   dbSession.add(lease)
   dbSession.commit()
@@ -116,4 +116,4 @@ def test_add_invalid_lease(client, dbSession, addMockFbUser):
   assert json[0]['ncdmf_lease_id'] == '45678'
   assert json[0]['grow_area_name'] == 'A01'
   assert json[0]['rainfall_thresh_in'] == 1.5
-  assert json[0]['geo_boundary'] == {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-77.567573, 34.404497]}}
+  assert json[0]['geometry'] == [34.404497, -77.567573]
