@@ -42,16 +42,32 @@ def dbSession(db):
   # setup
   connection = db.engine.connect()
   transaction = connection.begin()
-
   options = dict(bind=connection, binds={})
   session = db.create_scoped_session(options=options)
-
   db.session = session
+
+  # keeps track of the tables that are used during this session
+  tablesUsed = {}
+  # override the session .add and .add_all functions with similar functions
+  # that also record the tables that are used
+  origAddFunc = session.add
+  origAddAllFunc = session.add_all
+  def mockAdd(model):
+    tablesUsed[model.__tablename__] = True
+    origAddFunc(model)
+  session.add = mockAdd
+  def mockAddAll(models):
+    for model in models:
+      tablesUsed[model.__tablename__] = True
+    origAddAllFunc(models)
+  session.add_all = mockAddAll
 
   yield session
 
   # teardown
-  transaction.rollback()
+  transaction.rollback() # rollback all database operations
+  for table in tablesUsed: # reset the auto_increment fields for all tables that were used
+    session.execute('ALTER TABLE {} AUTO_INCREMENT = 1;'.format(table))
   connection.close()
   session.remove()
 
