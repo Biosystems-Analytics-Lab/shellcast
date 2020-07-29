@@ -165,7 +165,7 @@ function addLeaseDataToMap(leaseData) {
       </div>
     `);
     const marker = new google.maps.Marker({
-      position: getLatLngFromGeoJSON(lease.geo_boundary),
+      position: getLatLngFromArray(lease.geometry),
       map: map,
       title: lease.ncdmf_lease_id
       // icon: {
@@ -184,12 +184,10 @@ function addLeaseDataToMap(leaseData) {
   }
 }
 
-function getLatLngFromGeoJSON(geoJSON) {
-  // for Point geometries
-  const coords = geoJSON.geometry.coordinates;
+function getLatLngFromArray(geometry) {
   return {
-    lat: coords[1],
-    lng: coords[0]
+    lat: geometry[0],
+    lng: geometry[1]
   };
 }
 
