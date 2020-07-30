@@ -5,10 +5,10 @@ const MAP_EL_ID = 'closure-map';
 /** Options for the map. */
 const MAP_OPTIONS = {
   center: {
-    lat: 35.2,
-    lng: -77.2
+    lat: 35.007934,
+    lng: -76.315151
   },
-  zoom: 7,
+  zoom: 9,
   restriction: {
     latLngBounds: {
       north: 38,
