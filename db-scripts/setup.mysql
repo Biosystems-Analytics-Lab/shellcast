@@ -88,6 +88,13 @@ CREATE TABLE `sga_min_max` (
   PRIMARY KEY (`id`)
 );
 
+CREATE TABLE `phone_service_providers` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL DEFAULT '',
+  `mms_gateway` varchar(30) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+)
+
 /* Add foreign key relations. */
 ALTER TABLE `closure_probabilities` ADD CONSTRAINT `user_lease_fk` FOREIGN KEY (`lease_id`) REFERENCES `user_leases` (`id`);
 ALTER TABLE `user_leases` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
