@@ -1,0 +1,10 @@
+tidied qpf data on 2020072900
+tidied pop12 data on 2020072900
+exported 2020-07-29 00:00 data
+Reading layer `nc_bounds_10kmbuf_albers' from data source `/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/spatial/inputs/state_bounds_data/nc_bounds_10kmbuf_albers.shp' using driver `ESRI Shapefile'
+Simple feature collection with 1 feature and 1 field
+geometry type:  POLYGON
+dimension:      XY
+bbox:           xmin: 997982.1 ymin: -590691.5 xmax: 1763384 ymax: -215610.6
+CRS:            102008
+[1] "finished converting df to raster"
