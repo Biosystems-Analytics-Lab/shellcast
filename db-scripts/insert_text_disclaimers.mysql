@@ -1,6 +1,0 @@
-INSERT INTO `text_disclaimers` (`webapp_page`, `disclaimer_text`)
-VALUES
-  ('index', 'Disclaimer text goes here.'),
-  ('about', 'Disclaimer text goes here.'),
-  ('notifications', 'Disclaimer text goes here.')
-;
