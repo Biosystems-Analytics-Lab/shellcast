@@ -10,16 +10,17 @@ def test_valid(client, dbSession, addMockFbUser):
   assert len(results) == 0
 
   # add a mock Firebase user
-  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='11234567890'), 'validUser1')
+  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='1234567890'), 'validUser1')
 
   # request user info
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert len(json) == 2
+  assert len(json) == 3
   assert json.get('firebase_uid') == None
-  assert json['phone_number'] == '11234567890'
+  assert json['phone_number'] == '1234567890'
   assert json['email'] == 'blah@gmail.com'
+  assert json['service_provider_id'] == None
 
   # check that the user is now created in the database
   results = dbSession.query(User).all()
@@ -29,10 +30,11 @@ def test_valid(client, dbSession, addMockFbUser):
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert len(json) == 2
+  assert len(json) == 3
   assert json.get('firebase_uid') == None
-  assert json['phone_number'] == '11234567890'
+  assert json['phone_number'] == '1234567890'
   assert json['email'] == 'blah@gmail.com'
+  assert json['service_provider_id'] == None
 
   # check that the user is not created again
   results = dbSession.query(User).all()
@@ -40,27 +42,27 @@ def test_valid(client, dbSession, addMockFbUser):
 
 def test_invalidToken(client, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='11234567890'), 'validUser1')
+  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='1234567890'), 'validUser1')
 
   res = client.get('/userInfo', headers={'Authorization': 'invalidUser'})
   assert res.status_code == 401
 
 def test_expiredToken(client, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='11234567890'), 'validUser1', True)
+  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='1234567890'), 'validUser1', True)
 
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 401
 
 def test_update_info(client, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='11234567890'), 'validUser1')
+  addMockFbUser(dict(uid='blah', email='blah@gmail.com', phone_number='1234567890'), 'validUser1')
 
   # request user info
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert json['phone_number'] == '11234567890'
+  assert json['phone_number'] == '1234567890'
   assert json['email'] == 'blah@gmail.com'
 
   # make a request to update the user's info
