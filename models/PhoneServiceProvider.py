@@ -21,4 +21,4 @@ class PhoneServiceProvider(db.Model):
     }
 
   def __repr__(self):
-    return '<Phone Service Provider: {}, {}>'.format(self.name, self.mms_gateway)
+    return '<PhoneServiceProvider: {}, {}>'.format(self.name, self.mms_gateway)
