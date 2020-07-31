@@ -3,6 +3,7 @@
 -- Stores user information.
 CREATE TABLE `users` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `service_provider_id` int(5) UNSIGNED ZEROFILL NULL,
   `firebase_uid` varchar(28) NULL,
   `phone_number` varchar(11) NULL,
   `email` varchar(50) NULL,
@@ -90,13 +91,14 @@ CREATE TABLE `sga_min_max` (
 
 -- Stores the mobile phone service providers that we can send MMS messages to.
 CREATE TABLE `phone_service_providers` (
-  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `id` int(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL DEFAULT '',
   `mms_gateway` varchar(30) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-)
+);
 
 -- Add foreign key relations.
+ALTER TABLE `users` ADD CONSTRAINT `service_provider_fk` FOREIGN KEY (`service_provider_id`) REFERENCES `phone_service_providers` (`id`);
 ALTER TABLE `closure_probabilities` ADD CONSTRAINT `user_lease_fk` FOREIGN KEY (`lease_id`) REFERENCES `user_leases` (`id`);
 ALTER TABLE `user_leases` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `notification_log` ADD CONSTRAINT `user2_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
