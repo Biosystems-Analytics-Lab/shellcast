@@ -1,9 +1,15 @@
 import pytest
 
 from models.User import User
+from models.PhoneServiceProvider import PhoneServiceProvider
 
 def test_User(dbSession):
-  validUser1 = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='asdf@adf.com', phone_number='11234567890')
+  provider = PhoneServiceProvider(name='Verizon', mms_gateway='vzwpix.com')
+
+  dbSession.add(provider)
+  dbSession.commit()
+
+  validUser1 = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='asdf@adf.com', phone_number='1234567890', service_provider_id=provider.id)
 
   dbSession.add(validUser1)
   dbSession.commit()
@@ -14,6 +20,8 @@ def test_User(dbSession):
 
   assert len(res) == 1
   assert res[0].firebase_uid == validUser1.firebase_uid
+  assert res[0].email == validUser1.email
+  assert res[0].phone_number == validUser1.phone_number
 
 def test_asDict(genRandomString):
   user = User(firebase_uid=genRandomString(length=28), email=genRandomString(length=13), phone_number=genRandomString(length=11))
