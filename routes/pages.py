@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, current_app
 from models import db
 from models.SGAMinMaxProbability import SGAMinMaxProbability
+from models.PhoneServiceProvider import PhoneServiceProvider
 
 from datetime import datetime, timezone
 import pytz
@@ -29,7 +30,8 @@ def aboutPage():
 
 @pages.route('/preferences')
 def preferencesPage():
-  return render_template('preferences.html.jinja')
+  serviceProviders = db.session.query(PhoneServiceProvider.id, PhoneServiceProvider.name).all()
+  return render_template('preferences.html.jinja', serviceProviders=serviceProviders)
 
 @pages.route('/signin')
 def signinPage():
