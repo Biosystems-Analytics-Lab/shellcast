@@ -31,12 +31,14 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   const profForm = document.forms['profile-information-form'];
   const emailInput = profForm.elements['email-address'];
   const phoneNumberInput = profForm.elements['phone-number'];
+  const serviceProviderInput = profForm.elements['service-provider'];
   const cancelBtn = profForm.elements['prof-form-cancel-btn'];
   const saveBtn = profForm.elements['prof-form-save-btn'];
 
   // set values
   emailInput.value = profInfo.email;
   phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
+  serviceProviderInput.value = profInfo.service_provider_id;
 
   // disable cancel and save buttons
   cancelBtn.disabled = true;
@@ -100,11 +102,11 @@ async function saveProfileFormChanges() {
   const phoneNumber = profForm.elements['phone-number'].value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
   const newProfileInfo = {
     email: profForm.elements['email-address'].value,
-    phone_number: phoneNumber
+    phone_number: phoneNumber,
+    service_provider_id: profForm.elements['service-provider'].value
   };
 
   // upload data to server and re-init form
-  console.log('Uploading data to server', newProfileInfo);
   const res = await authorizedFetch('/userInfo', {
     method: 'POST',
     headers: {'Content-Type': 'application/json;charset=utf-8'},

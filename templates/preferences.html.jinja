@@ -37,16 +37,32 @@
           </small>
         </div>
 
-        <div class="mb-3">
-          <label for="phone">Mobile phone number</label>
-          <div class="input-group">
-            <div class="input-group-prepend"><div class="input-group-text">+1</div></div>
-            <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(111) 222-3333" aria-describedby="phoneHelp">
-            <div class="invalid-feedback" style="width: 100%;">
-              Please enter a valid phone number.
+        <div class="form-row">
+          <div class="mb-3 col" style="min-width: 300px;">
+            <label for="phone-number">Mobile phone number</label>
+            <div class="input-group">
+              <div class="input-group-prepend"><div class="input-group-text">+1</div></div>
+              <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(111) 222-3333" aria-describedby="phoneHelp">
+              <div class="invalid-feedback" style="width: 100%;">
+                Please enter a valid phone number.
+              </div>
+              <small id="phoneHelp" class="form-text text-muted" style="width: 100%;">
+                This phone number must be able to receive text (MMS) messages. This phone number will receive probable closure notifications if you opt into them below.
+              </small>
             </div>
-            <small id="phoneHelp" class="form-text text-muted" style="width: 100%;">
-              This phone number must be able to receive text (SMS/MMS) messages. This phone number will receive probable closure notifications if you opt into them below.
+          </div>
+          <div class="mb-3 col" style="min-width: 300px;">
+            <label for="service-provider">Mobile service provider</label>
+            <select class="form-control" id="service-provider" name="service-provider">
+              <option value="">-- Select one --</option>
+            {% for provider in serviceProviders %}
+              <option value="{{ provider.id }}">{{ provider.name }}</option>
+            {% endfor %}
+            </select>
+            <small id="serviceHelp" class="form-text text-muted" style="width: 100%;">
+              Providing your mobile phone service provider allows us to send you text messages through your
+              provider's MMS email gateway. This is much less expensive than sending you a message from a
+              texting service and helps us to reduce our cost of operation.
             </small>
           </div>
         </div>
