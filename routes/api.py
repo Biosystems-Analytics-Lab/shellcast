@@ -5,6 +5,7 @@ from models.User import User
 from models.ClosureProbability import ClosureProbability
 from models.SGAMinMaxProbability import SGAMinMaxProbability
 from models.Lease import Lease
+from models.PhoneServiceProvider import PhoneServiceProvider
 
 from routes.forms.ProfileInfoForm import ProfileInfoForm
 
@@ -34,17 +35,20 @@ def userInfo(user):
       userInfo['email'] = user.email
     if (user.phone_number != None):
       userInfo['phone_number'] = user.phone_number
+      userInfo['service_provider_id'] = user.service_provider_id
     return userInfo
   else: # request.method == 'POST'
     # validate the uploaded info
     form = ProfileInfoForm.from_json(request.json)
+    form.service_provider_id.choices.append(db.session.query(PhoneServiceProvider.id, PhoneServiceProvider.name).all())
     if (form.validate()):
       user.email = form.email.data
       user.phone_number = form.phone_number.data
+      user.service_provider_id = form.service_provider_id.data
       db.session.add(user)
       db.session.commit()
       return {'message': 'Success'}, 200
-    return {'message': 'Bad form input'}, 400
+    return {'message': form.errors}, 400
 
 @api.route('/leaseProbs')
 @userRequired
