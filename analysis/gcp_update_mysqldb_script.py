@@ -43,14 +43,14 @@ from config import Config, DevConfig # see config.py file
 # %% set paths here
 
 # base path to analysis
-analysis_base_path = "opt/analysis/" # set this and uncomment!
+# analysis_base_path = "opt/analysis/" # set this and uncomment!
 # analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
-# analysis_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/"
+analysis_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/"
 
 # base path to data
-data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
+# data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
 # data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
-# data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
+data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 
 # %% use base path
