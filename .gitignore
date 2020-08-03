@@ -20,3 +20,4 @@ htmlcov
 # analysis/data
 # ignore r history file
 .Rhistory
+.Rproj.user
