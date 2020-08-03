@@ -2,7 +2,7 @@
 """
 # ---- script header ----
 script name: gcp_update_mysqldb_script.py
-purpose of script: This script updates the ShellCast web app MySQL database. Specifically it updates the sga_min_max table, the ncdmf_leases table, and the closure_probabilities table.
+purpose of script: This script updates the ShellCast web app MySQL database. Specifically it updates the sga_min_max table, the ncdmf_leases table, and the closure_probabilities table. NOTE!: Must run this script from in the analysis directory.
 author: sheila saia
 email: ssaia@ncsu.edu
 date created: 20200716
@@ -34,19 +34,23 @@ conda install -c conda-forge geoalchemy2
 # %% load libraries
 
 import pandas
-import geopandas
 import pymysql
 # from sqlalchemy import create_engine
 import sqlalchemy
-from geoalchemy2 import Geometry, WKTElement
 from config import Config, DevConfig # see config.py file
 
 
 # %% set paths here
 
+# base path to analysis
+analysis_base_path = "opt/analysis/" # set this and uncomment!
+# analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
+# analysis_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/"
+
 # base path to data
 data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
 # data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
+# data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 
 # %% use base path
@@ -55,10 +59,18 @@ data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
 sga_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/sga_calcs/ndfd_sga_calcs.csv"
 
 # lease spatial data
-lease_spatial_data_path = data_base_path + "spatial/outputs/ncdmf_data/lease_centroids/lease_centroids_simple_wgs84.geojson"
+lease_spatial_data_path = data_base_path + "spatial/outputs/ncdmf_data/lease_centroids/lease_centroids_db_wgs84.csv"
 
 # lease data path
 lease_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/lease_calcs/ndfd_lease_calcs.csv"
+
+# path to custom functions needed for this script
+functions_path = analysis_base_path + "functions/"
+
+
+# %% load custom functions
+
+exec(open((functions_path + "make_lease_sql_query.py")).read())
 
 
 # %% load in data
@@ -67,13 +79,13 @@ lease_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/lease_calcs/nd
 sga_data = pandas.read_csv(sga_data_path)
 
 # lease spatial data
-lease_spatial_data = geopandas.read_file(lease_spatial_data_path)
+lease_spatial_data = pandas.read_csv(lease_spatial_data_path)
 
 # lease calcs data
 lease_data = pandas.read_csv(lease_data_path)
 
 
-# %% create engine collection (for sqlalchemy)
+# %% create engine (for sqlalchemy)
 
 # define engine variables
 # see config.py for these
@@ -83,8 +95,8 @@ db_name = DevConfig.DB_NAME
 db_socket_dir = DevConfig.DB_UNIX_SOCKET_PATH_PREFIX
 cloud_sql_connection_name = Config.CLOUD_SQL_INSTANCE_NAME
 
-# create collection
-collection = sqlalchemy.create_engine(
+# create engine
+engine = sqlalchemy.create_engine(
     # Equivalent URL:
     # mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_path>/<cloud_sql_instance_name>
     sqlalchemy.engine.url.URL(
@@ -101,7 +113,7 @@ collection = sqlalchemy.create_engine(
     # ... Specify additional properties here.
 )
 
-# collection
+# engine
 
 
 # %% open connection (for pymysql)
@@ -121,8 +133,10 @@ connection = pymysql.connect(host = DevConfig.HOST,
 
 # %% update sga min and max table
 
+# sga_data = sga_data[1:5]
+
 # add df to mysql db
-sga_data.to_sql('sga_min_max', collection, if_exists = 'append', index = False)
+sga_data.to_sql('sga_min_max', engine, if_exists = 'append', index = False)
 
 # print status
 print("added sga min and max data to mysql db")
@@ -138,7 +152,7 @@ print("added sga min and max data to mysql db")
 # for i in sga_result:
 #    print(i)
 
-# %% update ncdmf leases table (i.e., all possible leases from the NC DMF REST API)
+# %% update ncdmf leases table (i.e., all possible leases from the ncdmf rest api)
 
 # only want to add leases that aren't already in the database
 # create a cursor to get current leases in db
@@ -159,33 +173,38 @@ ncdmf_leases_current_df = pandas.DataFrame(ncdmf_leases_current_result)
 # get ncdmf lease ids
 ncdmf_leases_current_ids = ncdmf_leases_current_df['ncdmf_lease_id']
 
-# anti-join to find ones that are new (i.e., NOT in ncdmf_leases_current_ids)
+# anti-join to find new ncdmf leases from rest api 
+# (i.e., NOT in ncdmf_leases_current_ids and NOT in ncdmf_leases shellcast mysql table)
 lease_spatial_data_sel = lease_spatial_data[~lease_spatial_data['ncdmf_lease_id'].isin(ncdmf_leases_current_ids)].reset_index(drop=True)
 
-# if lease_spatial_data_sel length is zero then don't push updates to mysql database
-if (len(lease_spatial_data_sel['ncdmf_lease_id']) > 0):
-    # define coordinate reference system (crs same as sric)
-    wgs84_epsg = 4326
+# lease_spatial_data_sel = lease_spatial_data_sel[1:3]
+
+if (len(lease_spatial_data_sel) > 0):
     
-    # create a geom with SRID
-    def create_wkt_element(geom):
-        return WKTElement(geom.wkt, srid = wgs84_epsg)
+    # get sql query
+    ncdmf_leases_insert_query = make_lease_sql_query(lease_spatial_data_sel)
     
-    # assign crs to geometry column
-    lease_spatial_data_sel['geometry'] = lease_spatial_data_sel['geometry'].apply(create_wkt_element)
+    # execute query
+    ncdmf_lease_cursor.execute(ncdmf_leases_insert_query)
     
-    # Use 'dtype' to specify column's type
-    # For the geom column, we will use GeoAlchemy's type 'Geometry'
-    lease_spatial_data_sel.to_sql('ncdmf_leases', collection, if_exists = 'append', index = False, 
-                                  dtype={'geometry': Geometry('POINT', srid = wgs84_epsg)})
+    # commit changes to remote db
+    connection.commit()
     
     # print when finished
     print("added ncdmf lease data to mysql db")
     
 else:
-    #print when finished
-    print("no ncdmf lease data updates required")
+    # print when finished
+    print("there were no new ncdmf leases to add to mysql db")
 
+
+#%%
+#ncdmf_leases_insert_query
+
+#"INSERT INTO `ncdmf_leases` (`ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geometry`)
+#VALUES 
+#('443', 'E09', 2.0, ST_PointFromText('POINT(-76.391809 34.874979)')), 
+#('1259571', 'E06', 3.0, ST_PointFromText('POINT(-76.550947 34.701303)'));"
 
 # %% update closure_probabilities table
 
@@ -220,7 +239,7 @@ closure_prob_data = pandas.DataFrame({'lease_id' : user_leases_current_db_ids, #
                                      'prob_3d_perc' : user_leases_data_sel['prob_3d_perc']})
 
 # add df to mysql db
-closure_prob_data.to_sql('closure_probabilities', collection, if_exists = 'append', index = False)
+closure_prob_data.to_sql('closure_probabilities', engine, if_exists = 'append', index = False)
 
 # print status
 print("added user lease data to mysql db")
@@ -239,8 +258,8 @@ print("added user lease data to mysql db")
 
 # %% dispose engine and close connection
 
-collection.dispose()
+engine.dispose()
 connection.close()
 
 # print status
-print("gcp connection and collection closed")
+print("gcp connection and engine closed")
