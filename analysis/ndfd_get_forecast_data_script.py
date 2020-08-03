@@ -39,8 +39,9 @@ from csv import writer
 # %% set paths here
 
 # base path to analysis
-analysis_base_path = "opt/analysis/" # set this and uncomment!
+# analysis_base_path = "opt/analysis/" # set this and uncomment!
 # analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
+analysis_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/"
 
 # base path to data
 # data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!

@@ -24,9 +24,9 @@ packages <- c("tidyverse", "raster", "sf", "lubridate")
 for (package in packages) {
   if (! package %in% installed.packages()) {
     install.packages(package, dependencies = TRUE)
-  }
+    }
   library(package, character.only = TRUE)
-}
+  }
 
 
 # ---- 2. define base paths ----
