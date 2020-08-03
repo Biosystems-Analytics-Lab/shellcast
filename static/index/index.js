@@ -32,6 +32,8 @@ const GROW_AREA_TABLE_ID = 'area-table';
 const LEASE_TABLE_ID = 'lease-table';
 /** The path to the grow area bound file. */
 const GROW_AREA_BOUNDS_PATH = 'static/growing_area_bounds.geojson';
+/** The colors used to fill grow areas on the map. */
+const COLOR_SCALE = ['#feda8b', '#fdb366', '#f67e4b', '#dd3d2d', '#a50026'];
 
 // a reference to the Google map object
 let map;
@@ -72,9 +74,9 @@ function initGrowAreaTable(growAreaData) {
   for (let [areaId, data] of Object.entries(growAreaData)) {
     const rowData = {
       grow_area: areaId,
-      min_max_1d_prob: `${data.min_1d_prob}/${data.max_1d_prob}`,
-      min_max_2d_prob: `${data.min_2d_prob}/${data.max_2d_prob}`,
-      min_max_3d_prob: `${data.min_3d_prob}/${data.max_3d_prob}`
+      min_max_1d_prob: `${handleUndef(data.min_1d_prob)} / ${handleUndef(data.max_1d_prob)}`,
+      min_max_2d_prob: `${handleUndef(data.min_2d_prob)} / ${handleUndef(data.max_2d_prob)}`,
+      min_max_3d_prob: `${handleUndef(data.min_3d_prob)} / ${handleUndef(data.max_3d_prob)}`
     };
     rows.push(rowData);
   }
@@ -145,9 +147,9 @@ function addGrowAreaDataToMap(growAreaData) {
     mapInfoWindow.setPosition(pos);
     mapInfoWindow.setContent(`
       <div>Area: ${grow_area}
-      <br>1-day Min/Max %: ${min_1d_prob}/${max_1d_prob}
-      <br>2-day Min/Max %: ${min_2d_prob}/${max_2d_prob}
-      <br>3-day Min/Max %: ${min_3d_prob}/${max_3d_prob}
+      <br>1-day Min / Max %: ${handleUndef(min_1d_prob)} / ${handleUndef(max_1d_prob)}
+      <br>2-day Min / Max %: ${handleUndef(min_2d_prob)} / ${handleUndef(max_2d_prob)}
+      <br>3-day Min / Max %: ${handleUndef(min_3d_prob)} / ${handleUndef(max_3d_prob)}
       </div>
     `);
     mapInfoWindow.open(map);
@@ -159,9 +161,9 @@ function addLeaseDataToMap(leaseData) {
   for (let lease of leaseData) {
     const leaseInfoContent = (`
       <div>Lease ID: ${lease.ncdmf_lease_id}
-      <br>1-day %: ${lease.prob_1d_perc ? lease.prob_1d_perc : '-'}
-      <br>2-day %: ${lease.prob_2d_perc ? lease.prob_2d_perc : '-'}
-      <br>3-day %: ${lease.prob_3d_perc ? lease.prob_3d_perc : '-'}
+      <br>1-day %: ${handleUndef(lease.prob_1d_perc)}
+      <br>2-day %: ${handleUndef(lease.prob_2d_perc)}
+      <br>3-day %: ${handleUndef(lease.prob_3d_perc)}
       </div>
     `);
     const marker = new google.maps.Marker({
@@ -191,44 +193,38 @@ function getLatLngFromArray(geometry) {
   };
 }
 
+function handleUndef(value) {
+  return (value || value === 0) ? value : '-';
+}
+
 /**
  * Styles the given feature based on its 1-day closure probability.
  * @param {google.maps.data.Feature} feature the feature to style
  */
 function styleFeature(feature) {
-  const RED = [255, 0, 0];
-  const WHITE = [255, 255, 255];
-
-  // calculate the closure probability as a floating point
-  const prob1Day = feature.getProperty('min_1d_prob');
-  let closureProbPerc = 0; // default the closure probability to 0
-  if (prob1Day) {
-    closureProbPerc = prob1Day / 100;
-  }
-
   // calculate the color of the growing area (feature)
-  const areaColor = [];
-  for (var i = 0; i < 3; i++) {
-    areaColor[i] = lerp(WHITE[i], RED[i], closureProbPerc);
-  }
+  const areaColor = getColor(feature.getProperty('max_1d_prob'));
 
   return {
     strokeColor: '#000',
     strokeWeight: 1,
     strokeOpacity: 0.5,
-    fillColor: `rgb(${areaColor[0]},${areaColor[1]},${areaColor[2]})`,
+    fillColor: areaColor,
     fillOpacity: 0.8
   };
 }
 
 /**
- * Performs a linear interpolation between the low and high values.
- * @param {number} lowVal the low value
- * @param {number} highVal the high value
- * @param {number} factor a floating point number between 0 and 1
+ * Returns a color from the color scale based on the given value.
+ * @param {number} value the value to get a color for
  */
-function lerp(lowVal, highVal, factor) {
-  return (highVal - lowVal) * factor + lowVal;
+function getColor(value) {
+  let color = COLOR_SCALE[0];
+  if (value >= 20) color = COLOR_SCALE[1];
+  if (value >= 40) color = COLOR_SCALE[2];
+  if (value >= 60) color = COLOR_SCALE[3];
+  if (value >= 80) color = COLOR_SCALE[4];
+  return color;
 }
 
 (async () => {
