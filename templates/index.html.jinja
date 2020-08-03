@@ -14,7 +14,14 @@
 
 {% block content %}
   <div class="text-justify">
-    <p id="disclaimer">Disclaimer: The predictions shown within this app are in no way indicative of whether or not your lease will be closed.  Please use this only as a planning tool and seek out proper closure information from {blank}.</p>
+    <p id="disclaimer">
+      ShellCast forecasts offer predictions that are in no way indicative of whether or not a
+      growing area will actually be temporarily closed for harvest. Please only use ShellCast 
+      for planning purposes. For official information on closures, refer to the
+      <a href="http://portal.ncdenr.org/web/mf/proclamations-polluted-areas">North Carolina Division of Marine Fisheries</a> 
+      or the <a href="https://ncdenr.maps.arcgis.com/apps/webappviewer/index.html?id=5759aa19d7484a3b82a8e440fba643aa">Shellfish Sanitation Temporary Closure Public Viewer</a>.
+      Learn more about ShellCast forecasts on the <a href="/about">About</a> page.
+    </p>
     <div class="d-flex justify-content-between flex-wrap">
       <p><strong>Last updated: {{lastUpdated}} ({{hoursAgo}} hours ago)</strong></p>
       <a href="#closure-tables">Table View</a>
@@ -30,7 +37,7 @@
 
     <div id="lease-table-div">
       <div id="lease-table-toolbar">
-        <h4>My Lease Closure Probabilities</h4>
+        <h4>My Leases</h4>
       </div>
       <table
         id="lease-table"
@@ -50,11 +57,20 @@
       </table>
     </div>
 
-    <div id="lease-table-explanation"><p>Explanation text for the lease table goes here.</p></div>
+    <div id="lease-table-explanation">
+      <p>
+        To see forecasts for your lease sites and pins on the map, add leases to your account.
+        The forecasts shown indicate the percent chance that a lease will close in 1, 2, or 3
+        days due to expected rainfall. For example, if you are checking ShellCast on a Monday,
+        the 1-day forecast would indicate the % chance of a lease closing on Tuesday, the 2-day
+        forecast would indicate the % chance of a lease closing on Wednesday, and the 3-day 
+        forecast would indicate the % chance of a lease closing on Thursday.
+      </p>
+    </div>
 
     <div id="area-table-div">
       <div id="area-table-toolbar">
-        <h4>Grow Area Closure Probabilities</h4>
+        <h4>NCDMF Shellfish Growing Areas</h4>
       </div>
       <table
         id="area-table"
@@ -74,7 +90,17 @@
       </table>
     </div>
 
-    <div id="area-table-explanation"><p>Explanation text for the grow area table goes here.</p></div>
+    <div id="area-table-explanation">
+      <p>
+        The forecasts shown indicate the maximum percent chance that leases within a
+        NC Division of Marine Fisheries shellfish growing area will close in 1, 2, or
+        3 days due to expected rainfall. For example, if you are checking ShellCast
+        on a Monday, the 1-day forecast would indicate the % chance of a growing area
+        closing on Tuesday, the 2-day forecast would indicate the % chance of a growing
+        area closing on Wednesday, and the 3-day forecast would indicate the % chance
+        of a growing area closing on Thursday.
+      </p>
+    </div>
 
   </div>
 {% endblock %}
