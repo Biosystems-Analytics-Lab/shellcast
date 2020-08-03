@@ -47,8 +47,8 @@ for (package in packages) {
 
 # ---- 2. define base paths ----
 # base path to data
-data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
-# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/" 
+data_base_path = "opt/analysis/data/" # set this and uncomment!
+# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
 
 
 # ---- 3. defining paths and projections ----
@@ -89,7 +89,6 @@ cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_alb
 
 # check projection
 # st_crs(cmu_bounds_albers) # epsg = 102008
-
 
 # tabular data
 # rainfall thresholds
@@ -182,54 +181,74 @@ lease_data_centroid_albers_join <- lease_data_centroid_albers %>%
   dplyr::select(lease_id:county, grow_area, rain_in, rain_lab)
 
 # NOTE!
-# in the case that the centroid of the lease is at the edge of two growing areas then this code will take
-# the minimum rainfall threshold, as of 20200716 it does not look like this is an issue but it cold be in
-# the future
-# for now there are ~ 20 (513-483 = 20) leases that have centroids which are not in cmu's and those are dropped
+# if the centroid of the lease is at the edge of two growing areas then this code takes
+# the minimum rainfall threshold, as of 20200716 it does not look like this is an issue
+# but it cold be in the future
+# there are ~ 20 (513-483 = 30) leases that have centroids not in cmu's, these are dropped
 
-# save tabular data from lease_data_centroid_albers_join to the lease polygons
+# keep sga and rainfall threshold data to join to lease polygons
 lease_data_centroids_join_no_geom <- lease_data_centroid_albers_join %>%
   st_drop_geometry() %>%
   dplyr::select(lease_id, grow_area:rain_lab)
 
-# join to polygon dataset
+# join sga and rainfall threshold data to lease polygons
 lease_data_albers_join <- lease_data_albers %>%
   dplyr::left_join(lease_data_centroids_join_no_geom, by = "lease_id")
+# when grow_area, rain_in, and rain_lab are NA this means they don't have a rainfall threshold (aren't in a current cmu)
 
 # resave centroids b/c lease_data_albers_join has full lease dataset
 lease_data_centroids_albers_final <- lease_data_albers_join %>%
   st_centroid()
+# when grow_area, rain_in, and rain_lab are NA this means they don't have a rainfall threshold (aren't in a current cmu)
 
 
 # ---- 8. project data ----
-# project data and centroids to wgs84 projection
+# project data to wgs84 projection
 lease_data_wgs94 <- lease_data_albers_join %>%
   st_transform(crs = wgs84_epsg)
+
+# project centroids to wgs84 projection
 lease_data_centroid_wgs94 <- lease_data_centroids_albers_final %>%
   st_transform(crs = wgs84_epsg)
 
-# keep a simplified copy of the centroids that can be pushed to the mysql db
-lease_data_centroid_wgs94_simple <- lease_data_centroid_wgs94 %>%
+# project data to geojson file type (need this for the web app)
+# lease_data_wgs94_geojson <- sf_geojson(lease_data_wgs94, atomise = FALSE, simplify = TRUE, digits = 5)
+# lease_data_centroid_wgs94_geojson <- sf_geojson(lease_data_centroid_wgs94, atomise = FALSE, simplify = TRUE, digits = 5)
+# lease_data_centroid_wgs94_simple_geojson <- sf_geojson(lease_data_centroid_wgs94_simple, atomise = FALSE, simplify = TRUE, digits = 5)
+# gcp doesn't take in spatial data by default so not doing this for now
+
+
+# ---- 9. simplify data for mysql db ----
+# select fields for mysql db
+lease_data_centroid_wgs94_db <- lease_data_centroid_wgs94 %>%
   select(ncdmf_lease_id = lease_id,
          grow_area_name = grow_area,
          rainfall_thresh_in = rain_in)
 
-# project data to geojson file type (need this for the web app)
-lease_data_wgs94_geojson <- sf_geojson(lease_data_wgs94, atomise = FALSE, simplify = TRUE, digits = 5)
-lease_data_centroid_wgs94_geojson <- sf_geojson(lease_data_centroid_wgs94, atomise = FALSE, simplify = TRUE, digits = 5)
-lease_data_centroid_wgs94_simple_geojson <- sf_geojson(lease_data_centroid_wgs94_simple, atomise = FALSE, simplify = TRUE, digits = 5)
+# save coordinates
+lease_data_centroid_coords <- as.data.frame(st_coordinates(lease_data_centroid_wgs94_db)) %>%
+  dplyr::select(longitude = X, latitude = Y)
+
+# save lease centroid data as tabular dataset
+lease_data_centroid_wgs94_db_tabular <- lease_data_centroid_wgs94_db %>%
+  st_drop_geometry() %>%
+  bind_cols(lease_data_centroid_coords)%>%
+  na.omit() # drops all columns with an NA value so don't have to fix for db import
 
 
 # ---- 9. export data ----
 # export data as shape file for record keeping
 # st_write(lease_data_albers_join, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers_", latest_date_uct_str, ".shp")) # includes date in file name
-# st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/leases_centroids_albers_", latest_date_uct_str, ".shp")) # includes date in file name
+# st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_albers_", latest_date_uct_str, ".shp")) # includes date in file name
 st_write(lease_data_albers_join, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers.shp"), delete_layer = TRUE)
-st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/leases_centroids_albers.shp"), delete_layer = TRUE)
+st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_albers.shp"), delete_layer = TRUE)
+
+# export tabular lease centroids for mysql db
+write_csv(lease_data_centroid_wgs94_db_tabular, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_db_wgs84.csv"))
 
 # export data as geojson for web app
 # write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
-# write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/leases_centroids_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
-write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84.geojson"))
-write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_wgs84.geojson"))
-write_file(lease_data_centroid_wgs94_simple_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_simple_wgs84.geojson"))
+# write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
+# write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84.geojson"))
+# write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_wgs84.geojson"))
+# write_file(lease_data_centroid_wgs94_simple_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_simple_wgs84.geojson"))
