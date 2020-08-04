@@ -10,7 +10,7 @@
 
 # step 1
 # opt/anaconda3/bin/python ndfd_get_forecast_data_script.py | tee opt/analysis/data/tabular/outputs/terminal_data/01_python_output_$(date '+%Y%m%d').txt
-opt/anaconda3/bin/python ndfd_get_forecast_data_script.py | tee /Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/terminal_data/01_get_forecast_output_$(date '+%Y%m%d').txt
+/Users/sheila/opt/anaconda3/bin/python ndfd_get_forecast_data_script.py | tee /Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/terminal_data/01_get_forecast_output_$(date '+%Y%m%d').txt
 
 # step 2
 # /usr/local/bin/Rscript ndfd_convert_df_to_raster_script.R | tee opt/analysis/data/tabular/outputs/terminal_data/02_convert_df_out_$(date '+%Y%m%d').txt
