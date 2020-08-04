@@ -2,8 +2,8 @@
 """
 # ---- script header ----
 script name: gcp_update_mysqldb_script.py
-purpose of script: This script updates the ShellCast web app MySQL database. Specifically it updates the sga_min_max table, the ncdmf_leases table, and the closure_probabilities table. NOTE!: Must run this script from in the analysis directory.
-author: sheila saia
+purpose of script: This script updates the ShellCast MySQL database. Specifically it updates 
+the sga_min_max table, the ncdmf_leases table, and the closure_probabilities table.
 email: ssaia@ncsu.edu
 date created: 20200716
 
@@ -15,7 +15,6 @@ help:
 pymysql help: https://github.com/PyMySQL/PyMySQL
 pymysql docs: https://pymysql.readthedocs.io/en/latest/
 gcp docs: https://cloud.google.com/sql/docs/mysql/connect-app-engine-standard
-geoalchemy2: https://stackoverflow.com/questions/38361336/write-geodataframe-into-sql-database
 
 # install geopandas (in the shell)
 conda install -c conda-forge geopandas
@@ -85,7 +84,7 @@ lease_spatial_data = pandas.read_csv(lease_spatial_data_path)
 lease_data = pandas.read_csv(lease_data_path)
 
 
-# %% create engine (for sqlalchemy)
+# %% create engine (for sqlalchemy - to upload whole dataframe to mysql db)
 
 # define engine variables
 # see config.py for these
@@ -116,7 +115,7 @@ engine = sqlalchemy.create_engine(
 # engine
 
 
-# %% open connection (for pymysql)
+# %% open connection (for pymysql - to upload row by row data to mysql db)
 
 # define connection
 # see config.py for these
@@ -152,6 +151,7 @@ print("added sga min and max data to mysql db")
 # for i in sga_result:
 #    print(i)
 
+
 # %% update ncdmf leases table (i.e., all possible leases from the ncdmf rest api)
 
 # only want to add leases that aren't already in the database
@@ -173,12 +173,13 @@ ncdmf_leases_current_df = pandas.DataFrame(ncdmf_leases_current_result)
 # get ncdmf lease ids
 ncdmf_leases_current_ids = ncdmf_leases_current_df['ncdmf_lease_id']
 
-# anti-join to find new ncdmf leases from rest api 
+# anti-join to find new ncdmf leases from the ncdmf rest api 
 # (i.e., NOT in ncdmf_leases_current_ids and NOT in ncdmf_leases shellcast mysql table)
 lease_spatial_data_sel = lease_spatial_data[~lease_spatial_data['ncdmf_lease_id'].isin(ncdmf_leases_current_ids)].reset_index(drop=True)
 
 # lease_spatial_data_sel = lease_spatial_data_sel[1:3]
 
+# if there are no new leases to add (from the ncdmf rest api) then skip inserting rows
 if (len(lease_spatial_data_sel) > 0):
     
     # get sql query
