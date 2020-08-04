@@ -165,10 +165,10 @@ function createLeaseInfoEl(lease) {
             </small>
 
             <div class="notification-options" id="lease-${lease.id}-notification-options">
-              <label>How do you want to receive notifications?</label>
+              <label>I want to receive the following notifications:</label>
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="lease-none" id="lease-${lease.id}-none">
-                <label class="form-check-label" for="lease-${lease.id}-none">None</label>
+                <label class="form-check-label" for="lease-${lease.id}-none">I do not want to receive notifications</label>
               </div>
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="lease-email" id="lease-${lease.id}-email">
@@ -179,24 +179,31 @@ function createLeaseInfoEl(lease) {
                 <label class="form-check-label" for="lease-${lease.id}-text">Text</label>
               </div>
               <small class="form-text text-muted">
-                Choose whether you want to receive email and/or text notifications for this lease.  To receive text notifications, you must provide your mobile phone number and phone provider at the top of this page.
+                If you would like to receive both email and text notifications,
+                check both "Email" and "Text". If you choose not to receive
+                notifications, you will still see your lease sites on the
+                ShellCast webpage.
               </small>
 
-              <label>When do you want to receive notifications?</label>
+              <label>I want to receive notifications for this lease when the % chance of temporary harvest closure is:</label>
               <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}" value="${NOTIFICATION_PROB_PREFS[0]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}">${NOTIFICATION_PROB_PREFS[0]}% or higher probability of closure</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}">${NOTIFICATION_PROB_PREFS[0]}% or higher</label>
               </div>
               <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}" value="${NOTIFICATION_PROB_PREFS[1]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}">${NOTIFICATION_PROB_PREFS[1]}% or higher probability of closure</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}">${NOTIFICATION_PROB_PREFS[1]}% or higher</label>
               </div>
               <div class="form-check">
                 <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}" value="${NOTIFICATION_PROB_PREFS[2]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]}% or higher probability of closure</label>
+                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]}% or higher</label>
               </div>
               <small class="form-text text-muted">
-                This is the minimum closure probability that you will be notified at for this lease.  For example, if you choose "50% or higher", then you will be notified whenever your lease has a 50% or higher chance of being closed.
+                Choose the % chance at which you would like to receive
+                notifications for the lease. For example, if you choose
+                "50% or higher", then you will receive a notification
+                when your lease has at least a 50% chance of being
+                temporarily closed in the next 1, 2, or 3 days.
               </small>
 
               <label for="lease-${lease.id}-sample-notification">Example notification</label>
