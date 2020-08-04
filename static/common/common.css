@@ -22,6 +22,50 @@
   }
 }
 
+.text-bubble {
+  background: #efefef;
+  border: 1px solid #a7a7a7;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+  line-height: 1.3;
+  margin: 0 auto 40px;
+  max-width: 400px;
+  padding: 15px;
+  position: relative;
+}
+
+.text-bubble pre {
+  font-family: Univers,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  margin-bottom: 0;
+}
+
+.text-bubble__arrow {
+  border-left: 21px solid transparent;
+  border-top: 20px solid rgba(0, 0, 0, 0.2);
+  bottom: -25px;
+  position: absolute;
+  right: 15px;
+}
+
+.text-bubble__arrow::before {
+  border-left: 23px solid transparent;
+  border-top: 23px solid #a7a7a7;
+  bottom: 2px;
+  content: "";
+  position: absolute;
+  right: 5px;
+}
+
+.text-bubble__arrow::after {
+  border-left: 21px solid transparent;
+  border-top: 21px solid #efefef;
+  bottom: 4px;
+  content: "";
+  position: absolute;
+  right: 6px;
+}
+
 .page-main-header {
   text-align: center;
 }
