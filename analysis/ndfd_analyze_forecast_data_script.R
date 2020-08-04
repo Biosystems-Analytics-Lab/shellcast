@@ -483,7 +483,7 @@ stop_time - start_time
 # Time difference of ~3 to 4 min
 
 # print date
-print(paste0(ndfd_date_uct, "spatial averaging complete"))
+print(paste0(ndfd_date_uct, " spatial averaging complete"))
 
 
 # ---- 12. export area weighted ndfd cmu calcs ----
