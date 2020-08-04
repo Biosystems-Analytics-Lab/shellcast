@@ -2,3 +2,11 @@
   padding: 1rem;
   text-align: center;
 }
+
+.content p {
+  text-align: justify;
+}
+
+#shellcast-logo {
+  margin-bottom: 10px;
+}
