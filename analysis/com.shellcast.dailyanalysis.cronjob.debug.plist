@@ -1,0 +1,56 @@
+<!-- com.shellcast.dailyanalysis.cronjob.plist -->
+<!-- will have a weekly one too once rest api is up -->
+<!-- store in the ~/Library/LaunchAgents folder -->
+<!-- launchd man: https://www.manpagez.com/man/5/launchd.plist/ -->
+<!-- very helpful: https://babichmorrowc.github.io/post/launchd-jobs/ -->
+<!-- StartInterval - number of sections for interval but maybe I want to use StartCalendarInterval -->
+<!-- StartCalendarInterval help: https://alvinalexander.com/mac-os-x/launchd-plist-examples-startinterval-startcalendarinterval/ -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+<!-- define change log event label -->
+  <key>Label</key>
+  <string>com.shellcast.dailyanalysis.cronjob.plist</string>
+
+<!-- define script that will run -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/shellcast_daily_analysis.sh</string>
+  </array>
+
+<!-- define working directory -->
+  <key>WorkingDirectory</key>
+  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/</string>
+
+<!-- priority of scheduler -->
+  <key>Nice</key>
+  <integer>1</integer>
+
+<!-- runs at 7:00 every day -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>13</integer>
+    <key>Minute</key>
+    <integer>10</integer>
+  </dict>
+
+
+  <key>RunAtLoad</key>
+  <false/>
+  <key>KeepAlive</key>
+  <false/>
+
+<!-- standard error file -->
+  <key>StandardErrorPath</key>
+  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_analysis_cronjob.err</string>
+
+<!-- standard output file -->
+  <key>StandardOutPath</key>
+  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_analysis_cronjob.err</string>
+
+</dict>
+</plist>
