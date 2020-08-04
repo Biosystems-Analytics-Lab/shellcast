@@ -11,8 +11,9 @@ In the terminal, navigate to the LaunchAgents directory:
 cd ~/Library/LaunchAgents
 ```
 
-If `com.shellcast.dailyanalysis.cronjob.plist` file is not there, copy it here, using:
+If the plist file is not there, copy it here, using:
 ```{bash}
+# make sure to change the ... to the full path
 cp .../analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
 
 # cp /Users/sheila/Documents/github_ncsu/shellcast/analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
@@ -56,12 +57,13 @@ Each day the `shellcast_daily_analysis.sh` will run the following R and Python s
 
 ### running the bash script on its own
 
-To run the bash script not in a cron job (for debugging), use the code below. Outputs from each R and Python script will be saved into the terminal\_data directory. This script must be executable so you might have to check script permissions in the terminal window using `ls -l` and if not executable, then use `chmod -x shellcast_daily_analysis.sh` to make it executable.
+To run the bash script not in a cron job (for debugging), use the code below. This must be run from the analysis directory. Outputs from each R and Python script will be saved into the terminal\_data directory. This script must be executable so you might have to check script permissions in the terminal window using `ls -l` and if not executable, then use `chmod -x shellcast_daily_analysis.sh` to make it executable.
 
 ```{bash}
-# run this from within the analysis directory
+sh shellcast_daily_analysis.sh
 
-# sh shellcast_daily_analysis.sh
+# for debugging
+# sh shellcast_daily_analysis_debug.sh
 ```
 
 ## python libraries needed to run these scripts
