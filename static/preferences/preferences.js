@@ -206,8 +206,8 @@ function createLeaseInfoEl(lease) {
                 temporarily closed in the next 1, 2, or 3 days.
               </small>
 
-              <label for="lease-${lease.id}-sample-notification">Example notification</label>
-              <textarea class="form-control" id="lease-${lease.id}-sample-notification" name="sample-notification" rows="4" readonly></textarea>
+              <label for="lease-${lease.id}-example-notification">Example notification:</label>
+              <div class="text-bubble" id="lease-${lease.id}-example-notification"></div>
               <small class="form-text text-muted">
                 This is an example of a notification you might receive for this lease.
               </small>
@@ -228,7 +228,7 @@ function generateExampleNotification(leaseForm) {
   const ncdmfId = leaseForm.elements['lease-ncdmf-id'].value;
   const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
   if (noNotificationsCheckbox.checked) {
-    return '<<You will not receive any notifications for this lease.>>'
+    return '-- You will not receive any notifications for this lease. --';
   }
   const probRadios = leaseForm.elements[`lease-notification-prob`];
   let selectedProb;
@@ -313,6 +313,7 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
  */
 function onLeaseFormChange(e) {
   const leaseForm = e.target.form;
+  const leaseId = leaseForm.id.split('-')[1];
   const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
@@ -327,8 +328,8 @@ function onLeaseFormChange(e) {
   leaseForm.elements['lease-form-save-btn'].disabled = false;
   // enable/disable notification inputs as appropriate
   enableDisableLeaseNotificationInputs(leaseForm);
-  // show sample notification
-  leaseForm.elements['sample-notification'].value = generateExampleNotification(leaseForm);
+  // show example notification
+  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `<pre>${generateExampleNotification(leaseForm)}</pre>`;
 }
 
 /**
@@ -373,6 +374,7 @@ function buildLeaseForms() {
  */
 function initLeaseForm(lease, ignoreAddingEventListeners) {
   const leaseForm = document.forms[`form-${lease.id}`];
+  const leaseId = leaseForm.id.split('-')[1];
   const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
@@ -396,8 +398,8 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   cancelBtn.disabled = true;
   saveBtn.disabled = true;
 
-  // show sample notification
-  leaseForm.elements['sample-notification'].value = generateExampleNotification(leaseForm);
+  // show example notification
+  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `<pre>${generateExampleNotification(leaseForm)}</pre>`;
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
