@@ -150,14 +150,19 @@ function createLeaseInfoEl(lease) {
             </div>
 
             <div class="mb-3">
-              <label for="lease-${lease.id}-grow-area">Grow Area</label>
+              <label for="lease-${lease.id}-grow-area">NC Division of Marine Fisheries Shellfish Growing Area</label>
               <input type="text" class="form-control" id="lease-${lease.id}-grow-area" value="${lease.grow_area_name}" readonly>
             </div>
 
             <div class="mb-3">
-              <label for="lease-${lease.id}-rainfall-threshold">Rainfall Threshold</label>
+              <label for="lease-${lease.id}-rainfall-threshold">Rainfall Threshold (inches)</label>
               <input type="text" class="form-control" id="lease-${lease.id}-rainfall-threshold" value="${lease.rainfall_thresh_in}" readonly>
             </div>
+            <small class="form-text text-muted">
+              The rainfall threshold is the amount of rainfall in inches within a
+              24-hour period that results in a lease being temporarily closed for
+              harvest. The NC Division of Marine Fisheries determines the threshold.
+            </small>
 
             <div class="notification-options" id="lease-${lease.id}-notification-options">
               <label>How do you want to receive notifications?</label>
