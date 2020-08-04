@@ -2,8 +2,44 @@
 
 ## setting up and running the daily cron job
 
+The daily cron job used the `launchd` program, which should be already installed on a Mac, and will run each day at 7am as long as the host computer is on and the program is still loaded.
 
+Running a cron job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post]() was especially helpful and the official documentation is [here](https://www.launchd.info/). Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
 
+In the terminal, navigate to the LaunchAgents directory:
+```{bash}
+cd ~/Library/LaunchAgents
+```
+
+If the plist file is not there, copy it here, using:
+```{bash}
+# make sure to change the ... to the full path
+cp .../analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
+
+# cp /Users/sheila/Documents/github_ncsu/shellcast/analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
+```
+
+Check that you're working with the right version using nano.
+```{bash}
+nano com.shellcast.dailyanalysis.cronjob.plist
+```
+
+To load the cron job, run the following in the LaunchAgents directory:
+```{bash}
+launchctl load com.shellcast.dailyanalysis.cronjob.plist
+```
+
+To stop the cron job, run the following in the LaunchAgents directory:
+```{bash}
+launchctl unload com.shellcast.dailyanalysis.cronjob.plist
+```
+
+To see if a LaunchAgent is loaded you can use:
+```{bash}
+launchctl list
+```
+
+Also, you can go to `Applications > Utilities > Console` and then look at system log to see current loaded and active programs. Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
 
 
 ## cron job script run order
@@ -21,12 +57,13 @@ Each day the `shellcast_daily_analysis.sh` will run the following R and Python s
 
 ### running the bash script on its own
 
-To run the bash script not in a cron job (for debugging), use the code below. Outputs from each R and Python script will be saved into the terminal\_data directory.
+To run the bash script not in a cron job (for debugging), use the code below. This must be run from the analysis directory. Outputs from each R and Python script will be saved into the terminal\_data directory. This script must be executable so you might have to check script permissions in the terminal window using `ls -l` and if not executable, then use `chmod -x shellcast_daily_analysis.sh` to make it executable.
 
-```
-# run this from within the analysis directory
+```{bash}
+sh shellcast_daily_analysis.sh
 
-# sh shellcast_daily_analysis.sh
+# for debugging
+# sh shellcast_daily_analysis_debug.sh
 ```
 
 ## python libraries needed to run these scripts
@@ -37,7 +74,15 @@ To run the bash script not in a cron job (for debugging), use the code below. Ou
 
 3. sqlalchemy
 
-4. 
+4. pandas
+
+5. numpy
+
+6. datetime
+
+7. requests
+
+8. writer
 
 
 ## r packages needed to run these scripts
