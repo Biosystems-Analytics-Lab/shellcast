@@ -118,6 +118,32 @@ async function initMap() {
   // set the map's style
   map.data.setStyle(styleFeature);
   mapInfoWindow = new google.maps.InfoWindow();
+  // create the legend
+  const legend = document.createElement('div');
+  legend.style.backgroundColor = 'white';
+  legend.style.border = '1px solid black';
+  legend.style.display = 'grid';
+  legend.style.gridTemplateColumns = 'auto 1rem';
+  legend.style.marginLeft = '5px';
+  legend.style.textAlign = 'center';
+  legend.style.lineHeight = '2rem';
+  legend.style.fontSize = '1rem';
+  // add percents and colors to legend
+  const percIncrement = Math.floor(100 / COLOR_SCALE.length);
+  let startPerc = 0;
+  for (let color of COLOR_SCALE) {
+    const percDiv = document.createElement('div');
+    percDiv.style.paddingLeft = '3px';
+    percDiv.style.paddingRight = '3px';
+    percDiv.innerHTML = `${startPerc} - ${startPerc + percIncrement}%`;
+    startPerc += percIncrement;
+    legend.appendChild(percDiv);
+    const colorDiv = document.createElement('div');
+    colorDiv.style.backgroundColor = color;
+    legend.appendChild(colorDiv);
+  }
+  // add the legend to the map
+  map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
 
   return loadGeoJson(map, GROW_AREA_BOUNDS_PATH);
 }
