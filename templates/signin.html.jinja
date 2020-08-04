@@ -24,9 +24,21 @@
 
 {% block content %}
   <div class="container">
-    <img src="{{ url_for('static', filename='img/shellcast_logo.png') }}" height="80" width="273" alt="ShellCast logo" loading="lazy">
-    <p>Creating an account with ShellCast allows you to add your own lease information and receive personalized notifications about potential lease closures.</p>
-    <p>Please sign in to the ShellCast application using one of the authentication options below.</p>
+    <img src="{{ url_for('static', filename='img/shellcast_logo.png') }}" id="shellcast-logo" height="70" width="274" alt="ShellCast logo" loading="lazy">
+    <p>
+      Creating an account with ShellCast is easy, free, and allows you to
+      receive temporary closure forecasts for your leases. With an account,
+      you will be able to see your lease forecasts on the ShellCast map,
+      and also have the option of receiving email or text notifications
+      with lease forecast information. Receiving forecasts specific to your
+      leases can be useful since leases in a single shellfish growing area
+      can have different rainfall thresholds.
+    </p>
+    <p>
+      To create an account or sign-in to an existing account, use one of
+      the authentication options below. You must use an authentication
+      option to create an account.
+    </p>
     <div id="firebaseui-container"></div>
   </div>
 {% endblock %}
