@@ -30,7 +30,7 @@ VERIFIED_ADDRESSES = ['shellcastapp@ncsu.edu', 'stparham@ncsu.edu', 'ssaia@ncsu.
 
 cron = Blueprint('cron', __name__)
 
-def sendNotifications(emails):
+def sendNotificationsWithAWSSES(emails):
   # Create a new SES client
   client = boto3.client('ses', region_name=current_app.config.AWS_REGION, aws_access_key_id=current_app.config.AWS_ACCESS_KEY_ID, aws_secret_access_key=current_app.config.AWS_SECRET_ACCESS_KEY)
   curDate = datetime.now(pytz.timezone('US/Eastern')).strftime('%B %d, %Y')
@@ -101,10 +101,10 @@ def sendNotifications():
       notificationsToSend.append((textAddress, textNotification, user.id))
 
   # send notifications
-  responses = sendNotifications(notificationsToSend)
+  responses = sendNotificationsWithAWSSES(notificationsToSend)
   # log all notifications that were sent
   for address, notificationText, userId, sendSuccess, resText in responses:
-    db.session.add(Notification())
+    db.session.add(Notification(address=address, notification_text=notificationText, user_id=userId, send_success=sendSuccess, response_text=resText))
   db.session.commit()
   t1 = time.perf_counter_ns()
   result = 'Constructed and sent {} notifications to {} users in {} seconds'.format(len(notificationsToSend), len(users), (t1 - t0) / 1000000000)
