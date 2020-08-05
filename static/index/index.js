@@ -149,13 +149,13 @@ function createDaySelector(map) {
   const htmlStr = `
     <div class="btn-group btn-group-toggle btn-group-vertical" data-toggle="buttons">
       <label class="btn btn-outline-secondary active">
-        <input type="radio" id="1day" checked> 1-day
+        <input type="radio" id="1day" checked> 1-day Max
       </label>
       <label class="btn btn-outline-secondary">
-        <input type="radio" id="2day"> 2-day
+        <input type="radio" id="2day"> 2-day Max
       </label>
       <label class="btn btn-outline-secondary">
-        <input type="radio" id="3day"> 3-day
+        <input type="radio" id="3day"> 3-day Max
       </label>
     </div>
   `;
