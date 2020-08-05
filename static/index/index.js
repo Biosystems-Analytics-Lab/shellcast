@@ -110,21 +110,22 @@ async function loadGeoJson(map, url) {
 }
 
 /**
- * Initializes the map.
+ * @param {string} htmlStr the HTML string to create an element from
+ * @return {Element} a DOM element created from the given string
  */
-async function initMap() {
-  const mapEl = document.getElementById(MAP_EL_ID);
-  map = new google.maps.Map(mapEl, MAP_OPTIONS);
-  // set the map's style
-  map.data.setStyle(styleFeature);
-  mapInfoWindow = new google.maps.InfoWindow();
-  // create the legend
+function strToEl(htmlStr) {
+  const template = document.createElement('template');
+  template.innerHTML = htmlStr.trim();
+  return template.content.firstChild;
+}
+
+function createLegend() {
   const legend = document.createElement('div');
   legend.style.backgroundColor = 'white';
   legend.style.border = '1px solid black';
   legend.style.display = 'grid';
   legend.style.gridTemplateColumns = 'auto 1rem';
-  legend.style.marginLeft = '5px';
+  legend.style.marginLeft = '10px';
   legend.style.textAlign = 'center';
   legend.style.lineHeight = '2rem';
   legend.style.fontSize = '1rem';
@@ -132,18 +133,59 @@ async function initMap() {
   const percIncrement = Math.floor(100 / COLOR_SCALE.length);
   let startPerc = 0;
   for (let color of COLOR_SCALE) {
-    const percDiv = document.createElement('div');
+    const percDiv = strToEl(`<div>${startPerc} - ${startPerc + percIncrement}%</div>`);
     percDiv.style.paddingLeft = '3px';
     percDiv.style.paddingRight = '3px';
-    percDiv.innerHTML = `${startPerc} - ${startPerc + percIncrement}%`;
     startPerc += percIncrement;
     legend.appendChild(percDiv);
     const colorDiv = document.createElement('div');
     colorDiv.style.backgroundColor = color;
     legend.appendChild(colorDiv);
   }
+  return legend;
+}
+
+function createDaySelector(map) {
+  const htmlStr = `
+    <div class="btn-group btn-group-toggle btn-group-vertical" data-toggle="buttons">
+      <label class="btn btn-outline-secondary active">
+        <input type="radio" id="1day" checked> 1-day
+      </label>
+      <label class="btn btn-outline-secondary">
+        <input type="radio" id="2day"> 2-day
+      </label>
+      <label class="btn btn-outline-secondary">
+        <input type="radio" id="3day"> 3-day
+      </label>
+    </div>
+  `;
+  const daySelector = strToEl(htmlStr);
+  daySelector.style.backgroundColor = 'white';
+  daySelector.style.margin = '10px';
+  daySelector.style.border = '1px solid black';
+  for (let i = 0; i < daySelector.childElementCount; i++) {
+    const button = daySelector.children[i];
+    button.addEventListener('click', () => map.data.setStyle(styleFeatureBasedOnDay(i + 1)));
+  }
+  return daySelector;
+}
+
+/**
+ * Initializes the map.
+ */
+async function initMap() {
+  const mapEl = document.getElementById(MAP_EL_ID);
+  map = new google.maps.Map(mapEl, MAP_OPTIONS);
+  // set the map's style
+  map.data.setStyle(styleFeatureBasedOnDay(1));
+  mapInfoWindow = new google.maps.InfoWindow();
+  
   // add the legend to the map
-  map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+  const legend = createLegend();
+  map.controls[google.maps.ControlPosition.LEFT_TOP].push(legend);
+  // add the day selector to the map
+  const daySelector = createDaySelector(map);
+  map.controls[google.maps.ControlPosition.LEFT_TOP].push(daySelector);
 
   return loadGeoJson(map, GROW_AREA_BOUNDS_PATH);
 }
@@ -224,20 +266,21 @@ function handleUndef(value) {
 }
 
 /**
- * Styles the given feature based on its 1-day closure probability.
- * @param {google.maps.data.Feature} feature the feature to style
+ * Returns a function that styles features based on the max probability for the given day.
+ * @param {number} day the day to style with
  */
-function styleFeature(feature) {
-  // calculate the color of the growing area (feature)
-  const areaColor = getColor(feature.getProperty('max_1d_prob'));
-
-  return {
-    strokeColor: '#000',
-    strokeWeight: 1,
-    strokeOpacity: 0.5,
-    fillColor: areaColor,
-    fillOpacity: 0.8
-  };
+function styleFeatureBasedOnDay(day) {
+  return (feature) => {
+    // calculate the color of the growing area (feature)
+    const areaColor = getColor(feature.getProperty(`max_${day}d_prob`));
+    return {
+      strokeColor: '#000',
+      strokeWeight: 1,
+      strokeOpacity: 0.5,
+      fillColor: areaColor,
+      fillOpacity: 0.8
+    };
+  }
 }
 
 /**
