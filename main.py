@@ -9,6 +9,7 @@ from models import db
 
 from routes.pages import pages
 from routes.api import api
+from routes.cron import cron
 
 from config import Config, DevConfig
 
@@ -36,6 +37,7 @@ def createApp(configObj):
   # register blueprints
   app.register_blueprint(pages)
   app.register_blueprint(api)
+  app.register_blueprint(cron)
 
   # initialize database connection
   db.init_app(app)
