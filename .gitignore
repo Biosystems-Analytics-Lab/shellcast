@@ -17,7 +17,9 @@ htmlcov
 # ignore Mac backup stuff
 .DS_Store
 # ignore data folder
-analysis/data
+analysis/data/
 # ignore r history file
 .Rhistory
 .Rproj.user
+# debug script
+analysis/shellcast_daily_analysis_debug.sh
