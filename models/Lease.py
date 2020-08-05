@@ -21,7 +21,7 @@ class Lease(db.Model):
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
   user = db.relationship('User', back_populates='leases')
-  closureProbabilities = db.relationship('ClosureProbability', order_by=ClosureProbability.created, back_populates='lease')
+  closureProbabilities = db.relationship('ClosureProbability', order_by=ClosureProbability.id.desc(), back_populates='lease')
 
   def asDict(self):
     return {
