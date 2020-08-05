@@ -30,7 +30,6 @@ def ensureUserExists(fbUserInfo):
 
   return newUser
 
-
 def userRequired(func):
   """
   A decorator function that verifies the Firebase JWT token in the
@@ -51,4 +50,20 @@ def userRequired(func):
     
     user = ensureUserExists(fbUserInfo)
     return func(*args, **kwargs, user=user)
+  return wrapper
+
+def cronRequired(func):
+  """
+  A decorator function that ensures that a request is made by the
+  GCP App Engine cron service.
+  """
+  @wraps(func)
+  def wrapper(*args, **kwargs):
+    # check for X-Appengine-Cron header
+    try:
+      if (not request.headers['X-Appengine-Cron']):
+        return {'message': 'Request must be made by cron service'}, 401
+    except KeyError:
+      return {'message': 'Request must be made by cron service'}, 401
+    return func(*args, **kwargs)
   return wrapper
