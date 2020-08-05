@@ -6,6 +6,10 @@
 
 # NOTE! need to define folder output paths below
 
+# make sure that all spawned processes are killed on exit, a kill signal, or an error
+trap "exit" INT TERM ERR
+trap "kill 0" EXIT
+
 # step 1
 # opt/anaconda3/bin/python ndfd_get_forecast_data_script.py | tee opt/analysis/data/tabular/outputs/terminal_data/01_python_output_$(date '+%Y%m%d').txt
 python ndfd_get_forecast_data_script.py | tee /Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/terminal_data/01_get_forecast_output_$(date '+%Y%m%d').txt
@@ -18,23 +22,21 @@ Rscript ndfd_convert_df_to_raster_script.R | tee /Users/sheila/Documents/github_
 # /usr/local/bin/Rscript ndfd_analyze_forecast_data_script.R | tee opt/analysis/data/tabular/outputs/terminal_data/03_analyze_out_$(date '+%Y%m%d').txt
 Rscript ndfd_analyze_forecast_data_script.R | tee /Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/terminal_data/03_analyze_out_$(date '+%Y%m%d').txt
 
-
-# QUESTION i need to set up connection for step 4 in this script but how?
-
 # See main README for details on thow to set up both the TCP connection and UNIX socket.
 
-# in home directory (TCP connect - need this for pymysql)
-# ./cloud_sql_proxy -instances=MYSQLDB_INSTANCE_ID=tcp:3306
-# or could i run it as... (since i'm in the home directory)
-# ~/cloud_sql_proxy -instances=MYSQLDB_INSTANCE_ID=tcp:3306
+# open TCP connection for step 4
+~/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306 & PID1=$!
 
-# run in analysis directory (UNIX socket -need this for sqlalchemy)
-# ~/cloud_sql_proxy -dir=./cloudsql -instances=MYSQLDB_INSTANCE_ID
-# or could i run it as... (this doesn't work)
-# ~/cloud_sql_proxy -dir=~/opt/analysis/cloudsql -instances=MYSQLDB_INSTANCE_ID #(this doesn't work)
+# open UNIX socket for step 4
+~/cloud_sql_proxy -dir=~/opt/analysis/cloudsql -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database & PID2=$!
+
+# wait 3 seconds to make sure connections are open
+sleep 3s
 
 # step 4
 # opt/anaconda3/bin/python gcp_update_mysqldb_script.py | tee opt/analysis/data/tabular/outputs/terminal_data/04_update_db_out_$(date '+%Y%m%d').txt
-# python gcp_update_mysqldb_script.py | tee /Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/terminal_data/04_update_db_out_$(date '+%Y%m%d').txt
+/Users/sheila/opt/anaconda3/bin/python gcp_update_mysqldb_script.py | tee /Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/terminal_data/04_update_db_out_$(date '+%Y%m%d').txt
 
-# QUESTION i need to close the connection now but how?
+# close connections
+kill -SIGINT $PID1
+kill -SIGINT $PID2

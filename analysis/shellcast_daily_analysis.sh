@@ -27,12 +27,10 @@ trap "kill 0" EXIT
 # See main README for details on thow to set up both the TCP connection and UNIX socket.
 
 # open TCP connection for step 4
-~/cloud_sql_proxy -instances=MYSQLDB_INSTANCE_ID=tcp:3306 &
-PID1=$!
+~/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306=tcp:3306 & PID1=$!
 
 # open UNIX socket for step 4
-~/cloud_sql_proxy -dir=~/opt/analysis/cloudsql -instances=MYSQLDB_INSTANCE_ID & #(this doesn't work)
-PID2=$!
+~/cloud_sql_proxy -dir=~/opt/analysis/cloudsql -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306 & PID2=$!
 
 # wait 3 seconds to make sure connections are open
 sleep 3s
