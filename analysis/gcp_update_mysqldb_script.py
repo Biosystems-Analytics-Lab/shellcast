@@ -90,8 +90,8 @@ lease_data = pandas.read_csv(lease_data_path)
 # see config.py for these
 db_user = Config.DB_USER
 db_pass = Config.DB_PASS
-db_name = DevConfig.DB_NAME
-db_socket_dir = DevConfig.DB_UNIX_SOCKET_PATH_PREFIX
+db_name = Config.DB_NAME
+db_socket_dir = Config.DB_UNIX_SOCKET_PATH_PREFIX
 cloud_sql_connection_name = Config.CLOUD_SQL_INSTANCE_NAME
 
 # create engine
@@ -122,7 +122,7 @@ engine = sqlalchemy.create_engine(
 connection = pymysql.connect(host = DevConfig.HOST,
                              user = Config.DB_USER,
                              password = Config.DB_PASS,
-                             db = DevConfig.DB_NAME,
+                             db = Config.DB_NAME,
                              charset = 'utf8mb4',
                              cursorclass = pymysql.cursors.DictCursor)
 # see rest of connection parameters: https://pymysql.readthedocs.io/en/latest/modules/connections.html?highlight=connect#pymysql.connections.Connection
@@ -167,37 +167,42 @@ ncdmf_lease_cursor.execute(ncdmf_leases_current_sql)
 # save result
 ncdmf_leases_current_result = ncdmf_lease_cursor.fetchall()
 
-# convert to pandas df
-ncdmf_leases_current_df = pandas.DataFrame(ncdmf_leases_current_result)
-
-# get ncdmf lease ids
-ncdmf_leases_current_ids = ncdmf_leases_current_df['ncdmf_lease_id']
-
-# anti-join to find new ncdmf leases from the ncdmf rest api 
-# (i.e., NOT in ncdmf_leases_current_ids and NOT in ncdmf_leases shellcast mysql table)
-lease_spatial_data_sel = lease_spatial_data[~lease_spatial_data['ncdmf_lease_id'].isin(ncdmf_leases_current_ids)].reset_index(drop=True)
-
-# lease_spatial_data_sel = lease_spatial_data_sel[1:3]
-
-# if there are no new leases to add (from the ncdmf rest api) then skip inserting rows
-if (len(lease_spatial_data_sel) > 0):
+# if empty then give an error message and don't try to update
+if (len(ncdmf_leases_current_result) > 0):
+    # convert to pandas df
+    ncdmf_leases_current_df = pandas.DataFrame(ncdmf_leases_current_result)
     
-    # get sql query
-    ncdmf_leases_insert_query = make_lease_sql_query(lease_spatial_data_sel)
+    # get ncdmf lease ids
+    ncdmf_leases_current_ids = ncdmf_leases_current_df['ncdmf_lease_id']
     
-    # execute query
-    ncdmf_lease_cursor.execute(ncdmf_leases_insert_query)
+    # anti-join to find new ncdmf leases from the ncdmf rest api 
+    # (i.e., NOT in ncdmf_leases_current_ids and NOT in ncdmf_leases shellcast mysql table)
+    lease_spatial_data_sel = lease_spatial_data[~lease_spatial_data['ncdmf_lease_id'].isin(ncdmf_leases_current_ids)].reset_index(drop=True)
     
-    # commit changes to remote db
-    connection.commit()
+    lease_spatial_data_sel = lease_spatial_data_sel[1:6] # add the first five for now
     
-    # print when finished
-    print("added ncdmf lease data to mysql db")
-    
+    # if there are no new leases to add (from the ncdmf rest api) then skip inserting rows
+    if (len(lease_spatial_data_sel) > 0):
+        
+        # get sql query
+        ncdmf_leases_insert_query = make_lease_sql_query(lease_spatial_data_sel)
+        
+        # execute query
+        ncdmf_lease_cursor.execute(ncdmf_leases_insert_query)
+        
+        # commit changes to remote db
+        connection.commit()
+        
+        # print when finished
+        print("added ncdmf lease data to mysql db")
+        
+    else:
+        # print when finished
+        print("there were no new ncdmf leases to add to mysql db")
+        
 else:
-    # print when finished
-    print("there were no new ncdmf leases to add to mysql db")
-
+    # print that database is empty
+    print("the database is empty so leases cannot be added")
 
 #%%
 #ncdmf_leases_insert_query
