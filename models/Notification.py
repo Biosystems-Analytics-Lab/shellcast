@@ -7,16 +7,17 @@ class Notification(db.Model):
 
   id = db.Column(db.Integer, primary_key=True)
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-  closure_prob_id = db.Column(db.Integer, db.ForeignKey('closure_probabilities.id'))
-  notification_text = db.Column(db.String(80))
+  address = db.Column(db.String(50))
+  notification_text = db.Column(db.String(10000))
   send_success = db.Column(db.Boolean, server_default=expression.true(), default=True)
+  response_text = db.Column(db.String(10000))
   created = db.Column(db.DateTime, server_default=db.func.now())
 
   user = db.relationship('User', back_populates='notifications')
-  closureProbability = db.relationship('ClosureProbability', back_populates='notifications')
 
   def asDict(self):
     return {
+      'address': self.address,
       'notification_text': self.notification_text,
       'send_success': self.send_success
     }
