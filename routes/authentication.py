@@ -52,7 +52,7 @@ def userRequired(func):
     return func(*args, **kwargs, user=user)
   return wrapper
 
-def cronRequired(func):
+def cronOnly(func):
   """
   A decorator function that ensures that a request is made by the
   GCP App Engine cron service.
