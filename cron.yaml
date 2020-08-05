@@ -1,0 +1,5 @@
+cron:
+- description: "Send notifications daily"
+  url: /sendNotifications
+  schedule: every day 07:00
+  timezone: America/New_York
