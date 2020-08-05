@@ -57,9 +57,10 @@ CREATE TABLE `closure_probabilities` (
 CREATE TABLE `notification_log` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `closure_prob_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `notification_text` varchar(80) NULL,
+  `address` varchar(50) NOT NULL,
+  `notification_text` varchar(10000) NOT NULL,
   `send_success` boolean DEFAULT true,
+  `response_text` varchar(10000) NULL,
   `created` datetime DEFAULT NOW(),
   PRIMARY KEY (`id`)
 );
@@ -102,7 +103,6 @@ ALTER TABLE `users` ADD CONSTRAINT `service_provider_fk` FOREIGN KEY (`service_p
 ALTER TABLE `closure_probabilities` ADD CONSTRAINT `user_lease_fk` FOREIGN KEY (`lease_id`) REFERENCES `user_leases` (`id`);
 ALTER TABLE `user_leases` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `notification_log` ADD CONSTRAINT `user2_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-ALTER TABLE `notification_log` ADD CONSTRAINT `closure_prob_fk` FOREIGN KEY (`closure_prob_id`) REFERENCES `closure_probabilities` (`id`);
 
 -- Add constant (relatively constant) data to tables.
 -- Text disclaimers
