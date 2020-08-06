@@ -16,7 +16,6 @@ def ensureUserExists(fbUserInfo):
   # extract user info
   fbUid = fbUserInfo.get('uid')
   email = fbUserInfo.get('email')
-  phoneNum = fbUserInfo.get('phone_number')
 
   # check if the user with this Firebase UID already exists
   user = User.query.filter_by(firebase_uid=fbUid).first()
@@ -24,7 +23,7 @@ def ensureUserExists(fbUserInfo):
     return user
 
   # otherwise we need to create a new user
-  newUser = User(firebase_uid=fbUid, email=email, phone_number=phoneNum)
+  newUser = User(firebase_uid=fbUid, email=email)
   db.session.add(newUser)
   db.session.commit()
 
