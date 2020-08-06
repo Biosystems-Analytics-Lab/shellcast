@@ -19,6 +19,7 @@ class User(db.Model):
 
   def asDict(self):
     return {
+      'service_provider_id': self.service_provider_id,
       'firebase_uid': self.firebase_uid,
       'phone_number': self.phone_number,
       'email': self.email
