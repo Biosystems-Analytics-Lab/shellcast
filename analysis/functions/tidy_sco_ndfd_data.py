@@ -21,7 +21,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
         var_data_pd (data frame): A pandas dataframe with SCO NDFD variable data
         datetime_ymdh_str (str): A string in "%Y%m%d%H" format (e.g, "2016010100")
     Required:
-        import numpy, import pandas, import datatime, must load and run convert_sco_ndfd_datetime_str() and get_sco_ndfd_data() functions before this
+        import numpy, import pandas, import datatime, must load and run convert_sco_ndfd_datetime_str(), get_sco_ndfd_data(), and aggregate_sco_ndfd_var_data() functions before this
     """
     # ndfd_data.values # to see all possible variables
 
@@ -51,44 +51,35 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
             # no available list of pop12 or qpf for 24, 36, etc. hours out (which i need)
             # so skip entries with 4 dimensions
             if (len(var_data_dims) == 3): # when dimensions are (time, y, x)
-                var_data_time_dim = var_data_dims[0] # get time dimention
-
+                # get time dimention
+                var_data_time_dim = var_data_dims[0]
 
                 # save list of variable time dimentions
                 var_time_np = numpy.array(var_data[var_data_time_dim][:])
                 # we want 24 hr (1-day), 48 hr (2-day), and 72 hr (3-day) data
 
-                # make list of desired times
-                #var_times_sel = [24, 48, 72]
+                # select subperiods
+                var_times_sel = numpy.array([6., 12., 18., 24., 30., 36., 42., 48., 54., 60., 66., 72.])
 
-                # loop through desired times and get indeces
-                #var_times_sel_index = []
-                #for time in var_times_sel:
-                #    var_times_sel_index.append(int(numpy.where(var_time_np == time)[0][0]))
+                # check that subperiods are available
+                var_comparison = numpy.intersect1d(var_time_np, var_times_sel) # has to be 12 long
 
-                # check that desired times are available
-                var_times_sel = numpy.array([24.0, 48.0, 72.0])
-                var_comparison = numpy.intersect1d(var_time_np, var_times_sel)
+                # all subperiods are available
+                if(len(var_comparison) == 12):
+                    # get subperiod values
+                    var_24hr_vals = var_times_sel[0:4]
+                    var_48hr_vals = var_times_sel[4:8]
+                    var_72hr_vals = var_times_sel[8:12]
 
-                # if all desired times are available
-                if (len(var_comparison) == 3):
-                    # create indeces for hrs of interest
-                    hr24_index = int(numpy.where(var_time_np == 24)[0][0]) # 1-day forecast
-                    hr48_index = int(numpy.where(var_time_np == 48)[0][0]) # 2-day forecast
-                    hr72_index = int(numpy.where(var_time_np == 72)[0][0]) # 3-day forecast
+                    # get index for pulling data
+                    var_24hr_index = numpy.where(numpy.isin(var_times_sel, var_24hr_vals))[0] # 1-day forecast
+                    var_48hr_index = numpy.where(numpy.isin(var_times_sel, var_48hr_vals))[0] # 2-day forecast
+                    var_72hr_index = numpy.where(numpy.isin(var_times_sel, var_72hr_vals))[0] # 3-day forecast
 
-                    # for four loop will need if statement for each if length is zero
-                    # len(numpy.where(temp_pop12_time_np == 24)[0])
-
-                    # convert data to array (200 x 194)
-                    var_24hr_np = numpy.array(var_data.data[0][hr24_index][0])
-                    var_48hr_np = numpy.array(var_data.data[0][hr48_index][0])
-                    var_72hr_np = numpy.array(var_data.data[0][hr72_index][0])
-
-                    # convert data to dataframe (3 x 38800)
-                    var_24hr_pd_raw = pandas.DataFrame(var_24hr_np).stack(dropna = False).reset_index()
-                    var_48hr_pd_raw = pandas.DataFrame(var_48hr_np).stack(dropna = False).reset_index()
-                    var_72hr_pd_raw = pandas.DataFrame(var_72hr_np).stack(dropna = False).reset_index()
+                    # aggregate qpf data
+                    var_24hr_pd_raw = aggregate_sco_ndfd_var_data(var_data, var_24hr_index, var_24hr_vals, ndfd_var)
+                    var_48hr_pd_raw = aggregate_sco_ndfd_var_data(var_data, var_48hr_index, var_48hr_vals, ndfd_var)
+                    var_72hr_pd_raw = aggregate_sco_ndfd_var_data(var_data, var_72hr_index, var_72hr_vals, ndfd_var)
 
                     # add valid period column
                     var_24hr_pd_raw['valid_period_hrs'] = numpy.repeat("24", len(var_24hr_pd_raw), axis=0)
@@ -99,9 +90,9 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
                     var_data_pd_raw = var_24hr_pd_raw.append([var_48hr_pd_raw, var_72hr_pd_raw]).reset_index()
 
                     # rename columns
-                    var_data_pd = var_data_pd_raw.rename(columns={"level_0": "y_index", "level_1": "x_index", 0: "qpf_value_kgperm2"})
+                    var_data_pd = var_data_pd_raw.rename(columns={"level_0": "y_index", "level_1": "x_index", "qpf_value_kgperm2": "qpf_value_kgperm2"})
 
-                                    # save x and y data
+                    # save x and y data
                     x_data = ndfd_data['x'][:] # x coordinate
                     y_data = ndfd_data['y'][:] # y coordinate
 
@@ -131,16 +122,15 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
 
                     return var_data_pd, datetime_ymdh_str
 
-                # when not all desired times are available
+                # not all subperiods are available for this analysis so don't run
                 else:
                     # empty dataframe
                     var_data_pd = pandas.DataFrame()
 
                     # print status
-                    print("desired times for " + ndfd_var + " data on " + datetime_ymdh_str + " are not available")
+                    print("desired subperiods for " + ndfd_var + " data on " + datetime_ymdh_str + " are not available")
 
                     return var_data_pd, datetime_ymdh_str
-
 
             # if number of dimensions is more than 3 i.e. when they are: (reftime, time, y, x)
             else:
@@ -148,7 +138,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
                 var_data_pd = pandas.DataFrame()
 
                 # print status
-                print("desired times for " + ndfd_var + " data on " + datetime_ymdh_str + " are not available")
+                print("desired data dimensions for " + ndfd_var + " data on " + datetime_ymdh_str + " are not available")
 
                 return var_data_pd, datetime_ymdh_str
 
@@ -172,29 +162,28 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
                 var_time_np = numpy.array(var_data[var_data_time_dim][:])
                 # we want 24 hr (1-day), 48 hr (2-day), and 72 hr (3-day) data
 
-                # check that desired times are available
-                var_times_sel = numpy.array([24.0, 48.0, 72.0])
-                var_comparison = numpy.intersect1d(var_time_np, var_times_sel)
+                # select subperiods
+                var_times_sel = numpy.array([12.,  24.,  36.,  48.,  60.,  72.])
 
-                # if all desired times are available
-                if (len(var_comparison) == 3):
-                    # create indeces for hrs of interest
-                    hr24_index = int(numpy.where(var_time_np == 24)[0][0]) # 1-day forecast
-                    hr48_index = int(numpy.where(var_time_np == 48)[0][0]) # 2-day forecast
-                    hr72_index = int(numpy.where(var_time_np == 72)[0][0]) # 3-day forecast
+                # check that subperiods are available
+                var_comparison = numpy.intersect1d(var_time_np, var_times_sel) # has to be 6 long
 
-                    # for four loop will need if statement for each if length is zero
-                    # len(numpy.where(temp_pop12_time_np == 24)[0])
+                # all subperiods are available
+                if(len(var_comparison) == 6):
+                    # get subperiod values
+                    var_24hr_vals = var_times_sel[0:2]
+                    var_48hr_vals = var_times_sel[2:4]
+                    var_72hr_vals = var_times_sel[4:6]
 
-                    # convert data to array (200 x 194)
-                    var_24hr_np = numpy.array(var_data.data[0][hr24_index][0])
-                    var_48hr_np = numpy.array(var_data.data[0][hr48_index][0])
-                    var_72hr_np = numpy.array(var_data.data[0][hr72_index][0])
+                    # get index for pulling data
+                    var_24hr_index = numpy.where(numpy.isin(var_times_sel, var_24hr_vals))[0] # 1-day forecast
+                    var_48hr_index = numpy.where(numpy.isin(var_times_sel, var_48hr_vals))[0] # 2-day forecast
+                    var_72hr_index = numpy.where(numpy.isin(var_times_sel, var_72hr_vals))[0] # 3-day forecast
 
-                    # convert data to dataframe (3 x 38800)
-                    var_24hr_pd_raw = pandas.DataFrame(var_24hr_np).stack(dropna = False).reset_index()
-                    var_48hr_pd_raw = pandas.DataFrame(var_48hr_np).stack(dropna = False).reset_index()
-                    var_72hr_pd_raw = pandas.DataFrame(var_72hr_np).stack(dropna = False).reset_index()
+                    # aggregate qpf data
+                    var_24hr_pd_raw = aggregate_sco_ndfd_var_data(var_data, var_24hr_index, var_24hr_vals, ndfd_var)
+                    var_48hr_pd_raw = aggregate_sco_ndfd_var_data(var_data, var_48hr_index, var_48hr_vals, ndfd_var)
+                    var_72hr_pd_raw = aggregate_sco_ndfd_var_data(var_data, var_72hr_index, var_72hr_vals, ndfd_var)
 
                     # add valid period column
                     var_24hr_pd_raw['valid_period_hrs'] = numpy.repeat("24", len(var_24hr_pd_raw), axis=0)
@@ -204,8 +193,8 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
                     # merge rows of data frames
                     var_data_pd_raw = var_24hr_pd_raw.append([var_48hr_pd_raw, var_72hr_pd_raw]).reset_index()
 
-                    # make final pd dataframe with renamed columns
-                    var_data_pd = var_data_pd_raw.rename(columns={"level_0": "y_index", "level_1": "x_index", 0: "pop12_value_perc"})
+                    # rename columns
+                    var_data_pd = var_data_pd_raw.rename(columns={"level_0": "y_index", "level_1": "x_index", "pop12_value_perc": "pop12_value_perc"})
 
                     # save x and y data
                     x_data = ndfd_data['x'][:] # x coordinate
@@ -223,6 +212,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
                     # add longitude and latitude to data frame
                     var_data_pd['longitude_km'] = longitude
                     var_data_pd['latitude_km']  = latitude
+
                     # create and wrangle time columns
                     # server time is in UCT but changing it to something that's local for NC (use NYC timezone)
                     var_data_pd['time'] = pandas.to_datetime(numpy.repeat(datetime_uct_str, len(var_data_pd), axis=0), format = "%Y-%m-%d %H:%M")
@@ -236,16 +226,15 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
 
                     return var_data_pd, datetime_ymdh_str
 
-                # if not all desired times are available
+                # not all subperiods are available for this analysis so don't run
                 else:
                     # empty dataframe
                     var_data_pd = pandas.DataFrame()
 
                     # print status
-                    print("desired times for " + ndfd_var + " data on " + datetime_ymdh_str + " are not available")
+                    print("desired subperiods for " + ndfd_var + " data on " + datetime_ymdh_str + " are not available")
 
                     return var_data_pd, datetime_ymdh_str
-
 
             # if number of dimensions is more than 3 i.e. when they are: (reftime, time, y, x)
             else:
@@ -256,6 +245,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
                 print("desired times for " + ndfd_var + " data on " + datetime_ymdh_str + " are not available")
 
                 return var_data_pd, datetime_ymdh_str
+
 
         # if qpf or pop12 are wanted to but not available
         elif(((ndfd_var == "qpf") and (qpf_var_check == -1)) or ((ndfd_var == "pop12") and (pop12_var_check == -1))):
@@ -271,6 +261,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
         # if requesting something other than qpf or pop12 data
         else:
             return print("Not a valid ndfd_var option.")
+
 
     # if data doesn't exist
     else:
