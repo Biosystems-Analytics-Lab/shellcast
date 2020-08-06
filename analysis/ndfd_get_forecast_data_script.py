@@ -61,6 +61,7 @@ functions_path = analysis_base_path + "functions/"
 
 exec(open((functions_path + "convert_sco_ndfd_datetime_str.py")).read())
 exec(open((functions_path + "get_sco_ndfd_data.py")).read())
+exec(open((functions_path + "aggregate_sco_ndfd_var_data.py")).read())
 exec(open((functions_path + "tidy_sco_ndfd_data.py")).read())
 exec(open((functions_path + "append_list_as_row.py")).read())
 
@@ -114,8 +115,9 @@ elif (datetime_now_round_uct >= datetime_noontoday_uct) & (datetime_now_round_uc
     temp_datetime_uct_str = datetime_noontoday_uct.strftime("%Y-%m-%d %H:%M")
 
 # temp_datetime_uct_str
+# temp_datetime_uct_str = '2020-08-03 00:00' # use this to test large closure probabilities
 
-#
+# 
 
 # get data
 
