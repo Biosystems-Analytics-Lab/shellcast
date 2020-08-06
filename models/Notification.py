@@ -23,4 +23,4 @@ class Notification(db.Model):
     }
 
   def __repr__(self):
-    return '<Notification: {}, {}, {}>'.format(self.user_id, self.closure_prob_id, self.notification_text)
+    return '<Notification: {}, {}>'.format(self.user_id, self.notification_text)
