@@ -8,7 +8,7 @@ from models.Lease import Lease
 from models.NCDMFLease import NCDMFLease
 from models.PhoneServiceProvider import PhoneServiceProvider
 
-from routes.forms.ProfileInfoForm import ProfileInfoForm
+from routes.validators.ProfileInfoValidator import ProfileInfoValidator
 
 from routes.authentication import userRequired
 
@@ -40,16 +40,16 @@ def userInfo(user):
     return userInfo
   else: # request.method == 'POST'
     # validate the uploaded info
-    form = ProfileInfoForm.from_json(request.json)
-    form.service_provider_id.choices.append(db.session.query(PhoneServiceProvider.id, PhoneServiceProvider.name).all())
-    if (form.validate()):
-      user.email = form.email.data
-      user.phone_number = form.phone_number.data
-      user.service_provider_id = form.service_provider_id.data
+    possibleServiceProviders = list(map(lambda x: x[0], db.session.query(PhoneServiceProvider.id).all()))
+    validator = ProfileInfoValidator(request.json, possibleServiceProviders)
+    if (validator.validate()):
+      if (validator.email): user.email = validator.email
+      if (validator.phone_number): user.phone_number = validator.phone_number
+      if (validator.service_provider_id): user.service_provider_id = validator.service_provider_id
       db.session.add(user)
       db.session.commit()
       return {'message': 'Success'}, 200
-    return {'message': form.errors}, 400
+    return {'message': validator.errors}, 400
 
 @api.route('/leaseProbs')
 @userRequired
