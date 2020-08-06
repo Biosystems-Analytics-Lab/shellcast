@@ -5,6 +5,7 @@ from models.User import User
 from models.ClosureProbability import ClosureProbability
 from models.SGAMinMaxProbability import SGAMinMaxProbability
 from models.Lease import Lease
+from models.NCDMFLease import NCDMFLease
 from models.PhoneServiceProvider import PhoneServiceProvider
 
 from routes.forms.ProfileInfoForm import ProfileInfoForm
@@ -108,24 +109,25 @@ def userLeases(user):
     return jsonify(list(map(leaseToDict, leases)))
   elif (request.method == 'POST'):
     clientData = request.json
+    ncdmfLeaseId = clientData.get('ncdmf_lease_id')
     # find the NCDMF lease record
-    for lease in NCDMF_LEASES:
-      if (lease['ncdmf_lease_id'] == clientData.get('ncdmf_lease_id')):
-        # assertion: at this point we know that the given ncdmf_lease_id is valid
-        # now we need to check if this lease already exists for the current user
-        leaseRecord = db.session.query(Lease).filter_by(id=clientData.get('id'), user_id=user.id, ncdmf_lease_id=clientData.get('ncdmf_lease_id')).first()
-        if (leaseRecord):
-          # update the existing record
-          # TODO need to add checks for invalid values
-          leaseRecord.email_pref = request.json.get('email_pref')
-          leaseRecord.text_pref = request.json.get('text_pref')
-          leaseRecord.prob_pref = request.json.get('prob_pref')
-        else:
-          # create a new lease record
-          leaseRecord = Lease(user_id=user.id, **lease)
-        db.session.add(leaseRecord)
-        db.session.commit()
-        return leaseToDict(leaseRecord)
+    ncdmfLease = db.session.query(NCDMFLease).filter_by(ncdmf_lease_id=ncdmfLeaseId).first()
+    if (ncdmfLease):
+      # assertion: at this point we know that the given ncdmf_lease_id is valid
+      # now we need to check if this lease already exists for the current user
+      userLease = db.session.query(Lease).filter_by(id=clientData.get('id'), user_id=user.id, ncdmf_lease_id=ncdmfLeaseId).first()
+      if (userLease):
+        # update the existing record
+        # TODO need to add checks for invalid values
+        userLease.email_pref = request.json.get('email_pref')
+        userLease.text_pref = request.json.get('text_pref')
+        userLease.prob_pref = request.json.get('prob_pref')
+      else:
+        # create a new lease record
+        userLease = Lease(user_id=user.id, **ncdmfLease.asDict())
+      db.session.add(userLease)
+      db.session.commit()
+      return leaseToDict(userLease)
     return {'message': 'The given lease id does not exist.'}, 400
   else: # request.method == 'DELETE'
     print('TODO delete lease')
@@ -138,9 +140,10 @@ def searchLeases(user):
   Returns leases based on a search term.
   """
   searchTerm = str(request.json.get('search'))
-  # TODO return the pre-collected leases from the Griffin API with a fuzzy search on the ncdmf lease id
-  print('TODO return leases from database with a fuzzy search on the ncdmf lease id')
-  leases = NCDMF_LEASES
-  filteredLeases = filter(lambda x: searchTerm in str(x['ncdmf_lease_id']), leases)
-  leaseIdsOnly = map(lambda x: x['ncdmf_lease_id'], filteredLeases)
-  return jsonify(list(leaseIdsOnly))
+  userLeaseIds = db.session.query(Lease.ncdmf_lease_id).filter_by(user_id=user.id).all()
+  ncdmfLeaseIds = db.session.query(NCDMFLease.ncdmf_lease_id).\
+      filter(
+        NCDMFLease.ncdmf_lease_id.like('%%' + searchTerm + '%%'),
+        ~NCDMFLease.ncdmf_lease_id.in_(list(map(lambda x: x[0], userLeaseIds)))
+      ).all()
+  return jsonify(list(map(lambda x: x[0], ncdmfLeaseIds)))
