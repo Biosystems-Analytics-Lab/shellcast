@@ -12,7 +12,6 @@ class ClosureProbability(db.Model):
   updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
   lease = db.relationship('Lease', back_populates='closureProbabilities')
-  notifications = db.relationship('Notification', order_by=Notification.created, back_populates='closureProbability')
 
   def asDict(self):
     return {

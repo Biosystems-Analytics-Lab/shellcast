@@ -2,16 +2,17 @@ import pytest
 
 from models.User import User
 from models.Lease import Lease
+from models.NCDMFLease import NCDMFLease
 from models.ClosureProbability import ClosureProbability
 
 from firebase_admin import auth
 
 def test_get_leases(client, dbSession, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890'), 'validUser1')
+  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='1234567890'), 'validUser1')
 
   # add the user to the db
-  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890')
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='1234567890')
 
   dbSession.add(user)
   dbSession.commit()
@@ -47,18 +48,25 @@ def test_get_leases(client, dbSession, addMockFbUser):
 
 def test_add_lease(client, dbSession, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890'), 'validUser1')
+  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com'), 'validUser1')
 
   # add the user to the db
-  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890')
-
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com')
   dbSession.add(user)
   dbSession.commit()
 
   # add one existing lease for the user
   lease = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geometry=(34.404497, -77.567573))
-
   dbSession.add(lease)
+  dbSession.commit()
+
+  # add some NCDMF leases
+  ncdmfLeases = [
+    NCDMFLease(ncdmf_lease_id='819401', grow_area_name='D11', rainfall_thresh_in=2.5, geometry=(34.404497, -77.567573)),
+    NCDMFLease(ncdmf_lease_id='123456', grow_area_name='B05', rainfall_thresh_in=3.5, geometry=(35.923741, -76.239482)),
+    NCDMFLease(ncdmf_lease_id='4-C-89', grow_area_name='A01', rainfall_thresh_in=1.5, geometry=(36.303915, -75.864693))
+  ]
+  dbSession.add_all(ncdmfLeases)
   dbSession.commit()
 
   # make a request to add the given lease
@@ -89,10 +97,10 @@ def test_add_lease(client, dbSession, addMockFbUser):
 
 def test_add_invalid_lease(client, dbSession, addMockFbUser):
   # add a mock Firebase user
-  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890'), 'validUser1')
+  addMockFbUser(dict(uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com'), 'validUser1')
 
   # add the user to the db
-  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com', phone_number='11234567890')
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com')
 
   dbSession.add(user)
   dbSession.commit()
