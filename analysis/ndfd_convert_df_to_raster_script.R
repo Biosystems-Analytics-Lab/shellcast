@@ -14,6 +14,7 @@
 # to do list
 
 # TODO (wishlist) use here package
+# TODO (wishlist) use terra package for raster stuff
 
 
 # ---- 1. install and load packages as necessary ----

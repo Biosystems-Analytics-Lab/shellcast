@@ -14,9 +14,8 @@
 # to do list
 
 # TODO include error message/script stopping for no recent data to pull
-# TODO save all spatial data outputs to geojson (to reduce storage demands)
-# TODO need to creat some sort of warning so that if this doesn't work then mysql db doesn't update
 # TODO (wishlist) use here package
+# TODO (wishlist) use terra package for raster stuff
 
 
 # ---- 1. install and load packages as necessary ----
@@ -207,8 +206,8 @@ ndfd_pop12_raster_3day_sga_albers <- raster::crop(ndfd_pop12_raster_3day_albers,
 
 # plot to check
 # plot(ndfd_pop12_raster_1day_sga_albers)
-# plot(ndfd_qpf_raster_1day_sga_albers)
 # plot(ndfd_pop12_raster_2day_sga_albers)
+# plot(ndfd_pop12_raster_3day_sga_albers)
 
 # qpf for 1-day, 2-day, and 3-day forecasts
 ndfd_qpf_raster_1day_sga_albers <- raster::crop(ndfd_qpf_raster_1day_albers, sga_buffer_albers)
@@ -216,8 +215,8 @@ ndfd_qpf_raster_2day_sga_albers <- raster::crop(ndfd_qpf_raster_2day_albers, sga
 ndfd_qpf_raster_3day_sga_albers <- raster::crop(ndfd_qpf_raster_3day_albers, sga_buffer_albers)
 
 # plot to check
+# plot(ndfd_qpf_raster_1day_sga_albers)
 # plot(ndfd_qpf_raster_2day_sga_albers)
-# plot(ndfd_pop12_raster_3day_sga_albers)
 # plot(ndfd_qpf_raster_3day_sga_albers)
 
 # project pop12 to wgs84 toofor 1-day, 2-day, and 3-day forecasts
