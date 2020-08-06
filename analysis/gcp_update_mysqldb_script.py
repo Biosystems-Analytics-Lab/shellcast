@@ -68,7 +68,6 @@ functions_path = analysis_base_path + "functions/"
 
 
 # %% load custom functions
-
 exec(open((functions_path + "make_lease_sql_query.py")).read())
 
 
@@ -91,25 +90,17 @@ lease_data = pandas.read_csv(lease_data_path)
 db_user = Config.DB_USER
 db_pass = Config.DB_PASS
 db_name = Config.DB_NAME
-db_socket_dir = Config.DB_UNIX_SOCKET_PATH_PREFIX
 cloud_sql_connection_name = Config.CLOUD_SQL_INSTANCE_NAME
 
 # create engine
 engine = sqlalchemy.create_engine(
     # Equivalent URL:
-    # mysql+pymysql://<db_user>:<db_pass>@/<db_name>?unix_socket=<socket_path>/<cloud_sql_instance_name>
     sqlalchemy.engine.url.URL(
-        drivername="mysql+pymysql",
-        username=db_user,  # e.g. "my-database-user"
-        password=db_pass,  # e.g. "my-database-password"
-        database=db_name,  # e.g. "my-database-name"
-        query={
-            "unix_socket": "{}/{}".format(
-                db_socket_dir,  # e.g. "/cloudsql"
-                cloud_sql_connection_name)  # i.e "<PROJECT-NAME>:<INSTANCE-REGION>:<INSTANCE-NAME>"
-        }
+        drivername = "mysql+pymysql",
+        username = db_user,
+        password = db_pass,
+        database = db_name,
     ),
-    # ... Specify additional properties here.
 )
 
 # engine
@@ -132,14 +123,15 @@ connection = pymysql.connect(host = DevConfig.HOST,
 
 # %% update sga min and max table
 
-# sga_data = sga_data[1:5]
+sga_data = sga_data[1:5]
 
 # add df to mysql db
 sga_data.to_sql('sga_min_max', engine, if_exists = 'append', index = False)
 
 # print status
 print("added sga min and max data to mysql db")
-
+# print("did not add sga min and max data to mysql db")
+ 
 # create cursor to print out status of update
 # sga_cursor = connection.cursor()
 # execute query
