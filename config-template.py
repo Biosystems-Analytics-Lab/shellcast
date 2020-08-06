@@ -6,6 +6,12 @@ class Config(object):
   DEBUG = False
   # whether or not to setup Flask in testing mode
   TESTING = False
+  # AWS Access Key ID
+  AWS_ACCESS_KEY_ID = 'ADD_VALUE_HERE'
+  # AWS Secret Access Key
+  AWS_SECRET_ACCESS_KEY = 'ADD_VALUE_HERE'
+  # AWS SES region
+  AWS_REGION = 'us-east-1'
   # Google Maps JavaScript API Key
   MAPS_API_KEY = 'ADD_VALUE_HERE'
   # the username to use to access the database
