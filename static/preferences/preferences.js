@@ -114,14 +114,11 @@ async function saveProfileFormChanges() {
   });
   if (res.ok) {
     // overwrite the client copy of the profile info
-    profileInfo = newProfileInfo;
-    // reset the form with the new info
-    initProfileForm(newProfileInfo, true);
+    profileInfo = await res.json();
   } else {
     console.log('There was an error while saving the profile changes.');
-    // reset the form with the old info
-    initProfileForm(profileInfo, true);
   }
+  initProfileForm(profileInfo, true);
 }
 
 /**
