@@ -514,8 +514,8 @@ ndfd_cmu_calcs_join_data <- ndfd_cmu_calcs_data %>%
 
 # min and max calcs for each sga
 ndfd_sga_calcs_data <- ndfd_cmu_calcs_join_data %>%
-  group_by(grow_area, valid_period_hrs) %>%
-  summarize(min = round(min(prob_close_perc), 0),
+  dplyr::group_by(grow_area, valid_period_hrs) %>%
+  dplyr::summarize(min = round(min(prob_close_perc), 0),
             max = round(max(prob_close_perc), 0)) %>%
   dplyr::mutate(valid_period_hrs = case_when(valid_period_hrs == 24 ~ "1d_prob",
                                              valid_period_hrs == 48 ~ "2d_prob",
@@ -536,32 +536,13 @@ ndfd_lease_calcs_data_raw <- cmu_bounds_albers %>%
   st_intersection(lease_data_albers) %>%
   dplyr::select(lease_id, HA_CLASS) %>%
   st_drop_geometry() %>%
+  # group_by(lease_id) %>%
+  # count()
   dplyr::left_join(ndfd_cmu_calcs_data, by = "HA_CLASS") %>%
   dplyr::mutate(duplicate_id = paste0(lease_id, "_", rainfall_thresh_in)) # make a unique id for anti-join
 
-# some leases might overlap two cmus so account for that by taking cmu with minimum rainfall threshold
-# for example lease_id = 64-75B includes NB_4 (2 in depth) and NB_5 (4 in depth/emergency)
-ndfd_lease_duplicates <- ndfd_lease_calcs_data_raw %>%
-  group_by(lease_id) %>%
-  count() %>%
-  filter(n > 3) %>%
-  left_join(ndfd_lease_calcs_data_raw, by = "lease_id") %>%
-  distinct(lease_id, rainfall_thresh_in) %>%
-  summarise(rainfall_thresh_in = max(rainfall_thresh_in)) %>% # want to remove max rainfall threshold values in the case of duplicates
-  dplyr::mutate(duplicate_id = paste0(lease_id, "_", rainfall_thresh_in)) %>% # make a unique id for anti-join
-  dplyr::select(duplicate_id)
-
-# antijoin
-ndfd_lease_calcs_data_raw_no_duplicates <- ndfd_lease_calcs_data_raw %>%
-  dplyr::anti_join(ndfd_lease_duplicates, by = "duplicate_id") %>%
-  dplyr::select(-duplicate_id)
-
-# length(unique(ndfd_lease_calcs_data_raw$lease_id)) # 493
-# length(unique(lease_data_albers$lease_id)) # 513
-# ignoring some leases that are outside cmus
-
 # final tidy up of lease calcs for database
-ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw_no_duplicates %>%
+ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw %>%
   dplyr::mutate(day = ymd(datetime_uct),
                 prob_close = round(prob_close_perc, 0)) %>%
   dplyr::select(lease_id, day, valid_period_hrs, prob_close) %>%
@@ -569,28 +550,34 @@ ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw_no_duplicates %>%
                                          valid_period_hrs == 48 ~ "prob_2d_perc",
                                          valid_period_hrs == 72 ~ "prob_3d_perc")) %>%
   dplyr::select(-valid_period_hrs) %>%
-  tidyr::pivot_wider(id_cols = c(lease_id, day), names_from = valid_period, values_from = prob_close)
+  tidyr::pivot_wider(id_cols = c(lease_id, day), 
+                     names_from = valid_period, 
+                     values_from = prob_close, 
+                     values_fn = max) # will take the max prob. closure value if there are multiple
+# some leases might overlap two cmus so account for that by taking cmu with minimum rainfall threshold
+# for example lease_id = 64-75B includes NB_4 (2 in depth) and NB_5 (4 in depth/emergency)
 
 # add in leases wihtout cmus as NA values
 # these are leases that, at no point, touch a cmu boundary
-ndfd_leases_ignored_list <- lease_data_albers %>%
-  dplyr::anti_join(ndfd_lease_calcs_data_spread, by = "lease_id") %>%
-  st_drop_geometry() %>%
-  dplyr::select(lease_id)
+# ndfd_leases_ignored_list <- lease_data_albers %>%
+#   dplyr::anti_join(ndfd_lease_calcs_data_spread, by = "lease_id") %>%
+#   st_drop_geometry() %>%
+#   dplyr::select(lease_id)
 
 # create dataframe to bind to ndfd_lease_calcs_data_spread
-ndfd_leases_ignored <- data.frame(lease_id = ndfd_leases_ignored_list$lease_id,
-                                  day = ndfd_date_uct,
-                                  prob_1d_perc = NA,
-                                  prob_2d_perc = NA,
-                                  prob_3d_perc = NA)
+# ndfd_leases_ignored <- data.frame(lease_id = ndfd_leases_ignored_list$lease_id,
+#                                   day = ndfd_date_uct,
+#                                   prob_1d_perc = NA,
+#                                   prob_2d_perc = NA,
+#                                   prob_3d_perc = NA)
 
 # final dataset
-ndfd_lease_calcs_data <- rbind(ndfd_lease_calcs_data_spread, ndfd_leases_ignored)
+# ndfd_lease_calcs_data <- rbind(ndfd_lease_calcs_data_spread, ndfd_leases_ignored)
+ndfd_lease_calcs_data <- ndfd_lease_calcs_data_spread
 
 # check unique values
-# length(ndfd_lease_calcs_data$lease_id) # 513
-# length(unique(ndfd_lease_calcs_data$lease_id)) # 513 ok!
+# length(ndfd_lease_calcs_data$lease_id) # 483 on 20200806
+# length(unique(ndfd_lease_calcs_data$lease_id)) # 483 ok!
 
 
 # ---- 16. export lease data ----
