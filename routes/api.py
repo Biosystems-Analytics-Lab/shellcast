@@ -22,25 +22,25 @@ def userInfo(user):
   """
   Returns the user's info if a GET request.  Updates the user's info if a POST request.
   """
-  if (request.method == 'GET'):
-    userInfo = {}
-    if (user.email != None):
-      userInfo['email'] = user.email
+  def constructResponse(userObj):
+    userInfo = {'email': user.email}
     if (user.phone_number != None):
       userInfo['phone_number'] = user.phone_number
       userInfo['service_provider_id'] = user.service_provider_id
     return userInfo
+
+  if (request.method == 'GET'):
+    return constructResponse(user)
   else: # request.method == 'POST'
     # validate the uploaded info
-    possibleServiceProviders = list(map(lambda x: x[0], db.session.query(PhoneServiceProvider.id).all()))
-    validator = ProfileInfoValidator(request.json, possibleServiceProviders)
+    validator = ProfileInfoValidator(request.json)
     if (validator.validate()):
-      if (validator.email): user.email = validator.email
-      if (validator.phone_number): user.phone_number = validator.phone_number
-      if (validator.service_provider_id): user.service_provider_id = validator.service_provider_id
+      user.email = validator.email
+      user.phone_number = validator.phone_number
+      user.service_provider_id = validator.service_provider_id
       db.session.add(user)
       db.session.commit()
-      return {'message': 'Success'}, 200
+      return constructResponse(user)
     return {'message': validator.errors}, 400
 
 @api.route('/leaseProbs')
@@ -66,15 +66,12 @@ def getGrowAreaProbabilities():
   """
   Returns the min/max closure probabilties for each grow area.
   """
-  # t0 = time.perf_counter_ns()
   # TODO make sure this returns one (and only one) closure probability for each grow area
   growAreaProbs = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).limit(NUMBER_OF_GROW_AREAS)
   growAreaProbsAsDicts = {}
   for area in growAreaProbs:
     sgaName = area.grow_area_name
     growAreaProbsAsDicts[sgaName] = area.asDict()
-  # t1 = time.perf_counter_ns()
-  # print('Total query time: {} ms'.format((t1 - t0) / 1000000))
 
   return jsonify(growAreaProbsAsDicts)
 
