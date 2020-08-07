@@ -14,14 +14,6 @@ from routes.authentication import userRequired
 
 NUMBER_OF_GROW_AREAS = 73
 
-# just a temporary filler for the Mike Griffin API
-NCDMF_LEASES = [
-  {'ncdmf_lease_id': '4-C-89', 'grow_area_name': 'A01', 'rainfall_thresh_in': 1.5, 'geometry': (36.303915, -75.864693)},
-  {'ncdmf_lease_id': '819401', 'grow_area_name': 'B02', 'rainfall_thresh_in': 2.5, 'geometry': (36.164344, -75.927864)},
-  {'ncdmf_lease_id': '82-389B', 'grow_area_name': 'C03', 'rainfall_thresh_in': 3.5, 'geometry': (35.868877, -75.754829)},
-  {'ncdmf_lease_id': '123456', 'grow_area_name': 'D04', 'rainfall_thresh_in': 4.5, 'geometry': (34.404497, -77.567573)}
-]
-
 api = Blueprint('api', __name__)
 
 @api.route('/userInfo', methods=['GET', 'POST'])
