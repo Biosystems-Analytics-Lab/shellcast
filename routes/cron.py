@@ -31,14 +31,13 @@ VERIFIED_ADDRESSES = ['shellcastapp@ncsu.edu', 'stparham@ncsu.edu', 'ssaia@ncsu.
 cron = Blueprint('cron', __name__)
 
 def sendNotificationsWithAWSSES(emails):
-  logging.info(current_app.config)
   # Create a new SES client
   client = boto3.client('ses', region_name=current_app.config['AWS_REGION'], aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'], aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'])
   curDate = datetime.now(pytz.timezone('US/Eastern')).strftime('%B %d, %Y')
   subject = SUBJECT_TEMPLATE.format(curDate)
   responses = []
   for address, body, userId in emails:
-    if (address in VERIFIED_ADDRESSES):
+    if (address in VERIFIED_ADDRESSES): # TODO remove this check after moving out of SES sandbox
       try:
         response = client.send_email(
           Destination={'ToAddresses': [address]},
@@ -56,6 +55,9 @@ def sendNotificationsWithAWSSES(emails):
         logging.info('Email successfully sent to ' + address)
         logging.info(response['MessageId'])
         responses.append((address, body, userId, True, response['MessageId']))
+    else:
+      print('Email {} not verified, so can\'t send until out of SES sandbox'.format(address))
+    time.sleep(1.1) # TODO remove this after moving out of SES sandbox
   return responses
 
 @cron.route('/sendNotifications')
@@ -85,17 +87,18 @@ def sendNotifications():
     for lease in user.leases:
       # if the user has not deleted the lease and they want to receive some kind of notification
       if (not lease.deleted_by_user and (lease.email_pref or lease.text_pref)):
-        # get the latest closure probability for the lease
-        prob = lease.closureProbabilities[0]
-        # if any of the day probs are >= the lease's prob preference
-        if (prob.prob_1d_perc >= lease.prob_pref or prob.prob_2d_perc >= lease.prob_pref or prob.prob_3d_perc >= lease.prob_pref):
-          text = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
-          if (lease.email_pref):
-            emailNotification += text
-            needToSendEmail = True
-          if (lease.text_pref):
-            textNotification += text
-            needToSendText = True
+        if (len(lease.closureProbabilities) >= 1):
+          # get the latest closure probability for the lease
+          prob = lease.closureProbabilities[0]
+          # if any of the day probs are >= the lease's prob preference
+          if (prob.prob_1d_perc >= lease.prob_pref or prob.prob_2d_perc >= lease.prob_pref or prob.prob_3d_perc >= lease.prob_pref):
+            text = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
+            if (lease.email_pref):
+              emailNotification += text
+              needToSendEmail = True
+            if (lease.text_pref):
+              textNotification += text
+              needToSendText = True
     if (needToSendEmail and emailAddress != None):
       notificationsToSend.append((emailAddress, emailNotification, user.id))
     if (needToSendText and textAddress != None):
@@ -105,7 +108,8 @@ def sendNotifications():
   responses = sendNotificationsWithAWSSES(notificationsToSend)
   # log all notifications that were sent
   for address, notificationText, userId, sendSuccess, resText in responses:
-    db.session.add(Notification(address=address, notification_text=notificationText, user_id=userId, send_success=sendSuccess, response_text=resText))
+    notification = Notification(address=address, notification_text=notificationText, user_id=userId, send_success=sendSuccess, response_text=resText)
+    db.session.add(notification)
   db.session.commit()
   t1 = time.perf_counter_ns()
   result = 'Constructed and sent {} notifications to {} users in {} seconds'.format(len(notificationsToSend), len(users), (t1 - t0) / 1000000000)

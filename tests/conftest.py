@@ -8,10 +8,30 @@ from config import TestConfig
 from firebase_admin import auth
 from firebase_admin.auth import ExpiredIdTokenError, InvalidIdTokenError
 
+import boto3
+
 import random
 import string
 
 RNG_SEED = 8375
+
+# will be run once at the beginning of the testing session
+@pytest.fixture(scope='session')
+def monkeyPatchBotoClient():
+  class MockClient():
+    def __init__(self, *args, **kwargs):
+      pass
+    def send_email(self, *args, **kwargs):
+      return {'MessageId': 'bleh'}
+
+  # replace the boto3.client definition
+  realBotoClient = boto3.client
+  boto3.client = MockClient
+
+  yield MockClient
+
+  # restore the true boto3 client
+  boto3.client = realBotoClient
 
 # will be run once at the beginning of the testing session
 @pytest.fixture(scope='session')
