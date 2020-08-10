@@ -11,7 +11,7 @@ Copy the location of the json credential file and keep that in a safe location i
 
 ## setting up the daily cron job
 
-The daily cron job used the `launchd` program, which should be already installed on a Mac, and will run each day at 7am as long as the host computer is on and the program is still loaded.
+The daily cron job used the `launchd` program, which should be already installed on a Mac, and will run each day at 6am as long as the host computer is on and the program is still loaded. Notifications are sent out at 7am by the Google Cloud Platform cron job.
 
 First, you need to give the terminal permission to run the script. For a Mac, go to Settings > Security & Privacy. Click on Full Disk Access on the left list and go to the Privacy tab. Add Terminal (in Applications > Utilities) to this list. To save this you will have to sign in as an administrator to the machine you're working on. Be sure to lock the administrator privileges before you close the Settings window.
 
