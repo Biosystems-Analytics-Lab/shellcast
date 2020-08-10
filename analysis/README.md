@@ -1,30 +1,67 @@
 # shellcast-analysis
 
-## setting up and running the daily cron job
+## save gcp credentials (maybe this isn't right....)
+
+Run the code below in the command line. You're web browser will pop open and you'll need to give permission to sign into the email account associated with your account on the shellcast gcp project.
+
+```{bash}
+gcloud auth application-default login
+```
+Copy the location of the json credential file and keep that in a safe location in case you need it later. It will look something like "/Users/sheila/.config/gcloud/application_default_credentials.json".
+
+## setting up the daily cron job
 
 The daily cron job used the `launchd` program, which should be already installed on a Mac, and will run each day at 7am as long as the host computer is on and the program is still loaded.
 
-Running a cron job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post]() was especially helpful and the official documentation is [here](https://www.launchd.info/). Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
+First, you need to give the terminal permission to run the script. For a Mac, go to Settings > Security & Privacy. Click on Full Disk Access on the left list and go to the Privacy tab. Add Terminal (in Applications > Utilities) to this list. To save this you will have to sign in as an administrator to the machine you're working on. Be sure to lock the administrator privileges before you close the Settings window.
 
-In the terminal, navigate to the LaunchAgents directory:
+![Full Disk Access Settings Window](analysis/images/full_disk_access.png)
+
+Next, running a cron job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post]() was especially helpful and the official documentation is [here](https://www.launchd.info/). If you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
+
+Last, the bash (.sh) script you're running in the cron job and all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for each file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make each of them executable.
+
+```{bash}
+# make a script executable
+chmod +x shellcast_daily_analysis.sh
+```
+
+If needed, repeat this use of `chmod` for each of the Python and R scripts listed below in "cron job script run order". All of them need to be executable.
+
+Note, I've successfully run the cron job without the plist file being executable.
+
+## running the daily cron job
+
+When you're ready to run the cron job, do the following:
+
+First, in the terminal, navigate to the LaunchAgents directory.
+
 ```{bash}
 cd ~/Library/LaunchAgents
 ```
 
-If the plist file is not there, copy it here, using:
-```{bash}
-# make sure to change the ... to the full path
-cp .../analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
+Second, if the plist file is not there, copy it to this location.
 
+```{bash}
+# make sure to change the "..." to the full path
+# cp .../analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
+
+# it will look something like this:
 # cp /Users/sheila/Documents/github_ncsu/shellcast/analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
 ```
 
-Check that you're working with the right version using nano.
+Third, that you're working with the right version using nano or atom.
+
 ```{bash}
 nano com.shellcast.dailyanalysis.cronjob.plist
 ```
 
-To load the cron job, run the following in the LaunchAgents directory:
+```{bash}
+atom com.shellcast.dailyanalysis.cronjob.plist
+```
+
+Fourth, to load the cron job, run the following in the LaunchAgents directory:
+
 ```{bash}
 launchctl load com.shellcast.dailyanalysis.cronjob.plist
 ```
@@ -39,7 +76,11 @@ To see if a LaunchAgent is loaded you can use:
 launchctl list
 ```
 
-Also, you can go to `Applications > Utilities > Console` and then look at system log to see current loaded and active programs. Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
+Also, you can go to `Applications > Utilities > Console` and then look at system log to see current loaded and active programs.
+
+Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
+
+If debugging, I would typically open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., Error 1) but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging. :/
 
 
 ## cron job script run order
@@ -55,9 +96,19 @@ Each day the `shellcast_daily_analysis.sh` will run the following R and Python s
 4. `gcp_update_mysqldb_script.py` - This script takes the data outputs from the previous script and pushes them to the shellcast mysql database.
 
 
-### running the bash script on its own
+## running the bash script on its own
 
-To run the bash script not in a cron job (for debugging), use the code below. This must be run from the analysis directory. Outputs from each R and Python script will be saved into the terminal\_data directory. This script must be executable so you might have to check script permissions in the terminal window using `ls -l` and if not executable, then use `chmod -x shellcast_daily_analysis.sh` to make it executable.
+To run the bash script not in a cron job (for debugging), use the code below. This must be run from the analysis directory. Outputs from each R and Python script will be saved into the terminal\_data directory.
+
+The bash (.sh) script as well as so all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for the file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make it executable.
+
+```{bash}
+chmod +x shellcast_daily_analysis.sh
+```
+
+If needed, repeat this use of `chmod` for each of the Python and R scripts listed below in "cron job script run order".
+
+To run the bash script, open the terminal in the analysis directory and type the following:
 
 ```{bash}
 sh shellcast_daily_analysis.sh
