@@ -121,7 +121,7 @@ connection = pymysql.connect(host = DevConfig.HOST,
 # sga_data = sga_data[1:5] # for testing
 
 # add df to mysql db
-# sga_data.to_sql('sga_min_max', engine, if_exists = 'append', index = False)
+sga_data.to_sql('sga_min_max', engine, if_exists = 'append', index = False)
 
 # print status
 print("added sga min and max data to mysql db")
@@ -175,10 +175,10 @@ if (len(ncdmf_leases_current_result) > 0):
         ncdmf_leases_insert_query = make_lease_sql_query(lease_spatial_data_sel)
 
         # execute query
-        # ncdmf_lease_cursor.execute(ncdmf_leases_insert_query)
+        ncdmf_lease_cursor.execute(ncdmf_leases_insert_query)
 
         # commit changes to remote db
-        # connection.commit()
+        connection.commit()
 
         # print when finished
         print("added ncdmf lease data to mysql db")
