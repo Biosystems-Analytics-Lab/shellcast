@@ -15,7 +15,7 @@ The daily cron job used the `launchd` program, which should be already installed
 
 First, you need to give the terminal permission to run the script. For a Mac, go to Settings > Security & Privacy. Click on Full Disk Access on the left list and go to the Privacy tab. Add Terminal (in Applications > Utilities) to this list. To save this you will have to sign in as an administrator to the machine you're working on. Be sure to lock the administrator privileges before you close the Settings window.
 
-![Full Disk Access Settings Window](analysis/images/full_disk_access.png)
+![Full Disk Access Settings Window](/analysis/images/full_disk_access.png)
 
 Next, running a cron job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post]() was especially helpful and the official documentation is [here](https://www.launchd.info/). If you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
 
