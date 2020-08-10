@@ -1,11 +1,6 @@
-<!-- com.shellcast.dailyanalysis.cronjob.plist -->
-<!-- will have a weekly one too once rest api is up -->
+<!-- com.shellcast.dailyanalysis.cronjob.debug.plist -->
 <!-- store in the ~/Library/LaunchAgents folder -->
 <!-- launchd man: https://www.manpagez.com/man/5/launchd.plist/ -->
-<!-- very helpful: https://babichmorrowc.github.io/post/launchd-jobs/ -->
-<!-- StartInterval - number of sections for interval but maybe I want to use StartCalendarInterval -->
-<!-- StartCalendarInterval help: https://alvinalexander.com/mac-os-x/launchd-plist-examples-startinterval-startcalendarinterval/ -->
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -13,7 +8,7 @@
 
 <!-- define change log event label -->
   <key>Label</key>
-  <string>com.shellcast.dailyanalysis.cronjob.plist</string>
+  <string>com.shellcast.dailyanalysis.cronjob.debug.plist</string>
 
 <!-- define script that will run -->
   <key>ProgramArguments</key>
@@ -25,32 +20,32 @@
   <key>WorkingDirectory</key>
   <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/</string>
 
-<!-- priority of scheduler -->
+<!-- priority of scheduler (range is -20 to 20 with default at 0)-->
   <key>Nice</key>
-  <integer>1</integer>
+  <integer>5</integer>
 
-<!-- runs at 7:00 every day -->
+<!-- runs at 6:00 every day but this is for debug running -->
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>
-    <integer>13</integer>
+    <integer>18</integer>
     <key>Minute</key>
-    <integer>10</integer>
+    <integer>21</integer>
   </dict>
 
-
+<!-- other settings -->
   <key>RunAtLoad</key>
   <false/>
   <key>KeepAlive</key>
   <false/>
 
-<!-- standard error file -->
+<!-- standard error file, output will be appended (new file isn't written) -->
   <key>StandardErrorPath</key>
-  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_analysis_cronjob.err</string>
+  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_dailyanalysis_cronjob.err</string>
 
-<!-- standard output file -->
+<!-- standard output file, output will be appended (new file isn't written) -->
   <key>StandardOutPath</key>
-  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_analysis_cronjob.err</string>
+  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_dailyanalysis_cronjob.out</string>
 
 </dict>
 </plist>
