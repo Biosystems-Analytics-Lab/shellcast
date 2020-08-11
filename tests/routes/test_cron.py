@@ -10,16 +10,16 @@ from routes.cron import sendNotificationsWithAWSSES
 def test_sendNotificationsWithAWSSES(app, monkeyPatchBotoClient):
   with app.app_context():
     notificationsToSend = [
-      ('stparham@ncsu.edu', 'Notification1', 1),
+      ('blah@ncsu.edu', 'Notification1', 1),
       ('shellcastapp@ncsu.edu', 'Notification2', 2),
-      ('ssaia@ncsu.edu', 'Notification3', 3),
+      ('bleh3@ncsu.edu', 'Notification3', 3),
     ]
 
     responses = sendNotificationsWithAWSSES(notificationsToSend)
 
-    assert responses[0] == ('stparham@ncsu.edu', 'Notification1', 1, True, 'bleh')
+    assert responses[0] == ('blah@ncsu.edu', 'Notification1', 1, True, 'bleh')
     assert responses[1] == ('shellcastapp@ncsu.edu', 'Notification2', 2, True, 'bleh')
-    assert responses[2] == ('ssaia@ncsu.edu', 'Notification3', 3, True, 'bleh')
+    assert responses[2] == ('bleh3@ncsu.edu', 'Notification3', 3, True, 'bleh')
 
 def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
   # add a user to the db
