@@ -91,7 +91,9 @@ def sendNotifications():
           # get the latest closure probability for the lease
           prob = lease.closureProbabilities[0]
           # if any of the day probs are >= the lease's prob preference
-          if (prob.prob_1d_perc >= lease.prob_pref or prob.prob_2d_perc >= lease.prob_pref or prob.prob_3d_perc >= lease.prob_pref):
+          if ((prob.prob_1d_perc and prob.prob_1d_perc >= lease.prob_pref) or
+              (prob.prob_2d_perc and prob.prob_2d_perc >= lease.prob_pref) or
+              (prob.prob_3d_perc and prob.prob_3d_perc >= lease.prob_pref)):
             text = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
             if (lease.email_pref):
               emailNotification += text
