@@ -23,10 +23,8 @@ SUBJECT_TEMPLATE = 'ShellCast Lease Closure Probabilities for {}'
 CHARSET = 'UTF-8'
 # The template for lease information in notifications.
 LEASE_TEMPLATE =  'Lease: {}\n  1-day: {}%\n  2-day: {}%\n  3-day: {}%\n'
-
-
-
-VERIFIED_ADDRESSES = ['shellcastapp@ncsu.edu', 'stparham@ncsu.edu', 'ssaia@ncsu.edu', 'nnelson4@ncsu.edu']
+# The amount of time between sending emails
+EMAIL_SEND_INTERVAL = 0.1
 
 cron = Blueprint('cron', __name__)
 
@@ -37,27 +35,24 @@ def sendNotificationsWithAWSSES(emails):
   subject = SUBJECT_TEMPLATE.format(curDate)
   responses = []
   for address, body, userId in emails:
-    if (address in VERIFIED_ADDRESSES): # TODO remove this check after moving out of SES sandbox
-      try:
-        response = client.send_email(
-          Destination={'ToAddresses': [address]},
-          Message={
-            'Subject': {'Charset': CHARSET, 'Data': subject},
-            'Body': {'Text': {'Charset': CHARSET, 'Data': body}}
-          },
-          Source=SENDER,
-        )
-      except ClientError as e:
-        logging.error('Error while sending email to ' + address)
-        logging.error(e.response['Error']['Message'])
-        responses.append((address, body, userId, False, e.response['Error']['Message']))
-      else:
-        logging.info('Email successfully sent to ' + address)
-        logging.info(response['MessageId'])
-        responses.append((address, body, userId, True, response['MessageId']))
+    try:
+      response = client.send_email(
+        Destination={'ToAddresses': [address]},
+        Message={
+          'Subject': {'Charset': CHARSET, 'Data': subject},
+          'Body': {'Text': {'Charset': CHARSET, 'Data': body}}
+        },
+        Source=SENDER,
+      )
+    except ClientError as e:
+      logging.error('Error while sending email to ' + address)
+      logging.error(e.response['Error']['Message'])
+      responses.append((address, body, userId, False, e.response['Error']['Message']))
     else:
-      print('Email {} not verified, so can\'t send until out of SES sandbox'.format(address))
-    time.sleep(1.1) # TODO remove this after moving out of SES sandbox
+      logging.info('Email successfully sent to ' + address)
+      logging.info(response['MessageId'])
+      responses.append((address, body, userId, True, response['MessageId']))
+    time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
   return responses
 
 @cron.route('/sendNotifications')
