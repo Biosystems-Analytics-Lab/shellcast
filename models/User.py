@@ -1,3 +1,7 @@
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.sql import functions
+from sqlalchemy.orm import relationship
+
 from models import db
 from models.Lease import Lease
 from models.Notification import Notification
@@ -5,17 +9,17 @@ from models.Notification import Notification
 class User(db.Model):
   __tablename__ = 'users'
 
-  id = db.Column(db.Integer, primary_key=True)
-  service_provider_id = db.Column(db.Integer, db.ForeignKey('phone_service_providers.id'))
-  firebase_uid = db.Column(db.String(28))
-  phone_number = db.Column(db.String(11))
-  email = db.Column(db.String(50))
-  created = db.Column(db.DateTime, server_default=db.func.now())
-  updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+  id = Column(Integer, primary_key=True)
+  service_provider_id = Column(Integer, ForeignKey('phone_service_providers.id'))
+  firebase_uid = Column(String(28))
+  phone_number = Column(String(11))
+  email = Column(String(50))
+  created = Column(DateTime, server_default=functions.now())
+  updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
-  service_provider = db.relationship('PhoneServiceProvider', back_populates='users')
-  leases = db.relationship('Lease', order_by=Lease.created, back_populates='user')
-  notifications = db.relationship('Notification', order_by=Notification.created, back_populates='user')
+  service_provider = relationship('PhoneServiceProvider', back_populates='users')
+  leases = relationship('Lease', order_by=Lease.created, back_populates='user')
+  notifications = relationship('Notification', order_by=Notification.created, back_populates='user')
 
   def asDict(self):
     return {

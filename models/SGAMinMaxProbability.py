@@ -1,18 +1,21 @@
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.sql import functions
+
 from models import db
 
 class SGAMinMaxProbability(db.Model):
   __tablename__ = 'sga_min_max'
 
-  id = db.Column(db.Integer, primary_key=True)
-  grow_area_name = db.Column(db.String(3))
-  min_1d_prob = db.Column(db.Integer)
-  max_1d_prob = db.Column(db.Integer)
-  min_2d_prob = db.Column(db.Integer)
-  max_2d_prob = db.Column(db.Integer)
-  min_3d_prob = db.Column(db.Integer)
-  max_3d_prob = db.Column(db.Integer)
-  created = db.Column(db.DateTime, server_default=db.func.now())
-  updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+  id = Column(Integer, primary_key=True)
+  grow_area_name = Column(String(3))
+  min_1d_prob = Column(Integer)
+  max_1d_prob = Column(Integer)
+  min_2d_prob = Column(Integer)
+  max_2d_prob = Column(Integer)
+  min_3d_prob = Column(Integer)
+  max_3d_prob = Column(Integer)
+  created = Column(DateTime, server_default=functions.now())
+  updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
   def asDict(self):
     return {

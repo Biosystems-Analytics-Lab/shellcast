@@ -1,16 +1,19 @@
+from sqlalchemy import Column, Integer, Float, String, DateTime
+from sqlalchemy.sql import functions
+
 from models import db
 from models.PointColType import PointColType
 
 class NCDMFLease(db.Model):
   __tablename__ = 'ncdmf_leases'
 
-  id = db.Column(db.Integer, primary_key=True)
-  ncdmf_lease_id = db.Column(db.String(20))
-  grow_area_name = db.Column(db.String(3))
-  rainfall_thresh_in = db.Column(db.Float)
-  geometry = db.Column(PointColType)
-  created = db.Column(db.DateTime, server_default=db.func.now())
-  updated = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+  id = Column(Integer, primary_key=True)
+  ncdmf_lease_id = Column(String(20))
+  grow_area_name = Column(String(3))
+  rainfall_thresh_in = Column(Float)
+  geometry = Column(PointColType)
+  created = Column(DateTime, server_default=functions.now())
+  updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
   def asDict(self):
     return {
