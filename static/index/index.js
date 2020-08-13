@@ -32,8 +32,24 @@ const GROW_AREA_TABLE_ID = 'area-table';
 const LEASE_TABLE_ID = 'lease-table';
 /** The path to the grow area bound file. */
 const GROW_AREA_BOUNDS_PATH = 'static/growing_area_bounds.geojson';
-/** The colors used to fill grow areas on the map. */
-const COLOR_SCALE = ['#feda8b', '#fdb366', '#f67e4b', '#dd3d2d', '#a50026'];
+/** The color used to fill in grow areas without a closure probability. */
+const COLOR_NULL = 'transparent';
+/** The color used to fill in grow areas with a 0-40% closure probability. */
+const COLOR_0_40 = '#fff';
+/** The color used to fill in grow areas with a 40-60% closure probability. */
+const COLOR_40_60 = '#fecc5c';
+/** The color used to fill in grow areas with a 60-80% closure probability. */
+const COLOR_60_80 = '#fd8d3c';
+/** The color used to fill in grow areas with a 80-100% closure probability. */
+const COLOR_80_100 = '#e31a1c';
+/** The text and colors used for the legend. */
+const LEGEND_SCALE = [
+  { text: 'No data', color: COLOR_NULL},
+  { text: '0 - 40%', color: COLOR_0_40},
+  { text: '40 - 60%', color: COLOR_40_60},
+  { text: '60 - 80%', color: COLOR_60_80},
+  { text: '80 - 100%', color: COLOR_80_100}
+];
 
 // a reference to the Google map object
 let map;
@@ -121,7 +137,6 @@ function strToEl(htmlStr) {
 
 function createLegend() {
   const legend = document.createElement('div');
-  legend.style.backgroundColor = 'white';
   legend.style.border = '1px solid black';
   legend.style.display = 'grid';
   legend.style.gridTemplateColumns = 'auto 1rem';
@@ -129,17 +144,17 @@ function createLegend() {
   legend.style.textAlign = 'center';
   legend.style.lineHeight = '2rem';
   legend.style.fontSize = '1rem';
-  // add percents and colors to legend
-  const percIncrement = Math.floor(100 / COLOR_SCALE.length);
-  let startPerc = 0;
-  for (let color of COLOR_SCALE) {
-    const percDiv = strToEl(`<div>${startPerc} - ${startPerc + percIncrement}%</div>`);
-    percDiv.style.paddingLeft = '3px';
-    percDiv.style.paddingRight = '3px';
-    startPerc += percIncrement;
-    legend.appendChild(percDiv);
+  // add text and colors to legend
+  for (let step of LEGEND_SCALE) {
+    const textDiv = strToEl(`<div>${step.text}</div>`);
+    textDiv.style.paddingLeft = '3px';
+    textDiv.style.paddingRight = '3px';
+    textDiv.style.backgroundColor = 'white';
+    legend.appendChild(textDiv);
     const colorDiv = document.createElement('div');
-    colorDiv.style.backgroundColor = color;
+    colorDiv.style.backgroundColor = step.color;
+    colorDiv.style.borderLeft = '1px solid black';
+    colorDiv.style.borderTop = '1px solid black';
     legend.appendChild(colorDiv);
   }
   return legend;
@@ -288,11 +303,12 @@ function styleFeatureBasedOnDay(day) {
  * @param {number} value the value to get a color for
  */
 function getColor(value) {
-  let color = COLOR_SCALE[0];
-  if (value >= 20) color = COLOR_SCALE[1];
-  if (value >= 40) color = COLOR_SCALE[2];
-  if (value >= 60) color = COLOR_SCALE[3];
-  if (value >= 80) color = COLOR_SCALE[4];
+  let color = 'transparent';
+  if (value >= 0) color = COLOR_0_40;
+  if (value >= 40) color = COLOR_40_60;
+  if (value >= 60) color = COLOR_60_80;
+  if (value >= 80) color = COLOR_80_100;
+  if (value === null) color = 'transparent';
   return color;
 }
 
