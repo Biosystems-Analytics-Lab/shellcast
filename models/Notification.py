@@ -1,19 +1,21 @@
-from models import db
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy.sql import functions, expression
+from sqlalchemy.orm import relationship
 
-from sqlalchemy.sql import expression
+from models import db
 
 class Notification(db.Model):
   __tablename__ = 'notification_log'
 
-  id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-  address = db.Column(db.String(50))
-  notification_text = db.Column(db.String(10000))
-  send_success = db.Column(db.Boolean, server_default=expression.true(), default=True)
-  response_text = db.Column(db.String(10000))
-  created = db.Column(db.DateTime, server_default=db.func.now())
+  id = Column(Integer, primary_key=True)
+  user_id = Column(Integer, ForeignKey('users.id'))
+  address = Column(String(50))
+  notification_text = Column(String(10000))
+  send_success = Column(Boolean, server_default=expression.true(), default=True)
+  response_text = Column(String(10000))
+  created = Column(DateTime, server_default=functions.now())
 
-  user = db.relationship('User', back_populates='notifications')
+  user = relationship('User', back_populates='notifications')
 
   def asDict(self):
     return {
