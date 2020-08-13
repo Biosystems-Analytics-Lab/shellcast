@@ -288,10 +288,6 @@ function styleFeatureBasedOnDay(day) {
   return (feature) => {
     // calculate the color of the growing area (feature)
     const areaColor = getColor(feature.getProperty(`max_${day}d_prob`));
-    if (feature.getProperty('grow_area') === 'I01') {
-      console.log(feature.getProperty(`max_${day}d_prob`));
-      console.log(areaColor);
-    }
     return {
       strokeColor: '#000',
       strokeWeight: 1,
