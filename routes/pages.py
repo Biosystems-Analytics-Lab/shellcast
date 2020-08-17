@@ -3,7 +3,7 @@ from models import db
 from models.SGAMinMaxProbability import SGAMinMaxProbability
 from models.PhoneServiceProvider import PhoneServiceProvider
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import pytz
 
 # the number of seconds in one hour
@@ -13,16 +13,26 @@ pages = Blueprint('', __name__)
 @pages.route('/')
 def indexPage():
   lastGrowAreaProb = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).first()
+  templateVals = {
+    'mapsAPIKey': current_app.config['MAPS_API_KEY'],
+    'lastUpdated': 'No calculations run yet',
+    'hoursAgo': '?',
+    'day1': '?',
+    'day2': '?',
+    'day3': '?'
+  }
   if (lastGrowAreaProb):
     lastUpdatedTimeUTC = lastGrowAreaProb.updated.replace(tzinfo=timezone.utc)
     curTimeUTC = datetime.now(timezone.utc)
     duration = curTimeUTC - lastUpdatedTimeUTC
     durationSecs = duration.total_seconds()
-    durationHours = int(divmod(durationSecs, SECONDS_IN_HOURS)[0])
-    lastUpdatedTimeESTFormatted = lastUpdatedTimeUTC.astimezone(pytz.timezone('US/Eastern')).strftime("%B %d, %Y %I:%M %p") # ex: July 24, 2020 04:14 PM
-    return render_template('index.html.jinja', mapsAPIKey=current_app.config['MAPS_API_KEY'], lastUpdated=lastUpdatedTimeESTFormatted, hoursAgo=durationHours)
-  else:
-    return render_template('index.html.jinja', mapsAPIKey=current_app.config['MAPS_API_KEY'], lastUpdated="No calculations run yet", hoursAgo="?")
+    templateVals['hoursAgo'] = int(divmod(durationSecs, SECONDS_IN_HOURS)[0])
+    lastUpdatedTimeEST = lastUpdatedTimeUTC.astimezone(pytz.timezone('US/Eastern'))
+    templateVals['lastUpdated'] = lastUpdatedTimeEST.strftime('%B %d, %Y %I:%M %p') # ex: July 24, 2020 04:14 PM
+    templateVals['day1'] = lastUpdatedTimeEST.strftime('%B %d')
+    templateVals['day2'] = (lastUpdatedTimeEST + timedelta(days=1)).strftime('%B %d')
+    templateVals['day3'] = (lastUpdatedTimeEST + timedelta(days=2)).strftime('%B %d')
+  return render_template('index.html.jinja', **templateVals)
 
 @pages.route('/about')
 def aboutPage():
