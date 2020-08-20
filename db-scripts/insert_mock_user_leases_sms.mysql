@@ -1,4 +1,4 @@
-INSERT INTO `user_leases` (`user_id`, `ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geometry`, `email_pref`, `text_pref`, `prob_pref`, `deleted_by_user`)
+INSERT INTO `user_leases` (`user_id`, `ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geometry`, `email_pref`, `text_pref`, `prob_pref`, `deleted`)
 VALUES
 ('0001', '1-C-89', 'C01', 1.5, ST_PointFromText('POINT(-77.377124 34.528248)'), 1, 0, 25, 0),
 ('0001', '194', 'B09', 1.5, ST_PointFromText('POINT(-77.479114 34.483660)'), 1, 0, 25, 0)
