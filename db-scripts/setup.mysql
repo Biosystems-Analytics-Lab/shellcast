@@ -7,6 +7,7 @@ CREATE TABLE `users` (
   `firebase_uid` varchar(28) NULL,
   `phone_number` varchar(11) NULL,
   `email` varchar(50) NULL,
+  `deleted` boolean DEFAULT false,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)

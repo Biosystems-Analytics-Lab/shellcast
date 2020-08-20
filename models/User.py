@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.sql import functions
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy.sql import functions, expression
 from sqlalchemy.orm import relationship
 
 from models import db
@@ -14,6 +14,7 @@ class User(db.Model):
   firebase_uid = Column(String(28))
   phone_number = Column(String(11))
   email = Column(String(50))
+  deleted = Column(Boolean, server_default=expression.false(), default=False)
   created = Column(DateTime, server_default=functions.now())
   updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
