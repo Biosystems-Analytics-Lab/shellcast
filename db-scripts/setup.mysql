@@ -23,7 +23,7 @@ CREATE TABLE `user_leases` (
   `email_pref` boolean DEFAULT false,
   `text_pref` boolean DEFAULT false,
   `prob_pref` tinyint(3) DEFAULT 75,
-  `deleted_by_user` boolean DEFAULT false,
+  `deleted` boolean DEFAULT false,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)

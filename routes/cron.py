@@ -81,7 +81,7 @@ def sendNotifications():
     # for each lease
     for lease in user.leases:
       # if the user has not deleted the lease and they want to receive some kind of notification
-      if (not lease.deleted_by_user and (lease.email_pref or lease.text_pref)):
+      if (not lease.deleted and (lease.email_pref or lease.text_pref)):
         if (len(lease.closureProbabilities) >= 1):
           # get the latest closure probability for the lease
           prob = lease.closureProbabilities[0]

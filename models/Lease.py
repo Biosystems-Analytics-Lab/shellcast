@@ -18,7 +18,7 @@ class Lease(db.Model):
   email_pref = Column(Boolean, server_default=expression.false(), default=False)
   text_pref = Column(Boolean, server_default=expression.false(), default=False)
   prob_pref = Column(Integer, server_default=expression.literal(75), default=75)
-  deleted_by_user = Column(Boolean, server_default=expression.false(), default=False)
+  deleted = Column(Boolean, server_default=expression.false(), default=False)
   created = Column(DateTime, server_default=functions.now())
   updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
@@ -34,7 +34,7 @@ class Lease(db.Model):
       'email_pref': self.email_pref,
       'text_pref': self.text_pref,
       'prob_pref': self.prob_pref,
-      'deleted_by_user': self.deleted_by_user
+      'deleted': self.deleted
     }
 
   def __repr__(self):
