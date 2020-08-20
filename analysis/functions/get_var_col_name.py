@@ -46,7 +46,7 @@ def get_var_col_name(ndfd_data, ndfd_var):
             row_result = row_to_check.find('Total_precipitation_surface_12_Hour_Accumulation_probability_above_0p254')
             
             if row_result > 0:
-                row_to_check_final = row_to_check.replace(" ", "")
+                row_to_check_final = row_to_check.replace(" ", "").replace("'","")
                 var_col_name.append(row_to_check_final)
     
     return(var_col_name[0])
