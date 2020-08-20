@@ -29,9 +29,9 @@ def indexPage():
     templateVals['hoursAgo'] = int(divmod(durationSecs, SECONDS_IN_HOURS)[0])
     lastUpdatedTimeEST = lastUpdatedTimeUTC.astimezone(pytz.timezone('US/Eastern'))
     templateVals['lastUpdated'] = lastUpdatedTimeEST.strftime('%B %d, %Y %I:%M %p') # ex: July 24, 2020 04:14 PM
-    templateVals['day1'] = lastUpdatedTimeEST.strftime('%B %d')
-    templateVals['day2'] = (lastUpdatedTimeEST + timedelta(days=1)).strftime('%B %d')
-    templateVals['day3'] = (lastUpdatedTimeEST + timedelta(days=2)).strftime('%B %d')
+    templateVals['day1'] = lastUpdatedTimeEST.strftime('%B %d (%A)')
+    templateVals['day2'] = (lastUpdatedTimeEST + timedelta(days=1)).strftime('%B %d (%A)')
+    templateVals['day3'] = (lastUpdatedTimeEST + timedelta(days=2)).strftime('%B %d (%A)')
   return render_template('index.html.jinja', **templateVals)
 
 @pages.route('/about')
