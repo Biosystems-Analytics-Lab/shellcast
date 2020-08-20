@@ -1,12 +1,10 @@
 from flask import Blueprint, jsonify, request
 
 from models import db
-from models.User import User
 from models.ClosureProbability import ClosureProbability
 from models.SGAMinMaxProbability import SGAMinMaxProbability
 from models.Lease import Lease
 from models.NCDMFLease import NCDMFLease
-from models.PhoneServiceProvider import PhoneServiceProvider
 
 from routes.validators.ProfileInfoValidator import ProfileInfoValidator
 
