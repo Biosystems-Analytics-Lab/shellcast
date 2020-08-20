@@ -34,11 +34,11 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
         # there was an issue where the column name had some other padded information (see 2015/09/16 data)
         qpf_var_col_name = get_var_col_name(ndfd_data = ndfd_data, ndfd_var = "qpf")
         pop12_var_col_name = get_var_col_name(ndfd_data = ndfd_data, ndfd_var = "pop12")
-        
+
         # check that column name is exact
         qpf_var_check = qpf_var_col_name == 'Total_precipitation_surface_6_Hour_Accumulation'
         pop12_var_check = pop12_var_col_name == 'Total_precipitation_surface_12_Hour_Accumulation_probability_above_0p254'
-        
+
         # if requestig qpf data
         if ((ndfd_var == "qpf") and (qpf_var_check == True)):
             # save variable data
@@ -250,7 +250,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
 
 
         # if qpf or pop12 are wanted to but not available
-        elif(((ndfd_var == "qpf") and (len(qpf_var_col_name) > 0) or ((ndfd_var == "pop12") and (len(pop12_var_col_name) > 0))):
+        elif(((ndfd_var == "qpf") and (qpf_var_check == True) or (ndfd_var == "pop12") and (pop12_var_check == True))):
             # empty dataframe
             var_data_pd = pandas.DataFrame()
 
