@@ -33,6 +33,18 @@
   padding: 10px;
 }
 
+.date-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.date-info p {
+  margin: 0;
+}
+
 /* Changes for wide screens */
 @media only screen and (min-width: 992px) {
   #closure-tables {
