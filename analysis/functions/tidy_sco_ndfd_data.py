@@ -7,7 +7,7 @@ email: ssaia@ncsu.edu
 date created: 20200427
 
 required libraries: pydap, requests, numpy, pandas, datetime
-required functions: convert_sco_ndfd_datetime_str.py, get_sco_ndfd_data.py
+required functions: convert_sco_ndfd_datetime_str.py, aggregate_sco_ndfd_var_data(), get_sco_ndfd_data.py
 
 """
 def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
@@ -30,17 +30,19 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
 
     # if data exists
     if (len(ndfd_data) > 0):
-        # make ndfd_data children into string for later search check
-        ndfd_children_str = str(ndfd_data.children)
-
-        # find variable of interest, if -1 then it does not exist
-        qpf_var_check = ndfd_children_str.find('Total_precipitation_surface_6_Hour_Accumulation')
-        pop12_var_check = ndfd_children_str.find('Total_precipitation_surface_12_Hour_Accumulation_probability_above_0p254')
-
+        # get actual column name in SCO NDFD data and check code
+        # there was an issue where the column name had some other padded information (see 2015/09/16 data)
+        qpf_var_col_name = get_var_col_name(ndfd_data = ndfd_data, ndfd_var = "qpf")
+        pop12_var_col_name = get_var_col_name(ndfd_data = ndfd_data, ndfd_var = "pop12")
+        
+        # check that column name is exact
+        qpf_var_check = qpf_var_col_name == 'Total_precipitation_surface_6_Hour_Accumulation'
+        pop12_var_check = pop12_var_col_name == 'Total_precipitation_surface_12_Hour_Accumulation_probability_above_0p254'
+        
         # if requestig qpf data
-        if ((ndfd_var == "qpf") and (qpf_var_check != -1)):
+        if ((ndfd_var == "qpf") and (qpf_var_check == True)):
             # save variable data
-            var_data = ndfd_data['Total_precipitation_surface_6_Hour_Accumulation'] # qpf
+            var_data = ndfd_data[qpf_var_col_name] # qpf
             #var_data.dimensions # to see dimensions of variable
 
             # save variable dimentions
@@ -144,9 +146,9 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
 
 
         # if requesting pop12 data
-        elif ((ndfd_var == "pop12") and (pop12_var_check != -1)):
+        elif ((ndfd_var == "pop12") and (pop12_var_check == True)):
             # save variable data
-            var_data = ndfd_data['Total_precipitation_surface_12_Hour_Accumulation_probability_above_0p254'] # pop12
+            var_data = ndfd_data[pop12_var_col_name] # pop12
 
             # save variable dimentions
             var_data_dims = var_data.dimensions # get all dimentions
@@ -248,7 +250,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
 
 
         # if qpf or pop12 are wanted to but not available
-        elif(((ndfd_var == "qpf") and (qpf_var_check == -1)) or ((ndfd_var == "pop12") and (pop12_var_check == -1))):
+        elif(((ndfd_var == "qpf") and (qpf_var_check == False)) or ((ndfd_var == "pop12") and (pop12_var_check == False))):
             # empty dataframe
             var_data_pd = pandas.DataFrame()
 
