@@ -18,7 +18,7 @@
 # TODO (wishlist) use terra package for raster stuff
 
 # TODO remove notification testing factor (to bump up prob of closure values for testing)
-notificaiton_factor <- 3
+notification_factor <- 3
 
 
 # ---- 1. install and load packages as necessary ----
@@ -457,7 +457,7 @@ for (i in 1:length(valid_period_list)) {
 
     # calculate probability of closure
     temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
-    temp_cum_prob_closure_notification_test_result <- if_else(temp_cmu_prob_close_result * notificaiton_factor > 100, 100, temp_cmu_prob_close_result * notificaiton_factor) # to test notifications
+    temp_cum_prob_closure_notification_test_result <- if_else(temp_cmu_prob_close_result * notification_factor > 100, 100, temp_cmu_prob_close_result * notification_factor) # to test notifications
 
     # save data
     temp_ndfd_cmu_calcs_data <- data.frame(row_num = cmu_row_num,
