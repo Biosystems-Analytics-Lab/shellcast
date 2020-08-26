@@ -286,7 +286,6 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
   };
 
   // upload data to server and re-init form
-  console.log('Uploading data to server', dataToUpload);
   const res = await authorizedFetch('/leases', {
     method: 'POST',
     headers: {'Content-Type': 'application/json;charset=utf-8'},
