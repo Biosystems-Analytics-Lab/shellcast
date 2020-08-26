@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 
 from models import db
 from models.ClosureProbability import ClosureProbability
+from models.GrowArea import GrowArea
 from models.SGAMinMaxProbability import SGAMinMaxProbability
 from models.Lease import Lease
 from models.NCDMFLease import NCDMFLease
@@ -9,8 +10,6 @@ from models.NCDMFLease import NCDMFLease
 from routes.validators.ProfileInfoValidator import ProfileInfoValidator
 
 from routes.authentication import userRequired
-
-NUMBER_OF_GROW_AREAS = 73
 
 api = Blueprint('api', __name__)
 
@@ -65,7 +64,8 @@ def getGrowAreaProbabilities():
   Returns the min/max closure probabilties for each grow area.
   """
   # TODO make sure this returns one (and only one) closure probability for each grow area
-  growAreaProbs = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).limit(NUMBER_OF_GROW_AREAS)
+  numberOfGrowAreas = db.session.query(GrowArea).count()
+  growAreaProbs = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).limit(numberOfGrowAreas)
   growAreaProbsAsDicts = {}
   for area in growAreaProbs:
     sgaName = area.grow_area_name

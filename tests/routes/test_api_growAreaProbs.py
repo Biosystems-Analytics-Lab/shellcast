@@ -1,10 +1,24 @@
 import pytest
 
+from models.GrowArea import GrowArea
 from models.SGAMinMaxProbability import SGAMinMaxProbability
 
 from firebase_admin import auth
 
+NUMBER_OF_GROW_AREAS = 73
+
+def addGrowAreas(dbSession):
+  # make sure that grow areas are added to the sgas table
+  sgas = []
+  for x in range(NUMBER_OF_GROW_AREAS):
+    sgas.append(GrowArea(grow_area_name='A' + str(x)))
+  dbSession.add_all(sgas)
+  dbSession.commit()
+
 def test_valid(client, dbSession):
+  # make sure that grow areas are added to the sgas table
+  addGrowAreas(dbSession)
+
   # add some grow area probabilities to the database
   probabilities = [
     SGAMinMaxProbability(grow_area_name='A01', min_1d_prob=40, max_1d_prob=70, min_2d_prob=50, max_2d_prob=80, min_3d_prob=60, max_3d_prob=90),
@@ -28,7 +42,10 @@ def test_valid(client, dbSession):
   assert json['F11']['min_3d_prob'] == 60
   assert json['F11']['max_3d_prob'] == 90
 
-def test_73(client, dbSession):
+def test_return_all_grow_area_probs(client, dbSession):
+  # make sure that grow areas are added to the sgas table
+  addGrowAreas(dbSession)
+
   # add one probability at the beginning
   firstProb = SGAMinMaxProbability(grow_area_name='A00', min_1d_prob=40, max_1d_prob=70, min_2d_prob=50, max_2d_prob=80, min_3d_prob=60, max_3d_prob=90)
   dbSession.add(firstProb)
@@ -36,7 +53,7 @@ def test_73(client, dbSession):
 
   # add a probability for each growing area
   probabilities = []
-  for x in range(73):
+  for x in range(NUMBER_OF_GROW_AREAS):
     probabilities.append(SGAMinMaxProbability(grow_area_name='B'+str(x), min_1d_prob=x, max_1d_prob=x, min_2d_prob=x, max_2d_prob=x, min_3d_prob=x, max_3d_prob=x))
   dbSession.add_all(probabilities)
   dbSession.commit()
@@ -45,7 +62,7 @@ def test_73(client, dbSession):
   assert res.status_code == 200
 
   json = res.get_json()
-  assert len(json) == 73
+  assert len(json) == NUMBER_OF_GROW_AREAS
 
   print(list(json))
 
@@ -54,7 +71,7 @@ def test_73(client, dbSession):
   
   # add another set of probabilities for each growing area
   probabilities = []
-  for x in range(73):
+  for x in range(NUMBER_OF_GROW_AREAS):
     y = x + 10
     probabilities.append(SGAMinMaxProbability(grow_area_name='C'+str(y), min_1d_prob=y, max_1d_prob=y, min_2d_prob=y, max_2d_prob=y, min_3d_prob=y, max_3d_prob=y))
   dbSession.add_all(probabilities)
@@ -64,7 +81,7 @@ def test_73(client, dbSession):
   assert res.status_code == 200
 
   json = res.get_json()
-  assert len(json) == 73
+  assert len(json) == NUMBER_OF_GROW_AREAS
 
   for probGrowArea in json:
     assert 'C' in probGrowArea
