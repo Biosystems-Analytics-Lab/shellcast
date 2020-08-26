@@ -66,16 +66,6 @@ CREATE TABLE `notification_log` (
   PRIMARY KEY (`id`)
 );
 
--- Stores text disclaimers that are displayed on various pages of the web app.
-CREATE TABLE `text_disclaimers` (
-  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `webapp_page` varchar(50) NULL,
-  `disclaimer_text` mediumtext NULL,
-  `created` datetime DEFAULT NOW(),
-  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
-  PRIMARY KEY (`id`)
-);
-
 -- Stores the grow areas and their boundaries (the boundaries aren't stored yet but they will be)
 CREATE TABLE `sgas` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
