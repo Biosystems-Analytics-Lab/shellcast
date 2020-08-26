@@ -1,8 +1,0 @@
-INSERT INTO `ncdmf_leases` (`ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geometry`)
-VALUES
-('1-C-89', 'C01', 1.5, ST_PointFromText('POINT(-77.377124 34.528248)')),
-('194', 'B09', 1.5, ST_PointFromText('POINT(-77.479114 34.483660)')),
-('195', 'B09', 1.5, ST_PointFromText('POINT(-77.486429 34.471449)')),
-('447', 'B09', 1.5, ST_PointFromText('POINT(-77.501072 34.466252)')),
-('26-C-94', 'C01', 1.5, ST_PointFromText('POINT(-77.373648 34.525114)'))
-;
