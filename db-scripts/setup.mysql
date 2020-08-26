@@ -3,9 +3,9 @@
 -- Stores user information.
 CREATE TABLE `users` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `service_provider_id` int(5) UNSIGNED ZEROFILL NULL,
   `firebase_uid` varchar(28) NULL,
   `phone_number` varchar(11) NULL,
+  `service_provider_id` int(5) UNSIGNED ZEROFILL NULL,
   `email` varchar(50) NULL,
   `deleted` boolean DEFAULT false,
   `created` datetime DEFAULT NOW(),
