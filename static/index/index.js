@@ -35,7 +35,7 @@ const GROW_AREA_BOUNDS_PATH = 'static/growing_area_bounds.geojson';
 /** The color used to fill in grow areas without a closure probability. */
 const COLOR_NULL = 'transparent';
 /** The color used to fill in grow areas with a 0-40% closure probability. */
-const COLOR_0_40 = '#fff';
+const COLOR_0_40 = '#4eb265';
 /** The color used to fill in grow areas with a 40-60% closure probability. */
 const COLOR_40_60 = '#fecc5c';
 /** The color used to fill in grow areas with a 60-80% closure probability. */
