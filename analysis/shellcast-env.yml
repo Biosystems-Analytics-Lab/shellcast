@@ -1,6 +1,5 @@
 name: shellcast
 channels:
-  - defaults
   - conda-forge
 dependencies:
   - r
