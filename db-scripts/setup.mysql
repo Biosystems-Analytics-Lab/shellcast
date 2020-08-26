@@ -76,6 +76,16 @@ CREATE TABLE `text_disclaimers` (
   PRIMARY KEY (`id`)
 );
 
+-- Stores the grow areas and their boundaries (the boundaries aren't stored yet but they will be)
+CREATE TABLE `sgas` (
+  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `grow_area_name` varchar(3) NOT NULL,
+  `geometry` geometry NULL,
+  `created` datetime DEFAULT NOW(),
+  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
+  PRIMARY KEY (`id`)
+);
+
 -- Stores the min and max lease closure probabilities within each growing area.
 CREATE TABLE `sga_min_max` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
@@ -106,13 +116,22 @@ ALTER TABLE `user_leases` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFER
 ALTER TABLE `notification_log` ADD CONSTRAINT `user2_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 -- Add constant (relatively constant) data to tables.
--- Text disclaimers
-INSERT INTO `text_disclaimers` (`webapp_page`, `disclaimer_text`)
+-- Grow areas
+INSERT INTO `sgas` (`grow_area_name`)
 VALUES
-  ('index', 'Disclaimer text goes here.'),
-  ('about', 'Disclaimer text goes here.'),
-  ('notifications', 'Disclaimer text goes here.')
+  ('A01'),('A02'),('A03'),                                                         -- A
+  ('B01'),('B02'),('B03'),('B04'),('B05'),('B06'),('B07'),('B08'),('B09'),('B10'), -- B
+  ('C01'),('C02'),('C03'),('C04'),                                                 -- C
+  ('D01'),('D02'),('D03'),('D04'),                                                 -- D
+  ('E01'),('E02'),('E03'),('E04'),('E05'),('E06'),('E07'),('E08'),('E09'),         -- E
+  ('F01'),('F02'),('F03'),('F04'),('F05'),('F06'),('F07'),('F08'),('F09'),         -- F
+  ('G01'),('G02'),('G03'),('G04'),('G05'),('G06'),('G07'),('G08'),('G09'),('G10'), -- G
+  ('G11'),('G12'),
+  ('H01'),('H02'),('H03'),('H04'),('H05'),('H06'),                                 -- H
+  ('I01'),('I02'),('I03'),('I04'),('I05'),('I06'),('I07'),('I08'),('I09'),('I10'), -- I
+  ('I11'),('I12'),('I13'),('I14'),('I15'),('I16')
 ;
+
 -- Mobile phone service providers
 INSERT INTO `phone_service_providers` (`name`, `mms_gateway`)
 VALUES
