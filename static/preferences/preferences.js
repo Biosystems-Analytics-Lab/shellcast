@@ -97,6 +97,7 @@ function cancelProfileFormChanges() {
  */
 async function saveProfileFormChanges() {
   const profForm = document.forms['profile-information-form'];
+  const helpText = document.getElementById('profile-form-help-text');
 
   // gather data from form
   const phoneNumber = profForm.elements['phone-number'].value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
@@ -115,8 +116,12 @@ async function saveProfileFormChanges() {
   if (res.ok) {
     // overwrite the client copy of the profile info
     profileInfo = await res.json();
+    helpText.style.color = 'green';
+    helpText.innerHTML = 'Changes saved successfully!';
   } else {
-    console.log('There was an error while saving the profile changes.');
+    const json = await res.json();
+    helpText.style.color = 'red';
+    helpText.innerHTML = json.errors[0];
   }
   initProfileForm(profileInfo, true);
 }
