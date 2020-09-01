@@ -38,7 +38,7 @@ def userInfo(user):
       db.session.add(user)
       db.session.commit()
       return constructResponse(user)
-    return {'message': validator.errors}, 400
+    return {'errors': validator.errors}, 400
 
 @api.route('/leaseProbs')
 @userRequired
@@ -115,7 +115,7 @@ def userLeases(user):
       db.session.add(userLease)
       db.session.commit()
       return leaseToDict(userLease)
-    return {'message': 'The given lease id does not exist.'}, 400
+    return {'errors': ['The given lease id does not exist.']}, 400
   else: # request.method == 'DELETE'
     print('TODO delete lease')
     return {'message': 'Success'}, 200
