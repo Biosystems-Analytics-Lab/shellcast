@@ -39,12 +39,12 @@ from csv import writer
 # %% set paths here
 
 # base path to analysis
-# analysis_base_path = "opt/analysis/" # set this and uncomment!
+# analysis_base_path = "/home/ssaia/shellcast/analysis/" # set this and uncomment!
 # analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
 analysis_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/"
 
 # base path to data
-# data_base_path = "opt/shellcast/analysis/data/" # set this and uncomment!
+# data_base_path = "/home/ssaia/shellcast/analysis/data/" # set this and uncomment!
 # data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
 data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
@@ -64,6 +64,7 @@ exec(open((functions_path + "get_sco_ndfd_data.py")).read())
 exec(open((functions_path + "aggregate_sco_ndfd_var_data.py")).read())
 exec(open((functions_path + "tidy_sco_ndfd_data.py")).read())
 exec(open((functions_path + "append_list_as_row.py")).read())
+exec(open((functions_path + "get_var_col_name.py")).read())
 
 
 # %% get data and export
