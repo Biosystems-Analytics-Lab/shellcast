@@ -97,6 +97,7 @@ function cancelProfileFormChanges() {
  */
 async function saveProfileFormChanges() {
   const profForm = document.forms['profile-information-form'];
+  const helpText = document.getElementById('profile-form-help-text');
 
   // gather data from form
   const phoneNumber = profForm.elements['phone-number'].value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
@@ -115,8 +116,12 @@ async function saveProfileFormChanges() {
   if (res.ok) {
     // overwrite the client copy of the profile info
     profileInfo = await res.json();
+    helpText.style.color = 'green';
+    helpText.innerHTML = 'Changes saved successfully!';
   } else {
-    console.log('There was an error while saving the profile changes.');
+    const json = await res.json();
+    helpText.style.color = 'red';
+    helpText.innerHTML = json.errors[0];
   }
   initProfileForm(profileInfo, true);
 }
@@ -210,6 +215,7 @@ function createLeaseInfoEl(lease) {
               </small>
 
             <div style="text-align: right;">
+              <div><small id="lease-${lease.id}-help-text" role="alert"></small></div>
               <button class="btn btn-primary" type="button" name="lease-form-cancel-btn" disabled>Cancel</button>
               <button class="btn btn-primary" type="button" name="lease-form-save-btn" disabled>Save</button>
             </div>
@@ -254,6 +260,7 @@ function cancelLeaseFormChanges(leaseId) {
 async function saveLeaseFormChanges(leaseForm, leaseId) {
   const leaseIdx = leases.findIndex((lease) => lease.id === leaseId);
   const originalLeaseData = leases[leaseIdx];
+  const helpText = document.getElementById(`lease-${leaseId}-help-text`);
 
   // gather data from form inputs
   const emailCheckbox = leaseForm.elements[`lease-email`];
@@ -294,13 +301,14 @@ async function saveLeaseFormChanges(leaseForm, leaseId) {
   if (res.ok) {
     // overwrite the client copy of the lease info
     leases[leaseIdx] = newLeaseData;
-    // reset the form with the new info
-    initLeaseForm(newLeaseData, true);
+    helpText.style.color = 'green';
+    helpText.innerHTML = 'Changes saved successfully!';
   } else {
-    console.log('There was an error while saving the lease data.');
-    // reset the form with the old info
-    initLeaseForm(originalLeaseData, true);
+    const json = await res.json();
+    helpText.style.color = 'red';
+    helpText.innerHTML = json.errors[0];
   }
+  initLeaseForm(leases[leaseIdx], true);
 }
 
 /**
