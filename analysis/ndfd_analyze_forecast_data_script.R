@@ -36,7 +36,7 @@ for (package in packages) {
 
 # ---- 2. define base paths ----
 # base path to data
-# data_base_path = "/home/saia/shellcast/analysis/data/" # set this and uncomment!
+# data_base_path = "/home/ssaia/shellcast/analysis/data/" # set this and uncomment!
 # data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
 data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
