@@ -22,7 +22,7 @@
 
 <!-- priority of scheduler (range is -20 to 20 with default at 0) -->
   <key>Nice</key>
-  <integer>5</integer>
+  <integer>10</integer>
 
 <!-- runs at 6:00 every day but this is for debug running -->
   <key>StartCalendarInterval</key>
