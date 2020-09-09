@@ -86,14 +86,14 @@ def test_add_lease(client, dbSession, addMockFbUser):
 
   json = res.get_json()
   assert len(json) == 2
-  assert json[0]['ncdmf_lease_id'] == '45678'
-  assert json[0]['grow_area_name'] == 'A01'
-  assert json[0]['rainfall_thresh_in'] == 1.5
-  assert json[0]['geometry'] == [34.404497, -77.567573]
-  assert json[1]['ncdmf_lease_id'] == '4-C-89'
+  assert json[1]['ncdmf_lease_id'] == '45678'
   assert json[1]['grow_area_name'] == 'A01'
   assert json[1]['rainfall_thresh_in'] == 1.5
-  assert json[1]['geometry'] == [36.303915, -75.864693]
+  assert json[1]['geometry'] == [34.404497, -77.567573]
+  assert json[0]['ncdmf_lease_id'] == '4-C-89'
+  assert json[0]['grow_area_name'] == 'A01'
+  assert json[0]['rainfall_thresh_in'] == 1.5
+  assert json[0]['geometry'] == [36.303915, -75.864693]
 
 def test_add_invalid_lease(client, dbSession, addMockFbUser):
   # add a mock Firebase user
