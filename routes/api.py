@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy.exc import IntegrityError
 
 from models import db
 from models.ClosureProbability import ClosureProbability
@@ -103,7 +104,7 @@ def userLeases(user):
     if (ncdmfLease):
       # assertion: at this point we know that the given ncdmf_lease_id is valid
       # now we need to check if this lease already exists for the current user
-      userLease = db.session.query(Lease).filter_by(id=clientData.get('id'), user_id=user.id, ncdmf_lease_id=ncdmfLeaseId).first()
+      userLease = db.session.query(Lease).filter_by(user_id=user.id, ncdmf_lease_id=ncdmfLeaseId).first()
       if (userLease):
         # update the existing record
         # TODO need to add checks for invalid values
@@ -113,10 +114,13 @@ def userLeases(user):
       else:
         # create a new lease record
         userLease = Lease(user_id=user.id, **ncdmfLease.asDict())
-      db.session.add(userLease)
-      db.session.commit()
+      try:
+        db.session.add(userLease)
+        db.session.commit()
+      except IntegrityError:
+        return {'errors': ['A lease with the given ID already exists for this user.']}, 400
       return leaseToDict(userLease)
-    return {'errors': ['The given lease id does not exist.']}, 400
+    return {'errors': ['The given lease ID does not exist.']}, 400
   else: # request.method == 'DELETE'
     print('TODO delete lease')
     return {'message': 'Success'}, 200
