@@ -1,16 +1,22 @@
 import pytest
 
+from models.User import User
 from models.Lease import Lease
 from models.ClosureProbability import ClosureProbability
 
 def test_valid(dbSession):
+  # add the user to the db
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com')
+  dbSession.add(user)
+  dbSession.commit()
+
   # add some leases to the database
   leases = [
-    Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
-    Lease(ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5),
-    Lease(ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5),
-    Lease(ncdmf_lease_id='74929', grow_area_name='F02', rainfall_thresh_in=2.5),
-    Lease(ncdmf_lease_id='96854', grow_area_name='F03', rainfall_thresh_in=0.5),
+    Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5),
+    Lease(user_id=user.id, ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5),
+    Lease(user_id=user.id, ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5),
+    Lease(user_id=user.id, ncdmf_lease_id='74929', grow_area_name='F02', rainfall_thresh_in=2.5),
+    Lease(user_id=user.id, ncdmf_lease_id='96854', grow_area_name='F03', rainfall_thresh_in=0.5),
   ]
 
   dbSession.add_all(leases)
