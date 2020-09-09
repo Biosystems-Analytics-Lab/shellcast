@@ -1,9 +1,15 @@
 import pytest
 
+from models.User import User
 from models.Lease import Lease
 
 def test_Lease(dbSession):
-  validLease1 = Lease(ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, prob_pref=50, geometry=(35.803644, -75.985285))
+  # add the user to the db
+  user = User(firebase_uid='3sH9so5Y3DP72QA1XqbWw9J6I8o1', email='blah@gmail.com')
+  dbSession.add(user)
+  dbSession.commit()
+
+  validLease1 = Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, prob_pref=50, geometry=(35.803644, -75.985285))
 
   dbSession.add(validLease1)
   dbSession.commit()
