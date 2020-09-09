@@ -220,10 +220,15 @@ function createLeaseInfoEl(lease) {
                 This is an example of a notification you might receive for this lease.
               </small>
 
-            <div style="text-align: right;">
-              <div><small id="lease-${lease.id}-help-text" role="alert"></small></div>
-              <button class="btn btn-primary" type="button" name="lease-form-cancel-btn" disabled>Cancel</button>
-              <button class="btn btn-primary" type="button" name="lease-form-save-btn" disabled>Save</button>
+            <div style="text-align: right;"><small id="lease-${lease.id}-help-text" role="alert"></small></div>
+            <div class="lease-form-buttons">
+              <div>
+                <button class="btn btn-danger" type="button" name="lease-form-delete-btn">Delete</button>
+              </div>
+              <div>
+                <button class="btn btn-primary" type="button" name="lease-form-cancel-btn" disabled>Cancel</button>
+                <button class="btn btn-primary" type="button" name="lease-form-save-btn" disabled>Save</button>
+              </div>
             </div>
           </form>
         </div>
@@ -237,7 +242,7 @@ function generateExampleNotification(leaseForm) {
   const ncdmfId = leaseForm.elements['lease-ncdmf-id'].value;
   const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
   if (noNotificationsCheckbox.checked) {
-    return '-- You will not receive any notifications for this lease. --';
+    return '<p>-- You will not receive any notifications for this lease. --</p>';
   }
   const probRadios = leaseForm.elements[`lease-notification-prob`];
   let selectedProb;
@@ -246,7 +251,7 @@ function generateExampleNotification(leaseForm) {
       selectedProb = Number(radio.value);
     }
   }
-  return `Lease: ${ncdmfId}\n  1-day: ${selectedProb + 10}%\n  2-day: ${selectedProb + 13}%\n  3-day: ${selectedProb + 19}%`;
+  return `<pre>Lease: ${ncdmfId}\n  1-day: ${selectedProb + 10}%\n  2-day: ${selectedProb + 13}%\n  3-day: ${selectedProb + 19}%</pre>`;
 }
 
 /**
@@ -339,7 +344,7 @@ function onLeaseFormChange(e) {
   // enable/disable notification inputs as appropriate
   enableDisableLeaseNotificationInputs(leaseForm);
   // show example notification
-  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `<pre>${generateExampleNotification(leaseForm)}</pre>`;
+  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `${generateExampleNotification(leaseForm)}`;
 }
 
 /**
@@ -391,6 +396,7 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   const probRadios = leaseForm.elements[`lease-notification-prob`];
   const cancelBtn = leaseForm.elements[`lease-form-cancel-btn`];
   const saveBtn = leaseForm.elements[`lease-form-save-btn`];
+  const deleteBtn = leaseForm.elements[`lease-form-delete-btn`];
   // set values for checkboxes
   noNotificationsCheckbox.checked = !lease.email_pref && !lease.text_pref;
   emailCheckbox.checked = lease.email_pref;
@@ -409,11 +415,12 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   saveBtn.disabled = true;
 
   // show example notification
-  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `<pre>${generateExampleNotification(leaseForm)}</pre>`;
+  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `${generateExampleNotification(leaseForm)}`;
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
     leaseForm.addEventListener('change', onLeaseFormChange);
+    deleteBtn.addEventListener('click', () => deleteLease(lease.id));
     cancelBtn.addEventListener('click', () => cancelLeaseFormChanges(lease.id));
     saveBtn.addEventListener('click', () => saveLeaseFormChanges(leaseForm, lease.id));
   }
@@ -423,11 +430,11 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
  * Adds the given lease to the user's leases.
  * @param {string} leaseId the NCDMF lease id of the lease to add
  */
-async function addLease(leaseId) {
+async function addLease(leaseNCDMFId) {
   const res = await authorizedFetch('/leases', {
     method: 'POST',
     headers: {'Content-Type': 'application/json;charset=utf-8'},
-    body: JSON.stringify({ncdmf_lease_id: leaseId})
+    body: JSON.stringify({ncdmf_lease_id: leaseNCDMFId})
   });
   if (res.ok) {
     const lease = await res.json();
@@ -444,6 +451,24 @@ async function addLease(leaseId) {
   }
 
   clearLeaseSearch();
+}
+
+async function deleteLease(leaseId) {
+  const res = await authorizedFetch('/leases', {
+    method: 'DELETE',
+    headers: {'Content-Type': 'application/json;charset=utf-8'},
+    body: JSON.stringify({lease_id: leaseId})
+  });
+  if (res.ok) {
+    // find where the lease is in the local array of leases
+    const idxOfLease = leases.findIndex((x) => x.id === leaseId);
+    leases.splice(idxOfLease, 1); // and delete it
+    buildLeaseForms();
+  } else {
+    const errors = (await res.json()).errors;
+    console.log('There was a problem while deleting the lease.');
+    console.log(errors);
+  }
 }
 
 /**
