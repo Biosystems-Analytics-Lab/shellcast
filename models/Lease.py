@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, Boolean, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.sql import functions, expression
 from sqlalchemy.orm import relationship
 
@@ -8,6 +8,7 @@ from models.PointColType import PointColType
 
 class Lease(db.Model):
   __tablename__ = 'user_leases'
+  __table_args__ = (UniqueConstraint('user_id', 'ncdmf_lease_id', name='unique_leases_per_user'),)
 
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))

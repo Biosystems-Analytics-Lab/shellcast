@@ -17,7 +17,7 @@ CREATE TABLE `users` (
 CREATE TABLE `user_leases` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `ncdmf_lease_id` varchar(20) NULL,
+  `ncdmf_lease_id` varchar(20) NOT NULL,
   `grow_area_name` varchar(3) NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
   `geometry` point NULL,
@@ -27,7 +27,8 @@ CREATE TABLE `user_leases` (
   `deleted` boolean DEFAULT false,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `unique_leases_per_user` UNIQUE (`user_id`, `ncdmf_lease_id`)
 );
 
 -- Stores information about all potential leases retrieved from the NCDMF API.
