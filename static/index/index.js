@@ -77,7 +77,7 @@ async function getLeaseData() {
   if (res.ok) {
     return await res.json();
   }
-  console.log('Problem retrieving growing area data.');
+  console.log('Problem retrieving lease data.');
   console.log(res);
   return null;
 }

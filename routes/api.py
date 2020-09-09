@@ -49,11 +49,12 @@ def getLeaseClosureProbabilities(user):
   leases = db.session.query(Lease).filter_by(user_id=user.id).all()
   def getLeaseProbForLease(lease):
     probDict = {'ncdmf_lease_id': lease.ncdmf_lease_id, 'geometry': lease.geometry}
-    closureProb = db.session.query(ClosureProbability).filter_by(lease_id=lease.id).first()
-    if (closureProb):
-      probDict['prob_1d_perc'] = closureProb.prob_1d_perc
-      probDict['prob_2d_perc'] = closureProb.prob_2d_perc
-      probDict['prob_3d_perc'] = closureProb.prob_3d_perc
+    if (len(lease.closureProbabilities) >= 1):
+      # get the latest closure probability for the lease
+      prob = lease.closureProbabilities[0]
+      probDict['prob_1d_perc'] = prob.prob_1d_perc
+      probDict['prob_2d_perc'] = prob.prob_2d_perc
+      probDict['prob_3d_perc'] = prob.prob_3d_perc
     return probDict
   leaseList = list(map(getLeaseProbForLease, leases))
   return jsonify(leaseList)
