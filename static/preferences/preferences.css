@@ -24,3 +24,9 @@
   margin-top: 8px;
   margin-bottom: 0;
 }
+
+.lease-form-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}

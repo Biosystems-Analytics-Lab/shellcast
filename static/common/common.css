@@ -169,3 +169,15 @@ a:hover, .btn-link:hover, .dropdown-item:hover {
   background-color: #009fd7;
   border-color: #009fd7;
 }
+
+.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  color: #fff;
+  background-color: #c82333;
+  border-color: #bd2130;
+}
