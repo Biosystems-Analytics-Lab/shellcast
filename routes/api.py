@@ -9,6 +9,7 @@ from models.Lease import Lease
 from models.NCDMFLease import NCDMFLease
 
 from routes.validators.ProfileInfoValidator import ProfileInfoValidator
+from routes.validators.LeasePreferenceValidator import LeasePreferenceValidator
 
 from routes.authentication import userRequired
 
@@ -94,7 +95,7 @@ def userLeases(user):
       'prob_pref': lease.prob_pref
     }
   if (request.method == 'GET'):
-    leases = db.session.query(Lease).filter_by(user_id=user.id).all()
+    leases = db.session.query(Lease).filter_by(user_id=user.id, deleted=False).all()
     return jsonify(list(map(leaseToDict, leases)))
   elif (request.method == 'POST'):
     clientData = request.json
@@ -106,11 +107,14 @@ def userLeases(user):
       # now we need to check if this lease already exists for the current user
       userLease = db.session.query(Lease).filter_by(user_id=user.id, ncdmf_lease_id=ncdmfLeaseId).first()
       if (userLease):
-        # update the existing record
-        # TODO need to add checks for invalid values
-        userLease.email_pref = request.json.get('email_pref')
-        userLease.text_pref = request.json.get('text_pref')
-        userLease.prob_pref = request.json.get('prob_pref')
+        # mark the lease as not deleted
+        userLease.deleted = False
+        # validate the uploaded info
+        validator = LeasePreferenceValidator(request.json)
+        if (validator.validate()):
+          userLease.email_pref = validator.email_pref
+          userLease.text_pref = validator.text_pref
+          userLease.prob_pref = validator.prob_pref
       else:
         # create a new lease record
         userLease = Lease(user_id=user.id, **ncdmfLease.asDict())
@@ -118,12 +122,26 @@ def userLeases(user):
         db.session.add(userLease)
         db.session.commit()
       except IntegrityError:
-        return {'errors': ['A lease with the given ID already exists for this user.']}, 400
+        return {'errors': ['Cannot add/update lease due to constraint violations.']}, 400
       return leaseToDict(userLease)
     return {'errors': ['The given lease ID does not exist.']}, 400
   else: # request.method == 'DELETE'
-    print('TODO delete lease')
-    return {'message': 'Success'}, 200
+    clientData = request.json
+    leaseId = clientData.get('lease_id')
+    # find the lease with the given lease id and belongs to the current user
+    userLease = db.session.query(Lease).filter_by(user_id=user.id, id=leaseId).first()
+    if (userLease):
+      # set the deleted field
+      userLease.deleted = True
+      # reset the preference fields to their defaults
+      userLease.email_pref = Lease.DEFAULT_email_pref
+      userLease.text_pref = Lease.DEFAULT_text_pref
+      userLease.prob_pref = Lease.DEFAULT_prob_pref
+      db.session.add(userLease)
+      db.session.commit()
+      return {'message': 'Success'}, 200
+    else:
+      return {'errors': ['A lease with the given ID does not exist for this user.']}, 400
 
 @api.route('/searchLeases', methods=['POST'])
 @userRequired
@@ -132,7 +150,7 @@ def searchLeases(user):
   Returns leases based on a search term.
   """
   searchTerm = str(request.json.get('search'))
-  userLeaseIds = db.session.query(Lease.ncdmf_lease_id).filter_by(user_id=user.id).all()
+  userLeaseIds = db.session.query(Lease.ncdmf_lease_id).filter_by(user_id=user.id, deleted=False).all()
   ncdmfLeaseIds = db.session.query(NCDMFLease.ncdmf_lease_id).\
       filter(
         NCDMFLease.ncdmf_lease_id.like('%%' + searchTerm + '%%'),
