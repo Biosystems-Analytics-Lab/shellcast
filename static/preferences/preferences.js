@@ -1,9 +1,15 @@
 'use strict';
 
 const NOTIFICATION_PROB_PREFS = [25, 50, 75];
+/* The number of milliseconds between when a user changes the lease search
+   text and when an API request is sent for a lease search */
+const LEASE_SEARCH_DELAY = 400;
 
 let profileInfo = {};
 let leases = [];
+
+// the id of the latest lease search timer
+let leaseSearchTimer = null;
 
 /**
  * Retrieves the current user's profile information from the server.
@@ -425,10 +431,16 @@ async function addLease(leaseId) {
   });
   if (res.ok) {
     const lease = await res.json();
-    leases.push(lease);
+    // check if the lease is already added
+    const idxOfLease = leases.findIndex((x) => x.ncdmf_lease_id === lease.ncdmf_lease_id);
+    if (idxOfLease === -1) {
+      leases.push(lease);
+    }
     buildLeaseForms();
   } else {
-    console.log('There was a problem while adding a lease.');
+    const errors = (await res.json()).errors;
+    console.log('There was a problem while adding the lease.');
+    console.log(errors);
   }
 
   clearLeaseSearch();
@@ -440,6 +452,10 @@ async function addLease(leaseId) {
 async function searchLeases() {
   const searchResultsDiv = document.getElementById('lease-search-results');
   const userInput = document.getElementById('lease-search-text-input').value;
+  if (userInput === '') {
+    clearLeaseSearch();
+    return;
+  }
   const res = await authorizedFetch('/searchLeases', {
     method: 'POST',
     headers: {'Content-Type': 'application/json;charset=utf-8'},
@@ -448,16 +464,21 @@ async function searchLeases() {
   if (res.ok) {
     const returnedLeases = await res.json();
     searchResultsDiv.innerHTML = '';
-    for (let lease of returnedLeases) {
-      searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action" onclick="addLease('${lease}')">${lease}</button>`;
+    if (returnedLeases.length > 0) {
+      for (let lease of returnedLeases) {
+        searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action" onclick="addLease('${lease}')">${lease}</button>`;
+      }
+    } else {
+      // show message saying no results were found
+      searchResultsDiv.innerHTML = '<button type="button" class="list-group-item list-group-item-action">No leases with a similar ID were found.</button>';
     }
     searchResultsDiv.style.display = 'flex';
   } else {
     console.log('There was an error while searching for leases.');
-    // clear results
+    // show error message
     const searchResultsDiv = document.getElementById('lease-search-results');
-    searchResultsDiv.innerHTML = '';
-    searchResultsDiv.style.display = 'none';
+    searchResultsDiv.innerHTML = '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
+    searchResultsDiv.style.display = 'flex';
   }
 }
 
@@ -471,6 +492,23 @@ function clearLeaseSearch() {
   const searchResultsDiv = document.getElementById('lease-search-results');
   searchResultsDiv.innerHTML = '';
   searchResultsDiv.style.display = 'none';
+}
+
+function showSearchResultsDiv() {
+  const searchResultsDiv = document.getElementById('lease-search-results');
+  searchResultsDiv.style.display = 'flex';
+}
+
+function hideSearchResultsDiv() {
+  const searchResultsDiv = document.getElementById('lease-search-results');
+  searchResultsDiv.style.display = 'none';
+}
+
+function searchLeasesOnDelay() {
+  if (leaseSearchTimer !== null) {
+    clearTimeout(leaseSearchTimer);
+  }
+  leaseSearchTimer = setTimeout(searchLeases, LEASE_SEARCH_DELAY);
 }
 
 /**
@@ -487,6 +525,7 @@ async function handleSignedInUser(user) {
   initProfileForm(profileInfo);
 
   // setup lease search bar
+  document.getElementById('lease-search-text-input').addEventListener('input', searchLeasesOnDelay);
   document.getElementById('lease-search-btn').addEventListener('click', searchLeases);
   document.getElementById('lease-clear-btn').addEventListener('click', clearLeaseSearch);
 
