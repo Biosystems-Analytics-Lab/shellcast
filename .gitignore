@@ -17,7 +17,8 @@ htmlcov
 # ignore Mac backup stuff
 .DS_Store
 # ignore data folder
-analysis/data/
+analysis/data/spatial/outputs/ndfd_sco_data/
+analysis/data/tabular/outputs/
 # ignore r history file
 .Rhistory
 .Rproj.user
