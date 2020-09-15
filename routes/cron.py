@@ -21,8 +21,12 @@ SENDER = 'ShellCast <shellcastapp@ncsu.edu>'
 SUBJECT_TEMPLATE = 'ShellCast Lease Closure Probabilities for {}'
 # The character encoding for all emails.
 CHARSET = 'UTF-8'
+# The text that is at the beginning of every notification.
+NOTIFICATION_HEADER = 'https://go.ncsu.edu/shellcast\n\n'
 # The template for lease information in notifications.
 LEASE_TEMPLATE =  'Lease: {}\n  1-day: {}%\n  2-day: {}%\n  3-day: {}%\n'
+# The text that is at the end of every notification.
+NOTIFICATION_FOOTER = '\nThese predictions are in no way indicative of whether or not a growing area will actually be temporarily closed for harvest.'
 # The amount of time between sending emails
 EMAIL_SEND_INTERVAL = 0.1
 
@@ -74,8 +78,8 @@ def sendNotifications():
     if (user.phone_number != None and user.service_provider_id != None):
       textAddress = '{}@{}'.format(user.phone_number, user.service_provider.mms_gateway)
     # construct notification text
-    emailNotification = 'https://ncsu-shellcast.appspot.com/\n'
-    textNotification = 'https://ncsu-shellcast.appspot.com/\n'
+    emailNotification = NOTIFICATION_HEADER
+    textNotification = NOTIFICATION_HEADER
     needToSendEmail = False
     needToSendText = False
     # for each lease
@@ -96,6 +100,9 @@ def sendNotifications():
             if (lease.text_pref):
               textNotification += text
               needToSendText = True
+    # add a disclaimer to the end of the notifications
+    emailNotification += NOTIFICATION_FOOTER
+    textNotification += NOTIFICATION_FOOTER
     if (needToSendEmail and emailAddress != None):
       notificationsToSend.append((emailAddress, emailNotification, user.id))
     if (needToSendText and textAddress != None):

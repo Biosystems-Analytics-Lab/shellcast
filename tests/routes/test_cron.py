@@ -60,6 +60,7 @@ def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
   # check if a notification log record was added
   results = dbSession.query(Notification).all()
   assert len(results) == 1
+  assert 'https://go.ncsu.edu/shellcast' in results[0].notification_text
   assert 'Lease: 45678' in results[0].notification_text
   assert '1-day: 60%' in results[0].notification_text
   assert '2-day: 70%' in results[0].notification_text
@@ -69,3 +70,4 @@ def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
   assert '1-day: 32%' in results[0].notification_text
   assert '2-day: 33%' in results[0].notification_text
   assert '3-day: 69%' in results[0].notification_text
+  assert 'These predictions are in no way indicative of whether or not a growing area will actually be temporarily closed for harvest.' in results[0].notification_text
