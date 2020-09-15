@@ -48,7 +48,7 @@ def getLeaseClosureProbabilities(user):
   """
   Returns the user's lease closure probabilities.
   """
-  leases = db.session.query(Lease).filter_by(user_id=user.id).all()
+  leases = db.session.query(Lease).filter_by(user_id=user.id, deleted=False).all()
   def getLeaseProbForLease(lease):
     probDict = {'ncdmf_lease_id': lease.ncdmf_lease_id, 'geometry': lease.geometry}
     if (len(lease.closureProbabilities) >= 1):
