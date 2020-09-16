@@ -10,3 +10,4 @@ dependencies:
   - r-lubridate
   - python=3.7
   - gdal
+  - lwgeos
