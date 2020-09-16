@@ -16,7 +16,7 @@ firebase-admin-sdk-credentials.json
 htmlcov
 # ignore Mac backup stuff
 .DS_Store
-# ignore data folder
+# ignore data folder that change daily
 analysis/data/spatial/outputs/ndfd_sco_data/
 analysis/data/tabular/outputs/
 # ignore r history file
