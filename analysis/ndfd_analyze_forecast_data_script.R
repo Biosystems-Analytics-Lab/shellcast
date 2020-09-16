@@ -19,6 +19,7 @@
 
 # TODO remove notification testing factor (to bump up prob of closure values for testing)
 notification_factor <- 3
+notification_flag <- "testing" # or "production"
 
 
 # ---- 1. install and load packages as necessary ----
@@ -68,6 +69,9 @@ lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_
 
 # path to ignored lease bounds tabular outputs
 lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
+
+# path to ndfd tabular outputs appended
+ndfd_tabular_data_appended_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data_appended/")
 
 
 # define proj4 string for ndfd data
@@ -611,6 +615,32 @@ write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_ca
 
 # export ignored lease data (tabular)
 # write_csv(ndfd_leases_ignored_tab_data, paste0(lease_tabular_data_output_path, "lease_bounds_ignored_", latest_ndfd_date_uct_str, ".csv"))
+
+
+# ---- 19. append data for long-term analysis ----
+# reformat cmu data
+ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
+  dplyr::select(-row_num) %>%
+  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
+
+# reformat sga data
+datetime_uct_now <- unique(ndfd_cmu_calcs_data_to_append$datetime_uct)
+ndfd_sga_calcs_data_to_append <- ndfd_sga_calcs_data %>%
+  ungroup() %>%
+  dplyr::mutate(datetime_uct = rep(datetime_uct_now, dim(ndfd_sga_calcs_data)[1]),
+                flag = rep(notification_flag, dim(ndfd_sga_calcs_data)[1])) %>%
+  dplyr::select(grow_area_name, datetime_uct, min_1d_prob:max_3d_prob, flag)
+
+# reformat lease data
+ndfd_lease_calcs_data_to_append <- ndfd_lease_calcs_data %>%
+  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_lease_calcs_data)[1])) %>%
+  dplyr::select(lease_id, datetime_uct = day, prob_1d_perc:flag)
+
+# append all three datasets
+write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
+write_csv(ndfd_sga_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_sga_calcs_appended.csv"), append = TRUE)
+write_csv(ndfd_lease_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_lease_calcs_appended.csv"), append = TRUE)
+
 
 
 print("finished analyzing forecast data")
