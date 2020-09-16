@@ -636,10 +636,9 @@ ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
   dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
 
 # reformat sga data
-datetime_uct_now <- unique(ndfd_cmu_calcs_data_to_append$datetime_uct)
 ndfd_sga_calcs_data_to_append <- ndfd_sga_calcs_data %>%
   ungroup() %>%
-  dplyr::mutate(datetime_uct = rep(datetime_uct_now, dim(ndfd_sga_calcs_data)[1]),
+  dplyr::mutate(datetime_uct = rep(ndfd_date_uct, dim(ndfd_sga_calcs_data)[1]),
                 flag = rep(notification_flag, dim(ndfd_sga_calcs_data)[1])) %>%
   dplyr::select(grow_area_name, datetime_uct, min_1d_prob:max_3d_prob, flag)
 
