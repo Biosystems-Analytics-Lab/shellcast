@@ -17,8 +17,11 @@
 # TODO (wishlist) use here package
 # TODO (wishlist) use terra package for raster stuff
 
-# TODO remove notification testing factor (to bump up prob of closure values for testing)
-notification_factor <- 3
+# TODO remove notification testing factor when testing is over
+notification_flag <- "testing" # or "production"
+# notification_factor <- 3
+notification_dist_min <- 20
+notification_dist_max <- 100
 
 
 # ---- 1. install and load packages as necessary ----
@@ -68,6 +71,9 @@ lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_
 
 # path to ignored lease bounds tabular outputs
 lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
+
+# path to ndfd tabular outputs appended
+ndfd_tabular_data_appended_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data_appended/")
 
 
 # define proj4 string for ndfd data
@@ -456,8 +462,19 @@ for (i in 1:length(valid_period_list)) {
     temp_cmu_qpf_result <- round(sum(temp_qpf_cmu_df_fin$raster_value_wtd), 2)
 
     # calculate probability of closure
-    temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
-    temp_cum_prob_closure_notification_test_result <- if_else(temp_cmu_prob_close_result * notification_factor > 100, 100, temp_cmu_prob_close_result * notification_factor) # to test notifications
+    # check if testing mode
+    # if not testing mode calculate probability of closure as you would in production
+    if (notification_flag == "production") {
+      temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
+    }
+    
+    # if testing mode then more frequent approach to ensure more frequent notifications
+    else {
+      num_vals <- length(temp_cmu_qpf_result)
+      random_unif_vals <- round(runif(num_vals, min = notification_dist_min, max = notification_dist_max), 1) # random uniform distribution
+      temp_cmu_prob_close_result <- random_unif_vals
+      # temp_cmu_prob_closure_result <- if_else(temp_cmu_prob_close_result * notification_factor > 100, 100, temp_cmu_prob_close_result * notification_factor) # to test notifications
+    }
 
     # save data
     temp_ndfd_cmu_calcs_data <- data.frame(row_num = cmu_row_num,
@@ -467,8 +484,7 @@ for (i in 1:length(valid_period_list)) {
                                            valid_period_hrs = temp_valid_period,
                                            pop12_perc = temp_cmu_pop12_result,
                                            qpf_in = temp_cmu_qpf_result,
-                                           #prob_close_perc = temp_cmu_prob_close_result)
-                                           prob_close_perc = temp_cum_prob_closure_notification_test_result) # to test notifications
+                                           prob_close_perc = temp_cmu_prob_close_result)
 
     # bind results
     ndfd_cmu_calcs_data <-  rbind(ndfd_cmu_calcs_data, temp_ndfd_cmu_calcs_data)
@@ -611,6 +627,31 @@ write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_ca
 
 # export ignored lease data (tabular)
 # write_csv(ndfd_leases_ignored_tab_data, paste0(lease_tabular_data_output_path, "lease_bounds_ignored_", latest_ndfd_date_uct_str, ".csv"))
+
+
+# ---- 19. append data for long-term analysis ----
+# reformat cmu data
+ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
+  dplyr::select(-row_num) %>%
+  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
+
+# reformat sga data
+ndfd_sga_calcs_data_to_append <- ndfd_sga_calcs_data %>%
+  ungroup() %>%
+  dplyr::mutate(datetime_uct = rep(ndfd_date_uct, dim(ndfd_sga_calcs_data)[1]),
+                flag = rep(notification_flag, dim(ndfd_sga_calcs_data)[1])) %>%
+  dplyr::select(grow_area_name, datetime_uct, min_1d_prob:max_3d_prob, flag)
+
+# reformat lease data
+ndfd_lease_calcs_data_to_append <- ndfd_lease_calcs_data %>%
+  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_lease_calcs_data)[1])) %>%
+  dplyr::select(lease_id, datetime_uct = day, prob_1d_perc:flag)
+
+# append all three datasets
+write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
+write_csv(ndfd_sga_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_sga_calcs_appended.csv"), append = TRUE)
+write_csv(ndfd_lease_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_lease_calcs_appended.csv"), append = TRUE)
+
 
 
 print("finished analyzing forecast data")
