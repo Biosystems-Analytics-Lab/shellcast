@@ -130,6 +130,7 @@ async function saveProfileFormChanges() {
     helpText.innerHTML = json.errors[0];
   }
   initProfileForm(profileInfo, true);
+  buildLeaseForms();
 }
 
 /**
@@ -393,6 +394,7 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
   const emailCheckbox = leaseForm.elements[`lease-email`];
   const textCheckbox = leaseForm.elements[`lease-text`];
+  const textCheckboxLabel = textCheckbox.labels[0];
   const probRadios = leaseForm.elements[`lease-notification-prob`];
   const cancelBtn = leaseForm.elements[`lease-form-cancel-btn`];
   const saveBtn = leaseForm.elements[`lease-form-save-btn`];
@@ -400,7 +402,16 @@ function initLeaseForm(lease, ignoreAddingEventListeners) {
   // set values for checkboxes
   noNotificationsCheckbox.checked = !lease.email_pref && !lease.text_pref;
   emailCheckbox.checked = lease.email_pref;
-  textCheckbox.checked = lease.text_pref;
+  // don't allow text notifications to be enabled unless user entered a phone number and service provider
+  if (profileInfo.phone_number === undefined || profileInfo.service_provider_id === undefined) {
+    textCheckboxLabel.innerHTML = 'Text (You must enter a phone number and service provider at the top of this page to enable text notitifications.)';
+    textCheckbox.disabled = true;
+    textCheckbox.checked = false;
+  } else {
+    textCheckboxLabel.innerHTML = 'Text';
+    textCheckbox.disabled = false;
+    textCheckbox.checked = lease.text_pref;
+  }
   // set values for radio buttons
   for (let radio of probRadios) {
     const value = lease.prob_pref && lease.prob_pref.toString();
