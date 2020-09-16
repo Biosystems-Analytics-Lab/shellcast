@@ -17,9 +17,11 @@
 # TODO (wishlist) use here package
 # TODO (wishlist) use terra package for raster stuff
 
-# TODO remove notification testing factor (to bump up prob of closure values for testing)
-notification_factor <- 3
+# TODO remove notification testing factor when testing is over
 notification_flag <- "testing" # or "production"
+# notification_factor <- 3
+notification_dist_min <- 20
+notification_dist_max <- 100
 
 
 # ---- 1. install and load packages as necessary ----
@@ -460,8 +462,19 @@ for (i in 1:length(valid_period_list)) {
     temp_cmu_qpf_result <- round(sum(temp_qpf_cmu_df_fin$raster_value_wtd), 2)
 
     # calculate probability of closure
-    temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
-    temp_cum_prob_closure_notification_test_result <- if_else(temp_cmu_prob_close_result * notification_factor > 100, 100, temp_cmu_prob_close_result * notification_factor) # to test notifications
+    # check if testing mode
+    # if not testing mode calculate probability of closure as you would in production
+    if (notification_flag == "production") {
+      temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
+    }
+    
+    # if testing mode then more frequent approach to ensure more frequent notifications
+    else {
+      num_vals <- length(temp_cmu_qpf_result)
+      random_unif_vals <- round(runif(num_vals, min = notification_dist_min, max = notification_dist_max), 1) # random uniform distribution
+      temp_cmu_prob_close_result <- random_unif_vals
+      # temp_cmu_prob_closure_result <- if_else(temp_cmu_prob_close_result * notification_factor > 100, 100, temp_cmu_prob_close_result * notification_factor) # to test notifications
+    }
 
     # save data
     temp_ndfd_cmu_calcs_data <- data.frame(row_num = cmu_row_num,
@@ -471,8 +484,7 @@ for (i in 1:length(valid_period_list)) {
                                            valid_period_hrs = temp_valid_period,
                                            pop12_perc = temp_cmu_pop12_result,
                                            qpf_in = temp_cmu_qpf_result,
-                                           #prob_close_perc = temp_cmu_prob_close_result)
-                                           prob_close_perc = temp_cum_prob_closure_notification_test_result) # to test notifications
+                                           prob_close_perc = temp_cmu_prob_close_result)
 
     # bind results
     ndfd_cmu_calcs_data <-  rbind(ndfd_cmu_calcs_data, temp_ndfd_cmu_calcs_data)
