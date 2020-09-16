@@ -164,7 +164,7 @@ if (len(ncdmf_leases_current_result) > 0):
     # (i.e., NOT in ncdmf_leases_current_ids and NOT in ncdmf_leases shellcast mysql table)
     lease_spatial_data_sel = lease_spatial_data[~lease_spatial_data['ncdmf_lease_id'].isin(ncdmf_leases_current_ids)].reset_index(drop=True)
 
-    lease_spatial_data_sel = lease_spatial_data_sel[1:6] # add the first five for now
+    # lease_spatial_data_sel = lease_spatial_data_sel[1:6] # add the first five for now
 
     # if there are no new leases to add (from the ncdmf rest api) then skip inserting rows
     if (len(lease_spatial_data_sel) > 0):
