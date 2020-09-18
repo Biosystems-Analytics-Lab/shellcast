@@ -8,6 +8,14 @@ dependencies:
   - r-rgdal
   - r-tidyverse
   - r-lubridate
+  - r-lwgeom
   - python=3.7
+  - requests
+  - numpy
+  - pandas
+  - pydap
+  - sqlalchemy
+  - pymysql
   - gdal
-  - lwgeos
+  - proj
+  - geos
