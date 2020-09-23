@@ -18,7 +18,13 @@ def aggregate_sco_ndfd_var_data(ndfd_var_data, var_period_index, var_period_vals
     Returns:
         var_agg_data_pd (data frame): A pandas dataframe with variable data aggregated to the full period of interest (e.g., 24hr)
     Required:
-        import numpy, import pandas, ndfd_var_data requires loading and running convert_sco_ndfd_datetime_str() and get_sco_ndfd_data() functions before this
+        import numpy
+        import pandas
+        from pydap.client import open_url
+        import requests
+        import datetime
+        ndfd_var_data requires loading and running convert_sco_ndfd_datetime_str() and get_sco_ndfd_data() functions before this
+    Source: none, custom function
 
     Note: Subperiods and periods are described as follows. For example, qpf data is reported in subperiods of 6 hours so to calculate qpf for 24 hours, you will have to sum 6, 12, 18, and 24 hour subperiods to get a full 24 hour period.
     """
@@ -57,15 +63,15 @@ def aggregate_sco_ndfd_var_data(ndfd_var_data, var_period_index, var_period_vals
 
 def append_list_as_row(file_name, list_of_elem):
     """
-    Description: opens existing file and appends row to it
+    Description: Opens existing file and appends row to it
     Parameters:
         file_name (str): a string defining the file path
         list_of_elem (list): the list of elements to be added to the file
     Returns:
         path with list_of_elements appended to it (i.e., row appended)
-    Requred: need to import writer from the csv library
+    Required:
+        import writer from the csv library
     Source: https://thispointer.com/python-how-to-append-a-new-row-to-an-existing-csv-file/
-
     """
     # Open file in append mode
     with open(file_name, 'a+', newline='') as write_obj:
@@ -84,7 +90,8 @@ def convert_sco_ndfd_datetime_str(datetime_str):
         datetime_ym_str (str): A string in "%Y%m" format (e.g, "201601")
         datetime_ymd_str (str): A string in "%Y%m%d" format (e.g, "20160101")
         datetime_ymdh_str (str): A string in "%Y%m%d%H" format (e.g, "2016010100")
-
+    Required: none
+    Source: none, custom function
     """
     date_str, time_str = datetime_str.split()
     year_str, month_str, day_str = date_str.split("-")
@@ -100,8 +107,7 @@ def convert_sco_ndfd_datetime_str(datetime_str):
 
 def get_sco_ndfd_data(base_server_url, datetime_uct_str):
     """
-    Description: Returns a dataframe of NC State Climate office (SCO) National Digital Forecast Dataset (NDFD) data for a specified datetime,
-                 if url does not exist then will give empty dataset
+    Description: Returns a dataframe of NC State Climate office (SCO) National Digital Forecast Dataset (NDFD) data for a specified datetime, if url does not exist then will give empty dataset
     Parameters:
         base_server_url (str): Base URL (string) for the SCO NDFD TDS server
         datetime_uct_str (str): A string in "%Y-%m-%d %H:%M" format (e.g., "2016-01-01 00:00") with timezone = UCT
@@ -112,6 +118,7 @@ def get_sco_ndfd_data(base_server_url, datetime_uct_str):
         import open_url from pydap.client
         import requests
         must load and run convert_sco_ndfd_datetime_str() function
+    Source: none, custom function
     """
     # convert datetime string
     year_month, year_month_day, year_month_day_hour = convert_sco_ndfd_datetime_str(datetime_uct_str)
@@ -140,7 +147,9 @@ def get_var_col_name(ndfd_data, ndfd_var):
     Returns:
         var_col_name (str): A string with the full SCO NDFD variable column name means data is available)
     Required:
-        import pydap and requests, must load and run the get_sco_ndfd_data() function before this
+        import pydap and requests
+        must load and run the get_sco_ndfd_data() function before this
+    Source: none, custom function
     """
     # get children string
     ndfd_children_str = str(ndfd_data.children)
@@ -175,15 +184,16 @@ def get_var_col_name(ndfd_data, ndfd_var):
 
 def make_lease_sql_query(data):
     """
-    Description: opens existing file and appends row to it
+    Description: Makes sql (string) query to add new leases to mysql database
     Parameters:
         data (pandas df): a pandas dataframe that includes ncdmf lease information to be added to the shellcast mysql database,
         this dataframe must have the following columns: ncdmf_lease_id, grow_area_name, rainfall_thresh_in, longitude, latitude
     Returns:
         sql quere (string) to insert new ncdmf leases into the shellcast mysql database
-    Requred: need to import pandas, data going into this function needs to be at least 1 row or longer
+    Required:
+        import pandas
+        data going into this function needs to be at least 1 row or longer
     Source: none, custom function
-
     """
     # if there's only one lease to add
     if (len(data) == 1):
@@ -214,6 +224,7 @@ def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
         datetime_ymdh_str (str): A string in "%Y%m%d%H" format (e.g, "2016010100")
     Required:
         import numpy, import pandas, import datatime, must load and run convert_sco_ndfd_datetime_str(), get_sco_ndfd_data(), and aggregate_sco_ndfd_var_data() functions before this
+    Source: none, custom function
     """
     # ndfd_data.values # to see all possible variables
 
