@@ -22,7 +22,6 @@ to see the nc sco catalog website: https://tds.climate.ncsu.edu/thredds/catalog/
 
 # %% to do list
 
-# TODO this need to run everyday at 5am ET
 # TODO (wishlist) could try to run this using the xarray library
 
 
@@ -34,37 +33,23 @@ import datetime as dt # for datetime mgmt
 from pydap.client import open_url # to convert bin file
 import requests # to check if website exists
 from csv import writer
+from config import Config, DevConfig # see config.py file
+from functions import aggregate_sco_ndfd_var_data, append_list_as_row, convert_sco_ndfd_datetime_str, get_sco_ndfd_data, get_var_col_name, tidy_sco_ndfd_data # see functions.py file
 
 
-# %% set paths here
+# %% set paths
 
 # base path to analysis
-# analysis_base_path = "/home/ssaia/shellcast/analysis/" # set this and uncomment!
-# analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
-analysis_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/"
+analysis_base_path = Config.ANALYSIS_PATH
 
 # base path to data
-# data_base_path = "/home/ssaia/shellcast/analysis/data/" # set this and uncomment!
-# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
-data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
+data_base_path = Config.DATA_PATH
+
 
 # %% use set paths
 
 # path to ndfd tabular outputs
 tabular_output_path = data_base_path + "tabular/outputs/ndfd_sco_data/ndfd_sco_data_raw/"
-
-# path to custom functions needed for this script
-functions_path = analysis_base_path + "functions/"
-
-
-# %% load custom functions
-
-exec(open((functions_path + "convert_sco_ndfd_datetime_str.py")).read())
-exec(open((functions_path + "get_sco_ndfd_data.py")).read())
-exec(open((functions_path + "aggregate_sco_ndfd_var_data.py")).read())
-exec(open((functions_path + "tidy_sco_ndfd_data.py")).read())
-exec(open((functions_path + "append_list_as_row.py")).read())
-exec(open((functions_path + "get_var_col_name.py")).read())
 
 
 # %% get data and export
@@ -118,7 +103,7 @@ elif (datetime_now_round_uct >= datetime_noontoday_uct) & (datetime_now_round_uc
 # temp_datetime_uct_str
 # temp_datetime_uct_str = '2020-08-03 00:00' # use this to test large closure probabilities
 
-# 
+#
 
 # get data
 
