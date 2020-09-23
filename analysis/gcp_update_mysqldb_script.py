@@ -30,19 +30,16 @@ import pandas
 import pymysql
 import sqlalchemy
 from config import Config, DevConfig # see config.py file
+from functions import make_lease_sql_query # see functions.py file
 
 
 # %% set paths here
 
 # base path to analysis
-# analysis_base_path = "/home/ssaia/analysis/" # set this and uncomment!
-# analysis_base_path = "/Users/sheila/Documents/github/shellcast-analysis/"
-analysis_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/"
+analysis_base_path = Config.ANALYSIS_PATH
 
 # base path to data
-# data_base_path = "/home/ssaia/shellcast/analysis/data/" # set this and uncomment!
-# data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
-data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
+data_base_path = Config.DATA_PATH
 
 
 # %% use base path
@@ -55,13 +52,6 @@ lease_spatial_data_path = data_base_path + "spatial/outputs/ncdmf_data/lease_cen
 
 # lease data path
 lease_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/lease_calcs/ndfd_lease_calcs.csv"
-
-# path to custom functions needed for this script
-functions_path = analysis_base_path + "functions/"
-
-
-# %% load custom functions
-exec(open((functions_path + "make_lease_sql_query.py")).read())
 
 
 # %% load in data
@@ -188,7 +178,7 @@ if (len(ncdmf_leases_current_result) > 0):
 else:
     # print that database is empty
     print("the database is empty so leases cannot be added")
-    
+
 
 # %% update closure_probabilities table
 
@@ -205,7 +195,7 @@ user_leases_current_result = user_leases_cursor.fetchall()
 # convert to curent lease result to pandas df
 user_leases_current_df = pandas.DataFrame(user_leases_current_result)
 
-# lease calcs df select only needed columns 
+# lease calcs df select only needed columns
 lease_data_sel = lease_data.drop(columns = 'day').reset_index(drop=True)
 
 # rename to match current lease df
@@ -225,13 +215,13 @@ closure_prob_data = pandas.DataFrame({'lease_id' : leases_join_df['id'],
                                      'prob_1d_perc' : leases_join_df['prob_1d_perc'],
                                      'prob_2d_perc' : leases_join_df['prob_2d_perc'],
                                      'prob_3d_perc' : leases_join_df['prob_3d_perc']})
-    
+
 # add df to mysql db
 closure_prob_data.to_sql('closure_probabilities', engine, if_exists = 'append', index = False)
 
 # print status
 print("added user lease data to mysql db")
-    
+
 # to_sql can handle NaN to NULL conversion!
 # in most cases there should not be NULL values
 # but for testing some of the lease id's were made up
@@ -244,41 +234,3 @@ connection.close()
 
 # print status
 print("gcp connection and engine closed")
-
-
-# %% extra/draft code
-
-# final fixing up (replacing nan with null)
-# closure_prob_data = leases_join_df.replace(numpy.NAN, sqlalchemy.sql.null)
-
-# get ncdmf lease ids
-# user_leases_current_ncdmf_ids = user_leases_current_df['ncdmf_lease_id']
-# user_leases_current_db_ids = user_leases_current_df['id']
-
-# find lease results for leases in db
-# user_leases_data_sel_init = lease_data[lease_data.lease_id.isin(user_leases_current_ncdmf_ids)]
-# lease_data_sel_init = lease_data[0:3] # for testing
-
-# find lease id for leases in db
-# user_leases_current_db_ids = user_leases_current_df['id']
-#user_leases_current_db_ids_sel =user_leases_current_db_ids[user_leases_current_df.ncdmf_lease_id.isin(user_leases_data_sel_init.lease_id)]
-
-# final cleaned up version of lease_dato push to db
-# user_leases_data_sel = user_leases_data_sel_init.drop(columns = 'day').reset_index(drop=True)
-
-# use lease data to create closure probabilities dataset
-#closure_prob_data = pandas.DataFrame({'lease_id' : user_leases_current_db_ids, # key is actually id column
-#                                     'prob_1d_perc' : user_leases_data_sel['prob_1d_perc'],
-#                                     'prob_2d_perc' : user_leases_data_sel['prob_2d_perc'],
-#                                     'prob_3d_perc' : user_leases_data_sel['prob_3d_perc']})
-
-# create cursor to print out status of update
-# lease_cursor = connection.cursor()
-# execute query
-# lease_sql = "SELECT * FROM `leases`"
-# lease_cursor.execute(lease_sql)
-
-# fetch all records and print them
-# lease_result = lease_cursor.fetchall()
-# for i in lease_result:
-#    print(i)
