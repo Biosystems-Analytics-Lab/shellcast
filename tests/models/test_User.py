@@ -4,7 +4,7 @@ from models.User import User
 from models.PhoneServiceProvider import PhoneServiceProvider
 
 def test_User(dbSession):
-  provider = PhoneServiceProvider(name='Verizon', mms_gateway='vzwpix.com')
+  provider = PhoneServiceProvider(name='Verizon', mms_gateway='vzwpix.com', sms_gateway='vtext.com')
 
   dbSession.add(provider)
   dbSession.commit()

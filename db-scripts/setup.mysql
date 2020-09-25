@@ -97,6 +97,7 @@ CREATE TABLE `phone_service_providers` (
   `id` int(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL DEFAULT '',
   `mms_gateway` varchar(30) NOT NULL DEFAULT '',
+  `sms_gateway` varchar(30) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 );
 
@@ -124,18 +125,18 @@ VALUES
 ;
 
 -- Mobile phone service providers
-INSERT INTO `phone_service_providers` (`name`, `mms_gateway`)
+INSERT INTO `phone_service_providers` (`name`, `mms_gateway`, `sms_gateway`)
 VALUES
-  ('AT&T', 'mms.att.net'),
-  ('T-Mobile', 'tmomail.net'),
-  ('Verizon', 'vzwpix.com'),
-  ('Sprint (Pre-merger)', 'pm.sprint.com'),
-  ('US Cellular', 'mms.uscc.net'),
-  ('Straight Talk', 'mypixmessages.com'),
-  ('Xfinity Mobile', 'mypixmessages.com'),
-  ('Virgin Mobile', 'vmpix.com'),
-  ('Metro PCS', 'mymetropcs.com'),
-  ('Boost Mobile', 'myboostmobile.com'),
-  ('Cricket Wireless', 'mms.cricketwireless.net'),
-  ('Google Fi', 'msg.fi.google.com')
+  ('AT&T', 'mms.att.net', 'txt.att.net'),
+  ('T-Mobile', 'tmomail.net', 'tmomail.net'),
+  ('Verizon', 'vzwpix.com', 'vtext.com'),
+  ('Sprint (Pre-merger)', 'pm.sprint.com', 'messaging.sprintpcs.com'),
+  ('US Cellular', 'mms.uscc.net', 'email.uscc.net'),
+  ('Straight Talk', 'mypixmessages.com', 'vtext.com'),
+  ('Xfinity Mobile', 'mypixmessages.com', 'vtext.com'),
+  ('Virgin Mobile', 'vmpix.com', 'vmobl.com'),
+  ('Metro PCS', 'mymetropcs.com', 'mymetropcs.com'),
+  ('Boost Mobile', 'myboostmobile.com', 'sms.myboostmobile.com'),
+  ('Cricket Wireless', 'mms.cricketwireless.net', 'mms.cricketwireless.net'),
+  ('Google Fi', 'msg.fi.google.com', 'msg.fi.google.com')
 ;
