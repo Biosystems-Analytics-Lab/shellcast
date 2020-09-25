@@ -42,7 +42,7 @@ def test_valid(client, dbSession, addMockFbUser):
 
   # add a phone number and service provider for the user
   # add a mobile service provider to the db
-  provider = PhoneServiceProvider(name='Bleh Mobile', mms_gateway='mms.blah.com')
+  provider = PhoneServiceProvider(name='Bleh Mobile', mms_gateway='mms.blah.com', sms_gateway='sms.blah.com')
   dbSession.add(provider)
   dbSession.commit()
 
@@ -80,7 +80,7 @@ def test_update_info(client, addMockFbUser, dbSession):
   addMockFbUser(dict(uid='blah', email='blah@gmail.com'), 'validUser1')
 
   # add a mobile service provider
-  provider = PhoneServiceProvider(name='Bleh Mobile', mms_gateway='mms.blah.com')
+  provider = PhoneServiceProvider(name='Bleh Mobile', mms_gateway='mms.blah.com', sms_gateway='sms.blah.com')
   dbSession.add(provider)
   dbSession.commit()
 
@@ -122,7 +122,7 @@ def test_update_invalid_phone(client, addMockFbUser, dbSession):
   addMockFbUser(dict(uid='blah', email='blah@gmail.com'), 'validUser1')
 
   # add a mobile service provider
-  provider = PhoneServiceProvider(name='Bleh Mobile', mms_gateway='mms.blah.com')
+  provider = PhoneServiceProvider(name='Bleh Mobile', mms_gateway='mms.blah.com', sms_gateway='sms.blah.com')
   dbSession.add(provider)
   dbSession.commit()
 

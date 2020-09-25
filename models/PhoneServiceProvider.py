@@ -10,6 +10,7 @@ class PhoneServiceProvider(db.Model):
   id = Column(Integer, primary_key=True)
   name = Column(String(30), server_default='', default='')
   mms_gateway = Column(String(30), server_default='', default='')
+  sms_gateway = Column(String(30), server_default='', default='')
 
   users = relationship('User', order_by=User.created, back_populates='service_provider')
 
@@ -17,8 +18,9 @@ class PhoneServiceProvider(db.Model):
     return {
       'id': self.id,
       'name': self.name,
-      'mms_gateway': self.mms_gateway
+      'mms_gateway': self.mms_gateway,
+      'sms_gateway': self.sms_gateway
     }
 
   def __repr__(self):
-    return '<PhoneServiceProvider: {}, {}>'.format(self.name, self.mms_gateway)
+    return '<PhoneServiceProvider: {}, {}, {}>'.format(self.name, self.mms_gateway, self.sms_gateway)
