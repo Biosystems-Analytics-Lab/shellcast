@@ -5,21 +5,99 @@ from models.ClosureProbability import ClosureProbability
 from models.Lease import Lease
 from models.Notification import Notification
 
-from routes.cron import sendNotificationsWithAWSSES
+from routes.cron import sendNotificationsWithAWSSES, NOTIFICATION_HEADER, LEASE_TEMPLATE, NOTIFICATION_FOOTER
 
 def test_sendNotificationsWithAWSSES(app, monkeyPatchBotoClient):
   with app.app_context():
-    notificationsToSend = [
-      ('blah@ncsu.edu', 'Notification1', 1),
-      ('shellcastapp@ncsu.edu', 'Notification2', 2),
-      ('bleh3@ncsu.edu', 'Notification3', 3),
+    emailNotificationsToSend = [
+      ('blah@ncsu.edu', ['Notification1'], 1),
+      ('shellcastapp@ncsu.edu', ['Notification2'], 2),
+      ('bleh3@ncsu.edu', ['Notification3'], 3),
+    ]
+    textNotificationsToSend = [
+      ('1234567890@sms.blah.com', ['Notification1'], 1),
+      ('5555555555@sms.blah.com', ['Notification2'], 2),
+      ('0987654321@sms.blah.com', ['Notification3'], 3),
     ]
 
-    responses = sendNotificationsWithAWSSES(notificationsToSend)
+    responses = sendNotificationsWithAWSSES(emailNotificationsToSend, textNotificationsToSend)
 
-    assert responses[0] == ('blah@ncsu.edu', 'Notification1', 1, True, 'bleh')
-    assert responses[1] == ('shellcastapp@ncsu.edu', 'Notification2', 2, True, 'bleh')
-    assert responses[2] == ('bleh3@ncsu.edu', 'Notification3', 3, True, 'bleh')
+    assert responses[0] == ('blah@ncsu.edu', 'Notification1', 1, True, 'abc123')
+    assert responses[1] == ('shellcastapp@ncsu.edu', 'Notification2', 2, True, 'abc123')
+    assert responses[2] == ('bleh3@ncsu.edu', 'Notification3', 3, True, 'abc123')
+    assert responses[3] == ('1234567890@sms.blah.com', 'Notification1', 1, True, 'abc123')
+    assert responses[4] == ('5555555555@sms.blah.com', 'Notification2', 2, True, 'abc123')
+    assert responses[5] == ('0987654321@sms.blah.com', 'Notification3', 3, True, 'abc123')
+
+def test_sendVariedSizeTextNotifications(app, monkeyPatchBotoClient, genRandomString):
+  with app.app_context():
+    emails = []
+    texts = [
+      (
+        '0000000000@sms.blah.com',
+        [genRandomString(length=34), genRandomString(length=45)], # should be sent as 1 email
+        1
+      ),
+      (
+        '0000000001@sms.blah.com',
+        [genRandomString(length=119), genRandomString(length=1)], # should be sent as 1 email
+        2
+      ),
+      (
+        '0000000002@sms.blah.com',
+        [genRandomString(length=119), genRandomString(length=2)], # should be sent as 2 emails
+        3
+      ),
+      (
+        '0000000003@sms.blah.com',
+        [
+          genRandomString(length=34), genRandomString(length=45), genRandomString(length=21),
+          genRandomString(length=40), genRandomString(length=40), genRandomString(length=20)
+        ], # should be sent as 2 emails
+        4
+      ),
+      (
+        '0000000004@sms.blah.com',
+        [
+          genRandomString(length=20), genRandomString(length=55), genRandomString(length=55),
+          genRandomString(length=55), genRandomString(length=55), genRandomString(length=20)
+        ], # should be sent as 3 emails
+        5
+      ),
+    ]
+
+    responses = sendNotificationsWithAWSSES(emails, texts)
+
+    # check that all the responses are correct
+    for i in range(len(responses)):
+      assert responses[i][0] == texts[i][0]
+      assert responses[i][1] == ''.join(texts[i][1])
+      assert responses[i][2] == texts[i][2]
+
+    # check that the texts were broken up into emails appropriately
+    emailsTo0 = monkeyPatchBotoClient()['0000000000@sms.blah.com']
+    assert len(emailsTo0) == 1
+    assert emailsTo0[0]['body'] == ''.join(texts[0][1])
+
+    emailsTo1 = monkeyPatchBotoClient()['0000000001@sms.blah.com']
+    assert len(emailsTo1) == 1
+    assert emailsTo1[0]['body'] == ''.join(texts[1][1])
+
+    emailsTo2 = monkeyPatchBotoClient()['0000000002@sms.blah.com']
+    assert len(emailsTo2) == 2
+    assert emailsTo2[0]['body'] == texts[2][1][0]
+    assert emailsTo2[1]['body'] == texts[2][1][1]
+
+    emailsTo3 = monkeyPatchBotoClient()['0000000003@sms.blah.com']
+    assert len(emailsTo3) == 2
+    assert emailsTo3[0]['body'] == ''.join(texts[3][1][0:3])
+    assert emailsTo3[1]['body'] == ''.join(texts[3][1][3:6])
+
+    emailsTo4 = monkeyPatchBotoClient()['0000000004@sms.blah.com']
+    assert len(emailsTo4) == 3
+    assert emailsTo4[0]['body'] == ''.join(texts[4][1][0:2])
+    assert emailsTo4[1]['body'] == ''.join(texts[4][1][2:4])
+    assert emailsTo4[2]['body'] == ''.join(texts[4][1][4:6])
 
 def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
   # add a user to the db
@@ -54,7 +132,8 @@ def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
   assert res.status_code == 200
 
   data = str(res.get_data())
-  assert '1 notifications' in data
+  assert '1 email notifications' in data
+  assert '0 text notifications' in data
   assert '1 users' in data
 
   # check if a notification log record was added

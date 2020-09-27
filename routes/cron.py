@@ -29,34 +29,79 @@ LEASE_TEMPLATE =  'Lease: {}\n  1-day: {}%\n  2-day: {}%\n  3-day: {}%\n'
 NOTIFICATION_FOOTER = '\nThese predictions are in no way indicative of whether or not a growing area will actually be temporarily closed for harvest.'
 # The amount of time between sending emails
 EMAIL_SEND_INTERVAL = 0.1
+# The maximum size of SMS messages
+MAX_SMS_MESSAGE_SIZE = 120
 
 cron = Blueprint('cron', __name__)
 
-def sendNotificationsWithAWSSES(emails):
+def sendEmailWithAWSSES(client, address, subject, body):
+  try:
+    response = client.send_email(
+      Destination={'ToAddresses': [address]},
+      Message={
+        'Subject': {'Charset': CHARSET, 'Data': subject},
+        'Body': {'Text': {'Charset': CHARSET, 'Data': body}}
+      },
+      Source=SENDER,
+    )
+  except ClientError as e:
+    logging.error('Error while sending email to ' + address)
+    logging.error(e.response['Error']['Message'])
+    return False, e.response['Error']['Message']
+  else:
+    logging.info('Email successfully sent to ' + address)
+    logging.info(response['MessageId'])
+    return True, response['MessageId']
+
+def groupTextBodyChunks(textBodyChunks):
+  notificationParts = []
+
+  notificationPart = ''
+  # go through each body chunk
+  for textBodyChunk in textBodyChunks:
+    # if the body chunk can fit in the current part
+    if (len(notificationPart) + len(textBodyChunk) <= MAX_SMS_MESSAGE_SIZE):
+      notificationPart += textBodyChunk # add it
+    else: # else it can't fit
+      notificationParts.append(notificationPart) # so finalize the current part
+      notificationPart = textBodyChunk # start the new part
+
+  # add the last notification part
+  notificationParts.append(notificationPart)
+
+  return notificationParts
+
+
+def sendNotificationsWithAWSSES(emailNotifications, textNotifications):
   # Create a new SES client
   client = boto3.client('ses', region_name=current_app.config['AWS_REGION'], aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'], aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'])
   curDate = datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
   subject = SUBJECT_TEMPLATE.format(curDate)
   responses = []
-  for address, body, userId in emails:
-    try:
-      response = client.send_email(
-        Destination={'ToAddresses': [address]},
-        Message={
-          'Subject': {'Charset': CHARSET, 'Data': subject},
-          'Body': {'Text': {'Charset': CHARSET, 'Data': body}}
-        },
-        Source=SENDER,
-      )
-    except ClientError as e:
-      logging.error('Error while sending email to ' + address)
-      logging.error(e.response['Error']['Message'])
-      responses.append((address, body, userId, False, e.response['Error']['Message']))
-    else:
-      logging.info('Email successfully sent to ' + address)
-      logging.info(response['MessageId'])
-      responses.append((address, body, userId, True, response['MessageId']))
+  # send the email notifications
+  for address, emailBodyChunks, userId in emailNotifications:
+    body = ''.join(emailBodyChunks)
+    sendSuccess, response = sendEmailWithAWSSES(client, address, subject, body)
+    responses.append((address, body, userId, sendSuccess, response))
     time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
+  # send the text notifications
+  for address, textBodyChunks, userId in textNotifications:
+    # split the notification up into parts so that it can be sent through SMS (SMS has a limit on the size of messages)
+    notificationParts = groupTextBodyChunks(textBodyChunks)
+    overallSendSuccess = True
+    partResponses = []
+    for partIdx in range(len(notificationParts)):
+      # send the original subject for the first part; send part indices for the remaining parts
+      partSubject = subject if partIdx == 0 else f'{partIdx + 1}/{len(notificationParts)}' # e.g. 2/3
+      partBody = notificationParts[partIdx]
+      sendSuccess, response = sendEmailWithAWSSES(client, address, partSubject, partBody)
+      if not sendSuccess:
+        overallSendSuccess = False
+      partResponses.append(response)
+      time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
+
+    fullBody = ''.join(textBodyChunks)
+    responses.append((address, fullBody, userId, overallSendSuccess, ','.join(partResponses)))
   return responses
 
 @cron.route('/sendNotifications')
@@ -67,55 +112,55 @@ def sendNotifications():
   """
   logging.info('Constructing and sending notifications...')
   t0 = time.perf_counter_ns()
-  notificationsToSend = []
-  # for each user
+  emailNotificationsToSend = []
+  textNotificationsToSend = []
+  # build the notifications for each user
   users = db.session.query(User).all()
   for user in users:
     # get email address
     emailAddress = user.email
-    # get phone number and service provider gateway
+    # get phone number and service provider gateway (phonenumber@smsgateway)
     textAddress = None
     if (user.phone_number != None and user.service_provider_id != None):
-      textAddress = '{}@{}'.format(user.phone_number, user.service_provider.mms_gateway)
+      textAddress = '{}@{}'.format(user.phone_number, user.service_provider.sms_gateway)
     # construct notification text
-    emailNotification = NOTIFICATION_HEADER
-    textNotification = NOTIFICATION_HEADER
+    emailNotificationChunks = [NOTIFICATION_HEADER]
+    textNotificationChunks = [NOTIFICATION_HEADER]
     needToSendEmail = False
     needToSendText = False
-    # for each lease
+    # for each of the user's leases
     for lease in user.leases:
-      # if the user has not deleted the lease and they want to receive some kind of notification
-      if (not lease.deleted and (lease.email_pref or lease.text_pref)):
-        if (len(lease.closureProbabilities) >= 1):
-          # get the latest closure probability for the lease
-          prob = lease.closureProbabilities[0]
-          # if any of the day probs are >= the lease's prob preference
-          if ((prob.prob_1d_perc and prob.prob_1d_perc >= lease.prob_pref) or
-              (prob.prob_2d_perc and prob.prob_2d_perc >= lease.prob_pref) or
-              (prob.prob_3d_perc and prob.prob_3d_perc >= lease.prob_pref)):
-            text = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
-            if (lease.email_pref):
-              emailNotification += text
-              needToSendEmail = True
-            if (lease.text_pref):
-              textNotification += text
-              needToSendText = True
+      # if the user has not deleted the lease AND they want to receive some kind of notification AND probabilities have been calculated for the lease
+      if (not lease.deleted and (lease.email_pref or lease.text_pref) and len(lease.closureProbabilities) >= 1):
+        # get the latest closure probability for the lease
+        prob = lease.closureProbabilities[0]
+        # if any of the day probs are >= the lease's prob preference
+        if ((prob.prob_1d_perc and prob.prob_1d_perc >= lease.prob_pref) or
+            (prob.prob_2d_perc and prob.prob_2d_perc >= lease.prob_pref) or
+            (prob.prob_3d_perc and prob.prob_3d_perc >= lease.prob_pref)):
+          leaseInfo = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
+          if (lease.email_pref):
+            emailNotificationChunks.append(leaseInfo)
+            needToSendEmail = True
+          if (lease.text_pref):
+            textNotificationChunks.append(leaseInfo)
+            needToSendText = True
     # add a disclaimer to the end of the notifications
-    emailNotification += NOTIFICATION_FOOTER
-    textNotification += NOTIFICATION_FOOTER
+    emailNotificationChunks.append(NOTIFICATION_FOOTER)
+    textNotificationChunks.append(NOTIFICATION_FOOTER)
     if (needToSendEmail and emailAddress != None):
-      notificationsToSend.append((emailAddress, emailNotification, user.id))
+      emailNotificationsToSend.append((emailAddress, emailNotificationChunks, user.id))
     if (needToSendText and textAddress != None):
-      notificationsToSend.append((textAddress, textNotification, user.id))
+      textNotificationsToSend.append((textAddress, textNotificationChunks, user.id))
 
   # send notifications
-  responses = sendNotificationsWithAWSSES(notificationsToSend)
+  responses = sendNotificationsWithAWSSES(emailNotificationsToSend, textNotificationsToSend)
   # log all notifications that were sent
   for address, notificationText, userId, sendSuccess, resText in responses:
     notification = Notification(address=address, notification_text=notificationText, user_id=userId, send_success=sendSuccess, response_text=resText)
     db.session.add(notification)
   db.session.commit()
   t1 = time.perf_counter_ns()
-  result = 'Constructed and sent {} notifications to {} users in {} seconds'.format(len(notificationsToSend), len(users), (t1 - t0) / 1000000000)
+  result = 'Constructed and sent {} email notifications and {} text notifications to {} users in {} seconds'.format(len(emailNotificationsToSend), len(textNotificationsToSend), len(users), (t1 - t0) / 1000000000)
   logging.info(result)
   return result

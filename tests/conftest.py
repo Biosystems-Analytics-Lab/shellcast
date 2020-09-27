@@ -18,17 +18,25 @@ RNG_SEED = 8375
 # will be run once at the beginning of the testing session
 @pytest.fixture(scope='session')
 def monkeyPatchBotoClient():
+  emailsSent = {}
   class MockClient():
     def __init__(self, *args, **kwargs):
       pass
     def send_email(self, *args, **kwargs):
-      return {'MessageId': 'bleh'}
+      address = kwargs['Destination']['ToAddresses'][0]
+      subject = kwargs['Message']['Subject']['Data']
+      body = kwargs['Message']['Body']['Text']['Data']
+      if (emailsSent.get(address) == None):
+        emailsSent[address] = [{'subject': subject, 'body': body}]
+      else:
+        emailsSent[address].append({'subject': subject, 'body': body})
+      return {'MessageId': 'abc123'}
 
   # replace the boto3.client definition
   realBotoClient = boto3.client
   boto3.client = MockClient
 
-  yield MockClient
+  yield lambda: emailsSent
 
   # restore the true boto3 client
   boto3.client = realBotoClient
