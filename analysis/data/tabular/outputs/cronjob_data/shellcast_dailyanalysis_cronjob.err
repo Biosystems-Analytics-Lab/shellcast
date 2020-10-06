@@ -1,0 +1,3324 @@
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/01 14:04:46 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/01 14:04:47 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/01 14:04:47 Ready for new connections
+2020/09/01 14:04:55 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/01 14:04:56 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/01 14:04:57 Client closed local connection on 127.0.0.1:3306
+2020/09/01 14:04:57 Client closed local connection on 127.0.0.1:3306
+2020/09/01 14:04:57 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/02 09:34:32 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/02 09:34:33 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/02 09:34:33 Ready for new connections
+2020/09/02 09:34:43 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/02 09:34:43 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/02 09:34:45 Client closed local connection on 127.0.0.1:3306
+2020/09/02 09:34:45 Client closed local connection on 127.0.0.1:3306
+2020/09/02 09:34:45 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/03 06:04:01 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/03 06:04:02 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/03 06:04:02 Ready for new connections
+2020/09/03 06:04:08 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/03 06:04:09 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/03 06:04:11 Client closed local connection on 127.0.0.1:3306
+2020/09/03 06:04:11 Client closed local connection on 127.0.0.1:3306
+2020/09/03 06:04:11 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/04 06:04:07 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/04 06:04:07 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/04 06:04:07 Ready for new connections
+2020/09/04 06:04:12 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/04 06:04:13 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/04 06:04:14 Client closed local connection on 127.0.0.1:3306
+2020/09/04 06:04:14 Client closed local connection on 127.0.0.1:3306
+2020/09/04 06:04:14 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/05 09:49:16 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/05 09:49:17 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/05 09:49:17 Ready for new connections
+2020/09/05 09:49:22 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/05 09:49:22 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/05 09:49:24 Client closed local connection on 127.0.0.1:3306
+2020/09/05 09:49:24 Client closed local connection on 127.0.0.1:3306
+2020/09/05 09:49:24 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/06 06:04:11 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/06 06:04:11 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/06 06:04:11 Ready for new connections
+2020/09/06 06:04:16 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/06 06:04:17 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/06 06:04:18 Client closed local connection on 127.0.0.1:3306
+2020/09/06 06:04:18 Client closed local connection on 127.0.0.1:3306
+2020/09/06 06:04:18 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/07 06:04:20 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/07 06:04:21 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/07 06:04:21 Ready for new connections
+2020/09/07 06:04:26 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/07 06:04:27 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/07 06:04:29 Client closed local connection on 127.0.0.1:3306
+2020/09/07 06:04:29 Client closed local connection on 127.0.0.1:3306
+2020/09/07 06:04:29 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/08 06:04:15 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/08 06:04:16 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/08 06:04:16 Ready for new connections
+2020/09/08 06:04:21 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/08 06:04:22 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/08 06:04:23 Client closed local connection on 127.0.0.1:3306
+2020/09/08 06:04:23 Client closed local connection on 127.0.0.1:3306
+2020/09/08 06:04:23 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/09 06:04:19 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/09 06:04:20 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/09 06:04:20 Ready for new connections
+2020/09/09 06:04:24 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/09 06:04:25 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/09 06:04:27 Client closed local connection on 127.0.0.1:3306
+2020/09/09 06:04:27 Client closed local connection on 127.0.0.1:3306
+2020/09/09 06:04:27 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/10 06:04:31 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/10 06:04:32 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/10 06:04:32 Ready for new connections
+2020/09/10 06:04:54 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/10 06:04:55 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/10 06:04:57 Client closed local connection on 127.0.0.1:3306
+2020/09/10 06:04:57 Client closed local connection on 127.0.0.1:3306
+2020/09/10 06:04:57 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/11 06:04:12 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/11 06:04:12 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/11 06:04:12 Ready for new connections
+2020/09/11 06:04:17 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/11 06:04:18 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/11 06:04:19 Client closed local connection on 127.0.0.1:3306
+2020/09/11 06:04:19 Client closed local connection on 127.0.0.1:3306
+2020/09/11 06:04:20 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/12 06:04:15 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/12 06:04:16 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/12 06:04:16 Ready for new connections
+2020/09/12 06:04:20 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/12 06:04:21 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/12 06:04:23 Client closed local connection on 127.0.0.1:3306
+2020/09/12 06:04:23 Client closed local connection on 127.0.0.1:3306
+2020/09/12 06:04:23 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/13 06:04:30 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/13 06:04:32 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/13 06:04:32 Ready for new connections
+2020/09/13 06:04:34 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/13 06:04:35 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/13 06:04:37 Client closed local connection on 127.0.0.1:3306
+2020/09/13 06:04:37 Client closed local connection on 127.0.0.1:3306
+2020/09/13 06:04:37 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/14 06:04:17 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/14 06:04:18 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/14 06:04:18 Ready for new connections
+2020/09/14 06:04:22 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/14 06:04:23 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/14 06:04:25 Client closed local connection on 127.0.0.1:3306
+2020/09/14 06:04:25 Client closed local connection on 127.0.0.1:3306
+2020/09/14 06:04:25 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 157, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/util/connection.py", line 61, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/socket.py", line 752, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 672, in urlopen
+    chunked=chunked,
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 376, in _make_request
+    self._validate_conn(conn)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 994, in _validate_conn
+    conn.connect()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 300, in connect
+    conn = self._new_conn()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e
+urllib3.exceptions.NewConnectionError: <urllib3.connection.VerifiedHTTPSConnection object at 0x11344a590>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/adapters.py", line 449, in send
+    timeout=timeout
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 720, in urlopen
+    method, url, error=e, _pool=self, _stacktrace=sys.exc_info()[2]
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='tds.climate.ncsu.edu', port=443): Max retries exceeded with url: /thredds/dodsC/nws/ndfd/202009/20200915/2020091500ds.midatlan.oper.bin.html (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x11344a590>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 125, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "<string>", line 41, in get_sco_ndfd_data
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/api.py", line 76, in get
+    return request('get', url, params=params, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/api.py", line 61, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/sessions.py", line 530, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/sessions.py", line 643, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='tds.climate.ncsu.edu', port=443): Max retries exceeded with url: /thredds/dodsC/nws/ndfd/202009/20200915/2020091500ds.midatlan.oper.bin.html (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x11344a590>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/15 09:14:42 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/15 09:14:44 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/15 09:14:44 Ready for new connections
+2020/09/15 09:14:48 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/15 09:14:49 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/15 09:14:51 Client closed local connection on 127.0.0.1:3306
+2020/09/15 09:14:51 Client closed local connection on 127.0.0.1:3306
+2020/09/15 09:14:51 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/16 06:04:12 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/16 06:04:12 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/16 06:04:12 Ready for new connections
+2020/09/16 06:04:17 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/16 06:04:18 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/16 06:04:20 Client closed local connection on 127.0.0.1:3306
+2020/09/16 06:04:20 Client closed local connection on 127.0.0.1:3306
+2020/09/16 06:04:20 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/17 06:04:12 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/17 06:04:14 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/17 06:04:14 Ready for new connections
+2020/09/17 06:04:18 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/17 06:04:19 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/17 06:04:20 Client closed local connection on 127.0.0.1:3306
+2020/09/17 06:04:20 Client closed local connection on 127.0.0.1:3306
+2020/09/17 06:04:20 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 157, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/util/connection.py", line 61, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/socket.py", line 752, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 672, in urlopen
+    chunked=chunked,
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 376, in _make_request
+    self._validate_conn(conn)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 994, in _validate_conn
+    conn.connect()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 300, in connect
+    conn = self._new_conn()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e
+urllib3.exceptions.NewConnectionError: <urllib3.connection.VerifiedHTTPSConnection object at 0x112d27750>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/adapters.py", line 449, in send
+    timeout=timeout
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 720, in urlopen
+    method, url, error=e, _pool=self, _stacktrace=sys.exc_info()[2]
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='tds.climate.ncsu.edu', port=443): Max retries exceeded with url: /thredds/dodsC/nws/ndfd/202009/20200918/2020091800ds.midatlan.oper.bin.html (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x112d27750>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 125, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "<string>", line 41, in get_sco_ndfd_data
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/api.py", line 76, in get
+    return request('get', url, params=params, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/api.py", line 61, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/sessions.py", line 530, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/sessions.py", line 643, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='tds.climate.ncsu.edu', port=443): Max retries exceeded with url: /thredds/dodsC/nws/ndfd/202009/20200918/2020091800ds.midatlan.oper.bin.html (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x112d27750>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/18 09:47:24 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/18 09:47:25 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/18 09:47:25 Ready for new connections
+2020/09/18 09:47:38 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/18 09:47:39 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/18 09:47:40 Client closed local connection on 127.0.0.1:3306
+2020/09/18 09:47:40 Client closed local connection on 127.0.0.1:3306
+2020/09/18 09:47:40 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in data.frame(perc_cover = temp_qpf_perc_cov_values, raster_value = temp_qpf_raster_values) : 
+  arguments imply differing number of rows: 0, 3933
+Execution halted
+2020/09/19 06:02:27 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/19 06:02:28 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/19 06:02:28 Ready for new connections
+2020/09/19 06:02:37 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/19 06:02:37 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/19 06:02:39 Client closed local connection on 127.0.0.1:3306
+2020/09/19 06:02:39 Client closed local connection on 127.0.0.1:3306
+2020/09/19 06:02:39 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 157, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/util/connection.py", line 61, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/socket.py", line 752, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 672, in urlopen
+    chunked=chunked,
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 376, in _make_request
+    self._validate_conn(conn)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 994, in _validate_conn
+    conn.connect()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 300, in connect
+    conn = self._new_conn()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e
+urllib3.exceptions.NewConnectionError: <urllib3.connection.VerifiedHTTPSConnection object at 0x112fbb890>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/adapters.py", line 449, in send
+    timeout=timeout
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/connectionpool.py", line 720, in urlopen
+    method, url, error=e, _pool=self, _stacktrace=sys.exc_info()[2]
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/urllib3/util/retry.py", line 436, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='tds.climate.ncsu.edu', port=443): Max retries exceeded with url: /thredds/dodsC/nws/ndfd/202009/20200920/2020092000ds.midatlan.oper.bin.html (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x112fbb890>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 125, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "<string>", line 41, in get_sco_ndfd_data
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/api.py", line 76, in get
+    return request('get', url, params=params, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/api.py", line 61, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/sessions.py", line 530, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/sessions.py", line 643, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/requests/adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='tds.climate.ncsu.edu', port=443): Max retries exceeded with url: /thredds/dodsC/nws/ndfd/202009/20200920/2020092000ds.midatlan.oper.bin.html (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x112fbb890>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/20 06:05:37 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+Traceback (most recent call last):
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 583, in connect
+    **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/socket.py", line 728, in create_connection
+    raise err
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/socket.py", line 716, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 61] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "gcp_update_mysqldb_script.py", line 111, in <module>
+    cursorclass = pymysql.cursors.DictCursor)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/__init__.py", line 94, in Connect
+    return Connection(*args, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 325, in __init__
+    self.connect()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 630, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on '127.0.0.1' ([Errno 61] Connection refused)")
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/21 06:04:26 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/21 06:04:27 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/21 06:04:27 Ready for new connections
+2020/09/21 06:04:37 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/21 06:04:38 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/21 06:04:39 Client closed local connection on 127.0.0.1:3306
+2020/09/21 06:04:39 Client closed local connection on 127.0.0.1:3306
+2020/09/21 06:04:40 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/22 06:04:14 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/22 06:04:15 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/22 06:04:15 Ready for new connections
+2020/09/22 06:04:20 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/22 06:04:20 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/22 06:04:22 Client closed local connection on 127.0.0.1:3306
+2020/09/22 06:04:22 Client closed local connection on 127.0.0.1:3306
+2020/09/22 06:04:22 Received TERM signal. Waiting up to 0s before terminating.
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/23 06:04:21 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/23 06:04:22 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/23 06:04:22 Ready for new connections
+2020/09/23 06:04:27 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/23 06:04:27 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/23 06:04:29 Client closed local connection on 127.0.0.1:3306
+2020/09/23 06:04:29 Client closed local connection on 127.0.0.1:3306
+2020/09/23 06:04:29 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/24 06:04:06 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/24 06:04:08 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/24 06:04:08 Ready for new connections
+2020/09/24 06:04:17 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/24 06:04:18 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/24 06:04:21 Client closed local connection on 127.0.0.1:3306
+2020/09/24 06:04:21 Client closed local connection on 127.0.0.1:3306
+2020/09/24 06:04:21 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in data.frame(perc_cover = temp_pop12_perc_cov_values, raster_value = temp_pop12_raster_values) : 
+  arguments imply differing number of rows: 0, 3933
+Execution halted
+2020/09/25 06:01:01 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/25 06:01:01 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/25 06:01:01 Ready for new connections
+2020/09/25 06:01:17 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/25 06:01:17 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/25 06:01:19 Client closed local connection on 127.0.0.1:3306
+2020/09/25 06:01:19 Client closed local connection on 127.0.0.1:3306
+2020/09/25 06:01:19 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/26 06:03:40 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/26 06:03:43 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/26 06:03:43 Ready for new connections
+2020/09/26 06:03:46 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/26 06:03:47 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/26 06:04:00 Client closed local connection on 127.0.0.1:3306
+2020/09/26 06:04:00 Client closed local connection on 127.0.0.1:3306
+2020/09/26 06:04:00 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/27 06:03:44 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/27 06:03:45 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/27 06:03:45 Ready for new connections
+2020/09/27 06:03:49 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/27 06:03:50 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/27 06:03:51 Client closed local connection on 127.0.0.1:3306
+2020/09/27 06:03:51 Client closed local connection on 127.0.0.1:3306
+2020/09/27 06:03:51 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/28 06:03:42 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/28 06:03:43 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/28 06:03:43 Ready for new connections
+2020/09/28 06:03:48 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/28 06:03:49 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/28 06:03:50 Client closed local connection on 127.0.0.1:3306
+2020/09/28 06:03:50 Client closed local connection on 127.0.0.1:3306
+2020/09/28 06:03:50 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/29 06:03:40 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/29 06:03:41 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/29 06:03:41 Ready for new connections
+2020/09/29 06:03:45 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/29 06:03:46 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/29 06:03:47 Client closed local connection on 127.0.0.1:3306
+2020/09/29 06:03:47 Client closed local connection on 127.0.0.1:3306
+2020/09/29 06:03:47 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/09/30 09:24:11 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/09/30 09:24:13 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/09/30 09:24:13 Ready for new connections
+2020/09/30 10:05:06 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/09/30 10:05:51 couldn't connect to "ncsu-shellcast:us-east1:ncsu-shellcast-database": Post https://www.googleapis.com/sql/v1beta4/projects/ncsu-shellcast/instances/ncsu-shellcast-database/createEphemeral?alt=json&prettyPrint=false: read tcp 192.168.0.3:56049->172.217.8.10:443: read: operation timed out
+Traceback (most recent call last):
+  File "gcp_update_mysqldb_script.py", line 101, in <module>
+    cursorclass = pymysql.cursors.DictCursor)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/__init__.py", line 94, in Connect
+    return Connection(*args, **kwargs)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 325, in __init__
+    self.connect()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 598, in connect
+    self._get_server_information()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 975, in _get_server_information
+    packet = self._read_packet()
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 657, in _read_packet
+    packet_header = self._read_bytes(4)
+  File "/Users/sheila/opt/anaconda3/lib/python3.7/site-packages/pymysql/connections.py", line 707, in _read_bytes
+    CR.CR_SERVER_LOST, "Lost connection to MySQL server during query")
+pymysql.err.OperationalError: (2013, 'Lost connection to MySQL server during query')
+2020/09/30 10:05:51 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/10/01 06:03:50 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/01 06:03:52 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/01 06:03:52 Ready for new connections
+2020/10/01 06:03:55 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/01 06:03:56 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/01 06:03:58 Client closed local connection on 127.0.0.1:3306
+2020/10/01 06:03:58 Client closed local connection on 127.0.0.1:3306
+2020/10/01 06:03:58 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/10/02 06:03:47 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/02 06:03:48 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/02 06:03:48 Ready for new connections
+2020/10/02 06:03:55 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/02 06:03:55 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/02 06:03:57 Client closed local connection on 127.0.0.1:3306
+2020/10/02 06:03:57 Client closed local connection on 127.0.0.1:3306
+2020/10/02 06:03:57 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in data.frame(perc_cover = temp_qpf_perc_cov_values, raster_value = temp_qpf_raster_values) : 
+  arguments imply differing number of rows: 0, 3933
+Execution halted
+2020/10/03 06:00:58 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/03 06:01:00 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/03 06:01:00 Ready for new connections
+2020/10/03 06:01:06 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/03 06:01:06 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/03 06:01:08 Client closed local connection on 127.0.0.1:3306
+2020/10/03 06:01:08 Client closed local connection on 127.0.0.1:3306
+2020/10/03 06:01:08 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in data.frame(perc_cover = temp_qpf_perc_cov_values, raster_value = temp_qpf_raster_values) : 
+  arguments imply differing number of rows: 0, 3933
+Execution halted
+2020/10/04 06:00:56 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/04 06:00:57 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/04 06:00:57 Ready for new connections
+2020/10/04 06:01:05 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/04 06:01:06 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/04 06:01:08 Client closed local connection on 127.0.0.1:3306
+2020/10/04 06:01:08 Client closed local connection on 127.0.0.1:3306
+2020/10/04 06:01:08 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in data.frame(perc_cover = temp_pop12_perc_cov_values, raster_value = temp_pop12_raster_values) : 
+  arguments imply differing number of rows: 0, 3933
+Execution halted
+2020/10/05 06:00:56 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/05 06:00:57 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/05 06:00:57 Ready for new connections
+2020/10/05 06:01:06 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/05 06:01:07 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/05 06:01:08 Client closed local connection on 127.0.0.1:3306
+2020/10/05 06:01:08 Client closed local connection on 127.0.0.1:3306
+2020/10/05 06:01:08 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 133, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/10/06 09:28:45 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/06 09:28:46 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/06 09:28:46 Ready for new connections
+2020/10/06 09:28:54 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/06 09:28:55 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/06 09:28:57 Client closed local connection on 127.0.0.1:3306
+2020/10/06 09:28:57 Client closed local connection on 127.0.0.1:3306
+2020/10/06 09:28:58 Received TERM signal. Waiting up to 0s before terminating.
