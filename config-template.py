@@ -2,6 +2,10 @@ class Config(object):
   """
   The configuration used for a production environment.
   """
+  # analysis path
+  ANALYSIS_PATH = 'ANALYSIS_DIR_PATH_HERE'
+  # data path
+  DATA_PATH = 'DATA_DIR_PATH_HERE'
   # whether or not to log debugging output from Flask
   DEBUG = False
   # whether or not to setup Flask in testing mode
