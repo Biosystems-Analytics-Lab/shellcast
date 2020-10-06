@@ -19,7 +19,7 @@ htmlcov
 # ignore spatial data files that change daily
 analysis/data/spatial/outputs/*.tif
 # ignore tabular data files that change daily
-analysis/data/tabular/ouptuts/cron_job/*.err
+analysis/data/tabular/outputs/cron_job/*.err
 analysis/data/tabular/outputs/cron_job/*.out
 analysis/data/tabular/outputs/ndfd_sco_data/*.csv
 analysis/data/tabular/outputs/terminal_data/*.txt
