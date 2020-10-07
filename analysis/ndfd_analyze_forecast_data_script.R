@@ -195,6 +195,22 @@ cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_alb
 lease_data_albers <- st_read(paste0(lease_spatial_data_input_path, "lease_bounds_albers.shp")) %>%
   st_set_crs(na_albers_epsg) # epsg code wasn't assigned if this code isn't included
 
+# check if lease polygons are valid
+valid_check_list <- st_is_valid(lease_data_albers)
+
+# remove non-valid leases
+lease_data_albers_val <- lease_data_albers %>%
+  dplyr::mutate(valid_polygon = valid_check_list) %>%
+  dplyr::filter(valid_polygon == TRUE) %>%
+  dplyr::select(-valid_polygon)
+
+# invalid lease polygons
+# lease_data_albers_inval <- lease_data_albers %>%
+#   dplyr::mutate(valid_polygon = valid_check_list) %>%
+#   dplyr::filter(valid_polygon == FALSE) %>%
+#   dplyr::select(-valid_polygon)
+# only one is invalid (#414)
+
 # check crs
 # st_crs(sga_buffer_albers)
 # st_crs(sga_bounds_albers)
@@ -467,7 +483,7 @@ for (i in 1:length(valid_period_list)) {
     if (notification_flag == "production") {
       temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
     }
-    
+
     # if testing mode then more frequent approach to ensure more frequent notifications
     else {
       num_vals <- length(temp_cmu_qpf_result)
@@ -554,7 +570,7 @@ write_csv(ndfd_sga_calcs_data, paste0(ndfd_tabular_data_output_path, "sga_calcs/
 # ---- 15. select area weighted ndfd cmu calcs for leases ----
 # find leases that are in cmus
 ndfd_lease_calcs_data_raw <- cmu_bounds_albers %>%
-  st_intersection(lease_data_albers) %>%
+  st_intersection(lease_data_albers_val) %>%
   dplyr::select(lease_id, HA_CLASS) %>%
   st_drop_geometry() %>%
   # group_by(lease_id) %>%
@@ -571,9 +587,9 @@ ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw %>%
                                          valid_period_hrs == 48 ~ "prob_2d_perc",
                                          valid_period_hrs == 72 ~ "prob_3d_perc")) %>%
   dplyr::select(-valid_period_hrs) %>%
-  tidyr::pivot_wider(id_cols = c(lease_id, day), 
-                     names_from = valid_period, 
-                     values_from = prob_close, 
+  tidyr::pivot_wider(id_cols = c(lease_id, day),
+                     names_from = valid_period,
+                     values_from = prob_close,
                      values_fn = max) # will take the max prob. closure value if there are multiple
 # some leases might overlap two cmus so account for that by taking cmu with minimum rainfall threshold
 # for example lease_id = 64-75B includes NB_4 (2 in depth) and NB_5 (4 in depth/emergency)
