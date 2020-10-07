@@ -17,12 +17,8 @@ def aggregate_sco_ndfd_var_data(ndfd_var_data, var_period_index, var_period_vals
         ndfd_var (str): either "qpf" or "pop12", the SCO NDFD variable of interest
     Returns:
         var_agg_data_pd (data frame): A pandas dataframe with variable data aggregated to the full period of interest (e.g., 24hr)
-    Required:
-        import numpy
+      Required:
         import pandas
-        from pydap.client import open_url
-        import requests
-        import datetime
         ndfd_var_data requires loading and running convert_sco_ndfd_datetime_str() and get_sco_ndfd_data() functions before this
     Source: none, custom function
 
@@ -58,12 +54,12 @@ def aggregate_sco_ndfd_var_data(ndfd_var_data, var_period_index, var_period_vals
         # print response
         print(ndfd_var + " " + str(int(var_period_vals[-1])) + " hr period aggregated")
 
-    return(var_period_agg_df)
+    return var_period_agg_df
 
 
 def append_list_as_row(file_name, list_of_elem):
     """
-    Description: Opens existing file and appends row to it
+    Description: opens existing file and appends row to it
     Parameters:
         file_name (str): a string defining the file path
         list_of_elem (list): the list of elements to be added to the file
@@ -83,7 +79,7 @@ def append_list_as_row(file_name, list_of_elem):
 
 def convert_sco_ndfd_datetime_str(datetime_str):
     """
-    Description: Takes string of format "%Y-%m-%d %H:%M" and converts it to the "%Y%m%d%H", "%Y%m%d", and "%Y%m" formats
+    Description: takes string of format "%Y-%m-%d %H:%M" and converts it to the "%Y%m%d%H", "%Y%m%d", and "%Y%m" formats
     Parameters:
         datetime_str (str): A string in "%Y-%m-%d %H:%M" format (e.g., "2016-01-01 00:00")
     Returns:
@@ -93,7 +89,8 @@ def convert_sco_ndfd_datetime_str(datetime_str):
     Required: none
     Source: none, custom function
     """
-    date_str, time_str = datetime_str.split()
+    # strings
+    date_str, time_str = datetime_str.split(" ")
     year_str, month_str, day_str = date_str.split("-")
     hour_str, sec_str = time_str.split(":")
 
@@ -107,7 +104,7 @@ def convert_sco_ndfd_datetime_str(datetime_str):
 
 def get_sco_ndfd_data(base_server_url, datetime_uct_str):
     """
-    Description: Returns a dataframe of NC State Climate office (SCO) National Digital Forecast Dataset (NDFD) data for a specified datetime, if url does not exist then will give empty dataset
+    Description: returns a dataframe of NC State Climate office (SCO) National Digital Forecast Dataset (NDFD) data for a specified datetime, if url does not exist then will give empty dataset
     Parameters:
         base_server_url (str): Base URL (string) for the SCO NDFD TDS server
         datetime_uct_str (str): A string in "%Y-%m-%d %H:%M" format (e.g., "2016-01-01 00:00") with timezone = UCT
@@ -137,18 +134,21 @@ def get_sco_ndfd_data(base_server_url, datetime_uct_str):
         # get data from SCO server url and store it on pc
         ndfd_data = open_url(data_url)
 
+    else: # 404 or any other number means that url is not ok
+        ndfd_data = []
+
+    return ndfd_data #, url_status, data_url_to_check
+
 
 def get_var_col_name(ndfd_data, ndfd_var):
     """
-    Description: Returns the full column name of the variable of interest and SCO NDFD dataset of interest
+    Description: returns the full column name of the variable of interest and SCO NDFD dataset of interest
     Parameters:
         ndfd_data (pydap Dataset): Pydap dataset object for specified datetime, from get_sco_ndfd_data() function
         ndfd_var (str): either "qpf" or "pop12", the SCO NDFD variable of interest
     Returns:
         var_col_name (str): A string with the full SCO NDFD variable column name means data is available)
-    Required:
-        import pydap and requests
-        must load and run the get_sco_ndfd_data() function before this
+    Required: none
     Source: none, custom function
     """
     # get children string
@@ -179,21 +179,20 @@ def get_var_col_name(ndfd_data, ndfd_var):
                 row_to_check_final = row_to_check.replace(" ", "").replace("'","")
                 var_col_name.append(row_to_check_final)
 
-    return(var_col_name[0])
+    return var_col_name[0]
 
 
 def make_lease_sql_query(data):
     """
-    Description: Makes sql (string) query to add new leases to mysql database
+    Description: opens existing file and appends row to it
     Parameters:
         data (pandas df): a pandas dataframe that includes ncdmf lease information to be added to the shellcast mysql database,
         this dataframe must have the following columns: ncdmf_lease_id, grow_area_name, rainfall_thresh_in, longitude, latitude
     Returns:
-        sql quere (string) to insert new ncdmf leases into the shellcast mysql database
-    Required:
-        import pandas
-        data going into this function needs to be at least 1 row or longer
+        sql query (string) to insert new ncdmf leases into the shellcast mysql database
+    Requred: need to import pandas, data going into this function needs to be at least 1 row or longer
     Source: none, custom function
+
     """
     # if there's only one lease to add
     if (len(data) == 1):
@@ -210,6 +209,71 @@ def make_lease_sql_query(data):
                 rainfall_thresh_in = temp_row.rainfall_thresh_in,
                 longitude = round(temp_row.longitude, ndigits = 6),
                 latitude = round(temp_row.latitude, ndigits = 6))
+
+        # concatinate strings
+        full_str = initial_str + temp_row_str
+
+    # if greater than 1 (doesn't go into this function if it's not > 0)
+    else:
+        # define first and last rows
+        first_row = 0
+        last_row = len(data) - 1
+
+        # full string
+        full_str = ""
+
+        for row in range(0, len(data)):
+            # temp row string
+            if (row == first_row):
+                # get data for one row
+                temp_row = data.iloc[row]
+
+                # initial string
+                initial_str = "INSERT INTO `ncdmf_leases` (`ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geometry`) VALUES "
+
+                # define temp row string
+                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\')), '.format(
+                        ncdmf_lease_id = temp_row.ncdmf_lease_id,
+                        grow_area_name = temp_row.grow_area_name,
+                        rainfall_thresh_in = temp_row.rainfall_thresh_in,
+                        longitude = round(temp_row.longitude, ndigits = 6),
+                        latitude = round(temp_row.latitude, ndigits = 6))
+
+                # concatinate strings
+                full_str = full_str + initial_str + temp_row_str
+
+            elif ((row > first_row) and (row < last_row)):
+                # get data for one row
+                temp_row = data.iloc[row]
+
+                # define temp row string, note comma at end
+                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\')), '.format(
+                        ncdmf_lease_id = temp_row.ncdmf_lease_id,
+                        grow_area_name = temp_row.grow_area_name,
+                        rainfall_thresh_in = temp_row.rainfall_thresh_in,
+                        longitude = round(temp_row.longitude, ndigits = 6),
+                        latitude = round(temp_row.latitude, ndigits = 6))
+
+                # concatinate strings
+                full_str = full_str + temp_row_str
+
+            else: #if (row == last_row):
+                # get data for one row
+                temp_row = data.iloc[row]
+
+                # define temp row string, note semi-colon
+                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\'));'.format(
+                        ncdmf_lease_id = temp_row.ncdmf_lease_id,
+                        grow_area_name = temp_row.grow_area_name,
+                        rainfall_thresh_in = temp_row.rainfall_thresh_in,
+                        longitude = round(temp_row.longitude, ndigits = 6),
+                        latitude = round(temp_row.latitude, ndigits = 6))
+
+                # concatinate strings
+                full_str = full_str + temp_row_str
+
+    # return string
+    return full_str
 
 
 def tidy_sco_ndfd_data(ndfd_data, datetime_uct_str, ndfd_var):
