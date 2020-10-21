@@ -408,74 +408,88 @@ for (i in 1:length(valid_period_list)) {
 
     # cmu bounds area
     temp_cmu_area <- as.numeric(st_area(temp_cmu_bounds)) # in m^2
-
+    
+    # get value and weight of each gridcell that overlaps the cmu
+    temp_pop12_cmu_raster_perc_cover_df <- data.frame(raster::extract(temp_pop12_raster, temp_cmu_bounds, weights = TRUE)[[1]]) # getCover give percentage of the cover of the cmu boundary in the raster
+    temp_qpf_cmu_raster_perc_cover_df <- data.frame(raster::extract(temp_qpf_raster, temp_cmu_bounds, weights = TRUE)[[1]]) # getCover give percentage of the cover of the cmu boundary in the raster
+    
+    # calculate area weighted avg value for the cmu
+    temp_pop12_area_weighted_df <- temp_pop12_cmu_raster_perc_cover_df %>%
+      dplyr::mutate(area_weighted_avg = value * weight)
+    temp_qpf_area_weighted_df <- temp_qpf_cmu_raster_perc_cover_df %>%
+      dplyr::mutate(area_weighted_avg = value * weight)
+    
+    # sum weighted values to get result
+    temp_cmu_pop12_result <- round(sum(temp_pop12_area_weighted_df$area_weighted_avg), 2)
+    temp_cmu_qpf_result <- round(sum(temp_qpf_area_weighted_df$area_weighted_avg), 2)
+    
     # make this a funciton that takes ndfd raster and temp_cmu_bounds and gives area wtd raster result
     # pop12
-    temp_pop12_cmu_raster_empty <- raster()
-    raster::extent(temp_pop12_cmu_raster_empty) <- raster::extent(temp_pop12_raster)
-    raster::res(temp_pop12_cmu_raster_empty) <- raster::res(temp_pop12_raster)
-    raster::crs(temp_pop12_cmu_raster_empty) <- raster::crs(temp_pop12_raster)
+    # temp_pop12_cmu_raster_empty <- raster()
+    # raster::extent(temp_pop12_cmu_raster_empty) <- raster::extent(temp_pop12_raster)
+    # raster::res(temp_pop12_cmu_raster_empty) <- raster::res(temp_pop12_raster)
+    # raster::crs(temp_pop12_cmu_raster_empty) <- raster::crs(temp_pop12_raster)
 
     #qpf
-    temp_qpf_cmu_raster_empty <- raster()
-    raster::extent(temp_qpf_cmu_raster_empty) <- raster::extent(temp_qpf_raster)
-    raster::res(temp_qpf_cmu_raster_empty) <- raster::res(temp_qpf_raster)
-    raster::crs(temp_qpf_cmu_raster_empty) <- raster::crs(temp_qpf_raster)
+    # temp_qpf_cmu_raster_empty <- raster()
+    # raster::extent(temp_qpf_cmu_raster_empty) <- raster::extent(temp_qpf_raster)
+    # raster::res(temp_qpf_cmu_raster_empty) <- raster::res(temp_qpf_raster)
+    # raster::crs(temp_qpf_cmu_raster_empty) <- raster::crs(temp_qpf_raster)
 
     # calculate percent cover cmu over raster
-    temp_pop12_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_pop12_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
-    temp_qpf_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_qpf_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
+    # temp_pop12_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_pop12_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
+    # temp_qpf_cmu_raster_perc_cover <- raster::rasterize(temp_cmu_bounds, temp_qpf_cmu_raster_empty, getCover = TRUE) # getCover give percentage of the cover of the cmu boundary in the raster
 
     # define percent cover values
     # every once in a while randomly get the error: "Error in data.frame(perc_cover = temp_pop12_cmu_raster_perc_cover@data@values,: arguments imply differing number of rows: 0, 3933"
     # not sure how stable the rasterize getCover option is (which might be the issue here, watch fasterize for updates but right now no ability to get percent cover)
-    temp_pop12_perc_cov_values <- as.numeric(temp_pop12_cmu_raster_perc_cover@data@values)
-    temp_qpf_perc_cov_values <- as.numeric(temp_qpf_cmu_raster_perc_cover@data@values)
+    # temp_pop12_perc_cov_values <- as.numeric(temp_pop12_cmu_raster_perc_cover@data@values)
+    # temp_qpf_perc_cov_values <- as.numeric(temp_qpf_cmu_raster_perc_cover@data@values)
 
     # define raster values
     # every once in a while randomly get the error: "Error in data.frame(perc_cover = temp_pop12_cmu_raster_perc_cover@data@values,: arguments imply differing number of rows: 0, 3933"
     # not sure how stable the rasterize getCover option is (which might be the issue here, watch fasterize for updates but right now no ability to get percent cover)
-    temp_pop12_raster_values <- as.numeric(temp_pop12_raster@data@values)
-    temp_qpf_raster_values <- as.numeric(temp_qpf_raster@data@values)
+    # temp_pop12_raster_values <- as.numeric(temp_pop12_raster@data@values)
+    # temp_qpf_raster_values <- as.numeric(temp_qpf_raster@data@values)
 
     # convert raster to dataframe
-    temp_pop12_cmu_df <- data.frame(perc_cover = temp_pop12_perc_cov_values,
-                                    raster_value = temp_pop12_raster_values)
-    temp_qpf_cmu_df <- data.frame(perc_cover = temp_qpf_perc_cov_values,
-                                  raster_value = temp_qpf_raster_values)
+    # temp_pop12_cmu_df <- data.frame(perc_cover = temp_pop12_perc_cov_values,
+    #                                 raster_value = temp_pop12_raster_values)
+    # temp_qpf_cmu_df <- data.frame(perc_cover = temp_qpf_perc_cov_values,
+    #                               raster_value = temp_qpf_raster_values)
 
     # keep only dataframe entries with values and do spatial averaging calcs
     # pop12
-    temp_pop12_cmu_df_short <- temp_pop12_cmu_df %>%
-      na.omit() %>%
-      dplyr::mutate(flag = if_else(perc_cover == 0, "no_data", "data")) %>%
-      dplyr::filter(flag == "data") %>%
-      dplyr::select(-flag) %>%
-      dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
+    # temp_pop12_cmu_df_short <- temp_pop12_cmu_df %>%
+    #   na.omit() %>%
+    #   dplyr::mutate(flag = if_else(perc_cover == 0, "no_data", "data")) %>%
+    #   dplyr::filter(flag == "data") %>%
+    #   dplyr::select(-flag) %>%
+    #   dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
 
     # qpf
-    temp_qpf_cmu_df_short <- temp_qpf_cmu_df %>%
-      na.omit() %>%
-      dplyr::mutate(flag = if_else(perc_cover == 0, "no_data", "data")) %>%
-      dplyr::filter(flag == "data") %>%
-      dplyr::select(-flag) %>%
-      dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
+    # temp_qpf_cmu_df_short <- temp_qpf_cmu_df %>%
+    #   na.omit() %>%
+    #   dplyr::mutate(flag = if_else(perc_cover == 0, "no_data", "data")) %>%
+    #   dplyr::filter(flag == "data") %>%
+    #   dplyr::select(-flag) %>%
+    #   dplyr::mutate(cmu_raster_area_m2 = perc_cover*(temp_qpf_raster_res[1]*temp_qpf_raster_res[2]))
 
     # find total area of raster represented
-    temp_pop12_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
-    temp_qpf_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
+    # temp_pop12_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
+    # temp_qpf_cmu_raster_area_sum_m2 = sum(temp_qpf_cmu_df_short$cmu_raster_area_m2)
 
     # use total area to calculated weighted value
-    temp_pop12_cmu_df_fin <- temp_pop12_cmu_df_short %>%
-      dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_pop12_cmu_raster_area_sum_m2,
-                    raster_value_wtd = cmu_raster_area_perc * raster_value)
-    temp_qpf_cmu_df_fin <- temp_qpf_cmu_df_short %>%
-      dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_qpf_cmu_raster_area_sum_m2,
-                    raster_value_wtd = cmu_raster_area_perc * raster_value)
+    # temp_pop12_cmu_df_fin <- temp_pop12_cmu_df_short %>%
+    #   dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_pop12_cmu_raster_area_sum_m2,
+    #                 raster_value_wtd = cmu_raster_area_perc * raster_value)
+    # temp_qpf_cmu_df_fin <- temp_qpf_cmu_df_short %>%
+    #   dplyr::mutate(cmu_raster_area_perc = cmu_raster_area_m2/temp_qpf_cmu_raster_area_sum_m2,
+    #                 raster_value_wtd = cmu_raster_area_perc * raster_value)
 
     # sum weighted values to get result
-    temp_cmu_pop12_result <- round(sum(temp_pop12_cmu_df_fin$raster_value_wtd), 2)
-    temp_cmu_qpf_result <- round(sum(temp_qpf_cmu_df_fin$raster_value_wtd), 2)
+    # temp_cmu_pop12_result <- round(sum(temp_pop12_cmu_df_fin$raster_value_wtd), 2)
+    # temp_cmu_qpf_result <- round(sum(temp_qpf_cmu_df_fin$raster_value_wtd), 2)
 
     # calculate probability of closure
     # check if testing mode
