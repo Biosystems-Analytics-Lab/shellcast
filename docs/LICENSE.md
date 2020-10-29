@@ -8,7 +8,7 @@ This work is licensed under a
 [cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
 
 
-# Attribution for ShellCast.
+# ShellCast Attribution
 
 See [CITATION.md](https://github.ncsu.edu/ssaia/shellcast/blob/master/docs/CITATION.md) for details on how to provide attribution.
 
