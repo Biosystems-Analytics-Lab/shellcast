@@ -41,7 +41,6 @@ cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
 
-
 # path to cmu spatial outputs
 cmu_spatial_data_output_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
 
@@ -119,7 +118,8 @@ cmu_sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "cmu_sga
 # select only columns we need
 rain_thresh_data <- rain_thresh_raw %>%
   dplyr::left_join(cmu_sga_key, by = "HA_CLASS") %>%
-  dplyr::select(HA_CLASS, unit_id, rain_in = rainfall_threshold_in, rain_lab = rainfall_threshold_class)
+  dplyr::select(HA_CLASS, cmu_name, rain_in = rainfall_threshold_in, rain_lab = rainfall_threshold_class) %>%
+  dplyr::distinct_all()
 
 # length(unique(rain_thresh_data$HA_CLASS))
 # 149 unique HA_CLASS values
@@ -131,7 +131,7 @@ rain_thresh_data <- rain_thresh_raw %>%
 # join to cmu_bounds_raw_valid_albers
 cmu_bounds_albers <- cmu_bounds_raw_valid_albers %>%
   dplyr::left_join(rain_thresh_data, by = "HA_CLASS") %>%
-  dplyr::select(unit_id:rain_lab)
+  dplyr::select(cmu_name:rain_lab)
 
 # check that it joined
 # names(cmu_bounds_albers)
