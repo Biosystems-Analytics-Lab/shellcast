@@ -4,6 +4,7 @@ channels:
 dependencies:
   - r
   - r-sf
+  - r-geojsonsf
   - r-raster
   - r-rgdal
   - r-tidyverse
