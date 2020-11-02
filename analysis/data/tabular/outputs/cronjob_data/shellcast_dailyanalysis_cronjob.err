@@ -5889,3 +5889,342 @@ attribute variables are assumed to be spatially constant throughout all geometri
 2020/10/29 06:01:36 Client closed local connection on 127.0.0.1:3306
 2020/10/29 06:01:36 Client closed local connection on 127.0.0.1:3306
 2020/10/29 06:01:36 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 130, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Warning message:
+no function found corresponding to methods exports from 'raster' for: 'wkt' 
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Warning message:
+no function found corresponding to methods exports from 'raster' for: 'wkt' 
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/10/30 06:01:29 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/30 06:01:30 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/30 06:01:30 Ready for new connections
+2020/10/30 06:01:35 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/30 06:01:35 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/30 06:01:37 Client closed local connection on 127.0.0.1:3306
+2020/10/30 06:01:37 Client closed local connection on 127.0.0.1:3306
+2020/10/30 06:01:37 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 130, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Warning message:
+no function found corresponding to methods exports from 'raster' for: 'wkt' 
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Warning message:
+no function found corresponding to methods exports from 'raster' for: 'wkt' 
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/10/31 06:01:47 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/10/31 06:01:48 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/10/31 06:01:48 Ready for new connections
+2020/10/31 06:01:57 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/31 06:01:58 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/10/31 06:02:00 Client closed local connection on 127.0.0.1:3306
+2020/10/31 06:02:00 Client closed local connection on 127.0.0.1:3306
+2020/10/31 06:02:01 Received TERM signal. Waiting up to 0s before terminating.
+Traceback (most recent call last):
+  File "ndfd_get_forecast_data_script.py", line 110, in <module>
+    temp_data = get_sco_ndfd_data(base_server_url = ndfd_sco_server_url, datetime_uct_str = temp_datetime_uct_str)
+  File "/Users/sheila/Documents/github_ncsu/shellcast/analysis/functions.py", line 130, in get_sco_ndfd_data
+    url_check = requests.get(data_url_to_check)
+NameError: name 'requests' is not defined
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Warning message:
+no function found corresponding to methods exports from 'raster' for: 'wkt' 
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.1     v purrr   0.3.4
+v tibble  3.0.1     v dplyr   1.0.0
+v tidyr   1.1.0     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+Loading required package: sp
+
+Attaching package: 'raster'
+
+The following object is masked from 'package:dplyr':
+
+    select
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+Linking to GEOS 3.7.2, GDAL 2.4.2, PROJ 5.2.0
+
+Attaching package: 'lubridate'
+
+The following objects are masked from 'package:raster':
+
+    intersect, union
+
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+
+Warning message:
+no function found corresponding to methods exports from 'raster' for: 'wkt' 
+Parsed with column specification:
+cols(
+  HA_CLASS = col_character(),
+  ha_class_desc = col_character(),
+  sheilagoogle_ha_class_desc = col_character(),
+  grow_area = col_character(),
+  rainfall_threshold_in = col_double(),
+  rainfall_threshold_class = col_character(),
+  notes = col_character()
+)
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in x$.self$finalize() : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+Error in (function (x)  : attempt to apply non-function
+`summarise()` regrouping output by 'grow_area' (override with `.groups` argument)
+Warning message:
+attribute variables are assumed to be spatially constant throughout all geometries 
+2020/11/01 06:01:33 Rlimits for file descriptors set to {&{8500 9223372036854775807}}
+2020/11/01 06:01:34 Listening on 127.0.0.1:3306 for ncsu-shellcast:us-east1:ncsu-shellcast-database
+2020/11/01 06:01:34 Ready for new connections
+2020/11/01 06:01:39 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/11/01 06:01:39 New connection for "ncsu-shellcast:us-east1:ncsu-shellcast-database"
+2020/11/01 06:01:41 Client closed local connection on 127.0.0.1:3306
+2020/11/01 06:01:41 Client closed local connection on 127.0.0.1:3306
+2020/11/01 06:01:41 Received TERM signal. Waiting up to 0s before terminating.
