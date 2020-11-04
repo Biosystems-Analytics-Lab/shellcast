@@ -9,7 +9,6 @@ from models.Lease import Lease
 from models.NCDMFLease import NCDMFLease
 
 from routes.validators.ProfileInfoValidator import ProfileInfoValidator
-from routes.validators.LeasePreferenceValidator import LeasePreferenceValidator
 
 from routes.authentication import userRequired
 
@@ -22,7 +21,12 @@ def userInfo(user):
   Returns the user's info if a GET request.  Updates the user's info if a POST request.
   """
   def constructResponse(userObj):
-    userInfo = {'email': user.email}
+    userInfo = {
+      'email': user.email,
+      'email_pref': user.email_pref,
+      'text_pref': user.text_pref,
+      'prob_pref': user.prob_pref
+    }
     if (user.phone_number != None):
       userInfo['phone_number'] = user.phone_number
       userInfo['service_provider_id'] = user.service_provider_id
@@ -37,6 +41,9 @@ def userInfo(user):
       user.email = validator.email
       user.phone_number = validator.phone_number
       user.service_provider_id = validator.service_provider_id
+      user.email_pref = validator.email_pref
+      user.text_pref = validator.text_pref
+      user.prob_pref = validator.prob_pref
       db.session.add(user)
       db.session.commit()
       return constructResponse(user)
@@ -89,10 +96,7 @@ def userLeases(user):
       'ncdmf_lease_id': lease.ncdmf_lease_id,
       'grow_area_name': lease.grow_area_name,
       'rainfall_thresh_in': lease.rainfall_thresh_in,
-      'geometry': lease.geometry,
-      'email_pref': lease.email_pref,
-      'text_pref': lease.text_pref,
-      'prob_pref': lease.prob_pref
+      'geometry': lease.geometry
     }
   if (request.method == 'GET'):
     leases = db.session.query(Lease).filter_by(user_id=user.id, deleted=False).all()
@@ -109,12 +113,6 @@ def userLeases(user):
       if (userLease):
         # mark the lease as not deleted
         userLease.deleted = False
-        # validate the uploaded info
-        validator = LeasePreferenceValidator(request.json)
-        if (validator.validate()):
-          userLease.email_pref = validator.email_pref
-          userLease.text_pref = validator.text_pref
-          userLease.prob_pref = validator.prob_pref
       else:
         # create a new lease record
         userLease = Lease(user_id=user.id, **ncdmfLease.asDict())
@@ -133,10 +131,6 @@ def userLeases(user):
     if (userLease):
       # set the deleted field
       userLease.deleted = True
-      # reset the preference fields to their defaults
-      userLease.email_pref = Lease.DEFAULT_email_pref
-      userLease.text_pref = Lease.DEFAULT_text_pref
-      userLease.prob_pref = Lease.DEFAULT_prob_pref
       db.session.add(userLease)
       db.session.commit()
       return {'message': 'Success'}, 200
