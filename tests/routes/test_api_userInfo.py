@@ -17,8 +17,11 @@ def test_valid(client, dbSession, addMockFbUser):
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert len(json) == 1
+  assert len(json) == 4
   assert json['email'] == 'blah@gmail.com'
+  assert json['email_pref'] == False
+  assert json['text_pref'] == False
+  assert json['prob_pref'] == 75
   assert json.get('phone_number') == None
   assert json.get('service_provider_id') == None
 
@@ -30,8 +33,11 @@ def test_valid(client, dbSession, addMockFbUser):
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert len(json) == 1
+  assert len(json) == 4
   assert json['email'] == 'blah@gmail.com'
+  assert json['email_pref'] == False
+  assert json['text_pref'] == False
+  assert json['prob_pref'] == 75
   assert json.get('phone_number') == None
   assert json.get('service_provider_id') == None
 
@@ -56,8 +62,11 @@ def test_valid(client, dbSession, addMockFbUser):
   res = client.get('/userInfo', headers={'Authorization': 'validUser1'})
   assert res.status_code == 200
   json = res.get_json()
-  assert len(json) == 3
+  assert len(json) == 6
   assert json['email'] == 'blah@gmail.com'
+  assert json['email_pref'] == False
+  assert json['text_pref'] == False
+  assert json['prob_pref'] == 75
   assert json['phone_number'] == '1234567890'
   assert json['service_provider_id'] == 1
 
@@ -89,9 +98,20 @@ def test_update_info(client, addMockFbUser, dbSession):
   assert res.status_code == 200
   json = res.get_json()
   assert json['email'] == 'blah@gmail.com'
+  assert json['email_pref'] == False
+  assert json['text_pref'] == False
+  assert json['prob_pref'] == 75
 
   # make a request to update the user's info
-  res = client.post('/userInfo', headers={'Authorization': 'validUser1'}, json={'email': 'secondemail@gmail.com', 'phone_number': '5555555555', 'service_provider_id': 1})
+  updateData = {
+    'email': 'secondemail@gmail.com',
+    'email_pref': True,
+    'text_pref': True,
+    'prob_pref': 50,
+    'phone_number': '5555555555',
+    'service_provider_id': 1
+  }
+  res = client.post('/userInfo', headers={'Authorization': 'validUser1'}, json=updateData)
   print(res.get_json())
   assert res.status_code == 200
   
@@ -100,6 +120,9 @@ def test_update_info(client, addMockFbUser, dbSession):
   assert res.status_code == 200
   json = res.get_json()
   assert json['phone_number'] == '5555555555'
+  assert json['email_pref'] == True
+  assert json['text_pref'] == True
+  assert json['prob_pref'] == 50
   assert json['service_provider_id'] == 1
   assert json['email'] == 'secondemail@gmail.com'
 
