@@ -10,19 +10,12 @@ class Lease(db.Model):
   __tablename__ = 'user_leases'
   __table_args__ = (UniqueConstraint('user_id', 'ncdmf_lease_id', name='unique_leases_per_user'),)
 
-  DEFAULT_email_pref = False
-  DEFAULT_text_pref = False
-  DEFAULT_prob_pref = 75
-
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
   ncdmf_lease_id = Column(String(20), nullable=False)
   grow_area_name = Column(String(3))
   rainfall_thresh_in = Column(Float)
   geometry = Column(PointColType)
-  email_pref = Column(Boolean, server_default=expression.false(), default=DEFAULT_email_pref, nullable=False)
-  text_pref = Column(Boolean, server_default=expression.false(), default=DEFAULT_text_pref, nullable=False)
-  prob_pref = Column(Integer, server_default=expression.literal(DEFAULT_prob_pref), default=DEFAULT_prob_pref, nullable=False)
   deleted = Column(Boolean, server_default=expression.false(), default=False, nullable=False)
   created = Column(DateTime, server_default=functions.now())
   updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
@@ -36,9 +29,6 @@ class Lease(db.Model):
       'grow_area_name': self.grow_area_name,
       'rainfall_thresh_in': self.rainfall_thresh_in,
       'geometry': self.geometry,
-      'email_pref': self.email_pref,
-      'text_pref': self.text_pref,
-      'prob_pref': self.prob_pref,
       'deleted': self.deleted
     }
 

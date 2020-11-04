@@ -22,6 +22,9 @@ def test_User(dbSession):
   assert res[0].firebase_uid == validUser1.firebase_uid
   assert res[0].email == validUser1.email
   assert res[0].phone_number == validUser1.phone_number
+  assert res[0].email_pref == False
+  assert res[0].text_pref == False
+  assert res[0].prob_pref == 75
 
 def test_asDict(genRandomString):
   user = User(firebase_uid=genRandomString(length=28), email=genRandomString(length=13), phone_number=genRandomString(length=11))
@@ -31,6 +34,9 @@ def test_asDict(genRandomString):
   assert dictForm['firebase_uid'] == user.firebase_uid
   assert dictForm['phone_number'] == user.phone_number
   assert dictForm['email'] == user.email
+  assert dictForm['email_pref'] == user.email_pref
+  assert dictForm['text_pref'] == user.text_pref
+  assert dictForm['prob_pref'] == user.prob_pref
 
 def test_repr(genRandomString):
   user = User(firebase_uid=genRandomString(length=28), email=genRandomString(length=13), phone_number=genRandomString(length=11))
