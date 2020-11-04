@@ -124,34 +124,30 @@ def sendNotifications():
     if (user.phone_number != None and user.service_provider_id != None):
       textAddress = '{}@{}'.format(user.phone_number, user.service_provider.sms_gateway)
     # construct notification text
-    emailNotificationChunks = [NOTIFICATION_HEADER]
-    textNotificationChunks = [NOTIFICATION_HEADER]
-    needToSendEmail = False
-    needToSendText = False
+    notificationText = [NOTIFICATION_HEADER]
+    needToSendNotification = False
     # for each of the user's leases
     for lease in user.leases:
-      # if the user has not deleted the lease AND they want to receive some kind of notification AND probabilities have been calculated for the lease
-      if (not lease.deleted and (lease.email_pref or lease.text_pref) and len(lease.closureProbabilities) >= 1):
+      # if the lease has not been deleted AND probabilities have been calculated for the lease
+      if (not lease.deleted and len(lease.closureProbabilities) >= 1):
         # get the latest closure probability for the lease
         prob = lease.closureProbabilities[0]
-        # if any of the day probs are >= the lease's prob preference
-        if ((prob.prob_1d_perc and prob.prob_1d_perc >= lease.prob_pref) or
-            (prob.prob_2d_perc and prob.prob_2d_perc >= lease.prob_pref) or
-            (prob.prob_3d_perc and prob.prob_3d_perc >= lease.prob_pref)):
+        # if any of the day probs are >= the user's prob preference
+        if ((prob.prob_1d_perc and prob.prob_1d_perc >= user.prob_pref) or
+            (prob.prob_2d_perc and prob.prob_2d_perc >= user.prob_pref) or
+            (prob.prob_3d_perc and prob.prob_3d_perc >= user.prob_pref)):
           leaseInfo = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
-          if (lease.email_pref):
-            emailNotificationChunks.append(leaseInfo)
-            needToSendEmail = True
-          if (lease.text_pref):
-            textNotificationChunks.append(leaseInfo)
-            needToSendText = True
+          notificationText.append(leaseInfo)
+          needToSendNotification = True
     # add a disclaimer to the end of the notifications
-    emailNotificationChunks.append(NOTIFICATION_FOOTER)
-    textNotificationChunks.append(NOTIFICATION_FOOTER)
-    if (needToSendEmail and emailAddress != None):
-      emailNotificationsToSend.append((emailAddress, emailNotificationChunks, user.id))
-    if (needToSendText and textAddress != None):
-      textNotificationsToSend.append((textAddress, textNotificationChunks, user.id))
+    notificationText.append(NOTIFICATION_FOOTER)
+
+    if (needToSendNotification):
+      # only send emails or texts depending on the user's preferences
+      if (user.email_pref and emailAddress != None):
+        emailNotificationsToSend.append((emailAddress, notificationText, user.id))
+      if (user.text_pref and textAddress != None):
+        textNotificationsToSend.append((textAddress, notificationText, user.id))
 
   # send notifications
   responses = sendNotificationsWithAWSSES(emailNotificationsToSend, textNotificationsToSend)
