@@ -23,9 +23,10 @@
   <div id="user-signed-in" style="display: none">
     <div id="forms">
 
-      {# Generic profile information #}
+      {# Notification Preferences Form #}
       <form class="needs-validation mb-4" id="profile-information-form">
-        <h4>My Profile Information</h4>
+        <h4>My Notification Preferences</h4>
+        {# Email #}
         <div class="mb-3">
           <label for="email">Email address</label>
           <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com" aria-describedby="emailHelp">
@@ -33,14 +34,16 @@
             Please enter a valid email address.
           </div>
           <small id="emailHelp" class="form-text text-muted">
-            This email address is associated with the account you used to
-            create the account (for example, Gmail, Facebook). If you
-            choose to receive email notifications with ShellCast forecast
-            information for your lease(s), the notifications will be sent 
-            to this address.
+            This email address is initially pulled from the linked account you
+            used to create your ShellCast account (for example, Gmail,
+            Facebook), however, you can safely change this while not changing
+            your linked account. If you choose to receive email notifications
+            with ShellCast forecast information for your lease(s), the
+            notifications will be sent to this address.
           </small>
         </div>
 
+        {# Phone number and service provider #}
         <div class="form-row">
           <div class="mb-3 col" style="min-width: 300px;">
             <label for="phone-number">Mobile phone number</label>
@@ -74,6 +77,50 @@
           </div>
         </div>
 
+        {# Email, text, and probability preferences #}
+        <div class="notification-options" id="notification-options">
+          <label>I want to receive the following notifications:</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="no-notifications" id="no-notifications">
+            <label class="form-check-label" for="no-notifications">I do not want to receive notifications</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="email-pref" id="email-pref">
+            <label class="form-check-label" for="email-pref">Email</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
+            <label class="form-check-label" for="text-pref">Text</label>
+          </div>
+          <small class="form-text text-muted">
+            If you would like to receive both email and text notifications,
+            check both "Email" and "Text". If you choose not to receive
+            notifications, you will still see your lease sites on the
+            ShellCast webpage.
+          </small>
+
+          <label>I want to receive notifications for my leases when the % chance of temporary harvest closure is:</label>
+          {% for probOption in probOptions %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="notification-prob" id="notification-prob-{{ probOption }}" value="{{ probOption }}">
+              <label class="form-check-label" for="notification-prob-{{ probOption }}">{{ probOption }}% or higher</label>
+            </div>
+          {% endfor %}
+          <small class="form-text text-muted">
+            Choose the % chance at which you would like to receive
+            notifications for a lease. For example, if you choose
+            "50% or higher", then you will receive a notification
+            when any one of your leases has at least a 50% chance of being
+            temporarily closed in the next 1, 2, or 3 days.
+          </small>
+
+          <label for="example-notification">Example notification:</label>
+          <div class="text-bubble" id="example-notification"></div>
+          <small class="form-text text-muted">
+            This is an example of a notification you might receive for a lease.
+          </small>
+        </div>
+
         <div style="text-align: right;">
           <div><small id="profile-form-help-text" role="alert"></small></div>
           <button class="btn btn-primary" type="button" name="prof-form-cancel-btn" disabled>Cancel</button>
@@ -81,7 +128,7 @@
         </div>
       </form>
 
-      {# Lease preferences #}
+      {# User leases #}
       <h4>My Leases</h4>
       <p>
         You can search for your lease ID number on the

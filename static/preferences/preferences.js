@@ -1,6 +1,5 @@
 'use strict';
 
-const NOTIFICATION_PROB_PREFS = [25, 50, 75];
 /* The number of milliseconds between when a user changes the lease search
    text and when an API request is sent for a lease search */
 const LEASE_SEARCH_DELAY = 400;
@@ -38,17 +37,44 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   const emailInput = profForm.elements['email-address'];
   const phoneNumberInput = profForm.elements['phone-number'];
   const serviceProviderInput = profForm.elements['service-provider'];
+  const noNotificationsCheckbox = profForm.elements['no-notifications'];
+  const emailCheckbox = profForm.elements['email-pref'];
+  const textCheckbox = profForm.elements['text-pref'];
+  const textCheckboxLabel = textCheckbox.labels[0];
+  const probRadios = profForm.elements['notification-prob'];
   const cancelBtn = profForm.elements['prof-form-cancel-btn'];
   const saveBtn = profForm.elements['prof-form-save-btn'];
 
-  // set values
+  // set values for inputs
   emailInput.value = profInfo.email;
   phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
   serviceProviderInput.value = profInfo.service_provider_id;
+  noNotificationsCheckbox.checked = !profInfo.email_pref && !profInfo.text_pref;
+  emailCheckbox.checked = profInfo.email_pref;
+  // don't allow text notifications to be enabled unless user entered a phone number and service provider
+  if (profInfo.phone_number === undefined || profInfo.service_provider_id === undefined) {
+    textCheckboxLabel.innerHTML = 'Text (You must enter a phone number and service provider to enable text notitifications.)';
+    textCheckbox.disabled = true;
+    textCheckbox.checked = false;
+  } else {
+    textCheckboxLabel.innerHTML = 'Text';
+    textCheckbox.disabled = false;
+    textCheckbox.checked = profInfo.text_pref;
+  }
+  // set values for radio buttons
+  for (let radio of probRadios) {
+    const value = profInfo.prob_pref && profInfo.prob_pref.toString();
+    radio.checked = (radio.value === value);
+    // disable the radios if "No notifications" is checked
+    radio.disabled = noNotificationsCheckbox.checked;
+  }
 
   // disable cancel and save buttons
   cancelBtn.disabled = true;
   saveBtn.disabled = true;
+
+  // show example notification
+  document.getElementById('example-notification').innerHTML = generateExampleNotification(noNotificationsCheckbox.checked, profInfo.prob_pref);
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
@@ -82,11 +108,66 @@ function maskPhoneNumber(phoneNumber='') {
 }
 
 /**
+ * 
+ * @param {boolean} noNotifications whether or not the user enabled notifications
+ * @param {number} selectedProb the user's selected probabity preference
+ */
+function generateExampleNotification(noNotifications, selectedProb) {
+  if (noNotifications) {
+    return '<p>-- You will not receive any notifications for this lease. --</p>';
+  }
+  return `<pre>Lease: ABC-123\n  1-day: ${selectedProb + 10}%\n  2-day: ${selectedProb + 13}%\n  3-day: ${selectedProb + 19}%</pre>`;
+}
+
+/**
  * Enables the cancel and save buttons on the profile info form.
  * @param {object} e the change event
  */
 function onProfileFormChange(e) {
   const profForm = e.target.form;
+  const phoneNumberInput = profForm.elements['phone-number'];
+  const serviceProviderInput = profForm.elements['service-provider'];
+  const noNotificationsCheckbox = profForm.elements['no-notifications'];
+  const emailCheckbox = profForm.elements['email-pref'];
+  const textCheckbox = profForm.elements['text-pref'];
+  const textCheckboxLabel = textCheckbox.labels[0];
+  const probRadios = profForm.elements['notification-prob'];
+
+  // noNotifications/email/text logic
+  if (e.target === noNotificationsCheckbox) {
+    noNotificationsCheckbox.checked = true;
+    emailCheckbox.checked = textCheckbox.checked = false;
+  } else if (e.target === emailCheckbox || e.target === textCheckbox) {
+    noNotificationsCheckbox.checked = !emailCheckbox.checked && !textCheckbox.checked;
+  }
+
+  // don't allow text notifications to be enabled unless user entered a phone number and service provider
+  const noPhoneNumber = phoneNumberInput.value === undefined || phoneNumberInput.value === '';
+  const noServiceProvider = serviceProviderInput.value === undefined || serviceProviderInput.value === '';
+  if (noPhoneNumber || noServiceProvider) {
+    textCheckboxLabel.innerHTML = 'Text (You must enter a phone number and service provider to enable text notitifications.)';
+    textCheckbox.disabled = true;
+    textCheckbox.checked = false;
+  } else {
+    textCheckboxLabel.innerHTML = 'Text';
+    textCheckbox.disabled = false;
+  }
+
+  // enable/disable prob inputs as appropriate
+  for (let radio of probRadios) {
+    radio.disabled = noNotificationsCheckbox.checked;
+  }
+
+  // show example notification
+  let selectedProb;
+  for (let radio of probRadios) {
+    if (radio.checked) {
+      selectedProb = Number(radio.value);
+    }
+  }
+  document.getElementById('example-notification').innerHTML = generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
+
+  // enable save and cancel buttons
   profForm.elements['prof-form-cancel-btn'].disabled = false;
   profForm.elements['prof-form-save-btn'].disabled = false;
 }
@@ -106,11 +187,26 @@ async function saveProfileFormChanges() {
   const helpText = document.getElementById('profile-form-help-text');
 
   // gather data from form
+  const email = profForm.elements['email-address'].value;
   const phoneNumber = profForm.elements['phone-number'].value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
+  const serviceProviderId = profForm.elements['service-provider'].value;
+  const emailPref = profForm.elements['email-pref'].checked;
+  const textPref = profForm.elements['text-pref'].checked;
+  const probRadios = profForm.elements['notification-prob'];
+  let selectedProb;
+  for (let radio of probRadios) {
+    if (radio.checked) {
+      selectedProb = Number(radio.value);
+    }
+  }
+
   const newProfileInfo = {
-    email: profForm.elements['email-address'].value,
+    email: email,
     phone_number: phoneNumber,
-    service_provider_id: profForm.elements['service-provider'].value
+    service_provider_id: serviceProviderId,
+    email_pref: emailPref,
+    text_pref: textPref,
+    prob_pref: selectedProb
   };
 
   // upload data to server and re-init form
@@ -130,7 +226,6 @@ async function saveProfileFormChanges() {
     helpText.innerHTML = json.errors[0];
   }
   initProfileForm(profileInfo, true);
-  buildLeaseForms();
 }
 
 /**
@@ -138,15 +233,16 @@ async function saveProfileFormChanges() {
  * @param {object} lease the lease data to populate the form with
  */
 function createLeaseInfoEl(lease) {
-  const notificationsEnabled = lease.email_pref || lease.text_pref;
-  const disabledOrNah = notificationsEnabled ? '' : 'disabled';
   const LEASE_INFO_EL = `
     <div class="card">
       <div class="card-header" id="heading-${lease.id}">
-        <h2 class="mb-0">
+        <h2 class="mb-0 d-flex">
           <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-${lease.id}" aria-expanded="false" aria-controls="collapse-${lease.id}">
             Lease: ${lease.ncdmf_lease_id}
           </button>
+          <div>
+            <button class="btn btn-danger" type="button" id="delete-btn-${lease.id}">Delete</button>
+          </div>
         </h2>
       </div>
 
@@ -172,65 +268,6 @@ function createLeaseInfoEl(lease) {
               24-hour period that results in a lease being temporarily closed for
               harvest. The NC Division of Marine Fisheries determines the threshold.
             </small>
-
-            <div class="notification-options" id="lease-${lease.id}-notification-options">
-              <label>I want to receive the following notifications:</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="lease-none" id="lease-${lease.id}-none">
-                <label class="form-check-label" for="lease-${lease.id}-none">I do not want to receive notifications</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="lease-email" id="lease-${lease.id}-email">
-                <label class="form-check-label" for="lease-${lease.id}-email">Email</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="lease-text" id="lease-${lease.id}-text">
-                <label class="form-check-label" for="lease-${lease.id}-text">Text</label>
-              </div>
-              <small class="form-text text-muted">
-                If you would like to receive both email and text notifications,
-                check both "Email" and "Text". If you choose not to receive
-                notifications, you will still see your lease sites on the
-                ShellCast webpage.
-              </small>
-
-              <label>I want to receive notifications for this lease when the % chance of temporary harvest closure is:</label>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}" value="${NOTIFICATION_PROB_PREFS[0]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[0]}">${NOTIFICATION_PROB_PREFS[0]}% or higher</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}" value="${NOTIFICATION_PROB_PREFS[1]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[1]}">${NOTIFICATION_PROB_PREFS[1]}% or higher</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="lease-notification-prob" id="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}" value="${NOTIFICATION_PROB_PREFS[2]}" ${disabledOrNah}>
-                <label class="form-check-label" for="lease-${lease.id}-notification-prob-${NOTIFICATION_PROB_PREFS[2]}">${NOTIFICATION_PROB_PREFS[2]}% or higher</label>
-              </div>
-              <small class="form-text text-muted">
-                Choose the % chance at which you would like to receive
-                notifications for the lease. For example, if you choose
-                "50% or higher", then you will receive a notification
-                when your lease has at least a 50% chance of being
-                temporarily closed in the next 1, 2, or 3 days.
-              </small>
-
-              <label for="lease-${lease.id}-example-notification">Example notification:</label>
-              <div class="text-bubble" id="lease-${lease.id}-example-notification"></div>
-              <small class="form-text text-muted">
-                This is an example of a notification you might receive for this lease.
-              </small>
-
-            <div style="text-align: right;"><small id="lease-${lease.id}-help-text" role="alert"></small></div>
-            <div class="lease-form-buttons">
-              <div>
-                <button class="btn btn-danger" type="button" name="lease-form-delete-btn">Delete</button>
-              </div>
-              <div>
-                <button class="btn btn-primary" type="button" name="lease-form-cancel-btn" disabled>Cancel</button>
-                <button class="btn btn-primary" type="button" name="lease-form-save-btn" disabled>Save</button>
-              </div>
-            </div>
           </form>
         </div>
       </div>
@@ -239,134 +276,10 @@ function createLeaseInfoEl(lease) {
   return LEASE_INFO_EL;
 }
 
-function generateExampleNotification(leaseForm) {
-  const ncdmfId = leaseForm.elements['lease-ncdmf-id'].value;
-  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
-  if (noNotificationsCheckbox.checked) {
-    return '<p>-- You will not receive any notifications for this lease. --</p>';
-  }
-  const probRadios = leaseForm.elements[`lease-notification-prob`];
-  let selectedProb;
-  for (let radio of probRadios) {
-    if (radio.checked) {
-      selectedProb = Number(radio.value);
-    }
-  }
-  return `<pre>Lease: ${ncdmfId}\n  1-day: ${selectedProb + 10}%\n  2-day: ${selectedProb + 13}%\n  3-day: ${selectedProb + 19}%</pre>`;
-}
-
-/**
- * Resets the form that's associated with the lease with the given id.
- * @param {string} leaseId the id of the lease associated with the form whose changes are being cancelled
- */
-function cancelLeaseFormChanges(leaseId) {
-  const originalLeaseData = leases.find((lease) => lease.id === leaseId);
-  initLeaseForm(originalLeaseData, true);
-}
-
-/**
- * Saves the changes made to the given form and uploads the data to the server.
- * @param {object} leaseForm the form that is being saved
- * @param {string} leaseId the id of the lease whose values are being updated 
- */
-async function saveLeaseFormChanges(leaseForm, leaseId) {
-  const leaseIdx = leases.findIndex((lease) => lease.id === leaseId);
-  const originalLeaseData = leases[leaseIdx];
-  const helpText = document.getElementById(`lease-${leaseId}-help-text`);
-
-  // gather data from form inputs
-  const emailCheckbox = leaseForm.elements[`lease-email`];
-  const textCheckbox = leaseForm.elements[`lease-text`];
-  const probRadios = leaseForm.elements[`lease-notification-prob`];
-  let selectedProb;
-  for (let radio of probRadios) {
-    if (radio.checked) {
-      selectedProb = Number(radio.value);
-    }
-  }
-
-  // construct new lease data object
-  const newLeaseData = {
-    id: originalLeaseData.id,
-    ncdmf_lease_id: originalLeaseData.ncdmf_lease_id,
-    grow_area_name: originalLeaseData.grow_area_name,
-    rainfall_thresh_in: originalLeaseData.rainfall_thresh_in,
-    email_pref: emailCheckbox.checked,
-    text_pref: textCheckbox.checked,
-    prob_pref: selectedProb
-  };
-
-  const dataToUpload = {
-    id: newLeaseData.id,
-    ncdmf_lease_id: newLeaseData.ncdmf_lease_id,
-    email_pref: newLeaseData.email_pref,
-    text_pref: newLeaseData.text_pref,
-    prob_pref: newLeaseData.prob_pref
-  };
-
-  // upload data to server and re-init form
-  const res = await authorizedFetch('/leases', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json;charset=utf-8'},
-    body: JSON.stringify(dataToUpload)
-  });
-  if (res.ok) {
-    // overwrite the client copy of the lease info
-    leases[leaseIdx] = newLeaseData;
-    helpText.style.color = 'green';
-    helpText.innerHTML = 'Changes saved successfully!';
-  } else {
-    const json = await res.json();
-    helpText.style.color = 'red';
-    helpText.innerHTML = json.errors[0];
-  }
-  initLeaseForm(leases[leaseIdx], true);
-}
-
-/**
- * Enables the cancel and save buttons and disables the notification inputs if necessary.
- * @param {object} e the change event
- */
-function onLeaseFormChange(e) {
-  const leaseForm = e.target.form;
-  const leaseId = leaseForm.id.split('-')[1];
-  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
-  const emailCheckbox = leaseForm.elements[`lease-email`];
-  const textCheckbox = leaseForm.elements[`lease-text`];
-  if (e.target === noNotificationsCheckbox) {
-    noNotificationsCheckbox.checked = true;
-    emailCheckbox.checked = textCheckbox.checked = false;
-  } else if (e.target === emailCheckbox || e.target === textCheckbox) {
-    noNotificationsCheckbox.checked = !emailCheckbox.checked && !textCheckbox.checked;
-  }
-  // enable cancel and save buttons
-  leaseForm.elements['lease-form-cancel-btn'].disabled = false;
-  leaseForm.elements['lease-form-save-btn'].disabled = false;
-  // enable/disable notification inputs as appropriate
-  enableDisableLeaseNotificationInputs(leaseForm);
-  // show example notification
-  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `${generateExampleNotification(leaseForm)}`;
-}
-
-/**
- * Enables or disables the notification inputs of the given form based on the
- * whether or not the enable notifications checkbox is selected.
- * @param {object} leaseForm the form to enable or disable
- */
-function enableDisableLeaseNotificationInputs(leaseForm) {
-  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
-  const probRadios = leaseForm.elements[`lease-notification-prob`];
-  // enable/disable notification inputs appropriately
-  const notificationsEnabled = !noNotificationsCheckbox.checked;
-  for (let radio of probRadios) {
-    radio.disabled = !notificationsEnabled;
-  }
-}
-
 /**
  * Builds all of the lease forms based on the data in the global leases array.
  */
-function buildLeaseForms() {
+function buildLeaseInfoEls() {
   // add lease forms to leases accordion
   const leasesAccordion = document.getElementById('leases-accordion');
   leasesAccordion.innerHTML = '';
@@ -376,7 +289,7 @@ function buildLeaseForms() {
 
   // init values and setup event listeners
   for (let lease of leases) {
-    initLeaseForm(lease);
+    initLeaseInfoEl(lease);
   }
 }
 
@@ -388,52 +301,12 @@ function buildLeaseForms() {
  *    event listeners as part of the form initialization. This is useful if the
  *    form has already been created, but you are resetting the values.
  */
-function initLeaseForm(lease, ignoreAddingEventListeners) {
-  const leaseForm = document.forms[`form-${lease.id}`];
-  const leaseId = leaseForm.id.split('-')[1];
-  const noNotificationsCheckbox = leaseForm.elements[`lease-none`];
-  const emailCheckbox = leaseForm.elements[`lease-email`];
-  const textCheckbox = leaseForm.elements[`lease-text`];
-  const textCheckboxLabel = textCheckbox.labels[0];
-  const probRadios = leaseForm.elements[`lease-notification-prob`];
-  const cancelBtn = leaseForm.elements[`lease-form-cancel-btn`];
-  const saveBtn = leaseForm.elements[`lease-form-save-btn`];
-  const deleteBtn = leaseForm.elements[`lease-form-delete-btn`];
-  // set values for checkboxes
-  noNotificationsCheckbox.checked = !lease.email_pref && !lease.text_pref;
-  emailCheckbox.checked = lease.email_pref;
-  // don't allow text notifications to be enabled unless user entered a phone number and service provider
-  if (profileInfo.phone_number === undefined || profileInfo.service_provider_id === undefined) {
-    textCheckboxLabel.innerHTML = 'Text (You must enter a phone number and service provider at the top of this page to enable text notitifications.)';
-    textCheckbox.disabled = true;
-    textCheckbox.checked = false;
-  } else {
-    textCheckboxLabel.innerHTML = 'Text';
-    textCheckbox.disabled = false;
-    textCheckbox.checked = lease.text_pref;
-  }
-  // set values for radio buttons
-  for (let radio of probRadios) {
-    const value = lease.prob_pref && lease.prob_pref.toString();
-    radio.checked = (radio.value === value);
-  }
-
-  // disable notification inputs as appropriate
-  enableDisableLeaseNotificationInputs(leaseForm);
-
-  // disable cancel and save buttons
-  cancelBtn.disabled = true;
-  saveBtn.disabled = true;
-
-  // show example notification
-  document.getElementById(`lease-${leaseId}-example-notification`).innerHTML = `${generateExampleNotification(leaseForm)}`;
+function initLeaseInfoEl(lease, ignoreAddingEventListeners) {
+  const deleteBtn = document.getElementById(`delete-btn-${lease.id}`);
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
-    leaseForm.addEventListener('change', onLeaseFormChange);
     deleteBtn.addEventListener('click', () => deleteLease(lease.id));
-    cancelBtn.addEventListener('click', () => cancelLeaseFormChanges(lease.id));
-    saveBtn.addEventListener('click', () => saveLeaseFormChanges(leaseForm, lease.id));
   }
 }
 
@@ -454,7 +327,7 @@ async function addLease(leaseNCDMFId) {
     if (idxOfLease === -1) {
       leases.push(lease);
     }
-    buildLeaseForms();
+    buildLeaseInfoEls();
   } else {
     const errors = (await res.json()).errors;
     console.log('There was a problem while adding the lease.');
@@ -474,7 +347,7 @@ async function deleteLease(leaseId) {
     // find where the lease is in the local array of leases
     const idxOfLease = leases.findIndex((x) => x.id === leaseId);
     leases.splice(idxOfLease, 1); // and delete it
-    buildLeaseForms();
+    buildLeaseInfoEls();
   } else {
     const errors = (await res.json()).errors;
     console.log('There was a problem while deleting the lease.');
@@ -574,7 +447,7 @@ async function handleSignedInUser(user) {
   }
 
   // setup lease forms
-  buildLeaseForms();
+  buildLeaseInfoEls();
 };
 
 /**
