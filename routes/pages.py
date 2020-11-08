@@ -41,7 +41,8 @@ def aboutPage():
 @pages.route('/preferences')
 def preferencesPage():
   serviceProviders = db.session.query(PhoneServiceProvider.id, PhoneServiceProvider.name).all()
-  return render_template('preferences.html.jinja', serviceProviders=serviceProviders)
+  probOptions = [25, 50, 75]
+  return render_template('preferences.html.jinja', serviceProviders=serviceProviders, probOptions=probOptions)
 
 @pages.route('/signin')
 def signinPage():
