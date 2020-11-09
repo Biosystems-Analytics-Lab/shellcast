@@ -22,7 +22,7 @@ NCSU Virtual Computing Lab (VCL)
 - Linux Server - ShellCast uses a custom Linux server to run the closure analysis code on a regular basis.
 
 ## Documentation
-Instructions explaining how to perform a variety of tasks can be found in the following documents in the `doc` directory [](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/tree/master/docs).
+Instructions explaining how to perform a variety of tasks can be found in the following documents in the `doc` directory [here](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/tree/master/docs).
 
 - docs/ANALYSIS.md explains the various analysis scripts and how to set up the analysis cron job on a virtual computing lab image.
 - docs/CITATION.md explains how to cite and give attribution to ShellCast source code.
