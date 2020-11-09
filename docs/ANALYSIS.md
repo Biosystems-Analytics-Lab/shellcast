@@ -55,10 +55,10 @@ Setting up the VCL using NC State computing resources frees up use of a work mac
 Go to [VCL at NC State](https://vcl.ncsu.edu/), click on "Reservations" and login using your Unity ID and password. After login in, click on "Reservations" again and then "New Reservation". A window will pop up and you want to select "Imaging Reservation" with Ubuntu 18.04 LTS Base and choose "Now" and a duration that's appropriate for set up--at least 1 to 3 hours is recommended (**Figure 1.**). Then click "Create Reservation". You will need to wait a few minutes while this image is created. Click on "Connect!" and you will see a pop up window with more information on how to connect (**Figure 2.**). Then you will need to copy the ip address of the image for use in the next step.
 
 ![Figure 1 shows a screenshot with the options to create a VCL image reservation.](images/vcl_image_reservation.png)
-**Figure 1.** New VCL image reservation options.
+<br> **Figure 1.** New VCL image reservation options.
 
 ![Figure 2 shows a screenshot with the options to create a VCL image reservation.](images/vcl_image_info.png)
-**Figure 2.** VCL image IP information.
+<br> **Figure 2.** VCL image IP information.
 
 Once you created the image and have an IP address, open up a new terminal window, and follow the following steps.
 
@@ -140,7 +140,7 @@ The daily cron job uses Mac's `launchd` program, which should be already install
 First, you need to give the terminal permission to run the script. On the Mac, go to `Settings > Security & Privacy`. Click on `Full Disk Access` on the left list and go to the `Privacy` tab (**Figure 3.**). Add `Terminal` (in `Applications > Utilities`) to this list. To save this you will have to sign in as an administrator to the machine you're working on. Be sure to lock the administrator privileges before you close the Settings window.
 
 ![Figure 3 shows a screenshot of the full disk access settings window for a Mac.](images/full_disk_access.png)
-**Figure 3.** Full Disk Access Settings window for a Mac.
+<br> **Figure 3.** Full Disk Access Settings window for a Mac.
 
 Next, running a cron job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post by Cecina Babich Morrow](https://babichmorrowc.github.io/post/launchd-jobs/) was especially helpful and the official documentation is [here](https://www.launchd.info/). If you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trail version.
 
