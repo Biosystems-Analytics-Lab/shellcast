@@ -3,19 +3,20 @@
 This README file describes the components and set up of the daily analysis cron job that updates the ShellCast web application at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast).
 
 ## Table of Contents
-1. [List of Acronyms](#acronyms)
 
-2. [Description of Analysis scripts](#description)
+1. [List of Acronyms](#1.-list-of-acronyms)
 
-3. [Virtual Computing Lab (VCL) Set Up](#vcl)
+2. [Description of Analysis scripts](#2.-description-of-analysis-scripts)
 
-4. [Cron Job Set Up](#cron-job-setup)
+3. [Virtual Computing Lab Set Up](#3.-virtual-computing-lab-set-up)
 
-5. [Cron Job Run Order](#cron-job-run-order)
+4. [Cron Job Set Up](#4.-cron-job-set-up)
 
-6. [Description of Cron Job Outputs](#outputs)
+5. [Cron Job Run Order](#5.-cron-job-run-order)
 
-### 1. [List of Acronyms](#acronyms)
+6. [Description of Cron Job Outputs](#6.-description-of-cron-job-outputs)
+
+## 1. List of Acronyms
 
 - North Carolina Division of Marine Fisheries (NDCMF)
 - National Digital Forecast Dataset (NDFD)
@@ -23,7 +24,7 @@ This README file describes the components and set up of the daily analysis cron 
 - Virtual Computing Lab (VCL)
 - Google Cloud Platform (GCP)
 
-### 2. Description of Analysis Scripts
+## 2. Description of Analysis Scripts
 
 1. `ndfd_get_forecast_data_script.py` - This script gets the NDFD .bin file from the SCO server and converts it to a pandas dataframe.
 
@@ -41,10 +42,41 @@ This README file describes the components and set up of the daily analysis cron 
 
 8. `ncdmf_tidy_lease_data_script.R` (when rest api is available)
 
-### 3.
+## 3. Virtual Computing Lab (VCL) Set Up
 
+python libraries needed to run these scripts
 
-## save gcp credentials (maybe this isn't right....)
+1. pydap
+
+2. pymysql
+
+3. sqlalchemy
+
+4. pandas
+
+5. numpy
+
+6. datetime
+
+7. requests
+
+8. writer
+
+r packages needed to run these scripts
+
+1. tidyverse - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/tidyverse)
+
+2. lubridate - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/lubridate)
+
+3. sf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/sf)
+
+4. raster - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/raster)
+
+5. geojsonsf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/geojsonsf)
+
+## 4. Cron Job Set Up
+
+### save gcp credentials (maybe this isn't right....)
 
 Run the code below in the command line. You're web browser will pop open and you'll need to give permission to sign into the email account associated with your account on the shellcast gcp project.
 
@@ -53,7 +85,7 @@ gcloud auth application-default login
 ```
 Copy the location of the json credential file and keep that in a safe location in case you need it later. It will look something like "/Users/sheila/.config/gcloud/application_default_credentials.json".
 
-## setting up the daily cron job
+### setting up the daily cron job
 
 The daily cron job used the `launchd` program, which should be already installed on a Mac, and will run each day at 6am as long as the host computer is on and the program is still loaded. Notifications are sent out at 7am by the Google Cloud Platform cron job.
 
@@ -74,7 +106,7 @@ If needed, repeat this use of `chmod` for each of the Python and R scripts liste
 
 Note, I've successfully run the cron job without the plist file being executable.
 
-## running the daily cron job
+### running the daily cron job
 
 When you're ready to run the cron job, do the following:
 
@@ -126,8 +158,7 @@ Last, if you need help debugging the plist script, [LaunchControl](https://www.s
 
 If debugging, I would typically open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., Error 1) but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging. :/
 
-
-## cron job script run order
+## 5. Cron Job Run Order
 
 Each day the `shellcast_daily_analysis.sh` will run the following R and Python scripts:
 
@@ -161,40 +192,4 @@ sh shellcast_daily_analysis.sh
 # sh shellcast_daily_analysis_debug.sh
 ```
 
-## python libraries needed to run these scripts
-
-1. pydap
-
-2. pymysql
-
-3. sqlalchemy
-
-4. pandas
-
-5. numpy
-
-6. datetime
-
-7. requests
-
-8. writer
-
-
-## r packages needed to run these scripts
-
-1. tidyverse - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/tidyverse)
-
-2. lubridate - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/lubridate)
-
-3. sf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/sf)
-
-4. raster - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/raster)
-
-5. geojsonsf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/geojsonsf)
-
-
-
-
-
-
-## script run order (weekly, when rest api is available)
+## 6. Description of Cron Job Outputs
