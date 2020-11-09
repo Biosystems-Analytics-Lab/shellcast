@@ -12,8 +12,8 @@
 
 ## Development Environment Setup
 
-### Install Google Cloud SDK
-The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download and install the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
+### Install and initialize Google Cloud SDK
+The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download, install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
 
 ### Download Cloud SQL proxy
 You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference.
