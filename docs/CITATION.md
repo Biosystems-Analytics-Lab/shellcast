@@ -10,3 +10,7 @@
 # ShellCast License
 
 See [LICENSE.md](https://github.ncsu.edu/ssaia/shellcast/blob/master/docs/LICENSE.md) for details on the license used for ShellCast.
+
+# Contact
+
+If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
