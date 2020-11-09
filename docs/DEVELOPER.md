@@ -1,4 +1,4 @@
-This document is intended to help a developer get up and running with ShellCast.  It describes some important information about the 
+This document is intended to help a developer get up and running with ShellCast.
 
 ## Code Structure
 - main.py - This file is the root of the Python Flask application.
