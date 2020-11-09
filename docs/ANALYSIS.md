@@ -16,6 +16,8 @@ This README file describes the components and set up of the daily analysis cron 
 
 6. [Description of Cron Job Outputs](#6-description-of-cron-job-outputs)
 
+7. [Contact Information](#7-contact-information)
+
 ## 1. List of Acronyms
 
 - North Carolina Division of Marine Fisheries (NCDMF)
@@ -246,3 +248,7 @@ Each day the `shellcast_daily_analysis.sh`, which is called in the `launchcd` pl
 ## 6. Description of Cron Job Outputs
 
 **THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
+
+## 7. Contact Information
+
+If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
