@@ -1,3 +1,5 @@
+This document is intended to help a developer get up and running with ShellCast.  It describes some important information about the 
+
 ## Code Structure
 - main.py - This file is the root of the Python Flask application.
 - app.yaml - This file contains all of the configuration needed to deploy the app to Google Cloud.
@@ -9,6 +11,11 @@
 - __routes__ - This folder contains all of the routes that are registered with the Flask application.
 - __tests__ - This folder contains all of the unit tests for the application.
 - __db-scripts__ - This folder contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
+- __analysis__ - This folder contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](ANALYSIS.md).
+
+## General Notes
+- This repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#deploy-the-app-to-google-app-engine).
+
 
 ## Development Environment Setup
 
