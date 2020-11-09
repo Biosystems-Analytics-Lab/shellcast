@@ -1,4 +1,48 @@
-# shellcast-analysis
+# ANALYSIS.md
+
+This README file describes the components and set up of the daily analysis cron job that updates the ShellCast web application at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast).
+
+## Table of Contents
+1. [List of Acronyms](#acronyms)
+
+2. [Description of Analysis scripts](#description)
+
+3. [Virtual Computing Lab (VCL) Set Up](#vcl)
+
+4. [Cron Job Set Up](#cron-job-setup)
+
+5. [Cron Job Run Order](#cron-job-run-order)
+
+6. [Description of Cron Job Outputs](#outputs)
+
+### 1. [List of Acronyms](#acronyms)
+
+- North Carolina Division of Marine Fisheries (NDCMF)
+- National Digital Forecast Dataset (NDFD)
+- North Carolina State Climate Office (SCO)
+- Virtual Computing Lab (VCL)
+- Google Cloud Platform (GCP)
+
+### 2. Description of Analysis Scripts
+
+1. `ndfd_get_forecast_data_script.py` - This script gets the NDFD .bin file from the SCO server and converts it to a pandas dataframe.
+
+2. `ndfd_convert_df_to_raster_script.R` - This script converts the NDFD pandas dataframe to a raster object that is used for downstream R analysis.
+
+3. `ndfd_analyze_forecast_data_script.R` - This script takes the raster object as well as other spatial information about the NC coast (shellfish growing area boundaries, conditional management boundaries, lease boundaries, etc.) and does calculations for each scale so they can be used to update the ShellCast MySQL database.
+
+4. `gcp_update_mysqldb_script.py` - This script takes the data outputs from the analysis script and pushes them to the ShellCast MySQL database.
+
+5. `ncdmf_tidy_sga_data_script.R`
+
+6. `ncdmf_tidy_cmu_bounds_script.R`
+
+7. `ncdmf_get_lease_data_script.R` - This script is not yet included but will be created when the NC
+
+8. `ncdmf_tidy_lease_data_script.R` (when rest api is available)
+
+### 3.
+
 
 ## save gcp credentials (maybe this isn't right....)
 
@@ -154,7 +198,3 @@ sh shellcast_daily_analysis.sh
 
 
 ## script run order (weekly, when rest api is available)
-
-ncdmf_get_lease_data_script.R (when rest api is available)
-
-ncdmf_tidy_lease_data_script.R (when rest api is available)
