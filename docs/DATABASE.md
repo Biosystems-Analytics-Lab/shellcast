@@ -25,7 +25,16 @@ There are 6 tables.
 _ADD DB DIAGRAM_
 
 ## Connecting to Google Cloud SQL
-
+1. Complete the [Install and initialize Google Cloud SDK](DEVELOPER.md#install-and-initialize-google-cloud-sdk) section in the DEVELOPER.md documentation.
+2. Complete the [Download Cloud SQL proxy](DEVELOPER.md#download-cloud-sql-proxy) section in the DEVELOPER.md documentation.
+3. Start a TCP connection by running the first command in the [Use the Cloud SQL proxy](DEVELOPER.md#use-the-cloud-sql-proxy-tcp-and-unix-socket) section in the DEVELOPER.md documentation.
+4. Now you can connect to the database instance with Sequel Pro (or any other SQL client) with the following connection details:
+  - Host: 127.0.0.1
+  - Username: root
+  - Password: (you should get the password from the maintainers of ShellCast if you're working on ShellCast)
+  - Database: shellcast
+  - Port: 3306
+5. After a few moments, the database tables should load and you should be able to browse the database.
 
 ## Downloading database tables
 You can download the current state of the database as CSV files using Sequel Pro.
