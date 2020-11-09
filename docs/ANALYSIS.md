@@ -8,7 +8,7 @@ This README file describes the components and set up of the daily analysis cron 
 
 2. [Description of Analysis scripts](#2-description-of-analysis-scripts)
 
-3. [Virtual Computing Lab Set Up](#3-virtual-computing-lab-set-up)
+3. [VCL Set Up](#3-vcl-set-up)
 
 4. [Cron Job Set Up](#4-cron-job-set-up)
 
@@ -18,7 +18,7 @@ This README file describes the components and set up of the daily analysis cron 
 
 ## 1. List of Acronyms
 
-- North Carolina Division of Marine Fisheries (NDCMF)
+- North Carolina Division of Marine Fisheries (NCDMF)
 - National Digital Forecast Dataset (NDFD)
 - North Carolina State Climate Office (SCO)
 - Virtual Computing Lab (VCL)
@@ -26,76 +26,125 @@ This README file describes the components and set up of the daily analysis cron 
 
 ## 2. Description of Analysis Scripts
 
-1. `ndfd_get_forecast_data_script.py` - This script gets the NDFD .bin file from the SCO server and converts it to a pandas dataframe.
+1. `ndfd_get_forecast_data_script.py` - This script gets the NDFD .bin file from the SCO server and converts it to a pandas dataframe. This script is run daily.
 
-2. `ndfd_convert_df_to_raster_script.R` - This script converts the NDFD pandas dataframe to a raster object that is used for downstream R analysis.
+2. `ndfd_convert_df_to_raster_script.R` - This script converts the NDFD pandas dataframe to a raster object that is used for downstream R analysis. This script is run daily.
 
-3. `ndfd_analyze_forecast_data_script.R` - This script takes the raster object as well as other spatial information about the NC coast (shellfish growing area boundaries, conditional management boundaries, lease boundaries, etc.) and does calculations for each scale so they can be used to update the ShellCast MySQL database.
+3. `ndfd_analyze_forecast_data_script.R` - This script takes the raster object as well as other spatial information about the NC coast (shellfish growing area boundaries, conditional management boundaries, lease boundaries, etc.) and does calculations for each scale so they can be used to update the ShellCast MySQL database. This script is run daily.
 
-4. `gcp_update_mysqldb_script.py` - This script takes the data outputs from the analysis script and pushes them to the ShellCast MySQL database.
+4. `gcp_update_mysqldb_script.py` - This script takes the data outputs from the analysis script and pushes them to the ShellCast MySQL database. This script is run daily.
 
-5. `ncdmf_tidy_sga_data_script.R`
+5. `ncdmf_tidy_sga_data_script.R` - This script takes the NCDFM shellfish growing area boundaries spatial dataset and cleans it up for use with the analysis script listed above (number 3). This script is run yearly when shellfish growing areas change.
 
-6. `ncdmf_tidy_cmu_bounds_script.R`
+6. `ncdmf_tidy_cmu_bounds_script.R` - This script takes the NCDFM conditional management unit boundaries spatial dataset and cleans it up for use with the analysis script listed above (number 3). This script is run quarterly when conditional management units change.
 
-7. `ncdmf_get_lease_data_script.R` - This script is not yet included but will be created when the NC
+7. `ncdmf_get_lease_data_script.R` - This script is not yet included but will be created when the NCDMF finalizes the REST API for its publicly available lease dataset. This dataset is available in a viewer tool [here](https://www.arcgis.com/apps/webappviewer/index.html?id=de86f3bb9e634005b12f69a8a5947367&extent=-8551979.8781%2C4121555.1994%2C-8515290.1046%2C4140072.0696%2C102100). This script is run weekly to incorporate changes to leases made by NCDFM.
 
-8. `ncdmf_tidy_lease_data_script.R` (when rest api is available)
+8. `ncdmf_tidy_lease_data_script.R` - This script takes the NCDFM shellfish lease boundaries spatial dataset and cleans it up for use with the analysis script listed above (number 3). This script is run weekly (i.e., quarterly time scale) when conditional management units change.
 
-## 3. Virtual Computing Lab (VCL) Set Up
+**NOTE:** Scripts 1 through 4 are run daily while scripts 5 through 8 are run periodically. See full script descriptions for specific timing details.
 
-python libraries needed to run these scripts
+## 3. VCL Set Up
 
-1. pydap
+**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
 
-2. pymysql
+Setting up the VCL using NC State computing resources frees up use of a work machine and also ensures more consistent working conditions because the work machine doesn't have to be constantly on to run. There are two major steps to setting up the analysis cron job on a VCL machine: (1) create the image and (2) launch the image as a server.
 
-3. sqlalchemy
+### 3.1 Creating the VCL Image
 
-4. pandas
+Go to [VCL at NC State](https://vcl.ncsu.edu/), click on "Reservations" and login using your Unity ID and password. After login in, click on "Reservations" again and then "New Reservation". A window will pop up and you want to select "Imaging Reservation" with Ubuntu 18.04 LTS Base and choose "Now" and a duration that's appropriate for set up--at least 1 to 3 hours is recommended (**Figure 1.**). Then click "Create Reservation". You will need to wait a few minutes while this image is created. Click on "Connect!" and you will see a pop up window with more information on how to connect (**Figure 2.**). Then you will need to copy the ip address of the image for use in the next step.
 
-5. numpy
+![Figure 1 shows a screenshot with the options to create a VCL image reservation.](/images/vcl_image_reservation.png)
+**Figure 1.** New VCL image reservation options.
 
-6. datetime
+![Figure 2 shows a screenshot with the options to create a VCL image reservation.](/images/vcl_image_info.png)
+**Figure 2.** VCL image IP information.
 
-7. requests
+Once you created the image and have an IP address, open up a new terminal window, and follow the following steps.
 
-8. writer
+```{bash}
+# 1. secure connect to the VCL image using <your unity ID>@<the IP address>
+ssh unityid@ip
 
-r packages needed to run these scripts
+# 2. download Mini Conda 3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
-1. tidyverse - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/tidyverse)
+# 3. execute Mini Conda 3 download
+bash Miniconda3-latest-Linux-x86_64.sh
 
-2. lubridate - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/lubridate)
+# 4. exit out of environment using XXXX and secure connect back in using step 1
 
-3. sf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/sf)
+# 5. clone the shellcast repo into the image
+git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git
 
-4. raster - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/raster)
+# 6. go into the shellcast directory
+cd shellcast
 
-5. geojsonsf - [package installation info here](https://packagemanager.rstudio.com/client/#/repos/1/packages/geojsonsf)
+# 7. track and checkout the vcl branch
+git checkout --track origin/vcl
+
+# 8. if step 7 doesn't work then run this step and try step 7 again
+git fetch --all
+
+# 9. return to the home directory
+cd
+
+# 10. copy the shellcast environment yaml set up file into the home directory
+cp shellcast/analysis/shellcast-env.yml shellcast-env.yml
+
+# 11. use conda to create an environment based on the requirements in the shellcast environmental yaml file  
+conda env create --prefix /home/ssaia/env_shellcast -f shellcast-env.yml
+
+# 12. activate the environment you created
+conda activate /home/ssaia/env_shellcast
+
+# 13. nativate into the shellcast directory
+cd shellcast
+
+# 13. copy the Python config file template into the analysis directory
+cp config-template.py ./analysis/config.py
+
+# 14. navigate into the analysis directory and fill in the missing parts of the config.py file using nano
+cd analysis
+nano config.py
+
+**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
+```
+
+### 3.2 Creating the VCL Server Reservation
+
+**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
 
 ## 4. Cron Job Set Up
 
-### save gcp credentials (maybe this isn't right....)
+If VCL options are not available, the cron job can be set up on a work computer. This case applies to a Mac machine running macOS Mojave version 10.14.6 with a 2.3 GHz Intel Core i5 processor, 16 GB 2133 MHz DDR4 memory, and Intel Iris Plus Graphics 640 1536 MB graphics card.
 
-Run the code below in the command line. You're web browser will pop open and you'll need to give permission to sign into the email account associated with your account on the shellcast gcp project.
+To set up the cron job on the work Mac, there are two main steps: (1) setting up GCP credentials so the ShellCast MySQL database can be updated daily via the Python script and (2) scheduling the cron job.
+
+
+### 4.1 Setting Up GCP Credentials
+
+Run the code below in the command line. You're web browser will pop open and you'll need to give permission to sign into the email account associated with your account on the ShellCast GCP project. You will need administrator privledges with the ShellCast web application to update the MySQL database.
 
 ```{bash}
 gcloud auth application-default login
 ```
 Copy the location of the json credential file and keep that in a safe location in case you need it later. It will look something like "/Users/sheila/.config/gcloud/application_default_credentials.json".
 
-### setting up the daily cron job
+**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
 
-The daily cron job used the `launchd` program, which should be already installed on a Mac, and will run each day at 6am as long as the host computer is on and the program is still loaded. Notifications are sent out at 7am by the Google Cloud Platform cron job.
+### 4.2 Scheduling the Cron Job on a Mac
 
-First, you need to give the terminal permission to run the script. For a Mac, go to Settings > Security & Privacy. Click on Full Disk Access on the left list and go to the Privacy tab. Add Terminal (in Applications > Utilities) to this list. To save this you will have to sign in as an administrator to the machine you're working on. Be sure to lock the administrator privileges before you close the Settings window.
+The daily cron job uses Mac's `launchd` program, which should be already installed, and will run each day at 6am as long as the work/host computer is powered on and the cron job script is still loaded. Text and email notifications are sent out at 7:00am ET by the GCP cron job. There are several steps to scheduling the cron job on a mac.
 
-![Full Disk Access Settings Window](/analysis/images/full_disk_access.png)
+First, you need to give the terminal permission to run the script. On the Mac, go to `Settings > Security & Privacy`. Click on `Full Disk Access` on the left list and go to the `Privacy` tab (**Figure 3.**). Add `Terminal` (in `Applications > Utilities`) to this list. To save this you will have to sign in as an administrator to the machine you're working on. Be sure to lock the administrator privileges before you close the Settings window.
 
-Next, running a cron job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post]() was especially helpful and the official documentation is [here](https://www.launchd.info/). If you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
+![Figure 3 shows a screenshot of the full disk access settings window for a Mac.](/analysis/images/full_disk_access.png)
+**Figure 3.** Full Disk Access Settings window for a Mac.
 
-Last, the bash (.sh) script you're running in the cron job and all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for each file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make each of them executable.
+Next, running a cron job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post by Cecina Babich Morrow](https://babichmorrowc.github.io/post/launchd-jobs/) was especially helpful and the official documentation is [here](https://www.launchd.info/). If you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trail version.
+
+Next, the bash (.sh) script you're running in the cron job and all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for each file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make each of them executable.
 
 ```{bash}
 # make a script executable
@@ -104,19 +153,17 @@ chmod +x shellcast_daily_analysis.sh
 
 If needed, repeat this use of `chmod` for each of the Python and R scripts listed below in "cron job script run order". All of them need to be executable.
 
-Note, I've successfully run the cron job without the plist file being executable.
+**Note:** I've (Sheila) successfully run the cron job without the plist file being executable.
 
-### running the daily cron job
+Next, when you're ready to run the cron job, do the following:
 
-When you're ready to run the cron job, do the following:
-
-First, in the terminal, navigate to the LaunchAgents directory.
+In the terminal, navigate to the LaunchAgents directory.
 
 ```{bash}
 cd ~/Library/LaunchAgents
 ```
 
-Second, if the plist file is not there, copy it to this location.
+Then if the plist file is not there, copy it to this location.
 
 ```{bash}
 # make sure to change the "..." to the full path
@@ -126,54 +173,46 @@ Second, if the plist file is not there, copy it to this location.
 # cp /Users/sheila/Documents/github_ncsu/shellcast/analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
 ```
 
-Third, that you're working with the right version using nano or atom.
+Then check that you're working with the right plist file using nano.
 
 ```{bash}
 nano com.shellcast.dailyanalysis.cronjob.plist
 ```
 
+Or with atom.
+
 ```{bash}
 atom com.shellcast.dailyanalysis.cronjob.plist
 ```
 
-Fourth, to load the cron job, run the following in the LaunchAgents directory:
+Then load the cron job, run the following in the LaunchAgents directory.
 
 ```{bash}
 launchctl load com.shellcast.dailyanalysis.cronjob.plist
 ```
 
-To stop the cron job, run the following in the LaunchAgents directory:
+To stop the cron job, run the following in the LaunchAgents directory.
+
 ```{bash}
 launchctl unload com.shellcast.dailyanalysis.cronjob.plist
 ```
 
-To see if a LaunchAgent is loaded you can use:
+To see if a LaunchAgent is loaded you can use the following.
 ```{bash}
 launchctl list
 ```
 
 Also, you can go to `Applications > Utilities > Console` and then look at system log to see current loaded and active programs.
 
-Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app (I used the trial version for finding errors).
+Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trial version.
 
-If debugging, I would typically open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., Error 1) but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging. :/
+If debugging, you can open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., "Error 1") but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging.
 
-## 5. Cron Job Run Order
+### 4.3 Other Debugging
 
-Each day the `shellcast_daily_analysis.sh` will run the following R and Python scripts:
+If you're having issues with the cron job running, you can also try running the bash script on its own and checking if a particular script it giving issues.
 
-1. `ndfd_get_forecast_data_script.py` - This script gets the forecast and converts it to a pandas dataframe.
-
-2. `ndfd_convert_df_to_raster_script.R` - This script converts the forecast from a pandas dataframe to a raster object.
-
-3. `ndfd_analyze_forecast_data_script.R` - This script takes the raster object as well as other spatial information about the NC coast (shellfish growing area bounds, conditional management bounds, lease bounds, etc.) and does these three levels of calculatoins so they can be used to update the shellcast mysql database.
-
-4. `gcp_update_mysqldb_script.py` - This script takes the data outputs from the previous script and pushes them to the shellcast mysql database.
-
-
-## running the bash script on its own
-
-To run the bash script not in a cron job (for debugging), use the code below. This must be run from the analysis directory. Outputs from each R and Python script will be saved into the terminal\_data directory.
+To run the bash script (.sh) not in a cron job (for debugging), use the code below. This must be run from the analysis directory. Outputs from each R and Python script will be saved into the terminal\_data directory.
 
 The bash (.sh) script as well as so all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for the file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make it executable.
 
@@ -192,4 +231,18 @@ sh shellcast_daily_analysis.sh
 # sh shellcast_daily_analysis_debug.sh
 ```
 
+## 5. Cron Job Run Order
+
+Each day the `shellcast_daily_analysis.sh`, which is called in the `launchcd` plist file, will run the following R and Python scripts in the order noted below. For a description of each script see the [script description section above](#2-description-of-analysis-scripts).
+
+1. `ndfd_get_forecast_data_script.py`
+
+2. `ndfd_convert_df_to_raster_script.R`
+
+3. `ndfd_analyze_forecast_data_script.R`
+
+4. `gcp_update_mysqldb_script.py`
+
 ## 6. Description of Cron Job Outputs
+
+**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
