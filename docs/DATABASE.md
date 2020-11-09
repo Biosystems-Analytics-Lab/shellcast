@@ -43,4 +43,6 @@ You can download the current state of the database as CSV files using Sequel Pro
 3. Choose "Export > As CSV file...".
 4. A new window should open where you can change some settings related to the export.  The default settings are probably what you want, so just choose where you want to the files to be saved to and click "Export".
 
-## Editing user records
+## Editing user information and leases
+- User information such as phone number, email address, and email/text/probability preference can be found in the users table.  Simply double-click on the value you would like to change.
+- User lease information such as growing area name, CMU name, rainfall threshold, and location can be found in the user_leases table.  Simply double-click on the value you would like to change.
