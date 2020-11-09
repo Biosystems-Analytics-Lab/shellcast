@@ -4,17 +4,17 @@ This README file describes the components and set up of the daily analysis cron 
 
 ## Table of Contents
 
-1. [List of Acronyms](#1.-list-of-acronyms)
+1. [List of Acronyms](#1-list-of-acronyms)
 
-2. [Description of Analysis scripts](#2.-description-of-analysis-scripts)
+2. [Description of Analysis scripts](#2-description-of-analysis-scripts)
 
-3. [Virtual Computing Lab Set Up](#3.-virtual-computing-lab-set-up)
+3. [Virtual Computing Lab Set Up](#3-virtual-computing-lab-set-up)
 
-4. [Cron Job Set Up](#4.-cron-job-set-up)
+4. [Cron Job Set Up](#4-cron-job-set-up)
 
-5. [Cron Job Run Order](#5.-cron-job-run-order)
+5. [Cron Job Run Order](#5-cron-job-run-order)
 
-6. [Description of Cron Job Outputs](#6.-description-of-cron-job-outputs)
+6. [Description of Cron Job Outputs](#6-description-of-cron-job-outputs)
 
 ## 1. List of Acronyms
 
