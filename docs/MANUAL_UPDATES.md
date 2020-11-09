@@ -1,7 +1,7 @@
 This document is intended to explain how to perform simple, manual updates to ShellCast.
 
 ## Setup
-1. Download the Git repository to your machine by running `git clone https://github.ncsu.edu/ssaia/shellcast.git`.
+1. Download the Git repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.
 2. Download and install the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs).
 3. Complete the steps under the [Make a configuration file based on the template file]() section of the DEVELOPER.md documentation.
 
