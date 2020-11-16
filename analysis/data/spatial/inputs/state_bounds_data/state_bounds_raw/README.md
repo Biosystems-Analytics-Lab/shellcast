@@ -1,6 +1,6 @@
-## README file for state\_bounds\_raw directory ##
+## README file for state_bounds_raw directory ##
 
-last updated: 20180719<br/>
+last updated: 20201102<br/>
 contact: Sheila Saia (ssaia at ncsu dot edu)
 
-**state_bounds.shp** - This file represents the state boundaries for the United States and was originally downloaded as States.shp from http://osav-usdot.opendata.arcgis.com/datasets/c6717a90c9fe4f1986ba40789cbe124f_0. Metdata can be found at https://maps.bts.dot.gov/services/rest/services/NTAD/States/MapServer/0.
+**State_Boundaries.shp** - This file represents the state boundaries for the United States and was originally downloaded from https://hub.arcgis.com/datasets/f8730991034b46d2bed73a16a96765c6_55?geometry=166.851%2C13.656%2C8.823%2C59.927. Metdata can be found at https://www.arcgis.com/home/item.html?id=f8730991034b46d2bed73a16a96765c6. It was downloaded on 20201102. This is a little more detailed in terms of the outline for the coastal plane so I decided to use the TIGER data instead. I'm keeping this here for now.
