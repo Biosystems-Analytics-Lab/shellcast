@@ -7,6 +7,13 @@ email: ssaia@ncsu.edu
 date created: 20200923
 """
 
+import pandas # for data mgmt
+import numpy # for data mgmt
+import datetime as dt # for datetime mgmt
+from pydap.client import open_url # to convert bin file
+import requests # to check if website exists
+from csv import writer
+
 def aggregate_sco_ndfd_var_data(ndfd_var_data, var_period_index, var_period_vals, ndfd_var) :
     """
     Description: Returns a tidy dataframe of qpf SCO NDFD data for a specified date
