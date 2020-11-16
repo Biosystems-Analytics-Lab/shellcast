@@ -31,6 +31,8 @@
 # TODO save all spatial data outputs to geojson (to reduce storage demands)
 # TODO (wishlist) use here package
 
+# TODO change grow_area to sga_name throughout and re-export
+
 
 # ---- 1. install and load packages as necessary ----
 # packages
@@ -55,20 +57,25 @@ data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 # path to raw lease spatial inputs
 lease_data_spatial_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_raw/")
 
-# path to cmu buffer spatial inputs
+# path to cmu bounds spatial inputs
 cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
+
+# path to sga bounds spatial inputs
+sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds/")
 
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
 
-
 # path to lease spatial outputs
 lease_data_spatial_output_path <-  paste0(data_base_path, "spatial/outputs/ncdmf_data/")
 
-
 # define epsg and proj4 for N. America Albers projection (projecting to this)
-na_albers_proj4 <- "+proj=aea +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
-na_albers_epsg <- 102008
+# na_albers_proj4 <- "+proj=aea +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+# na_albers_epsg <- 102008
+
+# define epsg and proj for CONUS Albers projection (projecting to this)
+conus_albers_epsg <- 5070
+conus_albers_proj <- "+init=EPSG:5070"
 
 # define wgs 84 projection
 wgs84_epsg <- 4326
@@ -84,15 +91,21 @@ lease_bounds_raw <- st_read(paste0(lease_data_spatial_input_path, "lease_bounds_
 # st_crs(lease_bounds_raw) # epsg = 2264
 
 # cmu data
-cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_albers.shp"))  %>%
-  st_set_crs(na_albers_epsg) # epsg code wasn't assigned if this code isn't included
+cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_albers.shp"))
+
+# sga data
+sga_bounds_simple_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_simple_albers.shp"))
 
 # check projection
-# st_crs(cmu_bounds_albers) # epsg = 102008
+# st_crs(cmu_bounds_albers) # epsg = 5070
+# st_crs(sga_bounds_albers) # epsg = 5070
 
 # tabular data
 # rainfall thresholds
-rainfall_thresh_data <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds.csv"))
+rainfall_thresholds_data_raw <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"))
+
+# sga key
+sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "sga_key.csv"))
 
 
 # ---- 4b. load in latest least data (with dates) ----
@@ -133,7 +146,6 @@ rainfall_thresh_data <- read_csv(paste0(rainfall_thresh_tabular_data_input_path,
 # check projection
 # st_crs(sga_bounds_albers) # epsg = 102008
 
-
 # tabular data
 # rainfall thresholds
 # rainfall_thresh_data <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds.csv"))
@@ -141,7 +153,7 @@ rainfall_thresh_data <- read_csv(paste0(rainfall_thresh_tabular_data_input_path,
 
 # ---- 5. project and tidy up lease data ----
 lease_data_albers <- lease_bounds_raw %>%
-  st_transform(crs = na_albers_epsg) %>% # project
+  st_transform(crs = conus_albers_epsg) %>% # project
   dplyr::select(lease_id = ProductNbr, # tidy
                 owner = Owner,
                 type = Type_,
@@ -152,6 +164,7 @@ lease_data_albers <- lease_bounds_raw %>%
 
 # check projection
 # st_crs(lease_data_albers)
+# crs = 5070
 
 
 # ---- 7. find centroids of leases ----
@@ -160,36 +173,52 @@ lease_data_centroid_albers <- lease_data_albers %>%
   st_centroid()
 
 
+# ---- 8. add a little buffer to the sga bounds and select sga key data ----
+# sga key selected
+sga_key_sel <- sga_key %>%
+  dplyr::select(grow_area = sga_name, sga_desc = sga_desc_short)
+
+# buffer sga bounds and bind sga key select
+sga_bounds_simple_50mbuf_albers <- sga_bounds_simple_albers %>%
+  st_buffer(dist = 50) %>% # in m
+  dplyr::left_join(sga_key_sel, by = "grow_area")
+
+
 # ---- 6. add sga and rainfall depths to lease data ----
-# trim cmu data
-cmu_bounds_albers_sel <- cmu_bounds_albers %>%
-  dplyr::select(HA_CLASS, rain_in, rain_lab)
+# bind sga's to cmu's
+# cmu_sga_bounds_join <- cmu_bounds_albers %>%
+#   st_intersection(sga_bounds_albers)
+#   dplyr::select(cmu_name, rain_in, rain_lab)
 
 # trim rainfall threshold data
-rainfall_thresh_data_sel <- rainfall_thresh_data %>%
-  dplyr::select(HA_CLASS, grow_area)
+# rainfall_thresh_data_sel <- rainfall_thresholds_data_raw %>%
+#  dplyr::select(HA_CLASS, cmu_name)
 
-# join lease and cmu data by geometry
+# join lease, cmu, and sga data by geometry
 # joining by cmu and not sga because each sga has mutiple cmu's within and therefore multiple rainfall thresholds
 lease_data_centroid_albers_join <- lease_data_centroid_albers %>%
-  st_intersection(cmu_bounds_albers_sel) %>%
-  dplyr::left_join(rainfall_thresh_data_sel, by = "HA_CLASS") %>%
+  st_intersection(cmu_bounds_albers) %>%
+  st_intersection(sga_bounds_simple_50mbuf_albers) %>%
+  # dplyr::left_join(rainfall_thresh_data_sel, by = "HA_CLASS") %>%
   dplyr::group_by(lease_id) %>%
   dplyr::slice(which.min(rain_in)) %>%
-  #dplyr::group_by(lease_id, rain_in) %>%
-  #dplyr::count() %>%
-  dplyr::select(lease_id:county, grow_area, rain_in, rain_lab)
+  # dplyr::group_by(lease_id, rain_in) %>%
+  # dplyr::count() %>%
+  dplyr::select(lease_id:county, cmu_name, sga_name = grow_area, sga_desc, rain_in, rain_lab)
 
 # NOTE!
 # if the centroid of the lease is at the edge of two growing areas then this code takes
 # the minimum rainfall threshold, as of 20200716 it does not look like this is an issue
 # but it cold be in the future
 # there are ~ 20 (513-483 = 30) leases that have centroids not in cmu's, these are dropped
+# also, there were some leases that were just on the edge of the sga boundaries
+# with the max one about 37m away, so used a 50m buffer around sga bounds to help with this
+# might need an automated check for this once the REST API is up and running
 
 # keep sga and rainfall threshold data to join to lease polygons
 lease_data_centroids_join_no_geom <- lease_data_centroid_albers_join %>%
   st_drop_geometry() %>%
-  dplyr::select(lease_id, grow_area:rain_lab)
+  dplyr::select(lease_id, cmu_name:rain_lab)
 
 # join sga and rainfall threshold data to lease polygons
 lease_data_albers_join <- lease_data_albers %>%
@@ -197,15 +226,31 @@ lease_data_albers_join <- lease_data_albers %>%
   dplyr::filter(rain_in > 0) # drop leases without rainfall thresholds (i.e., NA values) so don't have to fix for db import
 # when grow_area, rain_in, and rain_lab are NA this means they don't have a rainfall threshold (aren't in a current cmu)
 
-# resave centroids b/c lease_data_albers_join has full lease dataset
-lease_data_centroids_albers_final <- lease_data_albers_join %>%
+# check if lease polygons are valid
+valid_check_list <- st_is_valid(lease_data_albers_join)
+
+# remove non-valid leases
+lease_data_albers_final <- lease_data_albers_join %>%
+  dplyr::mutate(valid_polygon = valid_check_list) %>%
+  dplyr::filter(valid_polygon == TRUE) %>%
+  dplyr::select(-valid_polygon)
+
+# invalid lease polygons
+# lease_data_albers_inval <- lease_data_albers_join %>%
+#   dplyr::mutate(valid_polygon = valid_check_list) %>%
+#   dplyr::filter(valid_polygon == FALSE) %>%
+#   dplyr::select(-valid_polygon)
+# only one is invalid (#414)
+
+# resave centroids b/c lease_data_albers_final has full lease dataset
+lease_data_centroids_albers_final <- lease_data_albers_final %>%
   st_centroid()
-# when grow_area, rain_in, and rain_lab are NA this means they don't have a rainfall threshold (aren't in a current cmu)
+# NA values means that leases don't have a rainfall threshold (aren't in a current cmu)
 
 
 # ---- 8. project data ----
 # project data to wgs84 projection
-lease_data_wgs94 <- lease_data_albers_join %>%
+lease_data_wgs94 <- lease_data_albers_final %>%
   st_transform(crs = wgs84_epsg)
 
 # project centroids to wgs84 projection
@@ -223,8 +268,10 @@ lease_data_centroid_wgs94 <- lease_data_centroids_albers_final %>%
 # select fields for mysql db
 lease_data_centroid_wgs94_db <- lease_data_centroid_wgs94 %>%
   dplyr::select(ncdmf_lease_id = lease_id,
-         grow_area_name = grow_area,
-         rainfall_thresh_in = rain_in)
+                cmu_name,
+                sga_name,
+                sga_desc,
+                rainfall_thresh_in = rain_in)
 
 # save coordinates
 lease_data_centroid_coords <- as.data.frame(st_coordinates(lease_data_centroid_wgs94_db)) %>%
@@ -238,9 +285,9 @@ lease_data_centroid_wgs94_db_tabular <- lease_data_centroid_wgs94_db %>%
 
 # ---- 10. export data ----
 # export data as shape file for record keeping
-# st_write(lease_data_albers_join, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers_", latest_date_uct_str, ".shp")) # includes date in file name
+# st_write(lease_data_albers_final, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers_", latest_date_uct_str, ".shp")) # includes date in file name
 # st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_albers_", latest_date_uct_str, ".shp")) # includes date in file name
-st_write(lease_data_albers_join, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers.shp"), delete_layer = TRUE)
+st_write(lease_data_albers_final, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers.shp"), delete_layer = TRUE)
 st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_albers.shp"), delete_layer = TRUE)
 
 # export tabular lease centroids for mysql db
