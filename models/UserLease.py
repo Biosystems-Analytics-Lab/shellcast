@@ -3,7 +3,6 @@ from sqlalchemy.sql import functions, expression
 from sqlalchemy.orm import relationship
 
 from models import db
-from models.ClosureProbability import ClosureProbability
 from models.PointColType import PointColType
 
 class UserLease(db.Model):
@@ -14,6 +13,7 @@ class UserLease(db.Model):
   user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
   ncdmf_lease_id = Column(String(20), nullable=False)
   grow_area_name = Column(String(3))
+  cmu_name = Column(String(10), nullable=False)
   rainfall_thresh_in = Column(Float)
   geometry = Column(PointColType)
   deleted = Column(Boolean, server_default=expression.false(), default=False, nullable=False)
@@ -21,16 +21,16 @@ class UserLease(db.Model):
   updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
   user = relationship('User', back_populates='leases')
-  closureProbabilities = relationship('ClosureProbability', order_by=ClosureProbability.id.desc(), back_populates='lease')
 
   def asDict(self):
     return {
       'ncdmf_lease_id': self.ncdmf_lease_id,
       'grow_area_name': self.grow_area_name,
+      'cmu_name': self.cmu_name,
       'rainfall_thresh_in': self.rainfall_thresh_in,
       'geometry': self.geometry,
       'deleted': self.deleted
     }
 
   def __repr__(self):
-    return '<UserLease: {}, {}, {}>'.format(self.user_id, self.ncdmf_lease_id, self.grow_area_name)
+    return '<UserLease: {}, {}, {}, {}>'.format(self.user_id, self.ncdmf_lease_id, self.grow_area_name, self.cmu_name)

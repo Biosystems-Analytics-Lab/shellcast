@@ -10,6 +10,7 @@ class NCDMFLease(db.Model):
   id = Column(Integer, primary_key=True)
   ncdmf_lease_id = Column(String(20))
   grow_area_name = Column(String(3))
+  cmu_name = Column(String(10), nullable=False)
   rainfall_thresh_in = Column(Float)
   geometry = Column(PointColType)
   created = Column(DateTime, server_default=functions.now())
@@ -19,9 +20,10 @@ class NCDMFLease(db.Model):
     return {
       'ncdmf_lease_id': self.ncdmf_lease_id,
       'grow_area_name': self.grow_area_name,
+      'cmu_name': self.cmu_name,
       'rainfall_thresh_in': self.rainfall_thresh_in,
       'geometry': self.geometry
     }
 
   def __repr__(self):
-    return '<NCDMFLease: {}, {}>'.format(self.ncdmf_lease_id, self.grow_area_name)
+    return '<NCDMFLease: {}, {}, {}>'.format(self.ncdmf_lease_id, self.grow_area_name, self.cmu_name)
