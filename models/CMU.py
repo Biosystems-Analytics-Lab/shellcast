@@ -2,22 +2,19 @@ from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import functions
 
 from models import db
-from models.GeomColType import GeomColType
 
-class GrowArea(db.Model):
-  __tablename__ = 'sgas'
+class CMU(db.Model):
+  __tablename__ = 'cmus'
 
   id = Column(Integer, primary_key=True)
-  grow_area_name = Column(String(3))
-  geometry = Column(GeomColType)
+  cmu_name = Column(String(10), nullable=False)
   created = Column(DateTime, server_default=functions.now())
   updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
   def asDict(self):
     return {
-      'grow_area_name': self.grow_area_name,
-      'geometry': self.geometry,
+      'cmu_name': self.cmu_name
     }
 
   def __repr__(self):
-    return '<GrowArea: {}>'.format(self.grow_area_name)
+    return '<CMU: {}>'.format(self.cmu_name)
