@@ -6,7 +6,7 @@ from models import db
 from models.ClosureProbability import ClosureProbability
 from models.PointColType import PointColType
 
-class Lease(db.Model):
+class UserLease(db.Model):
   __tablename__ = 'user_leases'
   __table_args__ = (UniqueConstraint('user_id', 'ncdmf_lease_id', name='unique_leases_per_user'),)
 
@@ -33,4 +33,4 @@ class Lease(db.Model):
     }
 
   def __repr__(self):
-    return '<Lease: {}, {}, {}>'.format(self.user_id, self.ncdmf_lease_id, self.grow_area_name)
+    return '<UserLease: {}, {}, {}>'.format(self.user_id, self.ncdmf_lease_id, self.grow_area_name)

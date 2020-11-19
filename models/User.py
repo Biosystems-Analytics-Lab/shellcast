@@ -3,7 +3,7 @@ from sqlalchemy.sql import functions, expression
 from sqlalchemy.orm import relationship
 
 from models import db
-from models.Lease import Lease
+from models.UserLease import UserLease
 from models.Notification import Notification
 
 class User(db.Model):
@@ -26,7 +26,7 @@ class User(db.Model):
   updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
   service_provider = relationship('PhoneServiceProvider', back_populates='users')
-  leases = relationship('Lease', order_by=Lease.created, back_populates='user')
+  leases = relationship('UserLease', order_by=UserLease.created, back_populates='user')
   notifications = relationship('Notification', order_by=Notification.created, back_populates='user')
 
   def asDict(self):

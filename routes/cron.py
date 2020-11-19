@@ -9,7 +9,6 @@ from botocore.exceptions import ClientError
 from models import db
 from models.User import User
 from models.ClosureProbability import ClosureProbability
-from models.Lease import Lease
 from models.Notification import Notification
 
 from routes.authentication import cronOnly
