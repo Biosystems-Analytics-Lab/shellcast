@@ -16,12 +16,13 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`)
 );
 
--- Stores information about leases.
+-- Stores information about user leases.
 CREATE TABLE `user_leases` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `user_id` int(5) UNSIGNED ZEROFILL NOT NULL,
   `ncdmf_lease_id` varchar(20) NOT NULL,
   `grow_area_name` varchar(3) NULL,
+  `cmu_name` varchar(10) NOT NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
   `geometry` point NULL,
   `deleted` boolean NOT NULL DEFAULT false,
@@ -36,20 +37,9 @@ CREATE TABLE `ncdmf_leases` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `ncdmf_lease_id` varchar(20) NULL,
   `grow_area_name` varchar(3) NULL,
+  `cmu_name` varchar(10) NOT NULL,
   `rainfall_thresh_in` decimal(3, 2) NULL,
   `geometry` point NULL,
-  `created` datetime DEFAULT NOW(),
-  `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
-  PRIMARY KEY (`id`)
-);
-
--- Stores calculated closure probabilities for each lease.
-CREATE TABLE `closure_probabilities` (
-  `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `lease_id` int(5) UNSIGNED ZEROFILL NOT NULL,
-  `prob_1d_perc` tinyint(3) NULL,
-  `prob_2d_perc` tinyint(3) NULL,
-  `prob_3d_perc` tinyint(3) NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
@@ -67,26 +57,22 @@ CREATE TABLE `notification_log` (
   PRIMARY KEY (`id`)
 );
 
--- Stores the grow areas and their boundaries (the boundaries aren't stored yet but they will be)
-CREATE TABLE `sgas` (
+-- Stores the growing units.
+CREATE TABLE `cmus` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `grow_area_name` varchar(3) NOT NULL,
-  `geometry` geometry NULL,
+  `cmu_name` varchar(10) NOT NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
 );
 
--- Stores the min and max lease closure probabilities within each growing area.
-CREATE TABLE `sga_min_max` (
+-- Stores the closure probabilities for each growing unit.
+CREATE TABLE `cmu_probabilities` (
   `id` int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `grow_area_name` varchar(3) NOT NULL,
-  `min_1d_prob` tinyint(3) NULL,
-  `max_1d_prob` tinyint(3) NULL,
-  `min_2d_prob` tinyint(3) NULL,
-  `max_2d_prob` tinyint(3) NULL,
-  `min_3d_prob` tinyint(3) NULL,
-  `max_3d_prob` tinyint(3) NULL,
+  `cmu_name` varchar(10) NOT NULL,
+  `prob_1d_perc` tinyint(3) NULL,
+  `prob_2d_perc` tinyint(3) NULL,
+  `prob_3d_perc` tinyint(3) NULL,
   `created` datetime DEFAULT NOW(),
   `updated` datetime DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`id`)
@@ -103,25 +89,14 @@ CREATE TABLE `phone_service_providers` (
 
 -- Add foreign key relations.
 ALTER TABLE `users` ADD CONSTRAINT `service_provider_fk` FOREIGN KEY (`service_provider_id`) REFERENCES `phone_service_providers` (`id`);
-ALTER TABLE `closure_probabilities` ADD CONSTRAINT `user_lease_fk` FOREIGN KEY (`lease_id`) REFERENCES `user_leases` (`id`);
 ALTER TABLE `user_leases` ADD CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `notification_log` ADD CONSTRAINT `user2_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 -- Add constant (relatively constant) data to tables.
--- Grow areas
-INSERT INTO `sgas` (`grow_area_name`)
+-- Growing units
+INSERT INTO `cmus` (`cmu_name`)
 VALUES
-  ('A01'),('A02'),('A03'),                                                         -- A
-  ('B01'),('B02'),('B03'),('B04'),('B05'),('B06'),('B07'),('B08'),('B09'),('B10'), -- B
-  ('C01'),('C02'),('C03'),('C04'),                                                 -- C
-  ('D01'),('D02'),('D03'),('D04'),                                                 -- D
-  ('E01'),('E02'),('E03'),('E04'),('E05'),('E06'),('E07'),('E08'),('E09'),         -- E
-  ('F01'),('F02'),('F03'),('F04'),('F05'),('F06'),('F07'),('F08'),('F09'),         -- F
-  ('G01'),('G02'),('G03'),('G04'),('G05'),('G06'),('G07'),('G08'),('G09'),('G10'), -- G
-  ('G11'),('G12'),
-  ('H01'),('H02'),('H03'),('H04'),('H05'),('H06'),                                 -- H
-  ('I01'),('I02'),('I03'),('I04'),('I05'),('I06'),('I07'),('I08'),('I09'),('I10'), -- I
-  ('I11'),('I12'),('I13'),('I14'),('I15'),('I16')
+  ('U133'),('U038'),('U111'),('U010'),('U108'),('U039'),('U082'),('U086'),('U142'),('U144'),('U143'),('U129'),('U047'),('U048'),('U046'),('U049'),('U053'),('U054'),('U056'),('U051'),('U057'),('U052'),('U064'),('U065'),('U025'),('U016'),('U017'),('U109'),('U110'),('U073'),('U069'),('U102'),('U099'),('U091'),('U092'),('U093'),('U095'),('U008'),('U083'),('U146'),('U131'),('U130'),('U128'),('U050'),('U055'),('U058'),('U059'),('U063'),('U066'),('U012'),('U014'),('U013'),('U015'),('U018'),('U019'),('U020'),('U024'),('U023'),('U080'),('U084'),('U112'),('U149'),('U045'),('U113'),('U117'),('U148'),('U119'),('U116'),('U120'),('U115'),('U034'),('U139'),('U136'),('U135'),('U147'),('U037'),('U036'),('U140'),('U137'),('U076'),('U079'),('U081'),('U072'),('U075'),('U031'),('U042'),('U104'),('U103'),('U101'),('U100'),('U107'),('U044'),('U074'),('U138'),('U035'),('U033'),('U132'),('U028'),('U011'),('U070'),('U071'),('U118'),('U114'),('U134'),('U009'),('U060'),('U061'),('U026'),('U027'),('U043'),('U062'),('U106'),('U122'),('U030'),('U121'),('U029'),('U032'),('U145'),('U105'),('U098'),('U078'),('U021'),('U068'),('U123'),('U124'),('U087'),('U005'),('U077'),('U088'),('U089'),('U090'),('U002'),('U001'),('U006'),('U007'),('U003'),('U004'),('U041'),('U022'),('U141'),('U067'),('U085'),('U094'),('U096'),('U097'),('U126'),('U040'),('U125'),('U127')
 ;
 
 -- Mobile phone service providers
