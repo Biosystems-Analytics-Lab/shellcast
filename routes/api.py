@@ -5,7 +5,7 @@ from models import db
 from models.ClosureProbability import ClosureProbability
 from models.GrowArea import GrowArea
 from models.SGAMinMaxProbability import SGAMinMaxProbability
-from models.Lease import Lease
+from models.UserLease import UserLease
 from models.NCDMFLease import NCDMFLease
 
 from routes.validators.ProfileInfoValidator import ProfileInfoValidator
@@ -55,7 +55,7 @@ def getLeaseClosureProbabilities(user):
   """
   Returns the user's lease closure probabilities.
   """
-  leases = db.session.query(Lease).filter_by(user_id=user.id, deleted=False).all()
+  leases = db.session.query(UserLease).filter_by(user_id=user.id, deleted=False).all()
   def getLeaseProbForLease(lease):
     probDict = {'ncdmf_lease_id': lease.ncdmf_lease_id, 'geometry': lease.geometry}
     if (len(lease.closureProbabilities) >= 1):
@@ -99,7 +99,7 @@ def userLeases(user):
       'geometry': lease.geometry
     }
   if (request.method == 'GET'):
-    leases = db.session.query(Lease).filter_by(user_id=user.id, deleted=False).all()
+    leases = db.session.query(UserLease).filter_by(user_id=user.id, deleted=False).all()
     return jsonify(list(map(leaseToDict, leases)))
   elif (request.method == 'POST'):
     clientData = request.json
@@ -109,13 +109,13 @@ def userLeases(user):
     if (ncdmfLease):
       # assertion: at this point we know that the given ncdmf_lease_id is valid
       # now we need to check if this lease already exists for the current user
-      userLease = db.session.query(Lease).filter_by(user_id=user.id, ncdmf_lease_id=ncdmfLeaseId).first()
+      userLease = db.session.query(UserLease).filter_by(user_id=user.id, ncdmf_lease_id=ncdmfLeaseId).first()
       if (userLease):
         # mark the lease as not deleted
         userLease.deleted = False
       else:
         # create a new lease record
-        userLease = Lease(user_id=user.id, **ncdmfLease.asDict())
+        userLease = UserLease(user_id=user.id, **ncdmfLease.asDict())
       try:
         db.session.add(userLease)
         db.session.commit()
@@ -127,7 +127,7 @@ def userLeases(user):
     clientData = request.json
     leaseId = clientData.get('lease_id')
     # find the lease with the given lease id and belongs to the current user
-    userLease = db.session.query(Lease).filter_by(user_id=user.id, id=leaseId).first()
+    userLease = db.session.query(UserLease).filter_by(user_id=user.id, id=leaseId).first()
     if (userLease):
       # set the deleted field
       userLease.deleted = True
@@ -144,7 +144,7 @@ def searchLeases(user):
   Returns leases based on a search term.
   """
   searchTerm = str(request.json.get('search'))
-  userLeaseIds = db.session.query(Lease.ncdmf_lease_id).filter_by(user_id=user.id, deleted=False).all()
+  userLeaseIds = db.session.query(UserLease.ncdmf_lease_id).filter_by(user_id=user.id, deleted=False).all()
   ncdmfLeaseIds = db.session.query(NCDMFLease.ncdmf_lease_id).\
       filter(
         NCDMFLease.ncdmf_lease_id.like('%%' + searchTerm + '%%'),
