@@ -27,10 +27,7 @@
 # ---- to do ----
 # to do list
 
-# TODO need to export file with lease_id and geo bounds for database
-# TODO save all spatial data outputs to geojson (to reduce storage demands)
 # TODO (wishlist) use here package
-
 # TODO change grow_area to sga_name throughout and re-export
 
 
@@ -54,6 +51,7 @@ for (package in packages) {
 data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 # ---- 3. defining paths and projections ----
+# inputs
 # path to raw lease spatial inputs
 lease_data_spatial_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_raw/")
 
@@ -66,9 +64,11 @@ sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
 
+# outputs
 # path to lease spatial outputs
 lease_data_spatial_output_path <-  paste0(data_base_path, "spatial/outputs/ncdmf_data/")
 
+# projections
 # define epsg and proj4 for N. America Albers projection (projecting to this)
 # na_albers_proj4 <- "+proj=aea +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 # na_albers_epsg <- 102008
@@ -102,7 +102,7 @@ sga_bounds_simple_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bou
 
 # tabular data
 # rainfall thresholds
-rainfall_thresholds_data_raw <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"))
+rainfall_thresholds_raw_tidy <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"))
 
 # sga key
 sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "sga_key.csv"))
@@ -176,7 +176,8 @@ lease_data_centroid_albers <- lease_data_albers %>%
 # ---- 8. add a little buffer to the sga bounds and select sga key data ----
 # sga key selected
 sga_key_sel <- sga_key %>%
-  dplyr::select(grow_area = sga_name, sga_desc = sga_desc_short)
+  dplyr::select(grow_area = sga_name, sga_desc = sga_desc_short) %>%
+  dplyr::mutate(word_count = str_count(sga_desc)) # has to be < 50 for the database
 
 # buffer sga bounds and bind sga key select
 sga_bounds_simple_50mbuf_albers <- sga_bounds_simple_albers %>%
@@ -191,7 +192,7 @@ sga_bounds_simple_50mbuf_albers <- sga_bounds_simple_albers %>%
 #   dplyr::select(cmu_name, rain_in, rain_lab)
 
 # trim rainfall threshold data
-# rainfall_thresh_data_sel <- rainfall_thresholds_data_raw %>%
+# rainfall_thresh_data_sel <- rainfall_thresholds_raw_tidy %>%
 #  dplyr::select(HA_CLASS, cmu_name)
 
 # join lease, cmu, and sga data by geometry
@@ -269,8 +270,8 @@ lease_data_centroid_wgs94 <- lease_data_centroids_albers_final %>%
 lease_data_centroid_wgs94_db <- lease_data_centroid_wgs94 %>%
   dplyr::select(ncdmf_lease_id = lease_id,
                 cmu_name,
-                sga_name,
-                sga_desc,
+                grow_area_name = sga_name,
+                grow_area_desc = sga_desc,
                 rainfall_thresh_in = rain_in)
 
 # save coordinates
