@@ -30,7 +30,6 @@
 # TODO need to export file with lease_id and geo bounds for database
 # TODO save all spatial data outputs to geojson (to reduce storage demands)
 # TODO (wishlist) use here package
-
 # TODO change grow_area to sga_name throughout and re-export
 
 
@@ -176,7 +175,8 @@ lease_data_centroid_albers <- lease_data_albers %>%
 # ---- 8. add a little buffer to the sga bounds and select sga key data ----
 # sga key selected
 sga_key_sel <- sga_key %>%
-  dplyr::select(grow_area = sga_name, sga_desc = sga_desc_short)
+  dplyr::select(grow_area = sga_name, sga_desc = sga_desc_short) %>%
+  dplyr::mutate(word_count = str_count(sga_desc)) # has to be < 50 for the database
 
 # buffer sga bounds and bind sga key select
 sga_bounds_simple_50mbuf_albers <- sga_bounds_simple_albers %>%
@@ -269,8 +269,8 @@ lease_data_centroid_wgs94 <- lease_data_centroids_albers_final %>%
 lease_data_centroid_wgs94_db <- lease_data_centroid_wgs94 %>%
   dplyr::select(ncdmf_lease_id = lease_id,
                 cmu_name,
-                sga_name,
-                sga_desc,
+                grow_area_name = sga_name,
+                grow_area_desc = sga_desc,
                 rainfall_thresh_in = rain_in)
 
 # save coordinates
