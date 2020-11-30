@@ -29,7 +29,7 @@ You can download and setup the Cloud SQL proxy by following [these instructions]
 Clone this repository to your machine by running `git clone https://github.ncsu.edu/ssaia/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
 ### Setup Python virtual environment
-1. Make sure that you have Python 3 installed on your machine.
+1. Make sure that you have Python 3.7 or higher installed on your machine.
 2. From the root directory of the repository, create a virtual environment by running `python3 -m venv venv`.
 3. Activate the virtual environment by running `source venv/bin/activate` if on a Linux or Mac machine. If on a Windows machine, run `venv\Scripts\activate.bat`.  Now "python" will refer to the virtual environment's copy of Python 3. You can deactivate the virtual environment by running `deactivate` (Linux/Mac/Windows).
 4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
