@@ -32,7 +32,7 @@ Clone this repository to your machine by running `git clone https://github.ncsu.
 1. Make sure that you have Python 3 installed on your machine.
 2. From the root directory of the repository, create a virtual environment by running `python3 -m venv venv`.
 3. Activate the virtual environment by running `source venv/bin/activate` if on a Linux or Mac machine. If on a Windows machine, run `venv\Scripts\activate.bat`.  Now "python" will refer to the virtual environment's copy of Python 3. You can deactivate the virtual environment by running `deactivate` (Linux/Mac/Windows).
-4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.
+4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
 
 ### Make a Unix socket directory
 To use the Cloud SQL proxy for local development and testing of the web app, a directory is needed for a Unix socket. From the root directory of the repository, make a new directory named "cloudsql" by running `mkdir cloudsql`.
