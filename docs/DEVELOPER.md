@@ -56,7 +56,7 @@ So what you need to do at this point is:
 ### Use the Cloud SQL proxy (TCP and Unix socket)
 By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database instances using any tool that can connect with a TCP connection or a Unix socket (you can't use Unix sockets on Windows).  The Cloud SQL proxy also allows the web application to reach the Cloud SQL database for use with local development and testing.
 - To use the Cloud SQL proxy with a TCP connection, run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306`.
-- To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -dir=<PATH TO UNIX SOCKET DIRECTORY> -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database`.
+- To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=unix:<PATH TO UNIX SOCKET DIRECTORY> -dir=<PATH TO UNIX SOCKET DIRECTORY>`.
 
 ### Run the application locally
 1. Make sure the Python virtual environment is activated.
