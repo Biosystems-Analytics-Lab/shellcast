@@ -26,7 +26,7 @@ The Google Cloud SDK is principally a command line tool that allows you to inter
 You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference.
 
 ### Clone this repository
-Clone this repository to your machine by running `git clone https://github.ncsu.edu/ssaia/shellcast.git`.
+Clone this repository to your machine by running `git clone https://github.ncsu.edu/ssaia/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
 ### Setup Python virtual environment
 1. Make sure that you have Python 3 installed on your machine.
@@ -56,7 +56,7 @@ So what you need to do at this point is:
 ### Use the Cloud SQL proxy (TCP and Unix socket)
 By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database instances using any tool that can connect with a TCP connection or a Unix socket (you can't use Unix sockets on Windows).  The Cloud SQL proxy also allows the web application to reach the Cloud SQL database for use with local development and testing.
 - To use the Cloud SQL proxy with a TCP connection, run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306`.
-- To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=unix:<PATH TO UNIX SOCKET DIRECTORY> -dir=<PATH TO UNIX SOCKET DIRECTORY>`.
+- To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database -dir=<PATH TO UNIX SOCKET DIRECTORY>`.  If you're having issues with the Unix socket being created correctly, then make sure your `cloudsql/` directory (and thus your shellcast repository) is not too deep in your file system.  Unix sockets have a limit on the length of their paths, so make sure the path to your shellcast repository is relatively shallow.
 
 ### Run the application locally
 1. Make sure the Python virtual environment is activated.
