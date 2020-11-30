@@ -35,12 +35,15 @@ data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 
 # ---- 3. use base paths and define projections ----
+# inputs
 # path to sga spatial inputs (raw data)
 sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds/sga_bounds_raw/")
 
+# outputs
 # path to sga spatial outputs
 sga_spatial_data_output_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds/")
 
+# projections
 # define epsg and proj for CONUS Albers projection (projecting to this)
 conus_albers_epsg <- 5070
 # conus_albers_proj <- "+init=EPSG:5070"
@@ -50,7 +53,6 @@ wgs84_epsg <- 4326
 
 
 # ---- 2. load data ----
-
 # shellfish growing area data
 sga_bounds_raw <- st_read(paste0(sga_spatial_data_input_path, "SGA_Current_Classifications.shp"))
 
@@ -238,10 +240,10 @@ sga_bounds_simple_albers <- sga_bounds_albers %>%
 # ---- 7. calculate simple buffer around sga bounds ----
 # sga buffer
 sga_bounds_buffer_albers <- sga_bounds_simple_albers %>%
-  st_convex_hull() %>% # for each sga
+  st_convex_hull() %>% # simple buffer for each sga
   summarize() %>% # dissolve sga bounds
   st_buffer(dist = 10000) %>% # buffer distance is in m so 10 * 1000m = 10km
-  st_convex_hull() # simple buffer
+  st_convex_hull() # simple buffer for all sgas
 
 
 # ---- 8. tidy sga boundaries by sga and class ----
