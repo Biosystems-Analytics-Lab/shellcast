@@ -1,87 +1,84 @@
 import pytest
 
-from models.GrowArea import GrowArea
-from models.SGAMinMaxProbability import SGAMinMaxProbability
+from models.CMU import CMU
+from models.CMUProbability import CMUProbability
 
 from firebase_admin import auth
 
-NUMBER_OF_GROW_AREAS = 73
+NUMBER_OF_GROWING_UNITS = 149
 
-def addGrowAreas(dbSession):
-  # make sure that grow areas are added to the sgas table
-  sgas = []
-  for x in range(NUMBER_OF_GROW_AREAS):
-    sgas.append(GrowArea(grow_area_name='A' + str(x)))
-  dbSession.add_all(sgas)
+def addGrowingUnits(dbSession):
+  # make sure that growing units are added to the cmus table
+  cmus = []
+  for x in range(NUMBER_OF_GROWING_UNITS):
+    cmus.append(CMU(cmu_name='U' + str(x)))
+  dbSession.add_all(cmus)
   dbSession.commit()
 
 def test_valid(client, dbSession):
-  # make sure that grow areas are added to the sgas table
-  addGrowAreas(dbSession)
+  # make sure that growing units are added to the cmus table
+  addGrowingUnits(dbSession)
 
-  # add some grow area probabilities to the database
+  # add some growing unit probabilities to the database
   probabilities = [
-    SGAMinMaxProbability(grow_area_name='A01', min_1d_prob=40, max_1d_prob=70, min_2d_prob=50, max_2d_prob=80, min_3d_prob=60, max_3d_prob=90),
-    SGAMinMaxProbability(grow_area_name='B03', min_1d_prob=40, max_1d_prob=70, min_2d_prob=50, max_2d_prob=80, min_3d_prob=60, max_3d_prob=90),
-    SGAMinMaxProbability(grow_area_name='F11', min_1d_prob=40, max_1d_prob=70, min_2d_prob=50, max_2d_prob=80, min_3d_prob=60, max_3d_prob=90)
+    CMUProbability(cmu_name='A01', prob_1d_perc=40, prob_2d_perc=50, prob_3d_perc=60),
+    CMUProbability(cmu_name='B03', prob_1d_perc=40, prob_2d_perc=50, prob_3d_perc=60),
+    CMUProbability(cmu_name='F11', prob_1d_perc=40, prob_2d_perc=50, prob_3d_perc=60),
   ]
 
   dbSession.add_all(probabilities)
   dbSession.commit()
 
-  res = client.get('/growAreaProbs')
+  res = client.get('/growingUnitProbs')
   assert res.status_code == 200
 
   json = res.get_json()
   assert len(json) == 3
 
-  assert json['A01']['min_1d_prob'] == 40
-  assert json['A01']['max_1d_prob'] == 70
-  assert json['B03']['min_2d_prob'] == 50
-  assert json['B03']['max_2d_prob'] == 80
-  assert json['F11']['min_3d_prob'] == 60
-  assert json['F11']['max_3d_prob'] == 90
+  assert json['A01']['prob_1d_perc'] == 40
+  assert json['B03']['prob_2d_perc'] == 50
+  assert json['F11']['prob_3d_perc'] == 60
 
-def test_return_all_grow_area_probs(client, dbSession):
-  # make sure that grow areas are added to the sgas table
-  addGrowAreas(dbSession)
+def test_returnAllGrowingUnitProbs(client, dbSession):
+  # make sure that growing units are added to the cmus table
+  addGrowingUnits(dbSession)
 
   # add one probability at the beginning
-  firstProb = SGAMinMaxProbability(grow_area_name='A00', min_1d_prob=40, max_1d_prob=70, min_2d_prob=50, max_2d_prob=80, min_3d_prob=60, max_3d_prob=90)
+  firstProb = CMUProbability(cmu_name='A00', prob_1d_perc=40, prob_2d_perc=50, prob_3d_perc=60)
   dbSession.add(firstProb)
   dbSession.commit()
 
-  # add a probability for each growing area
+  # add a probability for each growing unit
   probabilities = []
-  for x in range(NUMBER_OF_GROW_AREAS):
-    probabilities.append(SGAMinMaxProbability(grow_area_name='B'+str(x), min_1d_prob=x, max_1d_prob=x, min_2d_prob=x, max_2d_prob=x, min_3d_prob=x, max_3d_prob=x))
+  for x in range(NUMBER_OF_GROWING_UNITS):
+    probabilities.append(CMUProbability(cmu_name='B'+str(x), prob_1d_perc=x, prob_2d_perc=x, prob_3d_perc=x))
   dbSession.add_all(probabilities)
   dbSession.commit()
 
-  res = client.get('/growAreaProbs')
+  res = client.get('/growingUnitProbs')
   assert res.status_code == 200
 
   json = res.get_json()
-  assert len(json) == NUMBER_OF_GROW_AREAS
+  assert len(json) == NUMBER_OF_GROWING_UNITS
 
   print(list(json))
 
-  for probGrowArea in json:
-    assert 'B' in probGrowArea
+  for cmuName in json:
+    assert 'B' in cmuName
   
-  # add another set of probabilities for each growing area
+  # add another set of probabilities for each growing unit
   probabilities = []
-  for x in range(NUMBER_OF_GROW_AREAS):
+  for x in range(NUMBER_OF_GROWING_UNITS):
     y = x + 10
-    probabilities.append(SGAMinMaxProbability(grow_area_name='C'+str(y), min_1d_prob=y, max_1d_prob=y, min_2d_prob=y, max_2d_prob=y, min_3d_prob=y, max_3d_prob=y))
+    probabilities.append(CMUProbability(cmu_name='C'+str(y), prob_1d_perc=y, prob_2d_perc=y, prob_3d_perc=y))
   dbSession.add_all(probabilities)
   dbSession.commit()
 
-  res = client.get('/growAreaProbs')
+  res = client.get('/growingUnitProbs')
   assert res.status_code == 200
 
   json = res.get_json()
-  assert len(json) == NUMBER_OF_GROW_AREAS
+  assert len(json) == NUMBER_OF_GROWING_UNITS
 
-  for probGrowArea in json:
-    assert 'C' in probGrowArea
+  for cmuName in json:
+    assert 'C' in cmuName

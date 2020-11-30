@@ -1,8 +1,6 @@
 import pytest
 
 from models.User import User
-from models.Lease import Lease
-from models.ClosureProbability import ClosureProbability
 from models.Notification import Notification
 
 def test_valid(dbSession):
