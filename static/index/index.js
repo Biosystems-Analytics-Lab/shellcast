@@ -26,21 +26,21 @@ const MAP_OPTIONS = {
   },
   mapTypeId: 'hybrid' // 'roadmap', 'satellite', 'hybrid', 'terrain'
 };
-/** The ID of the grow area table element. */
-const GROW_AREA_TABLE_ID = 'area-table';
+/** The ID of the growing unit table element. */
+const GROWING_UNIT_TABLE_ID = 'growing-unit-table';
 /** The ID of the lease table element. */
 const LEASE_TABLE_ID = 'lease-table';
-/** The path to the grow area bound file. */
-const GROW_AREA_BOUNDS_PATH = 'static/growing_area_bounds.geojson';
-/** The color used to fill in grow areas without a closure probability. */
+/** The path to the growing unit boundaries file. */
+const GROWING_UNIT_BOUNDS_PATH = 'static/cmu_bounds.geojson';
+/** The color used to fill in growing units without a closure probability. */
 const COLOR_NULL = 'transparent';
-/** The color used to fill in grow areas with a 0-40% closure probability. */
+/** The color used to fill in growing units with a 0-40% closure probability. */
 const COLOR_0_40 = '#4eb265';
-/** The color used to fill in grow areas with a 40-60% closure probability. */
+/** The color used to fill in growing units with a 40-60% closure probability. */
 const COLOR_40_60 = '#fecc5c';
-/** The color used to fill in grow areas with a 60-80% closure probability. */
+/** The color used to fill in growing units with a 60-80% closure probability. */
 const COLOR_60_80 = '#fd8d3c';
-/** The color used to fill in grow areas with a 80-100% closure probability. */
+/** The color used to fill in growing units with a 80-100% closure probability. */
 const COLOR_80_100 = '#e31a1c';
 /** The text and colors used for the legend. */
 const LEGEND_SCALE = [
@@ -57,14 +57,14 @@ let map;
 let mapInfoWindow;
 
 /**
- * Fetches the growing area data from the server and returns it.
+ * Fetches the growing unit data from the server and returns it.
  */
-async function getGrowAreaData() {
-  const res = await fetch('/growAreaProbs');
+async function getGrowingUnitData() {
+  const res = await fetch('/growingUnitProbs');
   if (res.ok) {
     return await res.json();
   }
-  console.log('Problem retrieving growing area data.');
+  console.log('Problem retrieving growing unit data.');
   console.log(res);
   return null;
 }
@@ -83,20 +83,20 @@ async function getLeaseData() {
 }
 
 /**
- * Fills the grow area table with the grow area records.
+ * Fills the growing unit table with the growing unit records.
  */
-function initGrowAreaTable(growAreaData) {
+function initGrowingUnitTable(growingUnitData) {
   const rows = [];
-  for (let [areaId, data] of Object.entries(growAreaData)) {
+  for (let [cmuName, data] of Object.entries(growingUnitData)) {
     const rowData = {
-      grow_area: areaId,
-      min_max_1d_prob: `${handleUndef(data.min_1d_prob)} / ${handleUndef(data.max_1d_prob)}`,
-      min_max_2d_prob: `${handleUndef(data.min_2d_prob)} / ${handleUndef(data.max_2d_prob)}`,
-      min_max_3d_prob: `${handleUndef(data.min_3d_prob)} / ${handleUndef(data.max_3d_prob)}`
+      cmu_name: cmuName,
+      prob_1d_perc: `${handleUndef(data.prob_1d_perc)}`,
+      prob_2d_perc: `${handleUndef(data.prob_2d_perc)}`,
+      prob_3d_perc: `${handleUndef(data.prob_3d_perc)}`
     };
     rows.push(rowData);
   }
-  $(`#${GROW_AREA_TABLE_ID}`).bootstrapTable('load', rows);
+  $(`#${GROWING_UNIT_TABLE_ID}`).bootstrapTable('load', rows);
 }
 
 /**
@@ -121,7 +121,7 @@ function initLeaseTable(leaseData) {
  */
 async function loadGeoJson(map, url) {
   return new Promise((resolve) => {
-    map.data.loadGeoJson(url, {idPropertyName: 'grow_area'}, resolve);
+    map.data.loadGeoJson(url, {idPropertyName: 'cmu_name'}, resolve);
   });
 }
 
@@ -202,37 +202,31 @@ async function initMap() {
   const daySelector = createDaySelector(map);
   map.controls[google.maps.ControlPosition.LEFT_TOP].push(daySelector);
 
-  return loadGeoJson(map, GROW_AREA_BOUNDS_PATH);
+  return loadGeoJson(map, GROWING_UNIT_BOUNDS_PATH);
 }
 
-function addGrowAreaDataToMap(growAreaData) {
-  // set feature properties based on the grow area data
-  for (let [areaId, data] of Object.entries(growAreaData)) {
-    const curFeature = map.data.getFeatureById(areaId);
-    curFeature.setProperty('min_1d_prob', data.min_1d_prob);
-    curFeature.setProperty('max_1d_prob', data.max_1d_prob);
-    curFeature.setProperty('min_2d_prob', data.min_2d_prob);
-    curFeature.setProperty('max_2d_prob', data.max_2d_prob);
-    curFeature.setProperty('min_3d_prob', data.min_3d_prob);
-    curFeature.setProperty('max_3d_prob', data.max_3d_prob);
+function addGrowingUnitDataToMap(growingUnitData) {
+  // set feature properties based on the growing unit data
+  for (let [cmuName, data] of Object.entries(growingUnitData)) {
+    const curFeature = map.data.getFeatureById(cmuName);
+    curFeature.setProperty('prob_1d_perc', data.prob_1d_perc);
+    curFeature.setProperty('prob_2d_perc', data.prob_2d_perc);
+    curFeature.setProperty('prob_3d_perc', data.prob_3d_perc);
   }
 
-  // set up an info window to appear when clicking on any grow area
+  // set up an info window to appear when clicking on any growing unit
   map.data.addListener('click', (event) => {
     const pos = event.latLng;
-    const grow_area = event.feature.getProperty('grow_area');
-    const min_1d_prob = event.feature.getProperty('min_1d_prob');
-    const max_1d_prob = event.feature.getProperty('max_1d_prob');
-    const min_2d_prob = event.feature.getProperty('min_2d_prob');
-    const max_2d_prob = event.feature.getProperty('max_2d_prob');
-    const min_3d_prob = event.feature.getProperty('min_3d_prob');
-    const max_3d_prob = event.feature.getProperty('max_3d_prob');
+    const cmuName = event.feature.getProperty('cmu_name');
+    const prob_1d_perc = event.feature.getProperty('prob_1d_perc');
+    const prob_2d_perc = event.feature.getProperty('prob_2d_perc');
+    const prob_3d_perc = event.feature.getProperty('prob_3d_perc');
     mapInfoWindow.setPosition(pos);
     mapInfoWindow.setContent(`
-      <div>Area: ${grow_area}
-      <br>1-day Min / Max %: ${handleUndef(min_1d_prob)} / ${handleUndef(max_1d_prob)}
-      <br>2-day Min / Max %: ${handleUndef(min_2d_prob)} / ${handleUndef(max_2d_prob)}
-      <br>3-day Min / Max %: ${handleUndef(min_3d_prob)} / ${handleUndef(max_3d_prob)}
+      <div>Growing Unit: ${cmuName}
+      <br>1-day %: ${handleUndef(prob_1d_perc)}
+      <br>2-day %: ${handleUndef(prob_2d_perc)}
+      <br>3-day %: ${handleUndef(prob_3d_perc)}
       </div>
     `);
     mapInfoWindow.open(map);
@@ -276,18 +270,18 @@ function handleUndef(value) {
 }
 
 /**
- * Returns a function that styles features based on the max probability for the given day.
+ * Returns a function that styles features based on the probability for the given day.
  * @param {number} day the day to style with
  */
 function styleFeatureBasedOnDay(day) {
   return (feature) => {
-    // calculate the color of the growing area (feature)
-    const areaColor = getColor(feature.getProperty(`max_${day}d_prob`));
+    // calculate the color of the growing unit (feature)
+    const unitColor = getColor(feature.getProperty(`prob_${day}d_perc`));
     return {
       strokeColor: '#000',
       strokeWeight: 1,
       strokeOpacity: 0.5,
-      fillColor: areaColor,
+      fillColor: unitColor,
       fillOpacity: 0.8
     };
   }
@@ -310,9 +304,9 @@ function getColor(value) {
 (async () => {
   await initMap();
 
-  const growAreaData = await getGrowAreaData();
-  initGrowAreaTable(growAreaData);
-  addGrowAreaDataToMap(growAreaData);
+  const growingUnitData = await getGrowingUnitData();
+  initGrowingUnitTable(growingUnitData);
+  addGrowingUnitDataToMap(growingUnitData);
 
   firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {

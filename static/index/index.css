@@ -11,7 +11,7 @@
   grid-area: l;
 }
 
-#area-table-div {
+#growing-unit-table-div {
   grid-area: a;
 }
 
@@ -19,7 +19,7 @@
   height: 20vh !important;
 }
 
-#area-table-div .fixed-table-container.fixed-height {
+#growing-unit-table-div .fixed-table-container.fixed-height {
   height: 30vh !important;
 }
 
@@ -28,7 +28,7 @@
   padding: 10px;
 }
 
-#area-table-explanation {
+#growing-unit-table-explanation {
   grid-area: ia;
   padding: 10px;
 }
