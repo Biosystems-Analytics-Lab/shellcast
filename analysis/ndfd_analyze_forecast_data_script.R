@@ -19,9 +19,9 @@
 
 # TODO remove notification testing factor when testing is over
 notification_flag <- "production" # or "testing"
-# notification_factor <- 3
 notification_dist_min <- 20 # for notification_flag <- "testing"
 notification_dist_max <- 100 # for notification_flag <- "testing"
+# notification_factor <- 3
 
 
 # ---- 1. install and load packages as necessary ----
@@ -44,6 +44,7 @@ for (package in packages) {
 data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 # ---- 3. use base paths and define projections ----
+# inputs
 # path to ndfd spatial inputs
 ndfd_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
 
@@ -59,6 +60,7 @@ lease_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_d
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
 
+# outputs
 # path to ndfd spatial outputs
 ndfd_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
 
@@ -74,6 +76,7 @@ lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_s
 # path to ndfd tabular outputs appended
 ndfd_tabular_data_appended_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data_appended/")
 
+# projections
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"
 # source: https://spatialreference.org/ref/sr-org/6825/
@@ -178,7 +181,7 @@ ndfd_qpf_raster_3day_nc_albers <- raster::raster(paste0(ndfd_spatial_data_input_
 sga_bounds_buffer_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_10kmbuf_albers.shp"))
 
 # sga data
-sga_bounds_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_simple_albers.shp"))
+sga_bounds_simple_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_simple_albers.shp"))
 
 # cmu bounds buffered
 cmu_bounds_buffer_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_10kmbuf_albers.shp"))
@@ -195,14 +198,14 @@ lease_centroids_albers <- st_read(paste0(lease_spatial_data_input_path, "lease_c
 # all spatial data should have crs = 5070
 # check crs
 # st_crs(sga_bounds_buffer_albers)
-# st_crs(sga_bounds_albers)
+# st_crs(sga_bounds_simple_albers)
 # st_crs(cmu_bounds_buffer_albers)
 # st_crs(cmu_bounds_albers)
 # st_crs(lease_data_albers)
 
 # tabular data
 # rainfall thresholds
-rainfall_threshold_data_raw <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"))
+rainfall_thresholds_raw_tidy <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"))
 
 # cmu sga key
 cmu_sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "cmu_sga_key.csv"))
@@ -356,14 +359,18 @@ valid_period_list <- c(24, 48, 72)
 ndfd_date_uct <- lubridate::today(tzone = "UCT")
 
 # rasters lists
-pop12_cmu_raster_list <- c(ndfd_pop12_raster_1day_cmu_albers, ndfd_pop12_raster_2day_cmu_albers, ndfd_pop12_raster_3day_cmu_albers)
-qpf_cmu_raster_list <- c(ndfd_qpf_raster_1day_cmu_albers, ndfd_qpf_raster_2day_cmu_albers, ndfd_qpf_raster_3day_cmu_albers)
+pop12_cmu_raster_list <- c(ndfd_pop12_raster_1day_cmu_albers, 
+                           ndfd_pop12_raster_2day_cmu_albers, 
+                           ndfd_pop12_raster_3day_cmu_albers)
+qpf_cmu_raster_list <- c(ndfd_qpf_raster_1day_cmu_albers, 
+                         ndfd_qpf_raster_2day_cmu_albers, 
+                         ndfd_qpf_raster_3day_cmu_albers)
 
 # number of cmu's
 num_cmu <- length(cmu_bounds_albers$cmu_name)
 
 # row dimentions
-num_cmu_row <- length(valid_period_list)*num_cmu
+num_cmu_row <- length(valid_period_list) * num_cmu
 
 # set row number and start iterator
 cmu_row_num_list <- seq(1:num_cmu_row)
@@ -486,7 +493,7 @@ for (i in 1:length(valid_period_list)) {
     # check if testing mode
     # if not testing mode calculate probability of closure as you would in production
     if (notification_flag == "production") {
-      temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
+      temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in / temp_cmu_qpf_result)), 1) # from equation 1 in proposal
     }
 
     # if testing mode then more frequent approach to ensure more frequent notifications
@@ -676,12 +683,12 @@ print("finished analyzing forecast data")
 
 # ---- extra 1. min and max ndfd sga calcs ----
 # use rainfall threshold data to create a lookup table
-# cmu_sga_lookup <- rainfall_threshold_data_raw %>%
+# cmu_sga_lookup <- rainfall_thresholds_raw_tidy %>%
 #   dplyr::left_join(cmu_sga_key, by = "HA_CLASS")
 #   dplyr::select(cmu_name, sga_name)
 # 
 # # full sga list
-# sga_full_list <- st_drop_geometry(sga_bounds_albers) %>%
+# sga_full_list <- st_drop_geometry(sga_bounds_simple_albers) %>%
 #   dplyr::select(grow_area) %>%
 #   dplyr::distinct()
 # 
@@ -691,7 +698,7 @@ print("finished analyzing forecast data")
 
 # see how many sga's we have now
 # length(unique(ndfd_cmu_calcs_data$cmu_name)) # 144
-# length(unique(sga_bounds_albers$grow_area)) # 73
+# length(unique(sga_bounds_simple_albers$grow_area)) # 73
 # length(unique(rainfall_thresh_data$grow_area)) # 48
 # length(unique(ndfd_cmu_calcs_join_data$grow_area)) # 48
 # there are 73-48 = 25 sga without cmus inside

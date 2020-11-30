@@ -35,18 +35,21 @@ data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 
 # ---- 3. use base paths and define projections ----
+# inputs
 # path to cmu spatial inputs
 cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
 
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
 
+# outputs
 # path to cmu spatial outputs
 cmu_spatial_data_output_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
 
 # path to rainfall threshold tabular outputs
 rainfall_thresh_tabular_data_output_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
 
+# projections
 # define epsg of original dataset
 nc_sp_epsg <- 6542
 # https://epsg.io/6542
@@ -105,7 +108,7 @@ cmu_bounds_raw_valid_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_
 # same lengths therefore checks!
 
 # rainfall thresholds for cmu's
-rain_thresh_raw <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"), col_names = TRUE)
+rainfall_thresholds_raw_tidy <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"), col_names = TRUE)
 
 # sga key
 sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "sga_key.csv"), col_names = TRUE)
@@ -116,7 +119,7 @@ cmu_sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "cmu_sga
 
 # ---- 6. join and clean up cmu bounds data ----
 # select only columns we need
-rain_thresh_data <- rain_thresh_raw %>%
+rain_thresh_data <- rainfall_thresholds_raw_tidy %>%
   dplyr::left_join(cmu_sga_key, by = "HA_CLASS") %>%
   dplyr::select(HA_CLASS, cmu_name, rain_in = rainfall_threshold_in, rain_lab = rainfall_threshold_class) %>%
   dplyr::distinct_all()
