@@ -15,6 +15,7 @@ class UserLease(db.Model):
   user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
   ncdmf_lease_id = Column(String(20), nullable=False)
   grow_area_name = Column(String(3))
+  grow_area_desc = Column(String(50))
   cmu_name = Column(String(10), nullable=False)
   rainfall_thresh_in = Column(Float)
   geometry = Column(PointColType)
