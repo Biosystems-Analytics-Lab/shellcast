@@ -1,8 +1,8 @@
 import pytest
 
 from models.User import User
-from models.ClosureProbability import ClosureProbability
-from models.Lease import Lease
+from models.CMUProbability import CMUProbability
+from models.UserLease import UserLease
 from models.Notification import Notification
 
 from routes.cron import sendNotificationsWithAWSSES, NOTIFICATION_HEADER, LEASE_TEMPLATE, NOTIFICATION_FOOTER
@@ -107,18 +107,18 @@ def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
 
   # add a few leases for the user
   leases = [
-    Lease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', rainfall_thresh_in=1.5, geometry=(34.404497, -77.567573)),
-    Lease(user_id=user.id, ncdmf_lease_id='12345', grow_area_name='B02', rainfall_thresh_in=2.5, geometry=(35.207332, -76.523872)),
-    Lease(user_id=user.id, ncdmf_lease_id='82945', grow_area_name='C01', rainfall_thresh_in=1.5, geometry=(36.164344, -75.927864))
+    UserLease(user_id=user.id, ncdmf_lease_id='45678', grow_area_name='A01', cmu_name='U001', rainfall_thresh_in=1.5, geometry=(34.404497, -77.567573)),
+    UserLease(user_id=user.id, ncdmf_lease_id='12345', grow_area_name='B02', cmu_name='U002', rainfall_thresh_in=2.5, geometry=(35.207332, -76.523872)),
+    UserLease(user_id=user.id, ncdmf_lease_id='82945', grow_area_name='C01', cmu_name='U003', rainfall_thresh_in=1.5, geometry=(36.164344, -75.927864))
   ]
   dbSession.add_all(leases)
   dbSession.commit()
 
   # add some closure probabilities for those leases
   probabilities = [
-    ClosureProbability(lease_id=leases[0].id, prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80),
-    ClosureProbability(lease_id=leases[1].id, prob_1d_perc=45, prob_2d_perc=49, prob_3d_perc=49),
-    ClosureProbability(lease_id=leases[2].id, prob_1d_perc=32, prob_2d_perc=33, prob_3d_perc=69)
+    CMUProbability(cmu_name='U001', prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80),
+    CMUProbability(cmu_name='U002', prob_1d_perc=45, prob_2d_perc=49, prob_3d_perc=49),
+    CMUProbability(cmu_name='U003', prob_1d_perc=32, prob_2d_perc=33, prob_3d_perc=69)
   ]
   dbSession.add_all(probabilities)
   dbSession.commit()
