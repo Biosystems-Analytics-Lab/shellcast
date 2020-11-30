@@ -36,15 +36,18 @@ for (package in packages) {
 data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 # ---- 3. use base paths and define projections ----
+# inputs
 # path to ndfd tabular inputs
 ndfd_tabular_data_input_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/ndfd_sco_data_raw/")
 
 # path to nc buffer spatial inputs
 nc_buffer_spatial_input_path <- paste0(data_base_path, "spatial/inputs/state_bounds_data/")
 
+# outputs
 # path to ndfd spatial outputs
 ndfd_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
 
+# projections
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"
 # source: https://spatialreference.org/ref/sr-org/6825/

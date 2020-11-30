@@ -207,12 +207,14 @@ def make_lease_sql_query(data):
         temp_row = data.iloc[0]
 
         # initial string
-        initial_str = "INSERT INTO `ncdmf_leases` (`ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geometry`) VALUES "
+        initial_str = "INSERT INTO `ncdmf_leases` (`ncdmf_lease_id`, `grow_area_name`, `grow_area_desc`, `cmu_name`, `rainfall_thresh_in`, `geometry`) VALUES "
 
         # define temp row string
-        temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\'));'.format(
+        temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', \'{grow_area_desc}\', \'{cmu_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\'));'.format(
                 ncdmf_lease_id = temp_row.ncdmf_lease_id,
                 grow_area_name = temp_row.grow_area_name,
+                grow_area_desc = temp_row.grow_area_desc,
+                cmu_name = temp_row.cmu_name,
                 rainfall_thresh_in = temp_row.rainfall_thresh_in,
                 longitude = round(temp_row.longitude, ndigits = 6),
                 latitude = round(temp_row.latitude, ndigits = 6))
@@ -236,12 +238,14 @@ def make_lease_sql_query(data):
                 temp_row = data.iloc[row]
 
                 # initial string
-                initial_str = "INSERT INTO `ncdmf_leases` (`ncdmf_lease_id`, `grow_area_name`, `rainfall_thresh_in`, `geometry`) VALUES "
+                initial_str = "INSERT INTO `ncdmf_leases` (`ncdmf_lease_id`, `grow_area_name`, `grow_area_desc`, `cmu_name`, `rainfall_thresh_in`, `geometry`) VALUES "
 
                 # define temp row string
-                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\')), '.format(
+                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', \'{grow_area_desc}\', \'{cmu_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\')), '.format(
                         ncdmf_lease_id = temp_row.ncdmf_lease_id,
                         grow_area_name = temp_row.grow_area_name,
+                        grow_area_desc = temp_row.grow_area_desc,
+                        cmu_name = temp_row.cmu_name,
                         rainfall_thresh_in = temp_row.rainfall_thresh_in,
                         longitude = round(temp_row.longitude, ndigits = 6),
                         latitude = round(temp_row.latitude, ndigits = 6))
@@ -254,9 +258,11 @@ def make_lease_sql_query(data):
                 temp_row = data.iloc[row]
 
                 # define temp row string, note comma at end
-                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\')), '.format(
+                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', \'{grow_area_desc}\', \'{cmu_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\')), '.format(
                         ncdmf_lease_id = temp_row.ncdmf_lease_id,
                         grow_area_name = temp_row.grow_area_name,
+                        grow_area_desc = temp_row.grow_area_desc,
+                        cmu_name = temp_row.cmu_name,
                         rainfall_thresh_in = temp_row.rainfall_thresh_in,
                         longitude = round(temp_row.longitude, ndigits = 6),
                         latitude = round(temp_row.latitude, ndigits = 6))
@@ -269,9 +275,11 @@ def make_lease_sql_query(data):
                 temp_row = data.iloc[row]
 
                 # define temp row string, note semi-colon
-                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\'));'.format(
+                temp_row_str = '(\'{ncdmf_lease_id}\', \'{grow_area_name}\', \'{grow_area_desc}\', \'{cmu_name}\', {rainfall_thresh_in}, ST_PointFromText(\'POINT({longitude} {latitude})\'));'.format(
                         ncdmf_lease_id = temp_row.ncdmf_lease_id,
                         grow_area_name = temp_row.grow_area_name,
+                        grow_area_desc = temp_row.grow_area_desc,
+                        cmu_name = temp_row.cmu_name,
                         rainfall_thresh_in = temp_row.rainfall_thresh_in,
                         longitude = round(temp_row.longitude, ndigits = 6),
                         latitude = round(temp_row.latitude, ndigits = 6))

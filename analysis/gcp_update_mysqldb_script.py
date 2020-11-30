@@ -20,6 +20,7 @@ pymysql docs: https://pymysql.readthedocs.io/en/latest/
 # %% to do list
 
 
+
 # %% start script
 
 print("starting gcp mysql db update")
@@ -45,25 +46,31 @@ data_base_path = Config.DATA_PATH
 # %% use base path
 
 # sga data path
-sga_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/sga_calcs/ndfd_sga_calcs.csv"
+# sga_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/sga_calcs/ndfd_sga_calcs.csv"
+
+# cmu data path
+cmu_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/cmu_calcs/ndfd_cmu_calcs.csv"
 
 # lease spatial data
 lease_spatial_data_path = data_base_path + "spatial/outputs/ncdmf_data/lease_centroids/lease_centroids_db_wgs84.csv"
 
 # lease data path
-lease_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/lease_calcs/ndfd_lease_calcs.csv"
+# lease_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/lease_calcs/ndfd_lease_calcs.csv"
 
 
 # %% load in data
 
 # sga calcs data
-sga_data = pandas.read_csv(sga_data_path)
+# sga_data = pandas.read_csv(sga_data_path)
+
+# cmu calcs data
+cmu_data = pandas.read_csv(cmu_data_path)
 
 # lease spatial data
 lease_spatial_data = pandas.read_csv(lease_spatial_data_path)
 
 # lease calcs data
-lease_data = pandas.read_csv(lease_data_path)
+# lease_data = pandas.read_csv(lease_data_path)
 
 
 # %% create engine (for sqlalchemy - to upload whole dataframe to mysql db)
@@ -109,10 +116,10 @@ connection = pymysql.connect(host = DevConfig.HOST,
 # sga_data = sga_data[1:5] # for testing
 
 # add df to mysql db
-sga_data.to_sql('sga_min_max', engine, if_exists = 'append', index = False)
+# sga_data.to_sql('sga_min_max', engine, if_exists = 'append', index = False)
 
 # print status
-print("added sga min and max data to mysql db")
+# print("added sga min and max data to mysql db")
 # print("did not add sga min and max data to mysql db")
 
 # create cursor to print out status of update
@@ -125,6 +132,18 @@ print("added sga min and max data to mysql db")
 # sga_result = sga_cursor.fetchall()
 # for i in sga_result:
 #    print(i)
+
+
+# %% update cmu probabilities table
+
+# cmu_data = cmu_data[1:5] # for testing
+
+# add df to mysql db
+cmu_data.to_sql('cmu_probabilities', engine, if_exists = 'append', index = False)
+
+# print status
+print("added cmu data to mysql db")
+# print("did not add cmu data to mysql db")
 
 
 # %% update ncdmf leases table (i.e., all possible leases from the ncdmf rest api)
@@ -183,44 +202,44 @@ else:
 # %% update closure_probabilities table
 
 # create a cursor to get current leases in db
-user_leases_cursor = connection.cursor()
+# user_leases_cursor = connection.cursor()
 
 # execute query
-user_leases_current_sql = "SELECT id, ncdmf_lease_id FROM user_leases"
-user_leases_cursor.execute(user_leases_current_sql)
+# user_leases_current_sql = "SELECT id, ncdmf_lease_id FROM user_leases"
+# user_leases_cursor.execute(user_leases_current_sql)
 
 # save current lease result
-user_leases_current_result = user_leases_cursor.fetchall()
+# user_leases_current_result = user_leases_cursor.fetchall()
 
 # convert to curent lease result to pandas df
-user_leases_current_df = pandas.DataFrame(user_leases_current_result)
+# user_leases_current_df = pandas.DataFrame(user_leases_current_result)
 
 # lease calcs df select only needed columns
-lease_data_sel = lease_data.drop(columns = 'day').reset_index(drop=True)
+# lease_data_sel = lease_data.drop(columns = 'day').reset_index(drop=True)
 
 # rename to match current lease df
-lease_data_sel.columns = ['ncdmf_lease_id', 'prob_1d_perc', 'prob_2d_perc', 'prob_3d_perc']
+# lease_data_sel.columns = ['ncdmf_lease_id', 'prob_1d_perc', 'prob_2d_perc', 'prob_3d_perc']
 
 # set index of lease_data_sel
-lease_data_sel_fix = lease_data_sel.set_index('ncdmf_lease_id')
+# lease_data_sel_fix = lease_data_sel.set_index('ncdmf_lease_id')
 
 # join lease_data_sel to user_leases_current_df
-leases_join_df = user_leases_current_df.set_index(
-        'ncdmf_lease_id').join(
-                lease_data_sel_fix, how = 'left', on = 'ncdmf_lease_id').set_index(
-                        'id').reset_index(drop = False)
+#leases_join_df = user_leases_current_df.set_index(
+#        'ncdmf_lease_id').join(
+#                lease_data_sel_fix, how = 'left', on = 'ncdmf_lease_id').set_index(
+#                        'id').reset_index(drop = False)
 
 # finalize data to add to mysql db
-closure_prob_data = pandas.DataFrame({'lease_id' : leases_join_df['id'],
-                                     'prob_1d_perc' : leases_join_df['prob_1d_perc'],
-                                     'prob_2d_perc' : leases_join_df['prob_2d_perc'],
-                                     'prob_3d_perc' : leases_join_df['prob_3d_perc']})
+#closure_prob_data = pandas.DataFrame({'lease_id' : leases_join_df['id'],
+#                                     'prob_1d_perc' : leases_join_df['prob_1d_perc'],
+#                                     'prob_2d_perc' : leases_join_df['prob_2d_perc'],
+#                                     'prob_3d_perc' : leases_join_df['prob_3d_perc']})
 
 # add df to mysql db
-closure_prob_data.to_sql('closure_probabilities', engine, if_exists = 'append', index = False)
+#closure_prob_data.to_sql('closure_probabilities', engine, if_exists = 'append', index = False)
 
 # print status
-print("added user lease data to mysql db")
+#print("added user lease data to mysql db")
 
 # to_sql can handle NaN to NULL conversion!
 # in most cases there should not be NULL values

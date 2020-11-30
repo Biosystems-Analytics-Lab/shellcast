@@ -19,9 +19,9 @@
 
 # TODO remove notification testing factor when testing is over
 notification_flag <- "production" # or "testing"
-# notification_factor <- 3
 notification_dist_min <- 20 # for notification_flag <- "testing"
 notification_dist_max <- 100 # for notification_flag <- "testing"
+# notification_factor <- 3
 
 
 # ---- 1. install and load packages as necessary ----
@@ -44,6 +44,7 @@ for (package in packages) {
 data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 
 # ---- 3. use base paths and define projections ----
+# inputs
 # path to ndfd spatial inputs
 ndfd_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
 
@@ -54,11 +55,12 @@ sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data
 cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
 
 # path to lease bounds spatial inputs
-lease_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds/")
+lease_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_centroids/")
 
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
 
+# outputs
 # path to ndfd spatial outputs
 ndfd_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
 
@@ -74,6 +76,7 @@ lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_s
 # path to ndfd tabular outputs appended
 ndfd_tabular_data_appended_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data_appended/")
 
+# projections
 # define proj4 string for ndfd data
 ndfd_proj4 = "+proj=lcc +lat_1=25 +lat_2=25 +lat_0=25 +lon_0=-95 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs"
 # source: https://spatialreference.org/ref/sr-org/6825/
@@ -178,7 +181,7 @@ ndfd_qpf_raster_3day_nc_albers <- raster::raster(paste0(ndfd_spatial_data_input_
 sga_bounds_buffer_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_10kmbuf_albers.shp"))
 
 # sga data
-sga_bounds_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_simple_albers.shp"))
+sga_bounds_simple_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_simple_albers.shp"))
 
 # cmu bounds buffered
 cmu_bounds_buffer_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_10kmbuf_albers.shp"))
@@ -190,19 +193,19 @@ cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_alb
 # use latest date to read in most recent data
 # lease_data_albers <- st_read(paste0(lease_spatial_data_input_path, "leases_albers_", latest_lease_date_uct_str, ".shp")) %>%
 #   st_set_crs(na_albers_epsg) # epsg code wasn't assigned if this code isn't included, includes date in file name
-lease_data_albers <- st_read(paste0(lease_spatial_data_input_path, "lease_bounds_albers.shp"))
+lease_centroids_albers <- st_read(paste0(lease_spatial_data_input_path, "lease_centroids_albers.shp"))
 
 # all spatial data should have crs = 5070
 # check crs
 # st_crs(sga_bounds_buffer_albers)
-# st_crs(sga_bounds_albers)
+# st_crs(sga_bounds_simple_albers)
 # st_crs(cmu_bounds_buffer_albers)
 # st_crs(cmu_bounds_albers)
 # st_crs(lease_data_albers)
 
 # tabular data
 # rainfall thresholds
-rainfall_threshold_data_raw <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"))
+rainfall_thresholds_raw_tidy <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds_raw_tidy.csv"))
 
 # cmu sga key
 cmu_sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "cmu_sga_key.csv"))
@@ -270,11 +273,14 @@ cmu_sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "cmu_sga
 # writeRaster(ndfd_qpf_raster_3day_sga_wgs84, paste0(ndfd_spatial_data_output_path, "qpf_", latest_ndfd_date_uct, "_72hr_sga_wgs84.tif"), overwrite = TRUE)
 
 
-# ---- 9. crop sga raster ndfd data to cmu bounds ----
+# ---- 9. crop sga or nc raster ndfd data to cmu bounds ----
 # 1-day pop12 for 1-day, 2-day, and 3-day forecasts
-ndfd_pop12_raster_1day_cmu_albers <- raster::mask(ndfd_pop12_raster_1day_sga_albers, mask = cmu_bounds_buffer_albers)
-ndfd_pop12_raster_2day_cmu_albers <- raster::mask(ndfd_pop12_raster_2day_sga_albers, mask = cmu_bounds_buffer_albers)
-ndfd_pop12_raster_3day_cmu_albers <- raster::mask(ndfd_pop12_raster_3day_sga_albers, mask = cmu_bounds_buffer_albers)
+# ndfd_pop12_raster_1day_cmu_albers <- raster::mask(ndfd_pop12_raster_1day_sga_albers, mask = cmu_bounds_buffer_albers)
+# ndfd_pop12_raster_2day_cmu_albers <- raster::mask(ndfd_pop12_raster_2day_sga_albers, mask = cmu_bounds_buffer_albers)
+# ndfd_pop12_raster_3day_cmu_albers <- raster::mask(ndfd_pop12_raster_3day_sga_albers, mask = cmu_bounds_buffer_albers)
+ndfd_pop12_raster_1day_cmu_albers <- raster::mask(ndfd_pop12_raster_1day_nc_albers, mask = cmu_bounds_buffer_albers)
+ndfd_pop12_raster_2day_cmu_albers <- raster::mask(ndfd_pop12_raster_2day_nc_albers, mask = cmu_bounds_buffer_albers)
+ndfd_pop12_raster_3day_cmu_albers <- raster::mask(ndfd_pop12_raster_3day_nc_albers, mask = cmu_bounds_buffer_albers)
 
 # plot to check
 # plot(ndfd_pop12_raster_1day_cmu_albers)
@@ -282,9 +288,12 @@ ndfd_pop12_raster_3day_cmu_albers <- raster::mask(ndfd_pop12_raster_3day_sga_alb
 # plot(ndfd_pop12_raster_3day_cmu_albers)
 
 # 1-day qpf for 1-day, 2-day, and 3-day forecasts
-ndfd_qpf_raster_1day_cmu_albers <-  raster::mask(ndfd_qpf_raster_1day_sga_albers, mask = cmu_bounds_buffer_albers)
-ndfd_qpf_raster_2day_cmu_albers <-  raster::mask(ndfd_qpf_raster_2day_sga_albers, mask = cmu_bounds_buffer_albers)
-ndfd_qpf_raster_3day_cmu_albers <-  raster::mask(ndfd_qpf_raster_3day_sga_albers, mask = cmu_bounds_buffer_albers)
+# ndfd_qpf_raster_1day_cmu_albers <-  raster::mask(ndfd_qpf_raster_1day_sga_albers, mask = cmu_bounds_buffer_albers)
+# ndfd_qpf_raster_2day_cmu_albers <-  raster::mask(ndfd_qpf_raster_2day_sga_albers, mask = cmu_bounds_buffer_albers)
+# ndfd_qpf_raster_3day_cmu_albers <-  raster::mask(ndfd_qpf_raster_3day_sga_albers, mask = cmu_bounds_buffer_albers)
+ndfd_qpf_raster_1day_cmu_albers <-  raster::mask(ndfd_qpf_raster_1day_nc_albers, mask = cmu_bounds_buffer_albers)
+ndfd_qpf_raster_2day_cmu_albers <-  raster::mask(ndfd_qpf_raster_2day_nc_albers, mask = cmu_bounds_buffer_albers)
+ndfd_qpf_raster_3day_cmu_albers <-  raster::mask(ndfd_qpf_raster_3day_nc_albers, mask = cmu_bounds_buffer_albers)
 
 # plot to check
 # plot(ndfd_qpf_raster_1day_cmu_albers)
@@ -350,14 +359,18 @@ valid_period_list <- c(24, 48, 72)
 ndfd_date_uct <- lubridate::today(tzone = "UCT")
 
 # rasters lists
-pop12_cmu_raster_list <- c(ndfd_pop12_raster_1day_cmu_albers, ndfd_pop12_raster_2day_cmu_albers, ndfd_pop12_raster_3day_cmu_albers)
-qpf_cmu_raster_list <- c(ndfd_qpf_raster_1day_cmu_albers, ndfd_qpf_raster_2day_cmu_albers, ndfd_qpf_raster_3day_cmu_albers)
+pop12_cmu_raster_list <- c(ndfd_pop12_raster_1day_cmu_albers, 
+                           ndfd_pop12_raster_2day_cmu_albers, 
+                           ndfd_pop12_raster_3day_cmu_albers)
+qpf_cmu_raster_list <- c(ndfd_qpf_raster_1day_cmu_albers, 
+                         ndfd_qpf_raster_2day_cmu_albers, 
+                         ndfd_qpf_raster_3day_cmu_albers)
 
 # number of cmu's
 num_cmu <- length(cmu_bounds_albers$cmu_name)
 
 # row dimentions
-num_cmu_row <- length(valid_period_list)*num_cmu
+num_cmu_row <- length(valid_period_list) * num_cmu
 
 # set row number and start iterator
 cmu_row_num_list <- seq(1:num_cmu_row)
@@ -480,7 +493,7 @@ for (i in 1:length(valid_period_list)) {
     # check if testing mode
     # if not testing mode calculate probability of closure as you would in production
     if (notification_flag == "production") {
-      temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in/temp_cmu_qpf_result)), 1) # from equation 1 in proposal
+      temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in / temp_cmu_qpf_result)), 1) # from equation 1 in proposal
     }
 
     # if testing mode then more frequent approach to ensure more frequent notifications
@@ -521,36 +534,75 @@ stop_time - start_time
 print(paste0(ndfd_date_uct, " spatial averaging complete"))
 
 
-# ---- 12. export area weighted ndfd cmu calcs ----
-# export calcs for 1-day, 2-day, and 3-day forecasts
-# write_csv(ndfd_cmu_calcs_data, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs_", latest_ndfd_date_uct_str, ".csv")) # includes date in file name
-write_csv(ndfd_cmu_calcs_data, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs.csv"))
-
-
-# ---- 13. select area weighted ndfd cmu calcs for leases ----
-# find leases that are in cmus
-ndfd_lease_calcs_data_raw <- cmu_bounds_albers %>%
-  st_intersection(lease_data_albers) %>%
-  dplyr::select(lease_id, cmu_name) %>%
-  st_drop_geometry() %>%
-  # group_by(lease_id) %>%
-  # count()
-  dplyr::left_join(ndfd_cmu_calcs_data, by = "cmu_name") %>%
-  dplyr::mutate(duplicate_id = paste0(lease_id, "_", rainfall_thresh_in)) # make a unique id for anti-join
-
-# final tidy up of lease calcs for database
-ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw %>%
+# ---- 12. reformat cmu calcs for db ----
+# cmu_name, prob_1d_perc, prob_2d_perc, prob_3d_perc
+ndfd_cmu_calcs_data_spread <- ndfd_cmu_calcs_data %>%
   dplyr::mutate(day = ymd(datetime_uct),
                 prob_close = round(prob_close_perc, 0)) %>%
-  dplyr::select(lease_id, day, valid_period_hrs, prob_close) %>%
+  dplyr::select(cmu_name, day, valid_period_hrs, prob_close) %>%
   dplyr::mutate(valid_period = case_when(valid_period_hrs == 24 ~ "prob_1d_perc",
                                          valid_period_hrs == 48 ~ "prob_2d_perc",
                                          valid_period_hrs == 72 ~ "prob_3d_perc")) %>%
   dplyr::select(-valid_period_hrs) %>%
-  tidyr::pivot_wider(id_cols = c(lease_id, day),
+  tidyr::pivot_wider(id_cols = c(cmu_name, day),
                      names_from = valid_period,
                      values_from = prob_close,
-                     values_fn = max) # will take the max prob. closure value if there are multiple
+                     values_fn = max) %>% # will take the max prob. closure value if there are multiple
+  dplyr::select(-day)
+
+# ---- 13. export area weighted, spreaded ndfd cmu calcs ----
+# export calcs for 1-day, 2-day, and 3-day forecasts
+# write_csv(ndfd_cmu_calcs_data, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs_", latest_ndfd_date_uct_str, ".csv")) # includes date in file name
+write_csv(ndfd_cmu_calcs_data_spread, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs.csv"))
+
+print("finished analyzing forecast data")
+
+
+# ---- OLD CODE ----
+
+# ---- extra 13. select area weighted ndfd cmu calcs for leases ----
+# find leases that are in cmus
+# ndfd_lease_calcs_data_raw <- cmu_bounds_albers %>%
+#   st_intersection(lease_centroids_albers) %>%
+#   dplyr::select(lease_id, cmu_name) %>%
+#   st_drop_geometry()
+
+# check for duplicates where leases overlap two cmus
+# duplicate_list <- ndfd_lease_calcs_data_raw %>%
+#   dplyr::ungroup() %>%
+#   dplyr::group_by(lease_id) %>%
+#   dplyr::count() %>%
+#   dplyr::filter(n > 3) %>%
+#   dplyr::select(- n) %>%
+#   dplyr::distinct()
+# length zero = no overlap
+
+# if no duplicates then finalizel
+# if (dim(duplicate_list)[1] == 0) {
+#   
+#   ndfd_lease_calcs_data 
+# }
+
+# if duplicates then need to find and deal with them
+# else {
+#   
+#   
+# }
+
+
+# final tidy up of lease calcs for database
+# ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw %>%
+#   dplyr::mutate(day = ymd(datetime_uct),
+#                 prob_close = round(prob_close_perc, 0)) %>%
+#   dplyr::select(lease_id, day, valid_period_hrs, prob_close) %>%
+#   dplyr::mutate(valid_period = case_when(valid_period_hrs == 24 ~ "prob_1d_perc",
+#                                          valid_period_hrs == 48 ~ "prob_2d_perc",
+#                                          valid_period_hrs == 72 ~ "prob_3d_perc")) %>%
+#   dplyr::select(-valid_period_hrs) %>%
+#   tidyr::pivot_wider(id_cols = c(lease_id, day),
+#                      names_from = valid_period,
+#                      values_from = prob_close,
+#                      values_fn = max) # will take the max prob. closure value if there are multiple
 # some leases might overlap two cmus so account for that by taking cmu with minimum rainfall threshold
 # for example lease_id = 64-75B includes NB_4 (2 in depth) and NB_5 (4 in depth/emergency)
 
@@ -570,19 +622,19 @@ ndfd_lease_calcs_data_spread <- ndfd_lease_calcs_data_raw %>%
 
 # final dataset
 # ndfd_lease_calcs_data <- rbind(ndfd_lease_calcs_data_spread, ndfd_leases_ignored)
-ndfd_lease_calcs_data <- ndfd_lease_calcs_data_spread
+# ndfd_lease_calcs_datandfd_lease_calcs_data <- ndfd_lease_calcs_data_spread
 
 # check unique values
 # length(ndfd_lease_calcs_data$lease_id) # 483 on 20200806
 # length(unique(ndfd_lease_calcs_data$lease_id)) # 483 ok!
 
 
-# ---- 14. export lease data ----
+# ---- extra 14. export lease data ----
 # write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_calcs/ndfd_lease_calcs_", latest_ndfd_date_uct_str, ".csv")) # includes date in file name
-write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_calcs/ndfd_lease_calcs.csv"))
+# write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_calcs/ndfd_lease_calcs.csv"))
 
 
-# ---- 15. save ignored leases ----
+# ---- extra 15. save ignored leases ----
 
 # save ignored leases
 # ndfd_leases_ignored_data <- lease_data_albers %>%
@@ -596,7 +648,7 @@ write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_ca
 #   st_drop_geometry()
 
 
-# ---- 16. export data for ignored leases ----
+# ---- extra 16. export data for ignored leases ----
 
 # export ignored lease data
 # st_write(ndfd_leases_ignored_data, paste0(lease_spatial_data_output_path, "lease_bounds_ignored_", latest_ndfd_date_uct_str, ".shp"))
@@ -605,41 +657,38 @@ write_csv(ndfd_lease_calcs_data, paste0(ndfd_tabular_data_output_path, "lease_ca
 # write_csv(ndfd_leases_ignored_tab_data, paste0(lease_tabular_data_output_path, "lease_bounds_ignored_", latest_ndfd_date_uct_str, ".csv"))
 
 
-# ---- 17. append data for long-term analysis ----
+# ---- extra 17. append data for long-term analysis ----
 # reformat cmu data
-ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
-  dplyr::select(-row_num) %>%
-  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
+# ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
+#   dplyr::select(-row_num) %>%
+#   dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
 
 # reformat sga data
-ndfd_sga_calcs_data_to_append <- ndfd_sga_calcs_data %>%
-  ungroup() %>%
-  dplyr::mutate(datetime_uct = rep(ndfd_date_uct, dim(ndfd_sga_calcs_data)[1]),
-                flag = rep(notification_flag, dim(ndfd_sga_calcs_data)[1])) %>%
-  dplyr::select(grow_area_name, datetime_uct, min_1d_prob:max_3d_prob, flag)
+# ndfd_sga_calcs_data_to_append <- ndfd_sga_calcs_data %>%
+#   ungroup() %>%
+#   dplyr::mutate(datetime_uct = rep(ndfd_date_uct, dim(ndfd_sga_calcs_data)[1]),
+#                 flag = rep(notification_flag, dim(ndfd_sga_calcs_data)[1])) %>%
+#   dplyr::select(grow_area_name, datetime_uct, min_1d_prob:max_3d_prob, flag)
 
 # reformat lease data
-ndfd_lease_calcs_data_to_append <- ndfd_lease_calcs_data %>%
-  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_lease_calcs_data)[1])) %>%
-  dplyr::select(lease_id, datetime_uct = day, prob_1d_perc:flag)
+# ndfd_lease_calcs_data_to_append <- ndfd_lease_calcs_data %>%
+#   dplyr::mutate(flag = rep(notification_flag, dim(ndfd_lease_calcs_data)[1])) %>%
+#   dplyr::select(lease_id, datetime_uct = day, prob_1d_perc:flag)
 
 # append all three datasets
-write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
-write_csv(ndfd_sga_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_sga_calcs_appended.csv"), append = TRUE)
-write_csv(ndfd_lease_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_lease_calcs_appended.csv"), append = TRUE)
+# write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
+# write_csv(ndfd_sga_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_sga_calcs_appended.csv"), append = TRUE)
+# write_csv(ndfd_lease_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_lease_calcs_appended.csv"), append = TRUE)
 
-
-
-print("finished analyzing forecast data")
 
 # ---- extra 1. min and max ndfd sga calcs ----
 # use rainfall threshold data to create a lookup table
-# cmu_sga_lookup <- rainfall_threshold_data_raw %>%
+# cmu_sga_lookup <- rainfall_thresholds_raw_tidy %>%
 #   dplyr::left_join(cmu_sga_key, by = "HA_CLASS")
 #   dplyr::select(cmu_name, sga_name)
 # 
 # # full sga list
-# sga_full_list <- st_drop_geometry(sga_bounds_albers) %>%
+# sga_full_list <- st_drop_geometry(sga_bounds_simple_albers) %>%
 #   dplyr::select(grow_area) %>%
 #   dplyr::distinct()
 # 
@@ -649,7 +698,7 @@ print("finished analyzing forecast data")
 
 # see how many sga's we have now
 # length(unique(ndfd_cmu_calcs_data$cmu_name)) # 144
-# length(unique(sga_bounds_albers$grow_area)) # 73
+# length(unique(sga_bounds_simple_albers$grow_area)) # 73
 # length(unique(rainfall_thresh_data$grow_area)) # 48
 # length(unique(ndfd_cmu_calcs_join_data$grow_area)) # 48
 # there are 73-48 = 25 sga without cmus inside
