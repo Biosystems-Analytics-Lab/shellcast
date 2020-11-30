@@ -2,9 +2,8 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
 from models import db
-from models.ClosureProbability import ClosureProbability
-from models.GrowArea import GrowArea
-from models.SGAMinMaxProbability import SGAMinMaxProbability
+from models.CMU import CMU
+from models.CMUProbability import CMUProbability
 from models.UserLease import UserLease
 from models.NCDMFLease import NCDMFLease
 
@@ -58,30 +57,29 @@ def getLeaseClosureProbabilities(user):
   leases = db.session.query(UserLease).filter_by(user_id=user.id, deleted=False).all()
   def getLeaseProbForLease(lease):
     probDict = {'ncdmf_lease_id': lease.ncdmf_lease_id, 'geometry': lease.geometry}
-    if (len(lease.closureProbabilities) >= 1):
-      # get the latest closure probability for the lease
-      prob = lease.closureProbabilities[0]
-      probDict['prob_1d_perc'] = prob.prob_1d_perc
-      probDict['prob_2d_perc'] = prob.prob_2d_perc
-      probDict['prob_3d_perc'] = prob.prob_3d_perc
+    leaseProb = lease.getLatestProbability()
+    if (leaseProb):
+      probDict['prob_1d_perc'] = leaseProb.prob_1d_perc
+      probDict['prob_2d_perc'] = leaseProb.prob_2d_perc
+      probDict['prob_3d_perc'] = leaseProb.prob_3d_perc
     return probDict
   leaseList = list(map(getLeaseProbForLease, leases))
   return jsonify(leaseList)
 
-@api.route('/growAreaProbs')
-def getGrowAreaProbabilities():
+@api.route('/growingUnitProbs')
+def getGrowingUnitProbabilities():
   """
-  Returns the min/max closure probabilties for each grow area.
+  Returns the most recent closure probabilties for each growing unit.
   """
-  # TODO make sure this returns one (and only one) closure probability for each grow area
-  numberOfGrowAreas = db.session.query(GrowArea).count()
-  growAreaProbs = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).limit(numberOfGrowAreas)
-  growAreaProbsAsDicts = {}
-  for area in growAreaProbs:
-    sgaName = area.grow_area_name
-    growAreaProbsAsDicts[sgaName] = area.asDict()
+  # TODO make sure this returns one (and only one) closure probability for each growing unit
+  numGrowingUnits = db.session.query(CMU).count()
+  growingUnitProbs = db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).limit(numGrowingUnits)
+  growingUnitProbsAsDicts = {}
+  for unit in growingUnitProbs:
+    cmuName = unit.cmu_name
+    growingUnitProbsAsDicts[cmuName] = unit.asDict()
 
-  return jsonify(growAreaProbsAsDicts)
+  return jsonify(growingUnitProbsAsDicts)
 
 @api.route('/leases', methods=['GET', 'POST', 'DELETE'])
 @userRequired
@@ -95,6 +93,7 @@ def userLeases(user):
       'id': lease.id,
       'ncdmf_lease_id': lease.ncdmf_lease_id,
       'grow_area_name': lease.grow_area_name,
+      'cmu_name': lease.cmu_name,
       'rainfall_thresh_in': lease.rainfall_thresh_in,
       'geometry': lease.geometry
     }

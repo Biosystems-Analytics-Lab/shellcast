@@ -16,7 +16,7 @@
   <div class="text-justify">
     <p id="disclaimer">
       ShellCast forecasts offer predictions that are in no way indicative of whether or not a
-      growing area will actually be temporarily closed for harvest. Please only use ShellCast 
+      growing unit will actually be temporarily closed for harvest. Please only use ShellCast 
       for planning purposes. For official information on closures, refer to the
       <a href="http://portal.ncdenr.org/web/mf/proclamations-polluted-areas">North Carolina Division of Marine Fisheries</a> 
       or the <a href="https://ncdenr.maps.arcgis.com/apps/webappviewer/index.html?id=5759aa19d7484a3b82a8e440fba643aa">Shellfish Sanitation Temporary Closure Public Viewer</a>.
@@ -33,11 +33,11 @@
       </div>
       <a href="#closure-tables">Table View</a>
     </div>
-    <p>Growing areas shown below are colored by % chance of closure. The colors are defined in a legend on the map. For more information on the forecast, see the <a href="/about">About page</a>.</p>
+    <p>Growing units shown below are colored by % chance of closure. The colors are defined in a legend on the map. For more information on the forecast, see the <a href="/about">About page</a>.</p>
   </div>
 
   <div id="closure-map"></div>
-  <label class="sr-only" for="closure-map" id="Map alt text">A satellite image of North Carolina with shellfish growing areas colored based on the percent chance of temporary harvest closure.</label>
+  <label class="sr-only" for="closure-map" id="Map alt text">A satellite image of North Carolina with shellfish growing units colored based on the percent chance of temporary harvest closure.</label>
 
   <br>
 
@@ -74,37 +74,33 @@
       </p>
     </div>
 
-    <div id="area-table-div">
-      <div id="area-table-toolbar">
-        <h4>NCDMF Shellfish Growing Areas</h4>
+    <div id="growing-unit-table-div">
+      <div id="growing-unit-table-toolbar">
+        <h4>NCDMF Shellfish Growing Units</h4>
       </div>
       <table
-        id="area-table"
+        id="growing-unit-table"
         data-classes="table table-bordered table-hover table-sm"
         data-toggle="table"
         data-search="true"
         data-height="200"
-        data-toolbar="#area-table-toolbar">
+        data-toolbar="#growing-unit-table-toolbar">
         <thead>
           <tr>
-            <th data-sortable="true" data-field="grow_area">Grow Area</th>
-            <th data-field="min_max_1d_prob">1-day Min / Max (%)</th>
-            <th data-field="min_max_2d_prob">2-day Min / Max (%)</th>
-            <th data-field="min_max_3d_prob">3-day Min / Max (%)</th>
+            <th data-sortable="true" data-field="cmu_name">Growing Unit</th>
+            <th data-field="prob_1d_perc">1-day (%)</th>
+            <th data-field="prob_2d_perc">2-day (%)</th>
+            <th data-field="prob_3d_perc">3-day (%)</th>
           </tr>
         </thead>
       </table>
     </div>
 
-    <div id="area-table-explanation">
+    <div id="growing-unit-table-explanation">
       <p>
-        The forecasts shown provide the minimum and maximum percent chance of
-        temporary closure for leases in each of the conditionally approved NC
-        Division of Marine Fisheries shellfish growing areas. Individual
-        leases within a larger shellfish growing area can have slightly
-        different forecasts due to variation in rainfall forecasts and
-        temporary closure criteria. As a result, there can be more than one
-        percent chance of closure within shellfish growing areas.
+        The forecasts shown provide the percent chance of temporary closure
+        for leases in each of the conditionally approved NC Division of
+        Marine Fisheries shellfish growing units.
       </p>
     </div>
 

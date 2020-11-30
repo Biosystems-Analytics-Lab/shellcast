@@ -8,7 +8,6 @@ from botocore.exceptions import ClientError
 
 from models import db
 from models.User import User
-from models.ClosureProbability import ClosureProbability
 from models.Notification import Notification
 
 from routes.authentication import cronOnly
@@ -127,10 +126,10 @@ def sendNotifications():
     needToSendNotification = False
     # for each of the user's leases
     for lease in user.leases:
-      # if the lease has not been deleted AND probabilities have been calculated for the lease
-      if (not lease.deleted and len(lease.closureProbabilities) >= 1):
-        # get the latest closure probability for the lease
-        prob = lease.closureProbabilities[0]
+      # get the latest closure probability for the lease
+      prob = lease.getLatestProbability()
+      # if the lease has not been deleted and there's a probability for the lease
+      if (not lease.deleted and prob):
         # if any of the day probs are >= the user's prob preference
         if ((prob.prob_1d_perc and prob.prob_1d_perc >= user.prob_pref) or
             (prob.prob_2d_perc and prob.prob_2d_perc >= user.prob_pref) or

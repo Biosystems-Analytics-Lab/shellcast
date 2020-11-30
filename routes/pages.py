@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, current_app
 from models import db
-from models.SGAMinMaxProbability import SGAMinMaxProbability
+from models.CMUProbability import CMUProbability
 from models.PhoneServiceProvider import PhoneServiceProvider
 
 from datetime import datetime, timezone, timedelta
@@ -12,7 +12,7 @@ SECONDS_IN_HOURS = 3600
 pages = Blueprint('', __name__)
 @pages.route('/')
 def indexPage():
-  lastGrowAreaProb = db.session.query(SGAMinMaxProbability).order_by(SGAMinMaxProbability.id.desc()).first()
+  lastGrowingUnitProb = db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).first()
   templateVals = {
     'mapsAPIKey': current_app.config['MAPS_API_KEY'],
     'lastUpdated': 'No calculations run yet',
@@ -21,8 +21,8 @@ def indexPage():
     'day2': '?',
     'day3': '?'
   }
-  if (lastGrowAreaProb):
-    lastUpdatedTimeUTC = lastGrowAreaProb.updated.replace(tzinfo=timezone.utc)
+  if (lastGrowingUnitProb):
+    lastUpdatedTimeUTC = lastGrowingUnitProb.updated.replace(tzinfo=timezone.utc)
     curTimeUTC = datetime.now(timezone.utc)
     duration = curTimeUTC - lastUpdatedTimeUTC
     durationSecs = duration.total_seconds()

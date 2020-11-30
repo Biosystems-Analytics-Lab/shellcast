@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 from models import db
 from models.PointColType import PointColType
 
+from models.CMUProbability import CMUProbability
+
 class UserLease(db.Model):
   __tablename__ = 'user_leases'
   __table_args__ = (UniqueConstraint('user_id', 'ncdmf_lease_id', name='unique_leases_per_user'),)
@@ -31,6 +33,10 @@ class UserLease(db.Model):
       'geometry': self.geometry,
       'deleted': self.deleted
     }
+
+  def getLatestProbability(self):
+    leaseProb = db.session.query(CMUProbability).filter_by(cmu_name=self.cmu_name).order_by(CMUProbability.id.desc()).first()
+    return leaseProb
 
   def __repr__(self):
     return '<UserLease: {}, {}, {}, {}>'.format(self.user_id, self.ncdmf_lease_id, self.grow_area_name, self.cmu_name)
