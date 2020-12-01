@@ -310,9 +310,23 @@ function getColor(value) {
 
   firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
+      // show the leases table and explanation
+      document.getElementById('lease-table-div').style.display = 'block';
+      document.getElementById('lease-table-explanation').style.display = 'block';
+
+      // hide the "Create Account" message
+      document.getElementById('create-account-message').style.display = 'none';
+
       const leaseData = await getLeaseData();
       initLeaseTable(leaseData);
       addLeaseDataToMap(leaseData);
+    } else {
+      // hide the leases table and explanation
+      document.getElementById('lease-table-div').style.display = 'none';
+      document.getElementById('lease-table-explanation').style.display = 'none';
+
+      // show the "Create Account" message
+      document.getElementById('create-account-message').style.display = 'block';
     }
   });
 })();
