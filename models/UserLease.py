@@ -29,6 +29,7 @@ class UserLease(db.Model):
     return {
       'ncdmf_lease_id': self.ncdmf_lease_id,
       'grow_area_name': self.grow_area_name,
+      'grow_area_desc': self.grow_area_desc,
       'cmu_name': self.cmu_name,
       'rainfall_thresh_in': self.rainfall_thresh_in,
       'geometry': self.geometry,

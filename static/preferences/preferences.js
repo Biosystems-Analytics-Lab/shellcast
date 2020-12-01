@@ -260,7 +260,17 @@ function createLeaseInfoEl(lease) {
             </div>
 
             <div class="mb-3">
-              <label for="lease-${lease.id}-rainfall-threshold">Rainfall Threshold (inches)</label>
+              <label for="lease-${lease.id}-grow-area-desc">Growing Area Description</label>
+              <input type="text" class="form-control" id="lease-${lease.id}-grow-area-desc" value="${lease.grow_area_desc}" readonly>
+            </div>
+
+            <div class="mb-3">
+              <label for="lease-${lease.id}-grow-unit">NC Division of Marine Fisheries Shellfish Growing Unit</label>
+              <input type="text" class="form-control" id="lease-${lease.id}-grow-unit" value="${lease.cmu_name}" readonly>
+            </div>
+
+            <div class="mb-3">
+              <label for="lease-${lease.id}-rainfall-threshold">Lease Closure Rainfall Threshold (inches)</label>
               <input type="text" class="form-control" id="lease-${lease.id}-rainfall-threshold" value="${lease.rainfall_thresh_in}" readonly>
             </div>
             <small class="form-text text-muted">
