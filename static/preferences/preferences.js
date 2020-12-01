@@ -114,7 +114,7 @@ function maskPhoneNumber(phoneNumber='') {
  */
 function generateExampleNotification(noNotifications, selectedProb) {
   if (noNotifications) {
-    return '<p>-- You will not receive any notifications for this lease. --</p>';
+    return '<p>-- You will not receive any notifications. --</p>';
   }
   return `<pre>Lease: ABC-123\n  1-day: ${selectedProb + 10}%\n  2-day: ${selectedProb + 13}%\n  3-day: ${selectedProb + 19}%</pre>`;
 }
