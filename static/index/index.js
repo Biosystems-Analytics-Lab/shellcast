@@ -164,13 +164,13 @@ function createDaySelector(map) {
   const htmlStr = `
     <div class="btn-group btn-group-toggle btn-group-vertical" data-toggle="buttons">
       <label class="btn btn-outline-secondary active">
-        <input type="radio" id="1day" checked> 1-day
+        <input type="radio" id="1day" checked> Today
       </label>
       <label class="btn btn-outline-secondary">
-        <input type="radio" id="2day"> 2-day
+        <input type="radio" id="2day"> Tomorrow
       </label>
       <label class="btn btn-outline-secondary">
-        <input type="radio" id="3day"> 3-day
+        <input type="radio" id="3day"> In 2 days
       </label>
     </div>
   `;
@@ -224,9 +224,9 @@ function addGrowingUnitDataToMap(growingUnitData) {
     mapInfoWindow.setPosition(pos);
     mapInfoWindow.setContent(`
       <div>Growing Unit: ${cmuName}
-      <br>1-day %: ${handleUndef(prob_1d_perc)}
-      <br>2-day %: ${handleUndef(prob_2d_perc)}
-      <br>3-day %: ${handleUndef(prob_3d_perc)}
+      <br>Today %: ${handleUndef(prob_1d_perc)}
+      <br>Tomorrow %: ${handleUndef(prob_2d_perc)}
+      <br>In 2 days %: ${handleUndef(prob_3d_perc)}
       </div>
     `);
     mapInfoWindow.open(map);
@@ -238,9 +238,9 @@ function addLeaseDataToMap(leaseData) {
   for (let lease of leaseData) {
     const leaseInfoContent = (`
       <div>Lease ID: ${lease.ncdmf_lease_id}
-      <br>1-day %: ${handleUndef(lease.prob_1d_perc)}
-      <br>2-day %: ${handleUndef(lease.prob_2d_perc)}
-      <br>3-day %: ${handleUndef(lease.prob_3d_perc)}
+      <br>Today %: ${handleUndef(lease.prob_1d_perc)}
+      <br>Tomorrow %: ${handleUndef(lease.prob_2d_perc)}
+      <br>In 2 days %: ${handleUndef(lease.prob_3d_perc)}
       </div>
     `);
     const marker = new google.maps.Marker({
