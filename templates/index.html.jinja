@@ -19,13 +19,17 @@
         <p><strong>Last updated:</strong> {{lastUpdated}} ({{hoursAgo}} hours ago)</p>
       </div>
       <div>
-        <p><strong>1-day:</strong> {{day1}}</p>
-        <p><strong>2-day:</strong> {{day2}}</p>
-        <p><strong>3-day:</strong> {{day3}}</p>
+        <p><strong>Today:</strong> {{day1}}</p>
+        <p><strong>Tomorrow:</strong> {{day2}}</p>
+        <p><strong>In 2 days:</strong> {{day3}}</p>
       </div>
       <a href="#closure-tables">Table View</a>
     </div>
-    <p>Growing units shown below are colored by % chance of closure. The colors are defined in a legend on the map. For more information on the forecast, see the <a href="/about">About page</a>.</p>
+    <p>
+      Growing units shown below are colored by % chance of closure.
+      The colors are defined in a legend on the map. For more information
+      on the forecast, find out <a href="/how-it-works">how ShellCast works</a>.
+    </p>
   </div>
 
   <div id="closure-map"></div>
@@ -59,9 +63,9 @@
         <thead>
           <tr>
             <th data-sortable="true" data-field="ncdmf_lease_id">Lease ID</th>
-            <th data-field="prob_1d_perc">1-day (%)</th>
-            <th data-field="prob_2d_perc">2-day (%)</th>
-            <th data-field="prob_3d_perc">3-day (%)</th>
+            <th data-field="prob_1d_perc">Today (%)</th>
+            <th data-field="prob_2d_perc">Tomorrow (%)</th>
+            <th data-field="prob_3d_perc">In 2 days (%)</th>
           </tr>
         </thead>
       </table>
@@ -78,7 +82,7 @@
 
     <div id="growing-unit-table-div">
       <div id="growing-unit-table-toolbar">
-        <h4>NCDMF Shellfish Growing Units</h4>
+        <h4>Shellfish Growing Units</h4>
       </div>
       <table
         id="growing-unit-table"
@@ -90,9 +94,9 @@
         <thead>
           <tr>
             <th data-sortable="true" data-field="cmu_name">Growing Unit</th>
-            <th data-field="prob_1d_perc">1-day (%)</th>
-            <th data-field="prob_2d_perc">2-day (%)</th>
-            <th data-field="prob_3d_perc">3-day (%)</th>
+            <th data-field="prob_1d_perc">Today (%)</th>
+            <th data-field="prob_2d_perc">Tomorrow (%)</th>
+            <th data-field="prob_3d_perc">In 2 days (%)</th>
           </tr>
         </thead>
       </table>
