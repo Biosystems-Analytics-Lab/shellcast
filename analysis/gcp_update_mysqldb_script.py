@@ -175,7 +175,7 @@ if (len(ncdmf_leases_current_result) > 0):
 
     # lease_spatial_data_sel = lease_spatial_data_sel[1:6] # add the first five for now
 
-    # if there are no new leases to add (from the ncdmf rest api) then skip inserting rows
+    # if there are new leases to add then add only those
     if (len(lease_spatial_data_sel) > 0):
 
         # get sql query
@@ -190,14 +190,25 @@ if (len(ncdmf_leases_current_result) > 0):
         # print when finished
         print("added ncdmf lease data to mysql db")
 
+    # if there are no new leases to add (from the ncdmf rest api) then skip inserting rows
     else:
         # print when finished
-        print("there were no new ncdmf leases to add to mysql db")
+        print("there were no new ncdmf leases to add to the mysql db")
 
+# add all data because database is empty
 else:
-    # print that database is empty
-    print("the database is empty so leases cannot be added")
+    # format query
+    ncdmf_leases_all_insert_query = make_lease_sql_query(lease_spatial_data)
 
+    # execute query
+    ncdmf_lease_cursor.execute(ncdmf_leases_all_insert_query)
+
+    # commit changes to remote db
+    connection.commit()
+    
+    # print when finished
+    print("the mysql db was empty so all leases were added")
+    
 
 # %% update closure_probabilities table
 
