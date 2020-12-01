@@ -11,6 +11,8 @@ const FIREBASE_CONFIG = {
   appId: '1:770417321789:web:685ecb339be636f1140754'
 };
 
+const DISCLAIMER_MODAL_ID = 'disclaimer-privacy-modal';
+
 /**
  * Displays the UI for a signed in user.
  * @param {!firebase.User} user
@@ -40,6 +42,20 @@ function handleNavbarSignedOut() {
   document.getElementById('account-dropdown-sign-out').style.display = 'none';
 };
 
+function handleSignedIn(user) {
+  // hide disclaimer/privacy policy modal
+  $(`#${DISCLAIMER_MODAL_ID}`).modal('hide');
+
+  handleNavbarSignedIn(user);
+}
+
+function handleSignedOut() {
+  // show disclaimer/privacy policy modal
+  $(`#${DISCLAIMER_MODAL_ID}`).modal('show');
+
+  handleNavbarSignedOut();
+}
+
 async function signOut() {
   await firebase.auth().signOut();
   location.reload();
@@ -53,7 +69,7 @@ async function signOut() {
   if (document.getElementById('navigation-bar')) {
     // update elements based on auth state
     firebase.auth().onAuthStateChanged((user) => {
-      user ? handleNavbarSignedIn(user) : handleNavbarSignedOut();
+      user ? handleSignedIn(user) : handleSignedOut();
     });
 
     // init event listeners
