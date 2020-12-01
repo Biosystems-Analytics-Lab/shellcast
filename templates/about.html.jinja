@@ -1,6 +1,6 @@
 {% extends "base.html.jinja" %}
 
-{% block title %}About - ShellCast{% endblock %}
+{% block title %}About Us - ShellCast{% endblock %}
 
 {% block additional_head %}
   <!-- Custom CSS -->
@@ -9,96 +9,6 @@
 
 {% block content %}
   <div class="container">
-    <h1>What is ShellCast?</h1>
-    <p>
-      ShellCast is a forecast tool that helps North Carolina shellfish
-      growers anticipate temporary harvest area closures due to excess rainfall
-      and make data-driven management decisions. Forecast information on temporary
-      closures is helpful because closures impact business: shellfish growers cannot
-      harvest shellfish when a temporary closure is in effect.
-    </p>
-    <p>
-      ShellCast only offers forecasts of the percent chance of a growing area
-      temporarily closing, and does not provide information on closures currently
-      in effect. For more information on active closures, refer to proclamations
-      posted by the
-      <a href="http://portal.ncdenr.org/web/mf/proclamations-polluted-areas">North Carolina Division of Marine Fisheries</a>
-      or the <a href="https://ncdenr.maps.arcgis.com/apps/webappviewer/index.html?id=5759aa19d7484a3b82a8e440fba643aa">Shellfish Sanitation Temporary Closure Public Viewer</a>.
-    </p>
-    <img
-      src="{{ url_for('static', filename='img/shellcast_infographic.png') }}"
-      class="infographic"
-      alt="Flowchart showing data analysis steps and user-relevant outputs for the ShellCast web application."
-    >
-
-    <h1>Why use ShellCast?</h1>
-    <p>
-      Once they sign up and log into their ShellCast account, shellfish growers can
-      add their lease sites and view forecast information for each of their leases
-      on the ShellCat map page. They can also see forecasts for nearby growing areas
-      on this same map. The forecasts provide estimates on the percent chance that a
-      lease site or growing area will temporarily close in the next 1-, 2-, or 3-days
-      due to excess rainfall. It is beneficial to add leases because lease rainfall
-      thresholds can vary and lead to different chances of closure even with the same
-      growing area.
-    </p>
-    <p>
-      While adding their leases to ShellCast, shellfish growers can also sign up to
-      receive email or text message notifications if their shellfish lease sites are
-      likely to be temporarily closed in the next 1-, 2-, or 3-days. Please note
-      that leases outside of conditionally approved areas will not be searchable
-      because ShellCast cannot generate a percent chance of closure for these leases.
-    </p>
-    <p>
-      ShellCast is free to use, but carrier messaging rates may apply for those who
-      subscribe to email or text notifications.
-    </p>
-    <label for="example-notification" style="display: block;">Example notification:</label>
-    <div class="text-bubble" id="example-notification" style="margin-bottom: 1rem;">
-<pre>
-<a href="https://go.ncsu.edu/shellcast">https://go.ncsu.edu/shellcast</a>
-
-Lease: 1-C-89
-  1-day: 35%
-  2-day: 38%
-  3-day: 44%
-Lease: 123456
-  1-day: 85%
-  2-day: 88%
-  3-day: 94%
-
-These predictions are in no way
-indicative of whether or not a
-growing area will actually be
-temporarily closed for harvest.
-</pre>
-    </div>
-
-    <h1>How does ShellCast work?</h1>
-    <p>
-      Each day, we combine National Weather Service rainfall forecasts gathered
-      through the <a href="https://climate.ncsu.edu/">North Carolina State Climate Office</a>
-      with shellfish harvest area and grower lease information from the
-      <a href="https://bit.ly/3e5mzxl">North Carolina Division of Marine Fisheries</a>
-      to calculate probabilities of closure for each lease registered in ShellCast.
-      We calculate the probability of closure using rainfall thresholds applied by
-      the Office of Shellfish Sanitation and Recreational Water Quality. Shellfish
-      growers using ShellCast can select a threshold above which they would like to
-      receive email or text message notifications - for example, if they select a
-      threshold of 75%, they will receive email or text notifications when one of
-      their leases has a 75% or more chance of closing within the next 1 to 3 days.
-    </p>
-    <p>
-      ShellCast is part of an ongoing research project led by NC State that focuses
-      on improving the accuracy of rainfall forecasts for coastal North Carolina.
-      Results of this study will be used to improve the ShellCast algorithm.
-    </p>
-
-    <h1>Questions and Feedback</h1>
-    <p>
-      If you have any questions for us or feedback regarding the ShellCast web
-      application, please email us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.
-    </p>
 
     <h1>ShellCast Team</h1>
     {# Sheila Saia #}
@@ -142,6 +52,27 @@ temporarily closed for harvest.
         </div>
       </div>
     </div>
+    {# Laura Gomez Rodriguez #}
+    <div class="card mb-3">
+      <div class="row team-bio">
+        <div class="col-md-4 bio-image-container">
+          <img src="{{ url_for('static', filename='img/laura_gomez_rodriguez.png') }}" class="bio-image" alt="Laura Gomez Rodriguez">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Laura Gomez Rodriguez, Undergraduate Researcher</h5>
+            {# <h5 class="website-link"><a href=""></a></h5> #}
+            <p class="card-text">
+              Laura is an undergraduate student in the Biological and Agricultural
+              Engineering Department at NC State and a <a href="https://goodnight.ncsu.edu/">Goodnight Scholar</a>.
+              She is majoring in Biological Engineering with a concentration in
+              Environmental Engineering and minoring in Non-Profit Studies. Her
+              favorite shellfish to eat are clams, in particular she loves clam chowder.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
     {# Natalie Nelson #}
     <div class="card mb-3">
       <div class="row team-bio">
@@ -180,5 +111,12 @@ temporarily closed for harvest.
       We are grateful for help from Everette Allen, Walt Turner, and Crystal Tenan of OCC,
       Lisa Lowe of HPC, and Aaron Peeler, and Josh Thompson of VCL.
     </p>
+
+    <h1>Contact Us</h1>
+    <p>
+      If you have any questions for us or feedback regarding the ShellCast web
+      application, please email us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.
+    </p>
+
   </div>
 {% endblock %}
