@@ -93,6 +93,7 @@ def userLeases(user):
       'id': lease.id,
       'ncdmf_lease_id': lease.ncdmf_lease_id,
       'grow_area_name': lease.grow_area_name,
+      'grow_area_desc': lease.grow_area_desc,
       'cmu_name': lease.cmu_name,
       'rainfall_thresh_in': lease.rainfall_thresh_in,
       'geometry': lease.geometry
