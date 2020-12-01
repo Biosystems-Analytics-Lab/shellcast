@@ -9,6 +9,7 @@
 
 #lease-table-div {
   grid-area: l;
+  display: none;
 }
 
 #growing-unit-table-div {
@@ -26,7 +27,13 @@
 #lease-table-explanation {
   grid-area: il;
   padding: 10px;
+  display: none;
 }
+
+/* #create-account-message {
+  grid-area: il;
+  padding: 10px;
+} */
 
 #growing-unit-table-explanation {
   grid-area: ia;
