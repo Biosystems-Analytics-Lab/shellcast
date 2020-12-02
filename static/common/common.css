@@ -2,6 +2,14 @@
   padding: 1rem;
 }
 
+#account-sign-in {
+  display: none;
+}
+
+#account-dropdown-div {
+  display: none;
+}
+
 #account-dropdown {
   color: #009fd7;
 }

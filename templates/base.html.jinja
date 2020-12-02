@@ -83,14 +83,16 @@
 
     {# Navbar for account dropdown menu #}
     <div class="navbar-nav ml-auto">
-      <div class="nav-item dropdown">
+      {# Shows when signed out #}
+      <a id="account-sign-in" class="nav-item nav-link" href="/signin">Sign In/Create Account</a>
+      {# Shows when signed in #}
+      <div class="nav-item dropdown" id="account-dropdown-div">
         <a class="nav-link dropdown-toggle" id="account-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Account
         </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
-          <a class="dropdown-item" id="account-dropdown-preferences" href="/preferences">Manage preferences</a>
-          <button class="dropdown-item" id="account-dropdown-sign-out">Sign out</button>
-          <a class="dropdown-item" id="account-dropdown-sign-in" href="/signin">Sign in</a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="account-dropdown">
+          <a class="dropdown-item" id="account-dropdown-preferences" href="/preferences">Preferences</a>
+          <button class="dropdown-item" id="account-dropdown-sign-out">Sign Out</button>
         </div>
       </div>
     </div>

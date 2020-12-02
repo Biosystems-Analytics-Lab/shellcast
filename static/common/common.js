@@ -18,28 +18,28 @@ const DISCLAIMER_MODAL_ID = 'disclaimer-privacy-modal';
  * @param {!firebase.User} user
  */
 function handleNavbarSignedIn(user) {
+  // hide the "Sign In" link
+  document.getElementById('account-sign-in').style.display = 'none';
+
+  // show the account dropdown menu
+  document.getElementById('account-dropdown-div').style.display = 'block';
+
   // change the dropdown menu's text
   document.getElementById('account-dropdown').textContent = user.email;
-
-  // remove the "Sign in" option from the dropdown menu
-  document.getElementById('account-dropdown-sign-in').style.display = 'none';
-  // add the "Manage preferences" and "Sign out" options to the dropdown menu
-  document.getElementById('account-dropdown-preferences').style.display = 'block';
-  document.getElementById('account-dropdown-sign-out').style.display = 'block';
 };
 
 /**
  * Displays the UI for a signed out user.
  */
 function handleNavbarSignedOut() {
+  // show the "Sign In" link
+  document.getElementById('account-sign-in').style.display = 'block';
+
+  // hide the account dropdown menu
+  document.getElementById('account-dropdown-div').style.display = 'none';
+
   // change the dropdown menu's text
   document.getElementById('account-dropdown').textContent = 'Account';
-
-  // add the "Sign in" option to the dropdown menu
-  document.getElementById('account-dropdown-sign-in').style.display = 'block';
-  // remove the "Manage preferences" and "Sign out" options from the dropdown menu
-  document.getElementById('account-dropdown-preferences').style.display = 'none';
-  document.getElementById('account-dropdown-sign-out').style.display = 'none';
 };
 
 async function signOut() {
@@ -62,7 +62,7 @@ async function signOut() {
     document.getElementById('account-dropdown-sign-out').addEventListener('click', signOut);
 
     // update sign-in url
-    document.getElementById('account-dropdown-sign-in').href = `/signin?mode=select&signInSuccessUrl=${window.location.pathname}`;
+    document.getElementById('account-sign-in').href = `/signin?mode=select&signInSuccessUrl=${window.location.pathname}`;
   }
 })();
 
