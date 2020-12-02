@@ -42,20 +42,6 @@ function handleNavbarSignedOut() {
   document.getElementById('account-dropdown-sign-out').style.display = 'none';
 };
 
-function handleSignedIn(user) {
-  // hide disclaimer/privacy policy modal
-  $(`#${DISCLAIMER_MODAL_ID}`).modal('hide');
-
-  handleNavbarSignedIn(user);
-}
-
-function handleSignedOut() {
-  // show disclaimer/privacy policy modal
-  $(`#${DISCLAIMER_MODAL_ID}`).modal('show');
-
-  handleNavbarSignedOut();
-}
-
 async function signOut() {
   await firebase.auth().signOut();
   location.reload();
@@ -69,7 +55,7 @@ async function signOut() {
   if (document.getElementById('navigation-bar')) {
     // update elements based on auth state
     firebase.auth().onAuthStateChanged((user) => {
-      user ? handleSignedIn(user) : handleSignedOut();
+      user ? handleNavbarSignedIn(user) : handleNavbarSignedOut();
     });
 
     // init event listeners
