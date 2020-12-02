@@ -310,6 +310,9 @@ function getColor(value) {
 
   firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
+      // hide disclaimer/privacy policy modal
+      $(`#${DISCLAIMER_MODAL_ID}`).modal('hide');
+
       // show the leases table and explanation
       document.getElementById('lease-table-div').style.display = 'block';
       document.getElementById('lease-table-explanation').style.display = 'block';
@@ -321,6 +324,9 @@ function getColor(value) {
       initLeaseTable(leaseData);
       addLeaseDataToMap(leaseData);
     } else {
+      // show disclaimer/privacy policy modal
+      $(`#${DISCLAIMER_MODAL_ID}`).modal('show');
+
       // hide the leases table and explanation
       document.getElementById('lease-table-div').style.display = 'none';
       document.getElementById('lease-table-explanation').style.display = 'none';
