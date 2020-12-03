@@ -116,7 +116,7 @@ function generateExampleNotification(noNotifications, selectedProb) {
   if (noNotifications) {
     return '<p>-- You will not receive any notifications. --</p>';
   }
-  return `<pre>Lease: ABC-123\n  1-day: ${selectedProb + 10}%\n  2-day: ${selectedProb + 13}%\n  3-day: ${selectedProb + 19}%</pre>`;
+  return `<pre>Lease: ABC-123\n  Today: ${selectedProb + 10}%\n  Tomorrow: ${selectedProb - 13}%\n  In 2 days: ${selectedProb + 5}%</pre>`;
 }
 
 /**
