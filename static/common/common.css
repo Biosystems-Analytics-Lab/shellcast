@@ -11,7 +11,7 @@
 }
 
 #account-dropdown {
-  color: #009fd7;
+  color: #007fad;
 }
 
 #account-dropdown:hover {
@@ -80,7 +80,7 @@
 
 footer {
   text-align: center;
-  background-color: #009fd7;
+  background-color: #007fad;
   color: white;
   padding: 0.5rem;
   margin-top: 2rem;
@@ -91,7 +91,7 @@ footer a {
 }
 
 footer a:hover {
-  color: #0070d7;
+  color: #003da4;
 }
 
 .support-logos {
@@ -112,7 +112,7 @@ footer a:hover {
 /* Bootstrap overrides */
 .navbar {
   background-color: white;
-  border-bottom: 2px #009fd7 solid;
+  border-bottom: 2px #007fad solid;
   box-shadow: 0 2px 2px 0px rgba(0,0,0,0.1);
 }
 
@@ -146,21 +146,21 @@ footer a:hover {
 }
 
 .bg-primary {
-  background-color: #009fd7!important;
+  background-color: #007fad!important;
 }
 
 a, .btn-link, .dropdown-item {
-  color: #009fd7;
+  color: #007fad;
 }
 
-a:hover, .btn-link:hover, .dropdown-item:hover {
+a:hover, a:focus, .btn-link:hover, .dropdown-item:hover {
   color: #7ED3F6;
   background-color: transparent;
 }
 
 .btn-primary, .btn-primary:disabled {
-  background-color: #009fd7;
-  border-color: #009fd7;
+  background-color: #007fad;
+  border-color: #007fad;
 }
 
 .btn-primary:hover {
@@ -169,13 +169,13 @@ a:hover, .btn-link:hover, .dropdown-item:hover {
 }
 
 .dropdown-item:active {
-  background-color: #009fd7;
+  background-color: #007fad;
   color: white;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active {
-  background-color: #009fd7;
-  border-color: #009fd7;
+  background-color: #007fad;
+  border-color: #007fad;
 }
 
 .btn-danger {
