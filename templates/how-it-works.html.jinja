@@ -9,17 +9,17 @@
 
 {% block content %}
   <div class="container">
-    <h1>How ShellCast Works</h1>
+    <h1>How do I use ShellCast?</h1>
     {# How It Works Video #}
     <div id="how-it-works-video">
-      <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/OITzReDY4J4"
+      <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/bAK4t3ZoZqs"
         frameborder="0" allow="clipboard-write"
         allowfullscreen
       ></iframe>
     </div>
     <p>
       Click <a href="https://docs.google.com/document/d/1Sdt38w28ePIQ9SFwQqKl0ABgOh6GKjARhrWwtqHq3iI/edit?usp=sharing">here</a>
-      to view a transcript of the How ShellCast Works video.
+      to view a transcript of the video.
     </p>
 
     <h1>What is ShellCast?</h1>
@@ -62,30 +62,12 @@
       ShellCast is free to use, but carrier messaging rates may apply for those who
       subscribe to email or text notifications.
     </p>
-    <p>Example text notification:</p>
-    <img alt="Screenshot of text notification showing a link to return to the ShellCast web application to see more details.">
     <p>Example email notification:</p>
-    <img alt="Screenshot of email notification showing forecasted percent chance of closure details for each lease and a link to return to the ShellCast web application to see more information.">
-    {# <label for="example-notification" style="display: block;">Example notification:</label>
-    <div class="text-bubble" id="example-notification" style="margin-bottom: 1rem;">
-<pre>
-<a href="https://go.ncsu.edu/shellcast">https://go.ncsu.edu/shellcast</a>
-
-Lease: 1-C-89
-  Today: 35%
-  Tomorrow: 38%
-  In 2 days: 44%
-Lease: 123456
-  Today: 85%
-  Tomorrow: 88%
-  In 2 days: 94%
-
-These predictions are in no way
-indicative of whether or not a
-growing area will actually be
-temporarily closed for harvest.
-</pre>
-    </div> #}
+    <img
+      src="{{ url_for('static', filename='img/example_email_notification.png') }}"
+      alt="Screenshot of email notification showing forecasted percent chance of closure details for each lease and a link to return to the ShellCast web application to see more information."
+      style="width: 100%;"
+    >
 
     <h1>How does ShellCast work?</h1>
     <p>
@@ -141,12 +123,12 @@ temporarily closed for harvest.
     <p>
       As an example, say you get the email below for one of your leases.
     </p>
-    Example email notification:
-    Today: 20%
-    Tomorrow: 80%
-    In 2 days: 65%
+    <img
+      src="{{ url_for('static', filename='img/example_email_notification.png') }}"
+      alt="Screenshot of email notification showing forecasted percent chance of closure details for each lease and a link to return to the ShellCast web application to see more information."
+      style="width: 100%;"
+    >
 
-    <img alt="Screenshot of email notification showing forecasted percent chance of closure details for each lease and a link to return to the ShellCast web application to see more information.">
     <p>
       In the example above, ShellCast is forecasting the percent chance of closure
       for today to be 20%, which is fairly low. Remember, anything less than 50%
