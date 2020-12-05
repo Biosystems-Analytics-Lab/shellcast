@@ -8,9 +8,10 @@ class Notification(db.Model):
   __tablename__ = 'notification_log'
 
   id = Column(Integer, primary_key=True)
-  user_id = Column(Integer, ForeignKey('users.id'))
-  address = Column(String(50))
-  notification_text = Column(String(10000))
+  user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+  address = Column(String(50), nullable=False)
+  notification_text = Column(String(10000), nullable=False)
+  notification_type = Column(String(10), nullable=False)
   send_success = Column(Boolean, server_default=expression.true(), default=True)
   response_text = Column(String(10000))
   created = Column(DateTime, server_default=functions.now())

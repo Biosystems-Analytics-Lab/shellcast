@@ -22,13 +22,18 @@ CHARSET = 'UTF-8'
 # The text that is at the beginning of every notification.
 NOTIFICATION_HEADER = 'https://go.ncsu.edu/shellcast\n\n'
 # The template for lease information in notifications.
-LEASE_TEMPLATE =  'Lease: {}\n  1-day: {}%\n  2-day: {}%\n  3-day: {}%\n'
+LEASE_TEMPLATE =  'Lease: {}\n  Today: {}%\n  Tomorrow: {}%\n  In 2 days: {}%\n'
 # The text that is at the end of every notification.
-NOTIFICATION_FOOTER = '\nThese predictions are in no way indicative of whether or not a growing area will actually be temporarily closed for harvest.'
+NOTIFICATION_FOOTER = '\nThese predictions are in no way indicative of whether or not a lease will actually be temporarily closed for harvest.'
 # The amount of time between sending emails
 EMAIL_SEND_INTERVAL = 0.1
-# The maximum size of SMS messages
-MAX_SMS_MESSAGE_SIZE = 120
+# The subject for text notifications
+TEXT_NOTIFICATION_SUBJECT = ''
+# The text for text notifications (max length of 138 characters)
+TEXT_NOTIFICATION_TEXT = 'One or more of your leases has a high percent chance of closing today, tomorrow, or in 2 days. Visit go.ncsu.edu/shellcast for details.'
+
+NOTIFICATION_TYPE_EMAIL = 'email'
+NOTIFICATION_TYPE_TEXT = 'text'
 
 cron = Blueprint('cron', __name__)
 
@@ -51,55 +56,23 @@ def sendEmailWithAWSSES(client, address, subject, body):
     logging.info(response['MessageId'])
     return True, response['MessageId']
 
-def groupTextBodyChunks(textBodyChunks):
-  notificationParts = []
-
-  notificationPart = ''
-  # go through each body chunk
-  for textBodyChunk in textBodyChunks:
-    # if the body chunk can fit in the current part
-    if (len(notificationPart) + len(textBodyChunk) <= MAX_SMS_MESSAGE_SIZE):
-      notificationPart += textBodyChunk # add it
-    else: # else it can't fit
-      notificationParts.append(notificationPart) # so finalize the current part
-      notificationPart = textBodyChunk # start the new part
-
-  # add the last notification part
-  notificationParts.append(notificationPart)
-
-  return notificationParts
-
-
 def sendNotificationsWithAWSSES(emailNotifications, textNotifications):
   # Create a new SES client
   client = boto3.client('ses', region_name=current_app.config['AWS_REGION'], aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'], aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'])
   curDate = datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
-  subject = SUBJECT_TEMPLATE.format(curDate)
+  emailNotificationSubject = SUBJECT_TEMPLATE.format(curDate)
   responses = []
   # send the email notifications
   for address, emailBodyChunks, userId in emailNotifications:
     body = ''.join(emailBodyChunks)
-    sendSuccess, response = sendEmailWithAWSSES(client, address, subject, body)
-    responses.append((address, body, userId, sendSuccess, response))
+    sendSuccess, response = sendEmailWithAWSSES(client, address, emailNotificationSubject, body)
+    responses.append((address, body, NOTIFICATION_TYPE_EMAIL, userId, sendSuccess, response))
     time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
   # send the text notifications
-  for address, textBodyChunks, userId in textNotifications:
-    # split the notification up into parts so that it can be sent through SMS (SMS has a limit on the size of messages)
-    notificationParts = groupTextBodyChunks(textBodyChunks)
-    overallSendSuccess = True
-    partResponses = []
-    for partIdx in range(len(notificationParts)):
-      # send the original subject for the first part; send part indices for the remaining parts
-      partSubject = subject if partIdx == 0 else f'{partIdx + 1}/{len(notificationParts)}' # e.g. 2/3
-      partBody = notificationParts[partIdx]
-      sendSuccess, response = sendEmailWithAWSSES(client, address, partSubject, partBody)
-      if not sendSuccess:
-        overallSendSuccess = False
-      partResponses.append(response)
-      time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
-
-    fullBody = ''.join(textBodyChunks)
-    responses.append((address, fullBody, userId, overallSendSuccess, ','.join(partResponses)))
+  for address, body, userId in textNotifications:
+    sendSuccess, response = sendEmailWithAWSSES(client, address, TEXT_NOTIFICATION_SUBJECT, body)
+    responses.append((address, body, NOTIFICATION_TYPE_TEXT, userId, sendSuccess, response))
+    time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
   return responses
 
 @cron.route('/sendNotifications')
@@ -145,13 +118,13 @@ def sendNotifications():
       if (user.email_pref and emailAddress != None):
         emailNotificationsToSend.append((emailAddress, notificationText, user.id))
       if (user.text_pref and textAddress != None):
-        textNotificationsToSend.append((textAddress, notificationText, user.id))
+        textNotificationsToSend.append((textAddress, TEXT_NOTIFICATION_TEXT, user.id))
 
   # send notifications
   responses = sendNotificationsWithAWSSES(emailNotificationsToSend, textNotificationsToSend)
   # log all notifications that were sent
-  for address, notificationText, userId, sendSuccess, resText in responses:
-    notification = Notification(address=address, notification_text=notificationText, user_id=userId, send_success=sendSuccess, response_text=resText)
+  for address, notificationText, notificationType, userId, sendSuccess, resText in responses:
+    notification = Notification(address=address, notification_text=notificationText, notification_type=notificationType, user_id=userId, send_success=sendSuccess, response_text=resText)
     db.session.add(notification)
   db.session.commit()
   t1 = time.perf_counter_ns()
