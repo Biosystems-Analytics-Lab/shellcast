@@ -60,7 +60,7 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 
 ### Run the application locally
 1. Make sure the Python virtual environment is activated.
-2. Make sure the Cloud SQL proxy is started with a Unix socket (run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -dir=./cloudsql -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database`).
+2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 3. Run the Python app by running `python main.py`.
 4. Now you can navigate to [http://localhost:3361](http//:localhost:3361) in your browser to see the web app.
 
