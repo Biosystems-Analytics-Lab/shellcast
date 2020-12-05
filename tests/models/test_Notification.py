@@ -9,7 +9,7 @@ def test_valid(dbSession):
   dbSession.add(user)
   dbSession.commit()
 
-  notification = Notification(user_id=user.id, notification_text='There is a 54%% chance that your lease will be closed within 1 day.')
+  notification = Notification(user_id=user.id, address='asdf@adf.com', notification_text='There is a 54%% chance that your lease will be closed within 1 day.', notification_type='email')
 
   dbSession.add(notification)
   dbSession.commit()
