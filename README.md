@@ -24,10 +24,10 @@ NCSU Virtual Computing Lab (VCL)
 ## Documentation
 Instructions explaining how to perform a variety of tasks can be found in the following documents in the `doc` directory [here](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/tree/master/docs).
 
-- docs/ANALYSIS.md explains the various analysis scripts and how to set up the analysis cron job on a virtual computing lab image.
-- docs/CITATION.md explains how to cite and give attribution to ShellCast source code.
-- docs/DATABASE.md explains how to access, manage, and interact with the ShellCast database.
-- docs/DEVELOPER.md explains the structure of the repository, how to setup a full development environment, and how to perform common development tasks.
-- docs/LICENSE.md explains the ShellCast license.
-- docs/MANUAL_UPDATES.md explains how to make simple updates to ShellCast.
+- [docs/ANALYSIS.md](/docs/ANALYSIS.md) explains the various analysis scripts and how to set up the analysis cron job on a virtual computing lab image.
+- [docs/CITATION.md](/docs/CITATION.md) explains how to cite and give attribution to ShellCast source code.
+- [docs/DATABASE.md](/docs/DATABASE.md) explains how to access, manage, and interact with the ShellCast database.
+- [docs/DEVELOPER.md](/docs/DEVELOPER.md) explains the structure of the repository, how to setup a full development environment, and how to perform common development tasks.
+- [docs/LICENSE.md](/docs/LICENSE.md) explains the ShellCast license.
+- [docs/MANUAL_UPDATES.md](/docs/MANUAL_UPDATES.md) explains how to make simple updates to ShellCast.
 
