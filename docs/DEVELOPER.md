@@ -98,3 +98,31 @@ Oftentimes you will not want to run the entire test suite.  You can run a specif
 - To run a specific test file use `python -m pytest -v <PATH TO TEST FILE>`.
 - To run a specific test within a file use `python -m pytest -v <PATH TO TEST FILE>::<NAME OF TEST FUNCTION>`.
 
+
+## Frontend Development Notes
+The frontend of ShellCast consists of the HTML generated from the Jinja templates in the templates/ directory and the JS, CSS, and other files in the static/ directory.  The frontend also uses several CSS and JS libraries.
+
+### Third-party libraries
+- [Bootstrap](https://getbootstrap.com/) - Bootstrap is used for many of the UI components for the site.
+- [NCSU Bootstrap CSS](https://brand.ncsu.edu/bootstrap/v4/docs/4.1/content/reboot/) - NC State's custom CSS for Bootstrap is used to provide a foundation for the styling of the site.
+- [Bootstrap Table](https://bootstrap-table.com/) - Bootstrap Table is used to build the tables on the index page.
+- [Firebase JS](https://firebase.google.com/docs/web/setup) - Firebase is used to handle user authentication.
+- [Firebase UI](https://firebase.google.com/docs/auth/web/firebaseui) - Firebase UI provides a drop-in UI for authentication flows.
+
+### Templates
+All of the HTML for each web page is specified in a Jinja template for that web page.  Note that the templates do not contain any HTML that needs to be dynamically generated.  That HTML is specified within the JS file for the page that needs the dynamic content.
+
+- [templates/base.html.jinja](/templates/base.html.jinja) serves as a base for most of the other templates meaning that they build off of base.html.jinja.  base.html.jinja contains HTML for the navigation bar, footer, and disclaimer/privacy policy modal.
+- [templates/index.html.jinja](/templates/index.html.jinja) is the template for the index (map) page.
+- [templates/about.html.jinja](/templates/about.html.jinja) is the template for the About Us page.
+- [templates/how-it-works.html.jinja](/templates/how-it-works.html.jinja) is the template for the How ShellCast Works page.
+- [templates/preferences.html.jinja](/templates/preferences.html.jinja) is the template for the Preferences page.
+- [templates/signin.html.jinja](/templates/signin.html.jinja) is the template for the sign in page.
+
+### JavaScript and CSS
+The JS and CSS files for each page are grouped together in directories in [static/](/static/) that correspond to each template.  The [static/commmon/](/static/common/) directory contains JS and CSS that is common to all web pages (such as authentication code).  (I realize that renaming common/ to base/ to match the template naming or vice versa would have been smart, but that's just the way things were named initially and were never renamed.)
+
+Several ES6 features of JavaScript are used throughout the JS files such as: the let/const keywords for declaring variables, arrow functions, and async/await syntax for asynchronous programming.  At the bottom of most of the JS files, you will find an immediately invoked function expression (IIFE) which basically serves as a setup/main function that runs as soon as that JS file is loaded.
+
+
+
