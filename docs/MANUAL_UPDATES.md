@@ -53,3 +53,27 @@ Now [upload the changes to Google App Engine](#uploading-changes-to-google-app-e
 You can find more information on Google App Engine cron jobs [here](https://cloud.google.com/appengine/docs/flexible/python/scheduling-jobs-with-cron-yaml).
 
 To turn notifications back on, uncomment the cron job, and [upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
+
+## Changing notification schedule
+You can change the time at which notifications are sent by modifying the /sendNotifications cron job configuration in cron.yaml.  See [this page](https://cloud.google.com/appengine/docs/flexible/python/scheduling-jobs-with-cron-yaml#defining_the_cron_job_schedule) for information on how to format the schedule for a Google App Engine cron job.
+
+You will need to change cron.yaml from this:
+```
+cron:
+- description: "Send notifications daily"
+  url: /sendNotifications
+  schedule: every day 07:00
+  timezone: America/New_York
+```
+to this:
+```
+cron:
+- description: "Send notifications daily"
+  url: /sendNotifications
+  schedule: <SCHEDULE FORMAT>
+  timezone: America/New_York
+```
+
+Only the "schedule:" line needs to be changed unless you are also changing the timezone that is used to interpret the schedule.
+
+Now [upload the changes to GitHub](#uploading-changes-to-github) and [Google App Engine](#uploading-changes-to-google-app-engine).
