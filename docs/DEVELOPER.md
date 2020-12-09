@@ -92,4 +92,9 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 2. Run `python -m pytest -v --cov` to see coverage information.
 3. Running `coverage html` afterwards will generate web pages in a "htmlcov" directory.  If you open "htmlcov/index.html" in a web browser, then you can click through all of the Python files that were measured and see the exact lines that were executed or missed.
 
+### Running specific tests
+Oftentimes you will not want to run the entire test suite.  You can run a specific directory of test files, a specific test file, or even a specific test within a file.
+- To run a directory of test files use `python -m pytest -v <PATH TO TEST DIRECTORY>`.
+- To run a specific test file use `python -m pytest -v <PATH TO TEST FILE>`.
+- To run a specific test within a file use `python -m pytest -v <PATH TO TEST FILE>::<NAME OF TEST FUNCTION>`.
 
