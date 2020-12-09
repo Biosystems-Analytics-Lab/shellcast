@@ -1,17 +1,22 @@
 This document is intended to help a developer get up and running with ShellCast.
 
 ## Code Structure
-- main.py - This file is the root of the Python Flask application.
-- app.yaml - This file contains all of the configuration needed to deploy the app to Google Cloud.
+- main.py - The root of the Python Flask application.
+- app.yaml - Configuration for deploying the app to Google Cloud.
+- cron.yaml - Configuration for cron jobs running on Google App Engine.
+- config-template.py - Template that should be copied to make a local config.py file.
 - .gcloudignore - This file is similar to a .gitignore file in the sense that it specifies all of the files that will __not__ be uploaded to Google Cloud during deployments.
-- config-template.py - This is a template that should be copied to make a local config.py file.
-- __templates__ - This folder contains all of the Jinja templates.
-- __static__ - This folder contains all of the static content that is served like CSS and JS files.
-- __models__ - This folder contains all of the ORM models that are used to interact with the database.
-- __routes__ - This folder contains all of the routes that are registered with the Flask application.
-- __tests__ - This folder contains all of the unit tests for the application.
-- __db-scripts__ - This folder contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
-- __analysis__ - This folder contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](ANALYSIS.md).
+- .coveragerc - Configuration for the pytest-cov code coverage library.
+- requirements.txt - Dependencies for the Python app.
+- requirements-test.txt - Dependencies for unit tests.
+- __templates__ - Contains all of the Jinja templates used to render each page of the site.
+- __static__ - Contains all of the static content for each web page (CSS, JS, images, etc).
+- __models__ - Contains all of the Object Relational Mapping (ORM) models that are used to interact with the database.
+- __routes__ - Contains all of the routes that are registered with the Flask application.
+- __tests__ - Contains all of the unit tests for the application.
+- __db-scripts__ - Contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
+- __analysis__ - Contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](ANALYSIS.md).
+- __docs__ - Contains all of the documentation for the ShellCast application.
 
 ## General Notes
 - This repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#deploy-the-app-to-google-app-engine).
