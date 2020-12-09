@@ -64,22 +64,32 @@ So what you need to do at this point is:
 ## Common Development Tasks
 
 ### Use the Cloud SQL proxy (TCP and Unix socket)
-By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database instances using any tool that can connect with a TCP connection or a Unix socket (you can't use Unix sockets on Windows).  The Cloud SQL proxy also allows the web application to reach the Cloud SQL database for use with local development and testing.
+By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database instances using any tool that can connect with a TCP connection or a Unix socket (NOTE: you can't use Unix sockets on Windows).  The Cloud SQL proxy also allows the web application to reach the Cloud SQL database for use with local development and testing.
 - To use the Cloud SQL proxy with a TCP connection, run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306`.
 - To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database -dir=<PATH TO UNIX SOCKET DIRECTORY>`.  If you're having issues with the Unix socket being created correctly, then make sure your `cloudsql/` directory (and thus your shellcast repository) is not too deep in your file system.  Unix sockets have a limit on the length of their paths, so make sure the path to your shellcast repository is relatively shallow.
 
 ### Run the application locally
-1. Make sure the Python virtual environment is activated.
+1. Make sure the Python virtual environment is activated and that you are in the root of the local repository.
 2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 3. Run the Python app by running `python main.py`.
 4. Now you can navigate to [http://localhost:3361](http//:localhost:3361) in your browser to see the web app.
 
-### Run unit tests
-1. Make sure the Python virtual environment is activated.
-2. Make sure the Cloud SQL proxy is started with a Unix socket (run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -dir=./cloudsql -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database`).
-3. Run the tests by running `python -m pytest -v`. You should see the test output in the console.
-4. If you'd like to see code coverage information as well, then you can run `python -m pytest -v --cov`.  You can then also see more in-depth coverage information by running `coverage html` which will generate web pages in the "htmlcov" directory.  If you open "htmlcov/index.html" in a web browser, then you can click through all of the Python files that were measured and see the exact lines that were run or missed.
-
 ### Deploy the app to Google App Engine
 1. Make sure that you are signed in and using the correct project (ncsu-shellcast) by running `gcloud info`.
 2. From the root directory of the repository, you can deploy the application to Google App Engine by running `gcloud app deploy`.
+
+
+## Testing
+[pytest](https://docs.pytest.org/en/latest/) is used for unit testing.  [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) is used to generate code coverage reports.  The unit tests use pytest fixtures quite extensively.  See the [pytest fixtures documentation](https://docs.pytest.org/en/stable/fixture.html) for more information.  All of the fixtures are specified in tests/conftest.py.
+
+### Run unit tests
+1. Make sure the Python virtual environment is activated and that you are in the root of your local repository.
+2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+3. Run the tests by running `python -m pytest -v`. You should see the test output in the console.
+
+### Generate code coverage report
+1. Perform steps 1 and 2 from the [Run unit tests](#run-unit-tests) section.
+2. Run `python -m pytest -v --cov` to see coverage information.
+3. Running `coverage html` afterwards will generate web pages in a "htmlcov" directory.  If you open "htmlcov/index.html" in a web browser, then you can click through all of the Python files that were measured and see the exact lines that were executed or missed.
+
+
