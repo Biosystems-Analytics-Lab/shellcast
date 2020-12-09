@@ -25,8 +25,8 @@ After you have found and made an edit:
 1. [Upload the changes to GitHub](#uploading-changes-to-github).
 2. [Upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
 
-## Updating growing area boundaries
-growing_area_bounds.geojson contains the NCDMF growing areas and their boundaries.  To modify the growing areas' boundaries, simply replace that file with an updated version while keeping the file name the same.
+## Updating growing unit boundaries
+static/cmu_bounds.geojson contains the NCDMF growing units and their boundaries.  To modify the growing units' boundaries, simply replace that file with an updated version while keeping the file name the same.
 
 1. [Upload the changes to GitHub](#uploading-changes-to-github).
 2. [Upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
