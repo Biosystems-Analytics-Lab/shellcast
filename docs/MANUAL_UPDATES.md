@@ -15,7 +15,7 @@ This document is intended to explain how to perform simple, manual updates to Sh
 1. From the root of the repository, run `gcloud app deploy`.  Now any changes should be visible on the public website.  If the changes don't seem to be showing, then your browser is probably caching the old files.
 
 ## Updating web pages
-Nearly all of the HTML used for the content of the web pages is contained in the templates/ directory as Jinja templates.  However, HTML that needed to be generated dynamically is not present in these files and is instead embedded in JavaScript files.  If you want to edit any of the following dynamic elements, look in the listed JS file to find the HTML otherwise look at the template for the page you want to edit.
+Nearly all of the HTML used for the content of the web pages is contained in the templates/ directory as Jinja templates.  However, HTML that needs to be generated dynamically is not present in these files and is instead embedded in JavaScript files.  If you want to edit any of the following dynamic elements, look in the listed JS file to find the HTML otherwise look at the template for the page you want to edit.
 
 Dynamic HTML element file locations:
 - The map legend, day selector, and lease and grow area info popup HTML can be found in static/index/index.js.
