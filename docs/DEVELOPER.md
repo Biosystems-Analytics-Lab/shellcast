@@ -15,8 +15,13 @@ This document is intended to help a developer get up and running with ShellCast.
 - __routes__ - Contains all of the routes that are registered with the Flask application.
 - __tests__ - Contains all of the unit tests for the application.
 - __db-scripts__ - Contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
-- __analysis__ - Contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](ANALYSIS.md).
+- __analysis__ - Contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](docs/ANALYSIS.md).
 - __docs__ - Contains all of the documentation for the ShellCast application.
+
+## Notable Technologies Used
+- [Flask](https://flask.palletsprojects.com/en/1.1.x/) - Flask is a lightweight web app framework written in Python.  It is used for all of the backend logic of the web app.
+- [SQLAlchemy](https://www.sqlalchemy.org/) - SQLAlchemy is a Python framework used to interact with databases.  It is used in this project mainly for its ORM functionality.
+- [Jinja](https://jinja.palletsprojects.com/en/2.11.x/) - Jinja is a templating language.  It is used to build templates for the pages of the site.
 
 ## General Notes
 - This repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#deploy-the-app-to-google-app-engine).
