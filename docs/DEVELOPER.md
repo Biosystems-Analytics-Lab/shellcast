@@ -24,7 +24,7 @@ This document is intended to help a developer get up and running with ShellCast.
 - [Jinja](https://jinja.palletsprojects.com/en/2.11.x/) - Jinja is a templating language.  It is used to build templates for the pages of the site.
 
 ## General Notes
-- This repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#deploy-the-app-to-google-app-engine).
+- The GitHub repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#deploy-the-app-to-google-app-engine).
 
 
 ## Development Environment Setup
@@ -35,21 +35,21 @@ The Google Cloud SDK is principally a command line tool that allows you to inter
 ### Download Cloud SQL proxy
 You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference.
 
-### Clone this repository
-Clone this repository to your machine by running `git clone https://github.ncsu.edu/ssaia/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+### Clone the GitHub repository
+Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/ssaia/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
 ### Setup Python virtual environment
 1. Make sure that you have Python 3.7 or higher installed on your machine.
-2. From the root directory of the repository, create a virtual environment by running `python3 -m venv venv`.
+2. From the root directory of your local repository, create a virtual environment by running `python3 -m venv venv`.
 3. Activate the virtual environment by running `source venv/bin/activate` if on a Linux or Mac machine. If on a Windows machine, run `venv\Scripts\activate.bat`.  Now "python" will refer to the virtual environment's copy of Python 3. You can deactivate the virtual environment by running `deactivate` (Linux/Mac/Windows).
 4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
 
 ### Make a Unix socket directory
-To use the Cloud SQL proxy for local development and testing of the web app, a directory is needed for a Unix socket. From the root directory of the repository, make a new directory named "cloudsql" by running `mkdir cloudsql`.
+To use the Cloud SQL proxy for local development and testing of the web app, a directory is needed for a Unix socket. From the root directory of your local repository, make a new directory named "cloudsql" by running `mkdir cloudsql`.
 
 ### Make a configuration file based on the template file
-The web app uses a configuration file named "config.py" to store various configuration options. Some of these are quite sensitive (e.g. database credentials), so they shouldn't be saved in version control. Because of this, a "config.py" file isn't in the Git repository but rather a "config-template.py" file which provides all of the necessary structure for the "config.py" file with all of the non-sensitive values already populated.
-1. On your machine in the root of the repository, simply make a copy of config-template.py and name it "config.py". This file will automatically be ignored by Git because it is in the .gitignore.
+The web app uses a configuration file named "config.py" to store various configuration options. Some of these are quite sensitive (e.g. database credentials), so they shouldn't be saved in version control. Because of this, a "config.py" file isn't in the repository but rather a "config-template.py" file which provides all of the necessary structure for the "config.py" file with all of the non-sensitive values already populated.
+1. On your machine in the root of your local repository, simply make a copy of config-template.py and name it "config.py". This file will automatically be ignored by Git because it is in the .gitignore.
 2. You will now need to populate several values into config.py like the AWS Access Key ID, AWS Secret Access Key, Google Maps JavaScript API key, the database username, and the database password. Any values that you need to add are indicated by "ADD_VALUE_HERE". You can get these values through another communication channel.
 
 ### Setup Google service account credentials for Firebase Admin SDK
@@ -66,17 +66,17 @@ So what you need to do at this point is:
 ### Use the Cloud SQL proxy (TCP and Unix socket)
 By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database instances using any tool that can connect with a TCP connection or a Unix socket (NOTE: you can't use Unix sockets on Windows).  The Cloud SQL proxy also allows the web application to reach the Cloud SQL database for use with local development and testing.
 - To use the Cloud SQL proxy with a TCP connection, run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306`.
-- To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database -dir=<PATH TO UNIX SOCKET DIRECTORY>`.  If you're having issues with the Unix socket being created correctly, then make sure your `cloudsql/` directory (and thus your shellcast repository) is not too deep in your file system.  Unix sockets have a limit on the length of their paths, so make sure the path to your shellcast repository is relatively shallow.
+- To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database -dir=<PATH TO UNIX SOCKET DIRECTORY>`.  If you're having issues with the Unix socket being created correctly, then make sure your `cloudsql/` directory (and thus your local shellcast repository) is not too deep in your file system.  Unix sockets have a limit on the length of their paths, so make sure the path to your local shellcast repository is relatively shallow.
 
 ### Run the application locally
-1. Make sure the Python virtual environment is activated and that you are in the root of the local repository.
+1. Make sure the Python virtual environment is activated and that you are in the root of your local repository.
 2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 3. Run the Python app by running `python main.py`.
 4. Now you can navigate to [http://localhost:3361](http//:localhost:3361) in your browser to see the web app.
 
 ### Deploy the app to Google App Engine
 1. Make sure that you are signed in and using the correct project (ncsu-shellcast) by running `gcloud info`.
-2. From the root directory of the repository, you can deploy the application to Google App Engine by running `gcloud app deploy`.
+2. From the root directory of your local repository, you can deploy the application to Google App Engine by running `gcloud app deploy`.
 
 
 ## Testing
