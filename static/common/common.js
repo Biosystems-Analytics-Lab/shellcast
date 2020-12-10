@@ -47,25 +47,6 @@ async function signOut() {
   location.reload();
 }
 
-(async () => {
-  // initialize Firebase
-  firebase.initializeApp(FIREBASE_CONFIG);
-  
-  // if the navigation bar exists
-  if (document.getElementById('navigation-bar')) {
-    // update elements based on auth state
-    firebase.auth().onAuthStateChanged((user) => {
-      user ? handleNavbarSignedIn(user) : handleNavbarSignedOut();
-    });
-
-    // init event listeners
-    document.getElementById('account-dropdown-sign-out').addEventListener('click', signOut);
-
-    // update sign-in url
-    document.getElementById('account-sign-in').href = `/signin?mode=select&signInSuccessUrl=${window.location.pathname}`;
-  }
-})();
-
 async function authorizedFetch(url, options={}) {
   // request the token which may potentially be expired
   // (don't get an updated token just yet because you are unnecessarily refreshing tokens with sign-in service providers and this might drive you over your daily quotas)
@@ -91,3 +72,23 @@ async function authorizedFetch(url, options={}) {
 
   return request;
 }
+
+(async () => {
+  // initialize Firebase
+  firebase.initializeApp(FIREBASE_CONFIG);
+  
+  // if the navigation bar exists
+  if (document.getElementById('navigation-bar')) {
+    // update elements based on auth state
+    firebase.auth().onAuthStateChanged((user) => {
+      user ? handleNavbarSignedIn(user) : handleNavbarSignedOut();
+    });
+
+    // init event listeners
+    document.getElementById('account-dropdown-sign-out').addEventListener('click', signOut);
+
+    // update sign-in url
+    document.getElementById('account-sign-in').href = `/signin?mode=select&signInSuccessUrl=${window.location.pathname}`;
+  }
+})();
+
