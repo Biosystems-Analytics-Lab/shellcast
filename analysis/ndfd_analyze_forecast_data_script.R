@@ -18,8 +18,8 @@
 # TODO (wishlist) use terra package for raster stuff
 
 # TODO remove notification testing factor when testing is over
-notification_flag <- "production" # or "testing"
-notification_dist_min <- 20 # for notification_flag <- "testing"
+notification_flag <- "production" # "testing" or "production"
+notification_dist_min <- 0 # for notification_flag <- "testing"
 notification_dist_max <- 100 # for notification_flag <- "testing"
 # notification_factor <- 3
 
