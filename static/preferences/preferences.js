@@ -430,6 +430,17 @@ function searchLeasesOnDelay() {
   leaseSearchTimer = setTimeout(searchLeases, LEASE_SEARCH_DELAY);
 }
 
+async function deleteAccount() {
+  const res = await authorizedFetch('/deleteAccount');
+  if (res.ok) {
+    window.location.replace('/');
+  } else {
+    const errors = (await res.json()).errors;
+    console.log('There was a problem while deleting the account.');
+    console.log(errors);
+  }
+}
+
 /**
  * Displays the UI for a signed in user and initializes the lease forms.
  * @param {firebase.User} user
@@ -442,6 +453,9 @@ async function handleSignedInUser(user) {
   // get user's profile information
   profileInfo = await getProfileInfo();
   initProfileForm(profileInfo);
+
+  // setup delete account button
+  document.getElementById('confirm-account-deletion-btn').addEventListener('click', deleteAccount);
 
   // setup lease search bar
   document.getElementById('lease-search-text-input').addEventListener('input', searchLeasesOnDelay);

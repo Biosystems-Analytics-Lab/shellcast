@@ -1,7 +1,10 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
+from firebase_admin import auth
+
 from models import db
+from models.User import User
 from models.CMU import CMU
 from models.CMUProbability import CMUProbability
 from models.UserLease import UserLease
@@ -47,6 +50,37 @@ def userInfo(user):
       db.session.commit()
       return constructResponse(user)
     return {'errors': validator.errors}, 400
+
+@api.route('/deleteAccount')
+@userRequired
+def deleteAccount(user):
+  """
+  Deletes the user's account.
+  """
+  try:
+    # delete the user from Firebase
+    auth.delete_user(user.firebase_uid)
+
+    # clear PII 
+    user.firebase_uid = None
+    user.email = None
+    user.phone_number = None
+    user.service_provider_id = None
+
+    # clear preferences
+    user.email_pref = User.DEFAULT_email_pref
+    user.text_pref = User.DEFAULT_text_pref
+    user.prob_pref = User.DEFAULT_prob_pref
+
+    # mark user record as deleted
+    user.deleted = True
+
+    db.session.add(user)
+    db.session.commit()
+  except Exception as err:
+    print(err)
+    return {'errors': ['Could not delete user.']}, 400
+  return 'Success'
 
 @api.route('/leaseProbs')
 @userRequired

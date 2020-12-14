@@ -6,7 +6,7 @@ from models import db as _db
 from config import TestConfig
 
 from firebase_admin import auth
-from firebase_admin.auth import ExpiredIdTokenError, InvalidIdTokenError
+from firebase_admin.auth import ExpiredIdTokenError, InvalidIdTokenError, UserNotFoundError
 
 import boto3
 
@@ -119,6 +119,18 @@ def addMockFbUser():
   realTokenVerification = auth.verify_id_token
   auth.verify_id_token = mockTokenVerification
 
+  def mockDeleteUser(firebaseUID):
+    for token in mockFirebaseUsers:
+      user = mockFirebaseUsers[token]
+      if user['userInfo']['uid'] == firebaseUID:
+        del mockFirebaseUsers[token]
+        return
+    raise UserNotFoundError('A user with the UID {} was not found.'.format(firebaseUID))
+
+  # replace the delete_user definition
+  realDeleteUser = auth.delete_user
+  auth.delete_user = mockDeleteUser
+
   def addUser(userInfo, token, tokenIsExpired=False):
     mockFirebaseUsers[token] = dict(tokenExpired=tokenIsExpired, userInfo=userInfo)
 
@@ -126,6 +138,8 @@ def addMockFbUser():
 
   # restore true token verification
   auth.verify_id_token = realTokenVerification
+  # restore true delete_user
+  auth.delete_user = realDeleteUser
 
 @pytest.fixture(scope='function', autouse=True)
 def genRandomString():

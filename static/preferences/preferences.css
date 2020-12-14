@@ -1,3 +1,9 @@
+#delete-account-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #forms {
   margin: auto;
   max-width: 900px;

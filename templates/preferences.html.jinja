@@ -21,6 +21,11 @@
   <div id="user-signed-out" style="height: 100vh"></div>
 
   <div id="user-signed-in" style="display: none">
+
+    <div id="delete-account-div">
+      <button class="btn btn-danger" type="button" id="delete-account-btn" onclick="$('#account-deletion-modal').modal('show');">Delete Account</button>
+    </div>
+
     <div id="forms">
 
       {# Notification Preferences Form #}
@@ -158,4 +163,30 @@
 
     </div>
   </div>
+
+  {# <!-- Account Deletion Modal --> #}
+  <div class="modal fade" id="account-deletion-modal" tabindex="-1" aria-labelledby="account-deletion-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="account-deletion-label">Delete Account?</h5>
+        </div>
+        <div class="modal-body">
+          <p>
+            Are you sure that you want to delete your account?
+          </p>
+          <p>
+            Your email address, phone number, mobile phone service provider, and
+            notification preferences will be removed from our database.  You can
+            choose to make a new account with the same information later.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="$('#account-deletion-modal').modal('hide');">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirm-account-deletion-btn">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
