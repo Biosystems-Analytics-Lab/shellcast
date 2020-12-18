@@ -86,7 +86,7 @@ def sendNotifications():
   emailNotificationsToSend = []
   textNotificationsToSend = []
   # build the notifications for each user
-  users = db.session.query(User).all()
+  users = db.session.query(User).filter_by(deleted=False).all()
   for user in users:
     # get email address
     emailAddress = user.email
