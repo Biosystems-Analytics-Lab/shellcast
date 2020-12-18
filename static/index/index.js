@@ -304,6 +304,10 @@ function getColor(value) {
 (async () => {
   await initMap();
 
+  // format the search box placeholder text for both tables
+  document.querySelector('#lease-table-div input').placeholder = 'Search leases';
+  document.querySelector('#growing-unit-table-div input').placeholder = 'Search growing units';
+
   const growingUnitData = await getGrowingUnitData();
   initGrowingUnitTable(growingUnitData);
   addGrowingUnitDataToMap(growingUnitData);
