@@ -24,6 +24,8 @@ There are 6 tables.
 
 ![A diagram showing the fields for each database table and the relationships between them.](images/database_diagram.png)
 
+There are 3 "databases" in the MySQL instance: `shellcast`, `shellcast_dev`, and `shellcast_testing`.  `shellcast` is the production database that the live, public site uses.  `shellcast_dev` is the development database that is used when running the application on a local machine.  `shellcast_testing` is a database that is used for running the unit tests for the application.  `shellcast_testing` is wiped clean after every test.
+
 ## Connecting to Google Cloud SQL
 1. Complete the [Install and initialize Google Cloud SDK](DEVELOPER.md#install-and-initialize-google-cloud-sdk) section in the DEVELOPER.md documentation.
 2. Complete the [Download Cloud SQL proxy](DEVELOPER.md#download-cloud-sql-proxy) section in the DEVELOPER.md documentation.
