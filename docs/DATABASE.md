@@ -22,7 +22,7 @@ There are 6 tables.
   - Stores a log of all notifications that are sent to users.
   - Each notification is associated with a user that the notification is sent to as well as the closure probability that triggered the notification.
 
-_ADD DB DIAGRAM_
+![A diagram showing the fields for each database table and the relationships between them.](images/database_diagram.png)
 
 ## Connecting to Google Cloud SQL
 1. Complete the [Install and initialize Google Cloud SDK](DEVELOPER.md#install-and-initialize-google-cloud-sdk) section in the DEVELOPER.md documentation.
