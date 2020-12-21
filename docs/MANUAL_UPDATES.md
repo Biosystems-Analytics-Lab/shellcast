@@ -25,6 +25,24 @@ After you have found and made an edit:
 1. [Upload the changes to GitHub](#uploading-changes-to-github).
 2. [Upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
 
+## Adding a new web page and navigation link
+1. First, you need to create a template for the web page in the templates/ directory.  The template file is essentially the new web page's content except for things that are common to all pages such as the navigation bar and footer (these are specified in base.html.jinja but you don't need to mess with that file for now).  You can duplicate an existing template such as `about.html.jinja` as a starting point and rename it to `<name of the new page>.html.jinja`.  Delete all of the HTML in the `{% block content %}...{% endblock %}` section and replace it with what you want to be shown on the page.  Also be sure to update the `{% block title %}...{% endblock %}` section with the title of the new page (this is what will be shown on the tab in a web browser).  Also you can remove, reuse, or replace the CSS file tag in the `{% block additional_head %}...{% endblock %}` section depending if you need additional styling for the new page.  (CSS files for each of the existing pages are in the static/<name of page>/ directories if you need to take a look at them.)
+2. Next you need to add a route to the Flask application so that the page can be served to a client that requests it.  Open routes/pages.py and copy and paste an existing route like the following:
+  ```
+  @pages.route('/about')
+  def aboutPage():
+    return render_template('about.html.jinja')
+  ```
+Then change the route from `'/about'` to `'/<name of the new page>'`, the function name from `aboutPage()` to `<name of the new page>Page()`, and the template file path from `'about.hmtl.jinja'` to `<name of the new template file>`.
+
+3. Next you need to add a navigation link for the new page.  Open templates/base.html.jinja and find the following line:
+  ```
+  {% set navItems = [("index", "/", "Map"), ("about", "/about", "About Us"), ("how-it-works", "/how-it-works", "How ShellCast Works")] %}
+  ```
+This is a list of tuples containing the 3 pieces of information needed to make each of the nav links in the nav bar.  The first string in each tuple is the name of the page (the part of the template file name before `.html.jinja`).  The second string is the route to the page (this is what you used as the route in step 2).  The third string is the actual text that will be shown as a link in the nav bar.  You just need to add another tuple to the end of the list (the order that the items appear in the navItems list is the order that they will appear as nav links in the nav bar).
+
+4. Finally, [upload the changes to GitHub](#uploading-changes-to-github) and [to Google App Engine](#uploading-changes-to-google-app-engine).
+
 ## Updating growing unit boundaries
 static/cmu_bounds.geojson contains the NCDMF growing units and their boundaries.  To modify the growing units' boundaries, simply replace that file with an updated version while keeping the file name the same.
 
