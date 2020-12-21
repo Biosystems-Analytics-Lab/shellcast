@@ -1,5 +1,7 @@
 This document is intended to help a developer get up and running with ShellCast.
 
+_Please note that some steps in this document will only work on a Unix machine (Linux/Mac).  There are certainly work arounds for Windows, but I did not thoroughly look into these and document them._
+
 ## Code Structure
 - main.py - The root of the Python Flask application.
 - app.yaml - Configuration for deploying the app to Google Cloud.
@@ -45,6 +47,8 @@ Clone the GitHub repository to your machine by running `git clone https://github
 4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
 
 ### Make a Unix socket directory
+_This step cannot be performed on a Windows machine. This step is ultimately needed to connect to the database through the Unix socket option of the Cloud SQL proxy. To work around this, I would look into changing the SQLALCHEMY_DATABASE_URI property of your config.py file (see the section below) for the DevConfig and TestConfig objects. You should be able to change the URI so that it connects through a TCP connection in the Dev and Test configurations while still connecting through a Unix socket once deployed to GCP (that's when the regular Config object (production) configuration is used)._
+
 To use the Cloud SQL proxy for local development and testing of the web app, a directory is needed for a Unix socket. From the root directory of your local repository, make a new directory named "cloudsql" by running `mkdir cloudsql`.
 
 ### Make a configuration file based on the template file
