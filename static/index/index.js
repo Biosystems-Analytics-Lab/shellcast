@@ -304,9 +304,13 @@ function getColor(value) {
 (async () => {
   await initMap();
 
-  // format the search box placeholder text for both tables
-  document.querySelector('#lease-table-div input').placeholder = 'Search leases';
-  document.querySelector('#growing-unit-table-div input').placeholder = 'Search growing units';
+  // change placeholder text and title attribute for table search boxes
+  const leaseTableSearchBox = document.querySelector('#lease-table-div input');
+  leaseTableSearchBox.placeholder = 'Search leases';
+  leaseTableSearchBox.title = 'Search leases table';
+  const growingUnitTableSearchBox = document.querySelector('#growing-unit-table-div input');
+  growingUnitTableSearchBox.placeholder = 'Search growing units';
+  growingUnitTableSearchBox.title = 'Search growing units table';
 
   const growingUnitData = await getGrowingUnitData();
   initGrowingUnitTable(growingUnitData);
