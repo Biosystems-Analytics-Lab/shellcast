@@ -21,6 +21,23 @@ NCSU Virtual Computing Lab (VCL)
 - Available through https://vcl.wordpress.ncsu.edu/
 - Linux Server - ShellCast uses a custom Linux server to run the closure analysis code on a regular basis.
 
+## Architecture Overview
+![A diagram showing the data flow of the ShellCast application.](docs/images/architecture_diagram.png)
+
+1. The NC Climate Office provides APIs for a variety of weather data.
+2. Rainfall forecasts are retrieved every morning.
+3. The analysis server calculates closure probabilities for growing units based on the rainfall forecasts and rainfall closure thresholds for those growing units. See [docs/ANALYSIS.md](/docs/ANALYSIS.md) for more information.
+4. The calculated probabilities for every growing unit are uploaded to the database every morning.
+5. The database is a MySQL 5.7 instance hosted on Google Cloud SQL. See [docs/DATABASE.md](/docs/DATABASE.md) for more information.
+6. Calculated probabilites are retrieved by the web server 
+7. The web server is a Python Flask application hosted on Google App Engine. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
+8. As requests are made from a web browser, the web server responds to those requests.
+9. A user can access the ShellCast web site using any modern web browser on a computer, phone, or tablet.
+10. User information and preferences are propagated back to the database.
+11. Notifications are sent to users every morning based on their notification preferences. Notifications are sent using Amazon Web Services Simple Email Service.
+12. Email notifications show a detailed list of a user's leases that may close soon. Email notifications are sent using the user's email address.
+13. Text notifications consist of a short message with a link back to ShellCast site. Text notifications are sent using the user's phone number and the SMS gateway for the user's phone service provider.
+
 ## Documentation
 Instructions explaining how to perform a variety of tasks can be found in the following documents in the `doc` directory [here](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/tree/master/docs).
 
