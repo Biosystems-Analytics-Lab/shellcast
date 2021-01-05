@@ -1,6 +1,23 @@
+# DATABASE.md
+
+This document is intended to help a developer understand the ShellCast database structure and make changes to the database.
+
 _The following instructions assume that you are using [Sequel Pro](https://sequelpro.com/) as your database client.  Unfortunately, Sequel Pro is only available on Mac, however, you should be able to use any database client to access the database by following the instructions under [Connecting to Cloud SQL](#connecting-to-cloud-sql).  A powerful alternative to Sequel Pro is [DBeaver](https://dbeaver.io/) which is free, open source, and multiplatform._
 
-## Database Design
+## Table of Contents
+
+1. [Database Design](#1-database-design)
+
+2. [Connecting to Google Cloud SQL](#2-connecting-to-google-cloud-sql)
+
+3. [Downloading Database Tables](#3-downloading-database-tables)
+
+4. [Editing User Information and Leases](#4-editing-user-information-and-leases)
+
+5. [Contact Information](#5-contact-information)
+
+## 1. Database Design
+
 ShellCast uses a MySQL 5.7 instance hosted on Google Cloud SQL.
 
 There are 6 tables.
@@ -26,7 +43,8 @@ There are 6 tables.
 
 There are 3 "databases" in the MySQL instance: `shellcast`, `shellcast_dev`, and `shellcast_testing`.  `shellcast` is the production database that the live, public site uses.  `shellcast_dev` is the development database that is used when running the application on a local machine.  `shellcast_testing` is a database that is used for running the unit tests for the application.  `shellcast_testing` is wiped clean after every test.
 
-## Connecting to Google Cloud SQL
+## 2. Connecting to Google Cloud SQL
+
 1. Complete the [Install and initialize Google Cloud SDK](DEVELOPER.md#install-and-initialize-google-cloud-sdk) section in the DEVELOPER.md documentation.
 2. Complete the [Download Cloud SQL proxy](DEVELOPER.md#download-cloud-sql-proxy) section in the DEVELOPER.md documentation.
 3. Start a TCP connection by running the first command in the [Use the Cloud SQL proxy](DEVELOPER.md#use-the-cloud-sql-proxy-tcp-and-unix-socket) section in the DEVELOPER.md documentation.
@@ -38,13 +56,19 @@ There are 3 "databases" in the MySQL instance: `shellcast`, `shellcast_dev`, and
   - Port: 3306
 5. After a few moments, the database tables should load and you should be able to browse the database.
 
-## Downloading database tables
+## 3. Downloading Database Tables
+
 You can download the current state of the database as CSV files using Sequel Pro.
 1. Select all of the tables you'd like to download records for.
 2. Click the gear icon at the bottom left of the window.
 3. Choose "Export > As CSV file...".
 4. A new window should open where you can change some settings related to the export.  The default settings are probably what you want, so just choose where you want to the files to be saved to and click "Export".
 
-## Editing user information and leases
+## 4. Editing User Information and Leases
+
 - User information such as phone number, email address, and email/text/probability preference can be found in the users table.  Simply double-click on the value you would like to change.
 - User lease information such as growing area name, CMU name, rainfall threshold, and location can be found in the user_leases table.  Simply double-click on the value you would like to change.
+
+## 5. Contact Information
+
+If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
