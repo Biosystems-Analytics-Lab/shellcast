@@ -7,7 +7,7 @@ ShellCast is a Python Flask web application that helps North Carolina shellfish 
 
 2. [Architecture Overview](#2-architecture-overview)
 
-3. [Documentation Overview](#3-documentation-overiew)
+3. [Documentation Overview](#3-documentation-overview)
 
 4. [Contact Information](#4-contact-information)
 
