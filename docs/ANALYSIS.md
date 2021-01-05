@@ -22,7 +22,7 @@ This markdown file describes the components and set up of the daily analysis CRO
 
 ## 0. Background
 
-The main purpose of the scripts in the analysis folder are to: (1) pull rainfall data from a remote server at the North Carolina State Climate Office, (2) do some calculations with that rainfall data, and (3) update the ShellCast MySQL database based on those calculations. For a schematic representation of this workflow, see the ShellCast flowchart (<fill in link to draw.io figure in main repo README>).
+The main purpose of the scripts in the analysis folder are to: (1) pull rainfall data from a remote server at the North Carolina State Climate Office, (2) do some calculations with that rainfall data, and (3) update the ShellCast MySQL database based on those calculations. For a schematic representation of this workflow, including the how they relate to other major components of the ShellCast web application, see the ShellCast [architecture overview flowchart](https://github.ncsu.edu/biosystemsanalyticslab/shellcast#2-architecture-overview).
 
 The analysis daily CRON job ensures that the three steps descirbed above will run every day at 6am ET on the virtual computing lab server (or on a personal machine).
 
