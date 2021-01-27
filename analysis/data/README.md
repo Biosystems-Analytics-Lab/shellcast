@@ -1,4 +1,4 @@
-# README.md for data directory
+# README.md for the data directory
 
 last updated: 20210121<br/>
 contact: Sheila Saia (ssaia at ncsu dot edu)
@@ -20,8 +20,8 @@ Letters in parentheses next to file names refer to how frequently the directory 
             cmu_bounds_10kmbuf_albers.shp (Y) -
             cmu_bounds_albers.shp (Y) -
             cmu_bounds_wgs84.geojson (Y) -
-            README.md (Y) -
-        cmu_bounds_raw directory (move up layer?)
+            README.md (Y) - 
+        cmu_bounds_raw directory
           files:
             Conditional_Management_Units.shp (Y) -
             cmu_bounds_raw_albers.shp (Y) -
@@ -29,12 +29,14 @@ Letters in parentheses next to file names refer to how frequently the directory 
             README.md (Y) -
         sga_bounds directory
           files:
-            
-        sga_bounds_raw directory (move up layer?)
+
+
+        sga_bounds_raw directory
           files:
 
+
       1.1.2 state_bounds_data directory
-        state_bounds directory (move in layer?)
+        state_bounds directory
           files:
         state_bounds_raw directory
           files:
@@ -65,15 +67,20 @@ Letters in parentheses next to file names refer to how frequently the directory 
       2.2.2 ndfd_sco_data directory
         cmu_calcs directory
           files:
+
         lease_calcs directory
           files:
+
         ndfd_sco_data_raw directory
           files:
+
         sga_calcs directory
           files:
 
+
       2.2.3 ndfd_sco_data_appended directory
         files:
+
 
 
       2.2.4 terminal_data directory
