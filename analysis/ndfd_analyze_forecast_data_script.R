@@ -71,7 +71,7 @@ ndfd_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sc
 lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_ignored/")
 
 # path to ignored lease bounds tabular outputs
-lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
+# lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
 
 # path to ndfd tabular outputs appended
 ndfd_tabular_data_appended_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data_appended/")
