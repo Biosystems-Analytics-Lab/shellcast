@@ -17,12 +17,13 @@ htmlcov
 # ignore Mac backup stuff
 .DS_Store
 # ignore spatial data files that change daily
-analysis/data/spatial/outputs/*.tif
+analysis/data/spatial/outputs/ndfd_sco_data/*.tif
 # ignore tabular data files that change daily
 analysis/data/tabular/outputs/cronjob_data/*.err
 analysis/data/tabular/outputs/cronjob_data/*.out
 analysis/data/tabular/outputs/ndfd_sco_data/*.csv
 analysis/data/tabular/outputs/terminal_data/*.txt
+# these aren't being ignored (not sure why)
 # don't ignore appended csv data in analysis/data/tabular/outputs/ndfd_sco_data_appended
 # ignore r history file
 .Rhistory
