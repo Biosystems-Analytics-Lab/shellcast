@@ -66,7 +66,7 @@ data_available_pd = pandas.DataFrame(columns = ['datetime_uct_str', 'status'])
 
 # hardcode current day at 7am UCT for now
 today = dt.date.today()
-today_str = today.strftime("%Y%m%d") + "07"
+today_str = today.strftime("%Y%m%d") + "07" # "2021013107" 
 today_uct = pandas.to_datetime(dt.datetime.strptime(today_str, "%Y%m%d%H"))
 datetime_now_uct = today_uct.tz_localize(tz = "UCT")
 
