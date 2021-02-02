@@ -16,12 +16,8 @@
 # TODO include error message/script stopping for no recent data to pull
 # TODO (wishlist) use here package
 # TODO (wishlist) use terra package for raster stuff
-
 # TODO remove notification testing factor when testing is over
-notification_flag <- "production" # "testing" or "production"
-notification_dist_min <- 0 # for notification_flag <- "testing"
-notification_dist_max <- 100 # for notification_flag <- "testing"
-# notification_factor <- 3
+
 
 
 # ---- 1. install and load packages as necessary ----
@@ -68,7 +64,7 @@ ndfd_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ndfd_sc
 ndfd_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/")
 
 # path to ignored lease bounds spatial outputs
-lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_ignored/")
+# lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_ignored/")
 
 # path to ignored lease bounds tabular outputs
 # lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
@@ -92,6 +88,12 @@ conus_albers_proj <- "+init=EPSG:5070"
 # define wgs 84 projection
 # wgs84_epsg <- 4326
 # wgs84_proj4 <- "+proj=longlat +datum=WGS84 +no_defs"
+
+# notification flag for testing or production versions
+notification_flag <- "production" # "testing" or "production"
+notification_dist_min <- 0 # for notification_flag <- "testing"
+notification_dist_max <- 100 # for notification_flag <- "testing"
+# notification_factor <- 3
 
 
 # ---- 4. pull latest ndfd file name (with date) ----
@@ -550,12 +552,41 @@ ndfd_cmu_calcs_data_spread <- ndfd_cmu_calcs_data %>%
                      values_fn = max) %>% # will take the max prob. closure value if there are multiple
   dplyr::select(-day)
 
+# View(ndfd_cmu_calcs_data_spread)
+
+
 # ---- 13. export area weighted, spreaded ndfd cmu calcs ----
 # export calcs for 1-day, 2-day, and 3-day forecasts
 # write_csv(ndfd_cmu_calcs_data, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs_", latest_ndfd_date_uct_str, ".csv")) # includes date in file name
 write_csv(ndfd_cmu_calcs_data_spread, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs.csv"))
 
 print("finished analyzing forecast data")
+
+
+# ---- 14. append data for long-term analysis ----
+# reformat cmu data
+ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
+  dplyr::select(-row_num) %>%
+  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
+
+# reformat sga data
+# ndfd_sga_calcs_data_to_append <- ndfd_sga_calcs_data %>%
+#   ungroup() %>%
+#   dplyr::mutate(datetime_uct = rep(ndfd_date_uct, dim(ndfd_sga_calcs_data)[1]),
+#                 flag = rep(notification_flag, dim(ndfd_sga_calcs_data)[1])) %>%
+#   dplyr::select(grow_area_name, datetime_uct, min_1d_prob:max_3d_prob, flag)
+
+# reformat lease data
+# ndfd_lease_calcs_data_to_append <- ndfd_lease_calcs_data %>%
+#   dplyr::mutate(flag = rep(notification_flag, dim(ndfd_lease_calcs_data)[1])) %>%
+#   dplyr::select(lease_id, datetime_uct = day, prob_1d_perc:flag)
+
+# append all three datasets
+write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
+# write_csv(ndfd_sga_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_sga_calcs_appended.csv"), append = TRUE)
+# write_csv(ndfd_lease_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_lease_calcs_appended.csv"), append = TRUE)
+
+print("appended forecast data for long-term analysis")
 
 
 # ---- OLD CODE ----
@@ -655,30 +686,6 @@ print("finished analyzing forecast data")
 
 # export ignored lease data (tabular)
 # write_csv(ndfd_leases_ignored_tab_data, paste0(lease_tabular_data_output_path, "lease_bounds_ignored_", latest_ndfd_date_uct_str, ".csv"))
-
-
-# ---- extra 17. append data for long-term analysis ----
-# reformat cmu data
-# ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
-#   dplyr::select(-row_num) %>%
-#   dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
-
-# reformat sga data
-# ndfd_sga_calcs_data_to_append <- ndfd_sga_calcs_data %>%
-#   ungroup() %>%
-#   dplyr::mutate(datetime_uct = rep(ndfd_date_uct, dim(ndfd_sga_calcs_data)[1]),
-#                 flag = rep(notification_flag, dim(ndfd_sga_calcs_data)[1])) %>%
-#   dplyr::select(grow_area_name, datetime_uct, min_1d_prob:max_3d_prob, flag)
-
-# reformat lease data
-# ndfd_lease_calcs_data_to_append <- ndfd_lease_calcs_data %>%
-#   dplyr::mutate(flag = rep(notification_flag, dim(ndfd_lease_calcs_data)[1])) %>%
-#   dplyr::select(lease_id, datetime_uct = day, prob_1d_perc:flag)
-
-# append all three datasets
-# write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
-# write_csv(ndfd_sga_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_sga_calcs_appended.csv"), append = TRUE)
-# write_csv(ndfd_lease_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_lease_calcs_appended.csv"), append = TRUE)
 
 
 # ---- extra 1. min and max ndfd sga calcs ----
