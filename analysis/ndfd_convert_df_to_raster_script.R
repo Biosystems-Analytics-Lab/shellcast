@@ -41,7 +41,7 @@ data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 ndfd_tabular_data_input_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/ndfd_sco_data_raw/")
 
 # path to nc buffer spatial inputs
-nc_buffer_spatial_input_path <- paste0(data_base_path, "spatial/inputs/state_bounds_data/")
+nc_buffer_spatial_input_path <- paste0(data_base_path, "spatial/inputs/state_bounds_data/state_bounds/")
 
 # outputs
 # path to ndfd spatial outputs

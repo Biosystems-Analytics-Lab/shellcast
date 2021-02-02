@@ -37,7 +37,7 @@ data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 # ---- 3. use base paths and define projections ----
 # inputs
 # path to cmu spatial inputs
-cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
+cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds_raw/")
 
 # path to rainfall threshold tabular inputs
 rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
@@ -64,7 +64,7 @@ wgs84_epsg <- 4326
 
 # ---- 4. initial processing of cmu bounds (with qgis notes too) ----
 # cmu spatial data
-cmu_bounds_raw <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_raw/Conditional_Management_Units.shp")) %>%
+cmu_bounds_raw <- st_read(paste0(cmu_spatial_data_input_path, "Conditional_Management_Units.shp")) %>%
   st_set_crs(nc_sp_epsg)
 
 # st_crs(cmu_bounds_raw)
