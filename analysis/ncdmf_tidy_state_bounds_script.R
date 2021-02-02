@@ -31,7 +31,7 @@ data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analys
 state_bounds_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/state_bounds_data/state_bounds_raw/")
 
 # path to state bounds spatial outputs
-state_bounds_spatial_data_output_path <- paste0(data_base_path, "spatial/inputs/state_bounds_data/")
+state_bounds_spatial_data_output_path <- paste0(data_base_path, "spatial/inputs/state_bounds_data/state_bounds/")
 
 # define epsg and proj4 for N. America Albers projection (projecting to this)
 na_albers_proj4 <- "+proj=aea +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"

@@ -37,7 +37,7 @@ data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
 # ---- 3. use base paths and define projections ----
 # inputs
 # path to sga spatial inputs (raw data)
-sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds/sga_bounds_raw/")
+sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds_raw/")
 
 # outputs
 # path to sga spatial outputs
