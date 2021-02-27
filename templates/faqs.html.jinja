@@ -1,0 +1,196 @@
+{% extends "base.html.jinja" %}
+
+{% block title %}ShellCast Frequently Asked Questions (FAQs){% endblock %}
+
+{% block additional_head %}
+  <!-- Custom CSS -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='faqs/faqs.css') }}">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1><i>General ---- </i></h1>
+    <p></p>
+
+    <b>1. How do I know when ShellCast was last updated?</b>
+    <p>
+      On the Map page, you will see the date and time when ShellCast was last 
+      updated at the top of the page, just under the menu bar.
+    </p>
+
+    <b>2. What date corresponds to “today”, “tomorrow” and “in 2 days”?</b>
+    <p>
+      On the Map page, just under the menu bar, you will see the dates corresponding
+      to forecasts for today, tomorrow, and in 2 days.
+    </p>
+
+    <b>3. How do I see forecast information for my leases?</b>
+    <p>
+      On the Map page, you will see white pins on the map for each of the leases 
+      you added to your account. To see the percent chance of closure forecasts for 
+      a particular lease on the map, click on the map pin. By doing this you will 
+      be able to see the percent chance of closure for today, tomorrow, and 2 days 
+      from now for the lease pin you select.
+    </p>
+
+    <b>4. How do I see forecast information on the map for 2 days from now?</b>
+    <p>
+      On the middle-left of the map, there is a button that says “In 2 days”. Click 
+      this button to see the forecast information for 2-days from now. 
+    </p>
+
+    <b>5. When I click on the “Today”, “Tomorrow”, and “In 2 days” buttons on the map, 
+    nothing happens. Is something wrong?</b>
+    <p>
+      If the map does not change when you click on “Today”, “Tomorrow”, and “In 2 
+      days”, this likely means that the forecast is the same for the next few days. 
+      If you want to make sure the app is working properly, check the “Last updated” 
+      date and time at the top of the Map page. If the date shown by “last updated” 
+      is for the current day, then the app is functioning properly.  
+    </p>
+
+    <b>6. How do I move around on the map?</b>
+    <p>
+      You can zoom in and out of the map using the plus and minus buttons on the 
+      lower right corner. To move the map, click anywhere in the map, and drag the 
+      map while still clicking down on your mouse. Drag the map in the direction you 
+      would like it to move. 
+    </p>
+
+    <b>7. Do you plan to expand the geographic scope of ShellCast to include shellfish 
+    waters outside of North Carolina?</b>
+    <p>
+      Yes. In 2021, we are piloting the use of ShellCast with growers in North 
+      Carolina. Once we have completed the testing phase, we are interested in 
+      expanding to other states. If you are interested in having ShellCast in your 
+      area, please let us know by <a href="https://ncsu-shellcast.appspot.com/about">contacting us</a>.
+    </p>
+
+    <h1><i>Account ---- </i></h1>
+    <p></p>
+
+    <b>8. Do I need a Google account to create a ShellCast account?</b>
+    <p>
+      Yes. You must have a Gmail/Google email address to sign into ShellCast at this
+      time. We use Google so we can avoid storing your personal information. 
+    </p>
+
+    <b>9. How do I add leases to my account?</b>
+    <p>
+      To add leases, search for your lease by its North Carolina Division of Marine 
+      Fisheries ID in the search bar under “My Leases” on the Preferences page. If
+      you aren’t sure what your lease ID number is, you can search for it on the 
+      <a href="https://arcg.is/1ieXrX">Shellfish Leasing Application</a>. Once you 
+      have this application open, navigate to the location of your lease, click on 
+      the lease, and record the “Lease ID” value from the information that pops up.
+    </p>
+
+    <b>10. I added a lease to my account, but the shellfish growing area and rainfall 
+    threshold are incorrect.</b>
+    <p>
+      We receive lease information directly from the North Carolina Division of Marine 
+      Fisheries (DMF). If you see an error in the information, we encourage you to 
+      contact DMF.
+    </p>
+
+    <b>11. Can I delete leases from my account?</b>
+    <p>
+      Yes. If you would like to delete a lease from your account, go to the “My Leases” 
+      section of the Preferences page. To remove a lease from your account, click on 
+      the red “Delete” button to the right of your lease number.
+    </p>
+
+    <b>12. How do I delete my account?</b>
+    <p>
+      At the top of the Preferences page, you will see a red “Delete Account” button. 
+      Click this button to delete your account. Once you delete your account, your 
+      email address, phone number, mobile phone service provider, and notification 
+      preferences will be removed from our database. You can choose to make a new 
+      account with the same information later.
+    </p>
+
+    <h1><i>Notification Preferences ---- </i></h1>
+    <p></p>
+
+    <b>13. How do I get to the Preferences page?</b>
+    <p>
+      Click on your email address in the top-right corner of the menu bar, and then 
+      click on Preferences. 
+    </p>
+
+    <b>14. How do I set text notifications for my leases?</b>
+    <p>
+      Add your phone number and mobile service provider under “My Notification 
+      Preferences” on the Preferences page. Check off “Text” under “I want to receive 
+      the following notifications:”. Be sure to click on “Save” at the bottom-right 
+      of the “My Notification Preferences” section. If you do not click save, your 
+      phone number and service provider will not be saved.
+    </p>
+
+    <b>15. How do I set email notifications for my leases?</b>
+    <p>
+      Under “My Notification Preferences” on the Preferences page, check off “Email” 
+      under “I want to receive the following notifications:”. The emails will be sent 
+      to the Google address associated with your ShellCast account, which you will 
+      see listed under “Email address”. Be sure to click on “Save” at the bottom-right 
+      of the “My Notification Preferences” section. If you do not click save, your 
+      preferences will not be saved.
+    </p>
+
+    <b>16. Can I receive both text and email notifications?</b>
+    <p>
+      Yes. Check off both “Email” and “Text” under “I want to receive the following 
+      notifications:” under the “My Notification Preferences” section of the 
+      Preferences page. Be sure to click on “Save” at the bottom-right of the 
+      “My Notification Preferences” section. If you do not click “Save”, your 
+      preferences will not be saved.
+    </p>
+
+    <b>17. How do I stop receiving notifications?</b>
+    <p>
+      Under “My Notification Preferences” on the Preferences page, check off 
+      “I do not want to receive notifications”. Be sure to click on “Save” at the 
+      bottom-right of the “My Notification Preferences” section. If you do not click 
+      “Save”, your preferences will not be saved.
+    </p>
+
+    <b>18. Why do you ask for a mobile service provider? What if I don’t know my 
+    mobile service provider?</b>
+    <p>
+      We ask for your mobile service provider to make sure they have the required 
+      technology to send you text message notifications. If your mobile service provider 
+      is not listed, you cannot receive text messages notifications at this time. If you 
+      know that your mobile service provider relies on another carrier, select that 
+      carrier (for example, if your service provider uses Sprint towers, then select 
+      Sprint).
+    </p>
+
+    <b>19. What percent of temporary harvest closure should I select under 
+    “My Notification Preferences”?</b>
+    <p>
+      Select the threshold percent chance of closure value for when you would like to 
+      receive notifications. Your options are 25%, 50%, and 75%. If you choose 75%, you 
+      will get text messages when the percent chances of your leases for today, tomorrow, 
+      or two days from now are equal to or greater than 75%. Put another way, if you want 
+      to receive notifications more frequently, choose 25%; however, if you want to 
+      receive notifications less frequently, choose 75%. We use this selection to adjust 
+      notification settings for all of your leases.
+    </p>
+
+    <b>20. I haven’t received any notifications. Is something wrong?</b>
+    <p>
+      ShellCast notification depends on the percent chance of closure threshold you set 
+      in your notification settings, as well as the rainfall forecast for the next few days. 
+      ShellCast notifications are only issued when the percent chance of temporary harvest 
+      closure is above the threshold you specified in your notification preferences. If you 
+      would like to receive notifications more frequently, choose 25% as the threshold under 
+      “My Notification Preferences” on the Preferences page.
+    </p>
+
+    <p>
+      Do you have lingering question about ShellCast that we didn’t answer here? 
+      If so, please <a href="https://ncsu-shellcast.appspot.com/about">contact us</a>.
+    </p>
+
+  </div>
+{% endblock %}

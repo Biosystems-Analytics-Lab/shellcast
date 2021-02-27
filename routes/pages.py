@@ -42,6 +42,10 @@ def aboutPage():
 def howItWorksPage():
   return render_template('how-it-works.html.jinja')
 
+@pages.route('/faqs')
+def faqsPage():
+  return render_template('faqs.html.jinja')
+
 @pages.route('/preferences')
 def preferencesPage():
   serviceProviders = db.session.query(PhoneServiceProvider.id, PhoneServiceProvider.name).all()
