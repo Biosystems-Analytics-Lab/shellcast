@@ -18,11 +18,13 @@ This markdown file describes the components and set up of the daily analysis CRO
 
 6. [Description of CRON Job Outputs](#6-description-of-cron-job-outputs)
 
-7. [Contact Information](#7-contact-information)
+7. [Pushing Changes to GitHub](#7-pushing-changes-to-github)
+
+7. [Contact Information](#8-contact-information)
 
 ## 0. Background
 
-The main purpose of the scripts in the analysis folder are to: (1) pull rainfall data from a remote server at the North Carolina State Climate Office, (2) do some calculations with that rainfall data, and (3) update the ShellCast MySQL database based on those calculations. For a schematic representation of this workflow, including the how they relate to other major components of the ShellCast web application, see the ShellCast [architecture overview flowchart](https://github.ncsu.edu/biosystemsanalyticslab/shellcast#2-architecture-overview).
+The main purpose of the scripts in the analysis folder are to: (1) pull rainfall data from a remote server at the North Carolina State Climate Office, (2) do some calculations with that rainfall data, and (3) update the ShellCast MySQL database based on those calculations. For a schematic representation of this workflow, including the how they relate to other major components of the ShellCast web application, see the ShellCast [architecture overview flowchart](/../../#2-architecture-overview).
 
 The analysis daily CRON job ensures that the three steps descirbed above will run every day at 6am ET on the virtual computing lab server (or on a personal machine).
 
@@ -30,6 +32,7 @@ The analysis daily CRON job ensures that the three steps descirbed above will ru
 
 ## 1. List of Acronyms
 
+- North Carolina State University (NCSU)
 - North Carolina Division of Marine Fisheries (NCDMF)
 - National Digital Forecast Dataset (NDFD)
 - North Carolina State Climate Office (SCO)
@@ -60,11 +63,11 @@ The analysis daily CRON job ensures that the three steps descirbed above will ru
 
 **THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
 
-Setting up the VCL using NC State computing resources frees up use of a work machine and also ensures more consistent working conditions because the work machine doesn't have to be constantly on to run. There are two major steps to setting up the analysis CRON job on a VCL machine: (1) create the image and (2) launch the image as a server.
+Setting up the VCL using NCSU computing resources frees up use of a work machine and also ensures more consistent working conditions because the work machine doesn't have to be constantly on to run. There are two major steps to setting up the analysis CRON job on a VCL machine: (1) create the image and (2) launch the image as a server.
 
 ### 3.1 Creating the VCL Image
 
-Go to [VCL at NC State](https://vcl.ncsu.edu/), click on "Reservations" and login using your Unity ID and password. After login in, click on "Reservations" again and then "New Reservation". A window will pop up and you want to select "Imaging Reservation" with Ubuntu 18.04 LTS Base and choose "Now" and a duration that's appropriate for set up--at least 1 to 3 hours is recommended (**Figure 1.**). Then click "Create Reservation". You will need to wait a few minutes while this image is created. Click on "Connect!" and you will see a pop up window with more information on how to connect (**Figure 2.**). Then you will need to copy the ip address of the image for use in the next step.
+Go to [VCL at NCSU](https://vcl.ncsu.edu/), click on "Reservations" and login using your Unity ID and password. After login in, click on "Reservations" again and then "New Reservation". A window will pop up and you want to select "Imaging Reservation" with Ubuntu 18.04 LTS Base and choose "Now" and a duration that's appropriate for set up--at least 1 to 3 hours is recommended (**Figure 1.**). Then click "Create Reservation". You will need to wait a few minutes while this image is created. Click on "Connect!" and you will see a pop up window with more information on how to connect (**Figure 2.**). Then you will need to copy the ip address of the image for use in the next step.
 
 ![Figure 1 shows a screenshot with the options to create a VCL image reservation.](images/vcl_image_reservation.png)
 <br> **Figure 1.** New VCL image reservation options.
@@ -261,6 +264,10 @@ Each day the `shellcast_daily_analysis.sh`, which is called in the `launchcd` pl
 
 **THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
 
-## 7. Contact Information
+## 7. Pushing Changes to GitHub
 
-If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+When appropriate, changes need to be pushed to the NCSU Enterprise GitHub repository **as well as** the GitHub (public) respository as described in the [DEVELOPER.md documentation](/docs/DEVELOPER.md).
+
+## 8. Contact Information
+
+If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

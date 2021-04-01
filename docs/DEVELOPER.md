@@ -2,7 +2,7 @@
 
 This document is intended to help a developer get up and running with ShellCast.
 
-_Please note that some steps in this document will only work on a Unix machine (Linux/Mac).  There are certainly work arounds for Windows, but I did not thoroughly look into these and document them._
+_Please note that some steps in this document will only work on a Unix machine (Linux/Mac). There are certainly work arounds for Windows, but I did not thoroughly look into these and document them._
 
 ## Table of Contents
 
@@ -47,7 +47,9 @@ _Please note that some steps in this document will only work on a Unix machine (
 
 ## 3. General Notes
 
-- The GitHub repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#deploy-the-app-to-google-app-engine).
+- The GitHub repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#53-deploy-the-app-to-google-app-engine).
+
+- The NCSU Enterprise GitHub repo is mirrored on a GitHub public repo to share ShellCast code openly. See [Mirroring code updates on GitHub public repo](#54-mirroring-code-updates-on-itHub-public-repo) for more information on how to add and push changes to ShellCast.
 
 
 ## 4. Development Environment Setup
@@ -62,7 +64,7 @@ You can download and setup the Cloud SQL proxy by following [these instructions]
 
 ### 4.2 Clone the GitHub repository
 
-Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/ssaia/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
 ### 4.3 Setup Python virtual environment
 
@@ -104,7 +106,7 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 ### 5.2 Run the application locally
 
 1. Make sure the Python virtual environment is activated and that you are in the root of your local repository.
-2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 3. Run the Python app by running `python main.py`.
 4. Now you can navigate to [http://localhost:3361](http//:localhost:3361) in your browser to see the web app.
 
@@ -113,6 +115,13 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 1. Make sure that you are signed in and using the correct project (ncsu-shellcast) by running `gcloud info`.
 2. From the root directory of your local repository, you can deploy the application to Google App Engine by running `gcloud app deploy`.
 
+### 5.4 Mirroring code updates on GitHub public repo
+
+1. The NCSU GitHub Enterprise repo of ShellCast at https://github.ncsu.edu/biosystemsanalyticslab/shellcast is also mirrored on the public GitHub site at https://github.com/Biosystems-Analytics-Lab/shellcast. Mirroring is set up through git add and git push remotes as explained [here](https://jigarius.com/blog/multiple-git-remote-repositories).
+2. When adding and pushing changes to the remote GitHub Enterprise repo, use `git push all`. This will make sure both remote locations are up-to-date.
+
+We created the GitHub public repo and initiated remote mirroring after realizng the public view of the NCSU Enterprise GitHub repository was only public with NCSU authentication (i.e., public to only folks affiliated with NCSU).
+
 ## 6. Testing
 
 [pytest](https://docs.pytest.org/en/latest/) is used for unit testing.  [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) is used to generate code coverage reports.  The unit tests use pytest fixtures quite extensively.  See the [pytest fixtures documentation](https://docs.pytest.org/en/stable/fixture.html) for more information.  All of the fixtures are specified in tests/conftest.py.
@@ -120,12 +129,12 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 ### 6.1 Run unit tests
 
 1. Make sure the Python virtual environment is activated and that you are in the root of your local repository.
-2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 3. Run the tests by running `python -m pytest -v`. You should see the test output in the console.
 
 ### 6.2 Generate code coverage report
 
-1. Perform steps 1 and 2 from the [Run unit tests](#run-unit-tests) section.
+1. Perform steps 1 and 2 from the [Run unit tests](#61-run-unit-tests) section.
 2. Run `python -m pytest -v --cov` to see coverage information.
 3. Running `coverage html` afterwards will generate web pages in a "htmlcov" directory.  If you open "htmlcov/index.html" in a web browser, then you can click through all of the Python files that were measured and see the exact lines that were executed or missed.
 
@@ -167,4 +176,4 @@ Several ES6 features of JavaScript are used throughout the JS files such as: the
 
 ## 7. Contact Information
 
-If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

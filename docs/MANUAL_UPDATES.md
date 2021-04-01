@@ -24,16 +24,17 @@ This document is intended to explain how to perform simple, manual updates to Sh
 
 ## 1. Setup
 
-1. Download the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.
-2. Download and install the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs).
-3. Complete the steps under the [Make a configuration file based on the template file](/docs/DEVELOPER.md#make-a-configuration-file-based-on-the-template-file) section of the DEVELOPER.md documentation.
+1. Download the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git` (for NCSU GitHub) or `git clone https://github.com/Biosystems-Analytics-Lab/shellcast.git` (GitHub).
+2. Set up adding and push to GitHub Enterprise and GitHub public remotes as described in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
+3. Download and install the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs).
+4. Complete the steps under the [Make a configuration file based on the template file](/docs/DEVELOPER.md#46-make-a-configuration-file-based-on-the-template-file) section of the DEVELOPER.md documentation.
 
 ## 2. Uploading Changes to GitHub
 
 1. From the root of your local repository, run `git pull` to make sure you have the most recent version of the GitHub repository.
 2. Run `git add .` to stage all of the changes made in all files.
 3. Run `git commit` which will open a text editor where you can write a commit message (describe what changes you've made).
-4. Run `git push` to push the changes to GitHub.
+4. Run `git push all` to push the changes to GitHub. Make sure you have set your remotes to add and push to both the GitHub Enterprise and GitHub (public) repos as outlined in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
 
 ## 3. Uploading Changes to Google App Engine
 
@@ -48,8 +49,8 @@ Dynamic HTML element file locations:
 - The lease information form and lease search results HTML can be found in static/preferences/preferences.js.
 
 After you have found and made an edit:
-1. [Upload the changes to GitHub](#uploading-changes-to-github).
-2. [Upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
+1. [Upload the changes to GitHub](#2-uploading-changes-to-github).
+2. [Upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine).
 
 ## 5. Adding New Web Pages and Navigation Links
 
@@ -68,14 +69,14 @@ Then change the route from `'/about'` to `'/<name of the new page>'`, the functi
   ```
 This is a list of tuples containing the 3 pieces of information needed to make each of the nav links in the nav bar.  The first string in each tuple is the name of the page (the part of the template file name before `.html.jinja`).  The second string is the route to the page (this is what you used as the route in step 2).  The third string is the actual text that will be shown as a link in the nav bar.  You just need to add another tuple to the end of the list (the order that the items appear in the navItems list is the order that they will appear as nav links in the nav bar).
 
-4. Finally, [upload the changes to GitHub](#uploading-changes-to-github) and [to Google App Engine](#uploading-changes-to-google-app-engine).
+4. Finally, [upload the changes to GitHub](#2-uploading-changes-to-github) and [to Google App Engine](#3-uploading-changes-to-google-app-engine).
 
 ## 6. Updating Shellfish Growing Unit Boundaries
 
 static/cmu_bounds.geojson contains the NCDMF growing units and their boundaries.  To modify the growing units' boundaries, simply replace that file with an updated version while keeping the file name the same.
 
-1. [Upload the changes to GitHub](#uploading-changes-to-github).
-2. [Upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
+1. [Upload the changes to GitHub](#2-uploading-changes-to-github).
+2. [Upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine).
 
 ## 7. Turning Notifications Off and On
 
@@ -95,11 +96,11 @@ cron:
 #   schedule: every day 07:00
 #   timezone: America/New_York
 ```
-Now [upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
+Now [upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine).
 
 You can find more information on Google App Engine cron jobs [here](https://cloud.google.com/appengine/docs/flexible/python/scheduling-jobs-with-cron-yaml).
 
-To turn notifications back on, uncomment the cron job, and [upload the changes to Google App Engine](#uploading-changes-to-google-app-engine).
+To turn notifications back on, uncomment the cron job, and [upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine).
 
 ## 8. Changing Notification Schedule
 
@@ -124,8 +125,8 @@ cron:
 
 Only the "schedule:" line needs to be changed unless you are also changing the timezone that is used to interpret the schedule.
 
-Now [upload the changes to GitHub](#uploading-changes-to-github) and [Google App Engine](#uploading-changes-to-google-app-engine).
+Now [upload the changes to GitHub](#2-uploading-changes-to-github) and [upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine). Be sure to push changes to both the GitHub Enterprise remote and the GitHub public remote as decribed in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
 
 ## 9. Contact Information
 
-If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
