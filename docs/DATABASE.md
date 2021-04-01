@@ -2,7 +2,7 @@
 
 This document is intended to help a developer understand the ShellCast database structure and make changes to the database.
 
-_The following instructions assume that you are using [Sequel Pro](https://sequelpro.com/) as your database client.  Unfortunately, Sequel Pro is only available on Mac, however, you should be able to use any database client to access the database by following the instructions under [Connecting to Cloud SQL](#connecting-to-cloud-sql).  A powerful alternative to Sequel Pro is [DBeaver](https://dbeaver.io/) which is free, open source, and multiplatform._
+_The following instructions assume that you are using [Sequel Pro](https://sequelpro.com/) as your database client.  Unfortunately, Sequel Pro is only available on Mac, however, you should be able to use any database client to access the database by following the instructions under [Connecting to Cloud SQL](#2-connecting-to-google-cloud-sql).  A powerful alternative to Sequel Pro is [DBeaver](https://dbeaver.io/) which is free, open source, and multiplatform._
 
 ## Table of Contents
 
@@ -45,9 +45,9 @@ There are 3 "databases" in the MySQL instance: `shellcast`, `shellcast_dev`, and
 
 ## 2. Connecting to Google Cloud SQL
 
-1. Complete the [Install and initialize Google Cloud SDK](DEVELOPER.md#install-and-initialize-google-cloud-sdk) section in the DEVELOPER.md documentation.
-2. Complete the [Download Cloud SQL proxy](DEVELOPER.md#download-cloud-sql-proxy) section in the DEVELOPER.md documentation.
-3. Start a TCP connection by running the first command in the [Use the Cloud SQL proxy](DEVELOPER.md#use-the-cloud-sql-proxy-tcp-and-unix-socket) section in the DEVELOPER.md documentation.
+1. Complete the [Install and initialize Google Cloud SDK](DEVELOPER.md#41-install-and-initialize-google-cloud-sdk) section in the [docs/DEVELOPER.md](/docs/DEVELOPER.md) documentation.
+2. Complete the [Download Cloud SQL proxy](DEVELOPER.md#42-download-cloud-sql-proxy) section in the [docs/DEVELOPER.md](/docs/DEVELOPER.md) documentation.
+3. Start a TCP connection by running the first command in the [Use the Cloud SQL proxy](DEVELOPER.md#51-use-the-cloud-sql-proxy-tcp-and-unix-socket) section in the [docs/DEVELOPER.md](/docs/DEVELOPER.md) documentation.
 4. Now you can connect to the database instance with Sequel Pro (or any other SQL client) with the following connection details:
   - Host: 127.0.0.1
   - Username: root
@@ -71,4 +71,4 @@ You can download the current state of the database as CSV files using Sequel Pro
 
 ## 5. Contact Information
 
-If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

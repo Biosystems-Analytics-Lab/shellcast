@@ -1,7 +1,7 @@
 
-# README.md (`doc` directory)
+# README.md (`docs` directory)
 
-The `doc` directory contains several markdown documents explaining how to perform a variety of tasks related to ShellCast.
+The `docs` directory contains several markdown documents explaining how to perform a variety of tasks related to ShellCast.
 
 ## Directory Contents
 
@@ -16,8 +16,8 @@ The markdown documents included in this directory are:
 
 ## ShellCast Web Application Architecture Overview
 
-For a schematic representation of the major components of the ShellCast web application and their relationships, see the ShellCast [architecture overview flowchart](https://github.ncsu.edu/biosystemsanalyticslab/shellcast#2-architecture-overview).
+For a schematic representation of the major components of the ShellCast web application and their relationships, see the ShellCast [architecture overview flowchart](/../../#2-architecture-overview).
 
 ## Contact Information
 
-If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

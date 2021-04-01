@@ -1,5 +1,5 @@
 # ShellCast
-ShellCast is a Python Flask web application that helps North Carolina shellfish growers make harvesting decisions based on predicted rainfall.  The live production version of the app can be found at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast).
+ShellCast is a Python Flask web application that helps North Carolina shellfish growers make harvesting decisions based on predicted rainfall.  The live production version of the app can be found at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast). A public version of this repository is also available at https://github.com/Biosystems-Analytics-Lab/shellcast.
 
 ## Table of Contents
 
@@ -32,6 +32,10 @@ NCSU Virtual Computing Lab (VCL)
 - Available through https://vcl.wordpress.ncsu.edu/
 - Linux Server - ShellCast uses a custom Linux server to run the closure analysis code on a regular basis.
 
+NCSU GitHub Enterprise
+- Available through https://github.ncsu.edu/login
+- The enterprise ShellCast repo is also connected to add and push to a remote GitHub (public) repo at https://github.com/Biosystems-Analytics-Lab/shellcast. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
+
 ## 2. Architecture Overview
 
 ![A diagram showing the data flow of the ShellCast application.](docs/images/architecture_diagram.png)
@@ -52,7 +56,7 @@ NCSU Virtual Computing Lab (VCL)
 
 ## 3. Documentation Overview
 
-Instructions explaining how to perform a variety of tasks can be found in the following documents in the `doc` directory [here](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/tree/master/docs).
+Instructions explaining how to perform a variety of tasks can be found in the following documents in the `docs` directory [here](/docs/).
 
 - [docs/ANALYSIS.md](/docs/ANALYSIS.md) explains the various analysis scripts and how to set up the analysis cron job on a virtual computing lab image.
 - [docs/CITATION.md](/docs/CITATION.md) explains how to cite and give attribution to ShellCast source code.
@@ -63,4 +67,4 @@ Instructions explaining how to perform a variety of tasks can be found in the fo
 
 ## 4. Contact Information
 
-If you have any questions, feedback, or suggestions [please submit an issue](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
