@@ -2,7 +2,7 @@
 
 // Firebase configuration
 const FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyBRh_l-CqS8dz8QcpdLk8QRpY_aoMLQBj8',
+  apiKey: 'AIzaSyA8f1ZWHYObRaLVFHc7KCqgT3FGhu_qO90',
   authDomain: 'ncsu-shellcast.firebaseapp.com',
   databaseURL: 'https://ncsu-shellcast.firebaseio.com',
   projectId: 'ncsu-shellcast',
