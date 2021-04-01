@@ -32,9 +32,9 @@ NCSU Virtual Computing Lab (VCL)
 - Available through https://vcl.wordpress.ncsu.edu/
 - Linux Server - ShellCast uses a custom Linux server to run the closure analysis code on a regular basis.
 
-NCSU GitHub Enterprise
+NCSU Enterprise GitHub
 - Available through https://github.ncsu.edu/login
-- The enterprise ShellCast repo is also connected to add and push to a remote GitHub (public) repo at https://github.com/Biosystems-Analytics-Lab/shellcast. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
+- The NCSU Enterprise GitHub repo is also mirrored to add and push to a remote GitHub (public) repo at https://github.com/Biosystems-Analytics-Lab/shellcast. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
 
 ## 2. Architecture Overview
 
@@ -67,4 +67,4 @@ Instructions explaining how to perform a variety of tasks can be found in the fo
 
 ## 4. Contact Information
 
-If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
