@@ -118,9 +118,9 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 ### 5.4 Mirroring code updates on GitHub public repo
 
 1. The NCSU GitHub Enterprise repo of ShellCast at https://github.ncsu.edu/biosystemsanalyticslab/shellcast is also mirrored on the public GitHub site at https://github.com/Biosystems-Analytics-Lab/shellcast. Mirroring is set up through git add and git push remotes as explained [here](https://jigarius.com/blog/multiple-git-remote-repositories).
-2. When adding and pushing changes to the remote GitHub Enterprise repo, use `git push all`. This will make sure both remote locations are up-to-date.
+2. When adding and pushing changes to the remote NCSU Enterprise GitHub repo, use `git push all`. This will make sure both remote locations are up-to-date.
 
-We created the GitHub public repo and initiated remote mirroring after realizng the public view of the NCSU Enterprise GitHub repository was only public with NCSU authentication (i.e., public to only folks affiliated with NCSU).
+We created the GitHub public repo and initiated remote mirroring after realizng the public view of the NCSU Enterprise GitHub repo was only public with NCSU authentication (i.e., public to only folks affiliated with NCSU).
 
 ## 6. Testing
 
@@ -176,4 +176,4 @@ Several ES6 features of JavaScript are used throughout the JS files such as: the
 
 ## 7. Contact Information
 
-If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

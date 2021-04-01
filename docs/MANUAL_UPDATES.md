@@ -25,7 +25,7 @@ This document is intended to explain how to perform simple, manual updates to Sh
 ## 1. Setup
 
 1. Download the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git` (for NCSU GitHub) or `git clone https://github.com/Biosystems-Analytics-Lab/shellcast.git` (GitHub).
-2. Set up adding and push to GitHub Enterprise and GitHub public remotes as described in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
+2. Set up adding and push to the NCSU GitHub Enterprise **and** GitHub (public) repos as described in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
 3. Download and install the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs).
 4. Complete the steps under the [Make a configuration file based on the template file](/docs/DEVELOPER.md#46-make-a-configuration-file-based-on-the-template-file) section of the DEVELOPER.md documentation.
 
@@ -34,7 +34,7 @@ This document is intended to explain how to perform simple, manual updates to Sh
 1. From the root of your local repository, run `git pull` to make sure you have the most recent version of the GitHub repository.
 2. Run `git add .` to stage all of the changes made in all files.
 3. Run `git commit` which will open a text editor where you can write a commit message (describe what changes you've made).
-4. Run `git push all` to push the changes to GitHub. Make sure you have set your remotes to add and push to both the GitHub Enterprise and GitHub (public) repos as outlined in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
+4. Run `git push all` to push the changes to GitHub. Make sure you have set your remotes to add and push to the NCSU Enterprise GitHub **and** GitHub (public) repos as outlined in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
 
 ## 3. Uploading Changes to Google App Engine
 
@@ -125,8 +125,8 @@ cron:
 
 Only the "schedule:" line needs to be changed unless you are also changing the timezone that is used to interpret the schedule.
 
-Now [upload the changes to GitHub](#2-uploading-changes-to-github) and [upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine). Be sure to push changes to both the GitHub Enterprise remote and the GitHub public remote as decribed in the [Mirroring code updates on GitHub public repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
+Now [upload the changes to GitHub](#2-uploading-changes-to-github) and [upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine). Be sure to push changes to both the NCSU GitHub Enterprise **and** the GitHub (public) repos as decribed in the [Mirroring code updates on GitHub (public) repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
 
 ## 9. Contact Information
 
-If you have any questions, feedback, or suggestions please submit an issue [through NCSU GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
