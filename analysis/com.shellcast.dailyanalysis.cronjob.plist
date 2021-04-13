@@ -24,7 +24,7 @@
   <key>Nice</key>
   <integer>10</integer>
 
-<!-- runs at 6:00 every day but this is for debug running -->
+<!-- runs at 6:00 every day -->
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>
