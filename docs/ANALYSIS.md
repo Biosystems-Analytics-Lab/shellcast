@@ -148,8 +148,6 @@ gcloud auth application-default login
 ```
 Copy the location of the json credential file and keep that in a safe location in case you need it later. It will look something like "/Users/sheila/.config/gcloud/application_default_credentials.json".
 
-**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
-
 ### 4.2 Scheduling the CRON Job on a Personal Machine (i.e., a Mac)
 
 The daily CRON job uses Mac's `launchd` program, which should be already installed, and will run each day at 6am as long as the work/host computer is powered on and the CRON job script is still loaded. Text and email notifications are sent out at 7:00am ET by the GCP CRON job. There are several steps to scheduling the CRON job on a mac.
@@ -183,7 +181,7 @@ cd ~/Library/LaunchAgents
 Then if the plist file is not there, copy it to this location.
 
 ```{bash}
-# make sure to change the "..." to the full path
+# make sure to change the "..." to the full path to the shellcast repo directory
 # cp .../analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
 
 # it will look something like this:
@@ -201,6 +199,8 @@ Or with atom.
 ```{bash}
 atom com.shellcast.dailyanalysis.cronjob.plist
 ```
+
+Next, change the paths in the plist file so they are appropriate for your Mac machine. This includes the (1) `ProgramArguments` section, which is the path to `shellcast_daily_analysis.sh` file, (2) `WorkingDirectory` section, which is the path to the ShellCast analysis directory, (3) `StandardErrorPath` and `StandardOutPath` which are paths to the error (`.err`) and  output (`.out`) files in the analysis data directory. Make sure to save changes to the plist file.
 
 Then load the CRON job, run the following in the LaunchAgents directory.
 
@@ -221,11 +221,29 @@ launchctl list
 
 Also, you can go to `Applications > Utilities > Console` and then look at system log to see current loaded and active programs.
 
-Last, if you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trial version.
+Last, if you want to check that the plist script is loaded ok or need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trial version. You can also see that the status of the cron job is "Ok" like in Figure 4.
 
-If debugging, you can open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., "Error 1") but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging.
+![Figure 4 shows a screenshot of LaunchControl plist file for ShellCast](images/launchcontrol_image.png)
+<br> **Figure 4.** LaunchControl screenshot.
+
+If debugging (see Section 4.3 below), you can open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., "Error 1") but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging.
 
 ### 4.3 Other Debugging
+
+If you don't want to wait for 6am to test whether the plist script works (very likely!), you can navigate to the plist script in your LaunchAgents directory, open the plist script, and edit the time for something like 5 min in the future. I recommend saving the file, unloading, and re-loading the file to make sure the changes are present using the bash commands given above. You can also open up the LaunchControl app and check that time time changed.
+
+Change the hour and minute integers in the section of the plist file below. For example, if you wanted to run the script at 4:05pm your local time the plist file would look like the plist file section below. 
+```
+<!-- now trying to run it at 4:05pm my local time -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>16</integer>
+    <key>Minute</key>
+    <integer>5</integer>
+  </dict>
+```
+Note that hour ranges from 0-23 and minute ranges from 0-59. The timezone used will be based on whatever timezone your computer uses. Also, `<!-- text here -->` is the syntax to comment in plist files.
 
 If you're having issues with the CRON job running, you can also try running the bash script on its own and checking if a particular script it giving issues.
 
@@ -247,6 +265,19 @@ sh shellcast_daily_analysis.sh
 # for debugging
 # sh shellcast_daily_analysis_debug.sh
 ```
+
+If you want to check whether the SQL database updated correctly. You can follow the following steps.
+1. Open up a new terminal window, navigate to your home directory (type `cd`), and enter the code below. This assumes that you've already set up the Google Cloud TCP connection described in the [DEVELOPER.md documentation](/docs/DEVELOPER.md).
+```{bash}
+./cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306
+```
+2. Wait for it to connect. It should say something like "Ready for new connections" when you can move to the next step.
+3. Open up Sequel Pro and enter the database name and password for the Google Cloud SQL Database. The port number is 3306.
+4. On the top left corner of Sequel Pro click on "Choose Database..." and navigate to `shellcast`. You can click on the `cmu_probabilites` table, select the "Content" tab, and sort the "created" column to see if your scrip ran and updated the database (Figure 5). You can also look at Section 6 below for more info on how to see files that would have helpful debugging information.
+5. Close the connection by going back to the terminal from step #1 and type control+C. You will get a message that says something like "Received TERM signal. Waiting up to 0s before terminating."
+
+![Figure 5 shows a screenshot of Sequel Pro cmu_probabilies table for ShellCast](images/sequelpro_image.png)
+<br> **Figure 5.** Sequel Pro screenshot.
 
 ## 5. CRON Job Script Run Order
 
