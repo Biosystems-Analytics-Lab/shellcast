@@ -49,7 +49,7 @@ _Please note that some steps in this document will only work on a Unix machine (
 
 - The GitHub repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#53-deploy-the-app-to-google-app-engine).
 
-- The NCSU Enterprise GitHub repo is mirrored on a GitHub public repo to share ShellCast code openly. See [Mirroring code updates on GitHub public repo](#54-mirroring-code-updates-on-itHub-public-repo) for more information on how to add and push changes to ShellCast.
+- The NCSU Enterprise GitHub repo is mirrored on a GitHub public repo to share ShellCast code openly. See [Mirroring code updates on GitHub public repo](#54-mirroring-code-updates-on-GitHub-public-repo) for more information on how to add and push changes to ShellCast.
 
 
 ## 4. Development Environment Setup
