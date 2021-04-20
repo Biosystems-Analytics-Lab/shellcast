@@ -156,7 +156,7 @@ if (len(temp_data) > 0):
         append_list_as_row(data_log_path, temp_data_log)
 
         # print status
-        print("did not append " + temp_datetime_uct_str + " data")
+        print("appended " + temp_datetime_uct_str + " data")
 
 else:
     # keep track of available data
