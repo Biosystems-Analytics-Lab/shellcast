@@ -37,40 +37,40 @@ for (package in packages) {
 # base path to data
 # data_base_path = "/home/ssaia/shellcast/analysis/data/" # set this and uncomment!
 # data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
-data_base_path = here::here("analysis", "data")
+data_base_path = here::here("data")
 
 # ---- 3. use base paths and define projections ----
 # inputs
 # path to ndfd spatial inputs
-ndfd_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
+ndfd_spatial_data_input_path <- paste0(data_base_path, "/spatial/outputs/ndfd_sco_data/")
 
 # path to sga buffer spatial inputs
-sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds/")
+sga_spatial_data_input_path <- paste0(data_base_path, "/spatial/inputs/ncdmf_data/sga_bounds/")
 
 # path to cmu bounds spatial inputs
-cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
+cmu_spatial_data_input_path <- paste0(data_base_path, "/spatial/inputs/ncdmf_data/cmu_bounds/")
 
 # path to lease bounds spatial inputs
-lease_spatial_data_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_centroids/")
+lease_spatial_data_input_path <- paste0(data_base_path, "/spatial/outputs/ncdmf_data/lease_centroids/")
 
 # path to rainfall threshold tabular inputs
-rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
+rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "/tabular/inputs/ncdmf_rainfall_thresholds/")
 
 # outputs
 # path to ndfd spatial outputs
-ndfd_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
+ndfd_spatial_data_output_path <- paste0(data_base_path, "/spatial/outputs/ndfd_sco_data/")
 
 # path to ndfd tabular outputs
-ndfd_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/")
+ndfd_tabular_data_output_path <- paste0(data_base_path, "/tabular/outputs/ndfd_sco_data/")
 
 # path to ignored lease bounds spatial outputs
-# lease_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_ignored/")
+# lease_spatial_data_output_path <- paste0(data_base_path, "/spatial/outputs/ncdmf_data/lease_bounds_ignored/")
 
 # path to ignored lease bounds tabular outputs
-# lease_tabular_data_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
+# lease_tabular_data_output_path <- paste0(data_base_path, "/tabular/outputs/ndfd_sco_data/lease_calcs/leases_ignored/")
 
 # path to ndfd tabular outputs appended
-ndfd_tabular_data_appended_output_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data_appended/")
+ndfd_tabular_data_appended_output_path <- paste0(data_base_path, "/tabular/outputs/ndfd_sco_data_appended/")
 
 # projections
 # define proj4 string for ndfd data
