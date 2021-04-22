@@ -33,19 +33,19 @@ for (package in packages) {
 # base path to data
 # data_base_path = "/home/ssaia/shellcast/analysis/data/" # set this and uncomment! 
 # data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
-data_base_path = here::here("analysis", "data")
+data_base_path = here::here("data")
 
 # ---- 3. use base paths and define projections ----
 # inputs
 # path to ndfd tabular inputs
-ndfd_tabular_data_input_path <- paste0(data_base_path, "tabular/outputs/ndfd_sco_data/ndfd_sco_data_raw/")
+ndfd_tabular_data_input_path <- paste0(data_base_path, "/tabular/outputs/ndfd_sco_data/ndfd_sco_data_raw/")
 
 # path to nc buffer spatial inputs
-nc_buffer_spatial_input_path <- paste0(data_base_path, "spatial/inputs/state_bounds_data/state_bounds/")
+nc_buffer_spatial_input_path <- paste0(data_base_path, "/spatial/inputs/state_bounds_data/state_bounds/")
 
 # outputs
 # path to ndfd spatial outputs
-ndfd_spatial_data_output_path <- paste0(data_base_path, "spatial/outputs/ndfd_sco_data/")
+ndfd_spatial_data_output_path <- paste0(data_base_path, "/spatial/outputs/ndfd_sco_data/")
 
 # projections
 # define proj4 string for ndfd data
@@ -323,3 +323,4 @@ writeRaster(ndfd_qpf_raster_3day_nc_albers, paste0(ndfd_spatial_data_output_path
 
 
 print("finished converting df to raster")
+
