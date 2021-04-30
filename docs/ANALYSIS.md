@@ -305,9 +305,9 @@ When appropriate, changes need to be pushed to the NCSU Enterprise GitHub reposi
 
 - manually until we have the REST API access
 - put lease file shp file from Teri in analysis > data > spatial > outputs > ncdmf_data > lease_bounds_raw directory
-- be sure it's named "lease_bounds_raw.shp" (for other files too i.e., .shx, etc.)
-- run ncdmf_tidy_lease_data_script.R file in command line or in RStudio
-- this will generate "lease_centroids_albers.shp" and "lease_bounds_albers.shp" which are used in downstream steps
+- be sure to change the NCDMF name for the file to "lease_bounds_raw.shp" (for other files too i.e., .shx, etc.)
+- run ncdmf_tidy_lease_data_script.R file via command line or in RStudio
+- this will generate "lease_centroids_albers.shp" and "lease_bounds_albers.shp" in the repo (in the lease_centroids and lease_bounds directories within analysis > data > spatial > outputs > ncdmf_data), which are used in downstream steps
 
 **THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
 
