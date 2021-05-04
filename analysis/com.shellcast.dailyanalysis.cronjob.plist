@@ -13,12 +13,12 @@
 <!-- define script that will run -->
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/shellcast_daily_analysis.sh</string>
+    <string>/Users/nataliegnelson/shellcast_app_local/shellcast/analysis/shellcast_daily_analysis.sh</string>
   </array>
 
 <!-- define working directory -->
   <key>WorkingDirectory</key>
-  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/</string>
+  <string>/Users/nataliegnelson/shellcast_app_local/shellcast/analysis/</string>
 
 <!-- priority of scheduler (range is -20 to 20 with default at 0) -->
   <key>Nice</key>
@@ -41,11 +41,11 @@
 
 <!-- standard error file, output will be appended (new file isn't written) -->
   <key>StandardErrorPath</key>
-  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_dailyanalysis_cronjob.err</string>
+  <string>/Users/nataliegnelson/shellcast_app_local/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_dailyanalysis_cronjob.err</string>
 
 <!-- standard output file, output will be appended (new file isn't written) -->
   <key>StandardOutPath</key>
-  <string>/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_dailyanalysis_cronjob.out</string>
+  <string>/Users/nataliegnelson/shellcast_app_local/shellcast/analysis/data/tabular/outputs/cronjob_data/shellcast_dailyanalysis_cronjob.out</string>
 
 </dict>
 </plist>
