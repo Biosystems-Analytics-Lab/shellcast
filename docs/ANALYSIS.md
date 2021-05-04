@@ -20,7 +20,9 @@ This markdown file describes the components and set up of the daily analysis CRO
 
 7. [Pushing Changes to GitHub](#7-pushing-changes-to-github)
 
-7. [Contact Information](#8-contact-information)
+8. [Updating Leases](#8-updating-leases)
+
+9. [Contact Information](#9-contact-information)
 
 ## 0. Background
 
@@ -299,6 +301,16 @@ Each day the `shellcast_daily_analysis.sh`, which is called in the `launchcd` pl
 
 When appropriate, changes need to be pushed to the NCSU Enterprise GitHub repository **as well as** the GitHub (public) respository as described in the [DEVELOPER.md documentation](/docs/DEVELOPER.md).
 
-## 8. Contact Information
+## 8. Updating Leases
+
+- manually until we have the REST API access
+- put lease file shp file from Teri in analysis > data > spatial > outputs > ncdmf_data > lease_bounds_raw directory
+- be sure to change the NCDMF name for the file to "lease_bounds_raw.shp" (for other files too i.e., .shx, etc.)
+- run ncdmf_tidy_lease_data_script.R file via command line or in RStudio
+- this will generate "lease_centroids_albers.shp" and "lease_bounds_albers.shp" in the repo (in the lease_centroids and lease_bounds directories within analysis > data > spatial > outputs > ncdmf_data), which are used in downstream steps
+
+**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
+
+## 9. Contact Information
 
 If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
