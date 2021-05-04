@@ -33,7 +33,7 @@
 
 # ---- 1. install and load packages as necessary ----
 # packages
-packages <- c("tidyverse", "sf", "geojsonsf")
+packages <- c("tidyverse", "sf", "geojsonsf", "here")
 
 # install and load
 for (package in packages) {
@@ -48,25 +48,26 @@ for (package in packages) {
 # base path to data
 # data_base_path = "opt/analysis/data/" # set this and uncomment!
 # data_base_path = "/Users/sheila/Documents/bae_shellcast_project/shellcast_analysis/web_app_data/"
-data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
+# data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
+data_base_path = here::here("data")
 
 # ---- 3. defining paths and projections ----
 # inputs
 # path to raw lease spatial inputs
-lease_data_spatial_input_path <- paste0(data_base_path, "spatial/outputs/ncdmf_data/lease_bounds_raw/")
+lease_data_spatial_input_path <- paste0(data_base_path, "/spatial/outputs/ncdmf_data/lease_bounds_raw/")
 
 # path to cmu bounds spatial inputs
-cmu_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/cmu_bounds/")
+cmu_spatial_data_input_path <- paste0(data_base_path, "/spatial/inputs/ncdmf_data/cmu_bounds/")
 
 # path to sga bounds spatial inputs
-sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds/")
+sga_spatial_data_input_path <- paste0(data_base_path, "/spatial/inputs/ncdmf_data/sga_bounds/")
 
 # path to rainfall threshold tabular inputs
-rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "tabular/inputs/ncdmf_rainfall_thresholds/")
+rainfall_thresh_tabular_data_input_path <- paste0(data_base_path, "/tabular/inputs/ncdmf_rainfall_thresholds/")
 
 # outputs
 # path to lease spatial outputs
-lease_data_spatial_output_path <-  paste0(data_base_path, "spatial/outputs/ncdmf_data/")
+lease_data_spatial_output_path <-  paste0(data_base_path, "/spatial/outputs/ncdmf_data/")
 
 # projections
 # define epsg and proj4 for N. America Albers projection (projecting to this)
