@@ -133,7 +133,10 @@ conda env create --prefix /home/ssaia/env_shellcast -f shellcast-env.yml
 conda activate /home/ssaia/env_shellcast
 # The user will have to replace "ssaia" with their Unity ID.
 
-# 9. to see other conda environment help see the cheat sheet here:
+# 9. see that the packages are loaded
+conda list --explicit
+
+# 10. to see other conda environment help see the cheat sheet here:
 # https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf
 ```
 
