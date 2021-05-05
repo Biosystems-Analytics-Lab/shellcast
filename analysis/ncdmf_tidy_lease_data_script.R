@@ -27,7 +27,6 @@
 # ---- to do ----
 # to do list
 
-# TODO (wishlist) use here package
 # TODO change grow_area to sga_name throughout and re-export
 
 
@@ -83,7 +82,7 @@ wgs84_epsg <- 4326
 wgs84_proj4 <- "+proj=longlat +datum=WGS84 +no_defs"
 
 
-# ---- 4a. load in lease and rainfall threshold data (without dates) ----
+# ---- 4. load in lease and rainfall threshold data (without dates) ----
 # spatial data
 # use latest date to read in most recent data
 lease_bounds_raw <- st_read(paste0(lease_data_spatial_input_path, "lease_bounds_raw.shp"))
@@ -109,49 +108,6 @@ rainfall_thresholds_raw_tidy <- read_csv(paste0(rainfall_thresh_tabular_data_inp
 sga_key <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "sga_key.csv"))
 
 
-# ---- 4b. load in latest least data (with dates) ----
-# list files in lease_bounds_raw
-# lease_files <- list.files(lease_data_spatial_input_path, pattern = "*.shp") # if there is a pop12 dataset there's a qpf dataset
-# lease_files <- c(lease_files, "leases_20200401.shp") # to test with multiple
-
-# pull out date strings
-# lease_file_dates_str <- gsub("leases_", "", gsub(".shp", "", lease_files))
-
-# convert date strings to dates
-# lease_file_dates <- lubridate::ymd(lease_file_dates_str)
-
-# get today's date
-# today_date_uct <- lubridate::today(tzone = "UCT")
-
-# calcualte difference
-# diff_file_dates <- as.numeric(today_date_uct - lease_file_dates) # in days
-
-# find position of smallest difference
-# latest_date_uct <- lease_file_dates[diff_file_dates == min(diff_file_dates)]
-
-# convert to string
-# latest_date_uct_str <- strftime(latest_date_uct, format = "%Y%m%d")
-
-# need if statement that if length(date_check) < 1 then don't run this script
-
-# use latest date to read in most recent data
-# lease_bounds_raw <- st_read(paste0(lease_raw_data_path, "leases_", latest_date_uct_str, ".shp"))
-
-# check projection
-# st_crs(lease_bounds_raw) # epsg = 2264
-
-# sga data
-# sga_bounds_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_simple_albers.shp"))  %>%
-#   st_set_crs(na_albers_epsg) # epsg code wasn't assigned if this code isn't included
-
-# check projection
-# st_crs(sga_bounds_albers) # epsg = 102008
-
-# tabular data
-# rainfall thresholds
-# rainfall_thresh_data <- read_csv(paste0(rainfall_thresh_tabular_data_input_path, "rainfall_thresholds.csv"))
-
-
 # ---- 5. project and tidy up lease data ----
 lease_data_albers <- lease_bounds_raw %>%
   st_transform(crs = conus_albers_epsg) %>% # project
@@ -168,13 +124,13 @@ lease_data_albers <- lease_bounds_raw %>%
 # crs = 5070
 
 
-# ---- 7. find centroids of leases ----
+# ---- 6. find centroids of leases ----
 # calculate centroids of leases for map pins
 lease_data_centroid_albers <- lease_data_albers %>%
   st_centroid()
 
 
-# ---- 8. add a little buffer to the sga bounds and select sga key data ----
+# ---- 7. add a little buffer to the sga bounds and select sga key data ----
 # sga key selected
 sga_key_sel <- sga_key %>%
   dplyr::select(grow_area = sga_name, sga_desc = sga_desc_short) %>%
@@ -186,7 +142,7 @@ sga_bounds_simple_50mbuf_albers <- sga_bounds_simple_albers %>%
   dplyr::left_join(sga_key_sel, by = "grow_area")
 
 
-# ---- 6. add sga and rainfall depths to lease data ----
+# ---- 8. add sga and rainfall depths to lease data ----
 # bind sga's to cmu's
 # cmu_sga_bounds_join <- cmu_bounds_albers %>%
 #   st_intersection(sga_bounds_albers)
@@ -250,7 +206,7 @@ lease_data_centroids_albers_final <- lease_data_albers_final %>%
 # NA values means that leases don't have a rainfall threshold (aren't in a current cmu)
 
 
-# ---- 8. project data ----
+# ---- 9. project data ----
 # project data to wgs84 projection
 lease_data_wgs94 <- lease_data_albers_final %>%
   st_transform(crs = wgs84_epsg)
@@ -266,7 +222,7 @@ lease_data_centroid_wgs94 <- lease_data_centroids_albers_final %>%
 # gcp doesn't take in spatial data by default so not doing this for now
 
 
-# ---- 9. simplify data for mysql db ----
+# ---- 10. simplify data for mysql db ----
 # select fields for mysql db
 lease_data_centroid_wgs94_db <- lease_data_centroid_wgs94 %>%
   dplyr::select(ncdmf_lease_id = lease_id,
@@ -285,10 +241,8 @@ lease_data_centroid_wgs94_db_tabular <- lease_data_centroid_wgs94_db %>%
   dplyr::bind_cols(lease_data_centroid_coords)
 
 
-# ---- 10. export data ----
+# ---- 11. export data ----
 # export data as shape file for record keeping
-# st_write(lease_data_albers_final, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers_", latest_date_uct_str, ".shp")) # includes date in file name
-# st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_albers_", latest_date_uct_str, ".shp")) # includes date in file name
 st_write(lease_data_albers_final, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_albers.shp"), delete_layer = TRUE)
 st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_albers.shp"), delete_layer = TRUE)
 
@@ -296,8 +250,6 @@ st_write(lease_data_centroids_albers_final, paste0(lease_data_spatial_output_pat
 write_csv(lease_data_centroid_wgs94_db_tabular, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_db_wgs84.csv"))
 
 # export data as geojson for web app
-# write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
-# write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_wgs84_", latest_date_uct_str, ".geojson")) # includes date in file name
 # write_file(lease_data_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_bounds/lease_bounds_wgs84.geojson"))
 # write_file(lease_data_centroid_wgs94_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_wgs84.geojson"))
 # write_file(lease_data_centroid_wgs94_simple_geojson, paste0(lease_data_spatial_output_path, "lease_centroids/lease_centroids_simple_wgs84.geojson"))
