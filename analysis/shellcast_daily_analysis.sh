@@ -9,7 +9,7 @@
 # NOTE! need to define folder output paths below
 
 # source config.sh file (in analysis directory)
-source ../config.sh 
+source ../config.sh
 
 # make sure that all spawned processes are killed on exit, a kill signal, or an error
 trap "exit" INT TERM ERR
