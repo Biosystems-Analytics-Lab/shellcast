@@ -44,13 +44,15 @@ _Please note that some steps in this document will only work on a Unix machine (
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/) - Flask is a lightweight web app framework written in Python.  It is used for all of the backend logic of the web app.
 - [SQLAlchemy](https://www.sqlalchemy.org/) - SQLAlchemy is a Python framework used to interact with databases.  It is used in this project mainly for its ORM functionality.
 - [Jinja](https://jinja.palletsprojects.com/en/2.11.x/) - Jinja is a templating language.  It is used to build templates for the pages of the site.
+- [Python](https://www.python.org/download/releases/3.0/) - Python (version 3) is used here for data analysis. We recommend downloading Python using Miniconda as explained in [Setup Python and R for ShellCast Data Analysis](#47-setup-python-and-r-for-shellcast-data-analysis) below.
+- [R](https://www.r-project.org/) - R is a coding language used here for data analysis. We recommend installing both R and a helpful R graphic user interface called [RStudio](https://www.rstudio.com/products/rstudio/download/) as described in [Setup Python and R for ShellCast Data Analysis](#47-setup-python-and-r-for-shellcast-data-analysis) below.
+- [git](https://git-scm.com/) - We use git for version control and collaboration.
 
 ## 3. General Notes
 
 - The GitHub repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine.  You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#53-deploy-the-app-to-google-app-engine).
 
 - The NCSU Enterprise GitHub repo is mirrored on a GitHub public repo to share ShellCast code openly. See [Mirroring code updates on GitHub public repo](#54-mirroring-code-updates-on-GitHub-public-repo) for more information on how to add and push changes to ShellCast.
-
 
 ## 4. Development Environment Setup
 
@@ -82,8 +84,8 @@ To use the Cloud SQL proxy for local development and testing of the web app, a d
 ### 4.5 Make a configuration file based on the template file
 
 The web app uses a configuration file named "config.py" to store various configuration options. Some of these are quite sensitive (e.g. database credentials), so they shouldn't be saved in version control. Because of this, a "config.py" file isn't in the repository but rather a "config-template.py" file which provides all of the necessary structure for the "config.py" file with all of the non-sensitive values already populated.
-1. On your machine in the root of your local repository, simply make a copy of config-template.py and name it "config.py". This file will automatically be ignored by Git because it is in the .gitignore.
-2. You will now need to populate several values into config.py like the AWS Access Key ID, AWS Secret Access Key, Google Maps JavaScript API key, the database username, and the database password. Any values that you need to add are indicated by "ADD_VALUE_HERE". Since these values are extremely sensitive, they are not stored in this repository. If you are working on ShellCast as a developer, you can get the values by contacting a ShellCast administrator. If you are adapting the code to another project, you can add in new values that you create.
+1. On your machine in the root of your local repository, simply make a copy of config-template.py and name it "config.py". This file will automatically be ignored by Git because it is in the .gitignore. **Also**, make sure to copy the config.py file into the analysis folder so the ShellCast daily analysis CRON job can access it.
+2. You will now need to populate several values into config.py like the analysis path, data path, AWS Access Key ID, AWS Secret Access Key, Google Maps JavaScript API key, the database username, and the database password. Any values that you need to add are indicated by "ADD_VALUE_HERE". Since these values are extremely sensitive, they are not stored in this repository. If you are working on ShellCast as a developer, you can get the values by contacting a ShellCast administrator. If you are adapting the code to another project, you can add in new values that you create.
 
 ### 4.6 Setup Google service account credentials for Firebase Admin SDK
 
@@ -94,6 +96,48 @@ So what you need to do at this point is:
   - Go to the Firebase console and click on Settings > Service Accounts (or just click [here](https://console.firebase.google.com/u/1/project/ncsu-shellcast/settings/serviceaccounts/adminsdk))
   - Click generate new private key and store the file securely on your machine.  If you save it inside of the repo as `firebase-admin-sdk-credentials.json`, then it should be ignored by both .gitignore and .gcloudignore.  If you store it outside of the repo, then you won't have to worry about it being pushed to GitHub when you commit or Google Cloud when you deploy.  You do __NOT__ want to push this file to either of those places because it contains extremely sensitive information.
 2. Now that you have the credentials file, you just have to create an environment variable called `GOOGLE_APPLICATION_CREDENTIALS` which stores the absolute path to the file and the Admin SDK will implicitly find it as if running in App Engine.  On Linux/Mac you can run `export GOOGLE_APPLICATION_CREDENTIALS="/path/to/firebase-admin-sdk-credentials.json"`.  On Windows in Powershell you can run `$env:GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\firebase-admin-sdk-credentials.json"`.
+
+### 4.7 Setup Python and R for ShellCast Data Analysis
+
+Follow the steps below to run the ShellCast data analysis scripts on your local machine. This will be similar for setting up the virtual computing laboratory (VCL) environment as described in [ANALYSIS.md](/docs/ANALYSIS.md/#3-vcl-set-up).
+
+If you haven't installed it on your local machine, first install git following the directions [here](https://github.com/git-guides/install-git). If you have Homebrew installed on your local machine, you can also use that to install git as described [here](https://git-scm.com/download/mac).
+
+Next, follow the steps below in the terminal window to set up your local machine to be able to run ShellCast data analysis scripts.
+
+```{bash}
+# 1. download Mini Conda 3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+# 2. execute Mini Conda 3 download
+bash Miniconda3-latest-Linux-x86_64.sh
+
+# 3. navigate to where you want to keep your shellcast directory and clone the shellcast repo there using the following code
+git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git
+
+# 4. make sure you have the repo downloaded
+ls
+
+# 5. return to the home directory
+cd
+
+# 6. copy the shellcast environment yaml set up file into the home directory
+cp .../shellcast/analysis/shellcast-env.yml shellcast-env.yml
+# make sure you replace ".../" with the full path to the shellcast repo
+
+# 7. use conda to create an environment based on the requirements in the shellcast environmental yaml file  
+conda env create --prefix /home/ssaia/env_shellcast -f shellcast-env.yml
+# The user will have to replace "ssaia" with their Unity ID.
+
+# 8. activate the environment you created
+conda activate /home/ssaia/env_shellcast
+# The user will have to replace "ssaia" with their Unity ID.
+
+# 9. to see other conda environment help see the cheat sheet here:
+# https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf
+```
+
+This will set up an environment that has Python and R while also installing all the packages that are required to run the ShellCast analysis scripts. If you'd like to install R and RStudio manually on your local machine (this might help to have RStudio when debugging), you can install R by downloading it from CRAN [here](https://cran.r-project.org/mirrors.html) and you can install RStudio by downloading it [here](https://www.rstudio.com/products/rstudio/download/#download).
 
 ## 5. Common Development Tasks
 
@@ -117,7 +161,7 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 
 ### 5.4 Mirroring code updates on GitHub public repo
 
-1. The NCSU GitHub Enterprise repo of ShellCast at https://github.ncsu.edu/biosystemsanalyticslab/shellcast is also mirrored on the public GitHub site at https://github.com/Biosystems-Analytics-Lab/shellcast. Mirroring is set up through git add and git push remotes as explained [here](https://jigarius.com/blog/multiple-git-remote-repositories).
+1. The NCSU GitHub Enterprise repo of ShellCast at https://github.ncsu.edu/biosystemsanalyticslab/shellcast is also mirrored on the public GitHub site at https://github.com/Biosystems-Analytics-Lab/shellcast. Mirroring is set up through git add and git push remotes as explained under [in this blog under the "Adding multiple remotes" and "Push to multiple remotes" headings](https://jigarius.com/blog/multiple-git-remote-repositories).
 2. When adding and pushing changes to the remote NCSU Enterprise GitHub repo, use `git push all`. This will make sure both remote locations are up-to-date.
 
 We created the GitHub public repo and initiated remote mirroring after realizng the public view of the NCSU Enterprise GitHub repo was only public with NCSU authentication (i.e., public to only folks affiliated with NCSU).
