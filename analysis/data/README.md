@@ -3,7 +3,7 @@
 last updated: 20210121<br/>
 contact: Sheila Saia (ssaia at ncsu dot edu)
 
-This README file describes the directory and file structure of the data directory for the ShellCast project. For all other ShellCast documentation go [here](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/tree/master/docs).
+This README file describes the directory and file structure of the data directory for the ShellCast project. For all other ShellCast documentation go [here](/docs/).
 
 Letters in parentheses next to file names refer to how frequently the directory and file contents are updated. **NOTE:** No letter indicates the directory or file is static (i.e., not updated regularly).
 (D) = daily
