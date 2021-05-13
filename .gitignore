@@ -10,6 +10,8 @@ config.py
 config.sh
 # ignore local testing Unix socket folder
 cloudsql
+# ignore google cloud sql proxy
+cloud_sql_proxy
 # ignore Firebase Admin SDK credentials
 firebase-admin-sdk-credentials.json
 # ignore generated code coverage files
