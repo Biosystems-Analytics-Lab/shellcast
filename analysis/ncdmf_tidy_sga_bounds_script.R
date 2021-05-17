@@ -17,7 +17,7 @@
 
 # ---- 1. load libraries ----
 # packages
-packages <- c("tidyverse", "sf", "geojsonsf")
+packages <- c("tidyverse", "sf", "geojsonsf", "here")
 
 # install and load
 for (package in packages) {
@@ -31,17 +31,17 @@ for (package in packages) {
 # ---- 2. define base paths ----
 # base path to data
 # data_base_path = "...analysis/data/" # set this and uncomment!
-data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
-
+# data_base_path = "/Users/sheila/Documents/github_ncsu/shellcast/analysis/data/"
+data_base_path = here::here("data")
 
 # ---- 3. use base paths and define projections ----
 # inputs
 # path to sga spatial inputs (raw data)
-sga_spatial_data_input_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds_raw/")
+sga_spatial_data_input_path <- paste0(data_base_path, "/spatial/inputs/ncdmf_data/sga_bounds_raw/")
 
 # outputs
 # path to sga spatial outputs
-sga_spatial_data_output_path <- paste0(data_base_path, "spatial/inputs/ncdmf_data/sga_bounds/")
+sga_spatial_data_output_path <- paste0(data_base_path, "/spatial/inputs/ncdmf_data/sga_bounds/")
 
 # projections
 # define epsg and proj for CONUS Albers projection (projecting to this)
@@ -267,8 +267,6 @@ st_write(sga_bounds_buffer_albers, paste0(sga_spatial_data_output_path, "sga_bou
 
 # export sga class bounds
 st_write(sga_bounds_class_albers, paste0(sga_spatial_data_output_path, "sga_bounds_class_albers.shp"), delete_layer = TRUE)
-
-
 
 # save as wgs84 for geojson
 # sga_bounds_simple_wgs84 <- sga_bounds_simple_albers %>%

@@ -89,7 +89,7 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 # 3. execute Mini Conda 3 download
 bash Miniconda3-latest-Linux-x86_64.sh
 
-# 4. exit out of environment using XXXX and secure connect back in using step 1
+# 4. exit out of environment and secure connect back in using step 1
 
 # 5. clone the shellcast repo into the image
 git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git
@@ -109,25 +109,26 @@ cd
 # 10. copy the shellcast environment yaml set up file into the home directory
 cp shellcast/analysis/shellcast-env.yml shellcast-env.yml
 
-# 11. use conda to create an environment based on the requirements in the shellcast environmental yaml file  
+# 11. use F to create an environment (i.e., install packages and versions that are compatible) based on the requirements in the shellcast environmental yaml file  
 conda env create --prefix /home/ssaia/env_shellcast -f shellcast-env.yml
-# The user will have to replace "ssaia" with their Unity ID.
+# The user will have to replace "ssaia" with their Unity ID. The `--prefix` means that the environment will only be activated in this particular location.
 
 # 12. activate the environment you created
 conda activate /home/ssaia/env_shellcast
 # The user will have to replace "ssaia" with their Unity ID.
 
-# 13. nativate into the shellcast directory
+# 13. see that the packages are loaded
+conda list --explicit
+
+# 14. nativate into the shellcast directory
 cd shellcast
 
-# 13. copy the Python config file template into the analysis directory
+# 15. copy the Python config file template into the analysis directory
 cp config-template.py ./analysis/config.py
 
-# 14. navigate into the analysis directory and fill in the missing parts of the config.py file using nano
+# 16. navigate into the analysis directory and fill in the missing parts of the config.py file using nano
 cd analysis
 nano config.py
-
-**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
 ```
 
 ### 3.2 Creating the VCL Server Reservation
@@ -138,19 +139,22 @@ nano config.py
 
 If VCL options are not available, the CRON job can be set up on a work computer. This case applies to a Mac machine running macOS Mojave version 10.14.6 with a 2.3 GHz Intel Core i5 processor, 16 GB 2133 MHz DDR4 memory, and Intel Iris Plus Graphics 640 1536 MB graphics card.
 
-To set up the CRON job on the work Mac, there are two main steps: (1) setting up GCP credentials so the ShellCast MySQL database can be updated daily via the Python script and (2) scheduling the CRON job.
+To set up the CRON job on the work Mac, there are three main steps: (1) setting up your local machine to run ShellCast analysis scripts, (2) setting up GCP credentials so the ShellCast MySQL database can be updated daily via the Python script, and (3) scheduling the CRON job.
 
+### 4.1 Setting Up Python and R
 
-### 4.1 Setting Up GCP Credentials
+For a full explanation of how to set up your local machine to run ShellCast analysis scripts see [DEVELOPER.md](/docs/DEVELOPER.md/#47-setup-python-and-r-for-shellcast-data-analysis).
+
+### 4.2 Setting Up GCP Credentials
 
 Run the code below in the command line. You're web browser will pop open and you'll need to give permission to sign into the email account associated with your account on the ShellCast GCP project. You will need administrator privledges with the ShellCast web application to update the MySQL database.
 
 ```{bash}
 gcloud auth application-default login
 ```
-Copy the location of the json credential file and keep that in a safe location in case you need it later. It will look something like "/Users/sheila/.config/gcloud/application_default_credentials.json".
+Copy the location of the json credential file and keep that in a safe location in case you need it later. It will look something like "/Users/sheila/.config/gcloud/application_default_credentials.json". The json file will be downloaded to /Users/username/.config/gcloud/application_default_credentials.json following authentication.
 
-### 4.2 Scheduling the CRON Job on a Personal Machine (i.e., a Mac)
+### 4.3 Scheduling the CRON Job on a Personal Machine (i.e., a Mac)
 
 The daily CRON job uses Mac's `launchd` program, which should be already installed, and will run each day at 6am as long as the work/host computer is powered on and the CRON job script is still loaded. Text and email notifications are sent out at 7:00am ET by the GCP CRON job. There are several steps to scheduling the CRON job on a mac.
 
@@ -160,6 +164,20 @@ First, you need to give the terminal permission to run the script. On the Mac, g
 <br> **Figure 3.** Full Disk Access Settings window for a Mac.
 
 Next, running a CRON job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post by Cecina Babich Morrow](https://babichmorrowc.github.io/post/launchd-jobs/) was especially helpful and the official documentation is [here](https://www.launchd.info/). If you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trail version.
+
+Next, you need to copy the config-template.sh file into the analysis directory, save it as config.sh, and edit the paths so they reflect those on your local machine. That process will look something like the following (in the terminal window).
+
+```{bash}
+# 1. copy template into the analysis folder as config.sh
+cp .../shellcast/config-template.sh .../shellcast/analysis/config.sh
+# make sure you replace ".../" with the full path to the shellcast repo
+
+# NOTE: The config.sh file will be ignored by git, but it's best to not put sensitive information in since it will be printed out in the analysis output scripts.
+
+# 2. use your favorite text editor to change "ADD_VALUE_HERE" to whatever your local machine path is for that field
+
+# 3. save the config.sh file
+```
 
 Next, the bash (.sh) script you're running in the CRON job and all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for each file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make each of them executable.
 
@@ -202,7 +220,7 @@ Or with atom.
 atom com.shellcast.dailyanalysis.cronjob.plist
 ```
 
-Next, change the paths in the plist file so they are appropriate for your Mac machine. This includes the (1) `ProgramArguments` section, which is the path to `shellcast_daily_analysis.sh` file, (2) `WorkingDirectory` section, which is the path to the ShellCast analysis directory, (3) `StandardErrorPath` and `StandardOutPath` which are paths to the error (`.err`) and  output (`.out`) files in the analysis data directory. Make sure to save changes to the plist file.
+Next, change the paths in the plist file so they are appropriate for your Mac machine. This includes the (1) `ProgramArguments` section, which is the path to `shellcast_daily_analysis.sh` file, (2) `WorkingDirectory` section, which is the path to the ShellCast analysis directory, (3) `StandardErrorPath` and `StandardOutPath` which are paths to the error (`.err`) and  output (`.out`) files in the analysis data directory. Make sure to save changes to the plist file. See [Description of CRON Job Outputs](#6-description-of-cron-job-outputs) below for recommendations on where to direct outputs.
 
 Then load the CRON job, run the following in the LaunchAgents directory.
 
@@ -229,6 +247,8 @@ Last, if you want to check that the plist script is loaded ok or need help debug
 <br> **Figure 4.** LaunchControl screenshot.
 
 If debugging (see Section 4.3 below), you can open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., "Error 1") but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging.
+
+Depending on the number of plist files you have on your local machine, you may need to increase the priority of the the ShellCast plist file so that the code runs faster (because it has higher priority). To do this you would need to go into the plist script, increase the priority level from 10 to 15, for example, save the plist file, unload it, reload it, and check the amount of time it takes to run the next morning.
 
 ### 4.3 Other Debugging
 
@@ -269,7 +289,7 @@ sh shellcast_daily_analysis.sh
 ```
 
 If you want to check whether the SQL database updated correctly. You can follow the following steps.
-1. Open up a new terminal window, navigate to your home directory (type `cd`), and enter the code below. This assumes that you've already set up the Google Cloud TCP connection described in the [DEVELOPER.md documentation](/docs/DEVELOPER.md).
+1. Open up a new terminal window, navigate to your home directory (type `cd`), and enter the code below. This assumes that you've already set up the Google Cloud TCP connection described in the [DEVELOPER.md](/docs/DEVELOPER.md).
 ```{bash}
 ./cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306
 ```
@@ -295,7 +315,11 @@ Each day the `shellcast_daily_analysis.sh`, which is called in the `launchcd` pl
 
 ## 6. Description of CRON Job Outputs
 
-**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
+The CRON job .err and .out files are exported to the folder specified in the .plist file. A second set of outputs (one for each of the four analysis scripts) is saved to the output path location noted in the config.sh file. We recommend the .err and .out files be exported to shellcast > analysis > data > tabular > outputs > cronjob_data. We recommend the config.sh outputs be exported to shellcast > analysis > data > tabular > outputs > terminal_data.
+
+The .err file includes appended error messages for each run of the analysis. The .out file includes all messages that would have been printed in the terminal. Like the .err file, the .out file outputs are appended after each run of the analysis, which can be hard to sort through.
+
+To make it easier to see issues with the different scripts, each run of the analysis will generate four files in the terminal_data directory. These include: `01_get_forecast_output_DATE.text`, `02_convert_df_out_DATE.text`, `03_analyze_out_DATE.text`, `04_update_db_out_DATE.text`. Each corresponds to the outputs that would have been printed in the terminal for each of the four scripts described in [CRON Job Script Run Order](#5-cron-job-script-run-order) above.
 
 ## 7. Pushing Changes to GitHub
 
@@ -303,13 +327,13 @@ When appropriate, changes need to be pushed to the NCSU Enterprise GitHub reposi
 
 ## 8. Updating Leases
 
-- manually until we have the REST API access
-- put lease file shp file from Teri in analysis > data > spatial > outputs > ncdmf_data > lease_bounds_raw directory
-- be sure to change the NCDMF name for the file to "lease_bounds_raw.shp" (for other files too i.e., .shx, etc.)
-- run ncdmf_tidy_lease_data_script.R file via command line or in RStudio
-- this will generate "lease_centroids_albers.shp" and "lease_bounds_albers.shp" in the repo (in the lease_centroids and lease_bounds directories within analysis > data > spatial > outputs > ncdmf_data), which are used in downstream steps
+Untill we're able to get REST API access from the North Carolina Division of Marine Fisheries (NCDMF), we'll have to manually update the leases. We've chatted with Teri Dane and Mike Griffin of NCDMF about this and they've agreed to give us updates quarterly.
 
-**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
+To mannually update the leases in the ShellCast SQL database, follow these steps.
+
+1. Download the lease .shp file frim NCDMF to your local machine and save it (and all the associated .shp files) in the analysis > data > spatial > outputs > ncdmf_data > lease_bounds_raw directory as `lease_bounds_raw.shp`.
+2. Run the `ncdmf_tidy_lease_data_script.R` either in the command line or in RStudio. This script will generate `lease_centroids_albers.shp` and `lease_bounds_albers.shp` in the shellcast repository. That is these files will be exported to the `lease_centroids` and `lease_bounds` directories, respectively, within the analysis > data > spatial > outputs > ncdmf_data directory.
+3. The next day, the `gcp_update_mysqldb_script.py` script will check to see if there are new leases to be added to the SQL database. It will update them if there are and all other downstream analyses will be run normally with the newly updated leases.
 
 ## 9. Contact Information
 
