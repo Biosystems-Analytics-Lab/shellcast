@@ -24,8 +24,11 @@ analysis/data/tabular/outputs/cronjob_data/*.err
 analysis/data/tabular/outputs/cronjob_data/*.out
 analysis/data/tabular/outputs/ndfd_sco_data/*.csv
 analysis/data/tabular/outputs/terminal_data/*.txt
-# these aren't being ignored (not sure why)
-# don't ignore appended csv data in analysis/data/tabular/outputs/ndfd_sco_data_appended
+analysis/data/tabular/outputs/ndfd_sco_data/ndfd_sco_data_raw/*.csv
+analysis/data/tabular/outputs/ndfd_sco_data/lease_calcs/*.csv
+analysis/data/tabular/outputs/ndfd_sco_data/cmu_calcs/*.csv
+analysis/data/tabular/outputs/ndfd_sco_data_appended/*.csv
+# if these aren't being ignored then use git rm --cached <file path with wildcard>
 # ignore r history file
 .Rhistory
 .Rproj.user

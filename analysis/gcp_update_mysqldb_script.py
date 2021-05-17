@@ -110,30 +110,6 @@ connection = pymysql.connect(host = DevConfig.HOST,
 
 # connection
 
-
-# %% update sga min and max table
-
-# sga_data = sga_data[1:5] # for testing
-
-# add df to mysql db
-# sga_data.to_sql('sga_min_max', engine, if_exists = 'append', index = False)
-
-# print status
-# print("added sga min and max data to mysql db")
-# print("did not add sga min and max data to mysql db")
-
-# create cursor to print out status of update
-# sga_cursor = connection.cursor()
-# execute query
-# sga_sql = "SELECT * FROM `sga_min_max`"
-# sga_cursor.execute(sga_sql)
-
-# fetch all records and print them
-# sga_result = sga_cursor.fetchall()
-# for i in sga_result:
-#    print(i)
-
-
 # %% update cmu probabilities table
 
 # cmu_data = cmu_data[1:5] # for testing
@@ -208,53 +184,6 @@ else:
     
     # print when finished
     print("the mysql db was empty so all leases were added")
-    
-
-# %% update closure_probabilities table
-
-# create a cursor to get current leases in db
-# user_leases_cursor = connection.cursor()
-
-# execute query
-# user_leases_current_sql = "SELECT id, ncdmf_lease_id FROM user_leases"
-# user_leases_cursor.execute(user_leases_current_sql)
-
-# save current lease result
-# user_leases_current_result = user_leases_cursor.fetchall()
-
-# convert to curent lease result to pandas df
-# user_leases_current_df = pandas.DataFrame(user_leases_current_result)
-
-# lease calcs df select only needed columns
-# lease_data_sel = lease_data.drop(columns = 'day').reset_index(drop=True)
-
-# rename to match current lease df
-# lease_data_sel.columns = ['ncdmf_lease_id', 'prob_1d_perc', 'prob_2d_perc', 'prob_3d_perc']
-
-# set index of lease_data_sel
-# lease_data_sel_fix = lease_data_sel.set_index('ncdmf_lease_id')
-
-# join lease_data_sel to user_leases_current_df
-#leases_join_df = user_leases_current_df.set_index(
-#        'ncdmf_lease_id').join(
-#                lease_data_sel_fix, how = 'left', on = 'ncdmf_lease_id').set_index(
-#                        'id').reset_index(drop = False)
-
-# finalize data to add to mysql db
-#closure_prob_data = pandas.DataFrame({'lease_id' : leases_join_df['id'],
-#                                     'prob_1d_perc' : leases_join_df['prob_1d_perc'],
-#                                     'prob_2d_perc' : leases_join_df['prob_2d_perc'],
-#                                     'prob_3d_perc' : leases_join_df['prob_3d_perc']})
-
-# add df to mysql db
-#closure_prob_data.to_sql('closure_probabilities', engine, if_exists = 'append', index = False)
-
-# print status
-#print("added user lease data to mysql db")
-
-# to_sql can handle NaN to NULL conversion!
-# in most cases there should not be NULL values
-# but for testing some of the lease id's were made up
 
 
 # %% dispose engine and close connection

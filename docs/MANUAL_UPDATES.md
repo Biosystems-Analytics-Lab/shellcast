@@ -20,7 +20,9 @@ This document is intended to explain how to perform simple, manual updates to Sh
 
 8. [Changing Notification Schedule](#8-changing-notification-schedule)
 
-9. [Contact Information](#9-contact-information)
+9. [Updating ShellCast Leases](#9-updating-shellcast-leases)
+
+10. [Contact Information](#9-contact-information)
 
 ## 1. Setup
 
@@ -127,6 +129,10 @@ Only the "schedule:" line needs to be changed unless you are also changing the t
 
 Now [upload the changes to GitHub](#2-uploading-changes-to-github) and [upload the changes to Google App Engine](#3-uploading-changes-to-google-app-engine). Be sure to push changes to both the NCSU GitHub Enterprise **and** the GitHub (public) repos as decribed in the [Mirroring code updates on GitHub (public) repo section](/docs/DEVELOPER.md#54-mirroring-code-updates-on-github-public-repo) of the DEVELOPER.md documentation.
 
-## 9. Contact Information
+## 9. Updating ShellCast Leases
+
+Check out the instructions in [ANALYSIS.md](/docs/ANALYSIS.md/#8-updating-leases) for more details on how to update ShellCast leases.
+
+## 10. Contact Information
 
 If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
