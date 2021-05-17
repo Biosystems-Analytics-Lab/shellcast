@@ -1,6 +1,12 @@
 # ShellCast
 ShellCast is a Python Flask web application that helps North Carolina shellfish growers make harvesting decisions based on predicted rainfall.  The live production version of the app can be found at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast). A public version of this repository is also available at https://github.com/Biosystems-Analytics-Lab/shellcast.
 
+Please note that this repository is participating in a study into sustainability of open source projects. Data will be gathered about this repository for approximately the next 12 months, starting from May 17, 2021.
+
+Data collected will include number of contributors, number of PRs, time taken to close/merge these PRs, and issues closed.
+
+For more information, please visit [our informational page](https://sustainable-open-science-and-software.github.io/) or download our [participant information sheet](https://sustainable-open-science-and-software.github.io/assets/PIS_sustainable_software.pdf).
+
 ## Table of Contents
 
 1. [Third-Party Services](#1-third-party-services)
