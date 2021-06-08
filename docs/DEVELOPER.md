@@ -62,32 +62,32 @@ The Google Cloud SDK is principally a command line tool that allows you to inter
 
 ### 4.2 Download Cloud SQL proxy
 
-You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference.
+You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
 
-### 4.2 Clone the GitHub repository
+### 4.3 Clone the GitHub repository
 
 Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
-### 4.3 Setup Python virtual environment
+### 4.4 Setup Python virtual environment
 
 1. Make sure that you have Python 3.7 or higher installed on your machine.
 2. From the root directory of your local repository, create a virtual environment by running `python3 -m venv venv`.
 3. Activate the virtual environment by running `source venv/bin/activate` if on a Linux or Mac machine. If on a Windows machine, run `venv\Scripts\activate.bat`.  Now "python" will refer to the virtual environment's copy of Python 3. You can deactivate the virtual environment by running `deactivate` (Linux/Mac/Windows).
 4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
 
-### 4.4 Make a Unix socket directory
+### 4.5 Make a Unix socket directory
 
 _This step cannot be performed on a Windows machine. This step is ultimately needed to connect to the database through the Unix socket option of the Cloud SQL proxy. To work around this, I would look into changing the SQLALCHEMY_DATABASE_URI property of your config.py file (see the section below) for the DevConfig and TestConfig objects. You should be able to change the URI so that it connects through a TCP connection in the Dev and Test configurations while still connecting through a Unix socket once deployed to GCP (that's when the regular Config object (production) configuration is used)._
 
 To use the Cloud SQL proxy for local development and testing of the web app, a directory is needed for a Unix socket. From the root directory of your local repository, make a new directory named "cloudsql" by running `mkdir cloudsql`.
 
-### 4.5 Make a configuration file based on the template file
+### 4.6 Make a configuration file based on the template file
 
 The web app uses a configuration file named "config.py" to store various configuration options. Some of these are quite sensitive (e.g. database credentials), so they shouldn't be saved in version control. Because of this, a "config.py" file isn't in the repository but rather a "config-template.py" file which provides all of the necessary structure for the "config.py" file with all of the non-sensitive values already populated.
 1. On your machine in the root of your local repository, simply make a copy of config-template.py and name it "config.py". This file will automatically be ignored by Git because it is in the .gitignore. **Also**, make sure to copy the config.py file into the analysis folder so the ShellCast daily analysis CRON job can access it.
 2. You will now need to populate several values into config.py like the analysis path, data path, AWS Access Key ID, AWS Secret Access Key, Google Maps JavaScript API key, the database username, and the database password. Any values that you need to add are indicated by "ADD_VALUE_HERE". Since these values are extremely sensitive, they are not stored in this repository. If you are working on ShellCast as a developer, you can get the values by contacting a ShellCast administrator. If you are adapting the code to another project, you can add in new values that you create.
 
-### 4.6 Setup Google service account credentials for Firebase Admin SDK
+### 4.7 Setup Google service account credentials for Firebase Admin SDK
 
 Since Firebase authentication is used for managing users, the web app uses the Firebase Admin SDK to verify user ID tokens sent from the front end. The Admin SDK uses the concept of [Application Default Credentials](https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application) to implicitly find service account credentials in its environment so that it can access Firebase services. Service account credentials are already present when the app is deployed on GCP environments like App Engine so the Admin SDK can find them no problem. When developing locally, you have do a little work to help the Admin SDK with credentials. [This article](https://medium.com/google-cloud/firebase-separating-configuration-from-code-in-admin-sdk-d2bcd2e87de6) paints a pretty clear picture of what is going on with the credentials while on App Engine vs. developing locally (and what you need to do to set them up correctly).
 
@@ -97,7 +97,7 @@ So what you need to do at this point is:
   - Click generate new private key and store the file securely on your machine.  If you save it inside of the repo as `firebase-admin-sdk-credentials.json`, then it should be ignored by both .gitignore and .gcloudignore.  If you store it outside of the repo, then you won't have to worry about it being pushed to GitHub when you commit or Google Cloud when you deploy.  You do __NOT__ want to push this file to either of those places because it contains extremely sensitive information.
 2. Now that you have the credentials file, you just have to create an environment variable called `GOOGLE_APPLICATION_CREDENTIALS` which stores the absolute path to the file and the Admin SDK will implicitly find it as if running in App Engine.  On Linux/Mac you can run `export GOOGLE_APPLICATION_CREDENTIALS="/path/to/firebase-admin-sdk-credentials.json"`.  On Windows in Powershell you can run `$env:GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\firebase-admin-sdk-credentials.json"`.
 
-### 4.7 Setup Python and R for ShellCast Data Analysis
+### 4.8 Setup Python and R for ShellCast Data Analysis
 
 Follow the steps below to run the ShellCast data analysis scripts on your local machine. This will be similar for setting up the virtual computing laboratory (VCL) environment as described in [ANALYSIS.md](/docs/ANALYSIS.md/#3-vcl-set-up).
 
