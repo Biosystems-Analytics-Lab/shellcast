@@ -27,6 +27,8 @@ requirements-test.txt
 config-template.py
 # ignore local testing Unix socket folder
 cloudsql
+# ignore google cloud sql proxy
+cloud_sql_proxy
 # ignore database scripts
 db-scripts
 # ignore Firebase Admin SDK credentials (these will already be present in the App Engine environment)
