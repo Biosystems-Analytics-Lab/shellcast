@@ -14,19 +14,12 @@ help:
 """
 
 # %% to do list
-# Load the train data and attach it to the script
-
-# %% start script
 
 # %% load libraries
 from config import Config
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score
-from sklearn.model_selection import KFold
 
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import joblib
 
 # %% set paths here
 
@@ -35,9 +28,9 @@ data_base_path = Config.DATA_PATH
 
 # ndfd_path = data_base_path + "/tabular/outputs/ndfd_sco_data/cmu_calcs/"
 ndfd_path = data_base_path + "/tabular/outputs/ndfd_sco_data/cmu_calcs/"
-ndfd24_path = "ndfd_rocinput_joined_24h.csv"
-ndfd48_path = "ndfd_rocinput_joined_48h.csv"
-ndfd72_path = "ndfd_rocinput_joined_72h.csv"
+ndfd24_path = "ndfd_cmu_calcs_24h.csv"
+ndfd48_path = "ndfd_cmu_calcs_48h.csv"
+ndfd72_path = "ndfd_cmu_calcs_72h.csv"
 
 # %% load in data
 
@@ -77,25 +70,20 @@ x72 = x72.drop(columns=['cmu_name'],axis=1)
 x72 = x72.iloc[:, 0:5]
 print("\n72 Hours with type 1:\n", x72)
 
-# %% Random Forest Regression
+# %% Load trained models
+joblib_file_24 = "RF_models/joblib_RL24_Model.pkl"
+joblib_file_48 = "RF_models/joblib_RL48_Model.pkl"
+joblib_file_72 = "RF_models/joblib_RL72_Model.pkl"
 
-regressor24 = RandomForestRegressor(n_estimators = 100, random_state = 0)
-regressor48 = RandomForestRegressor(n_estimators = 100, random_state = 0)
-regressor72 = RandomForestRegressor(n_estimators = 100, random_state = 0)
+joblib_24_model = joblib.load(joblib_file_24)
+joblib_48_model = joblib.load(joblib_file_48)
+joblib_72_model = joblib.load(joblib_file_72)
 
+# %% Predict the rainfall
 
-# %% Loading training data
-
-
-# %% Train and predict the rainfall
-
-regressor24.fit(x, y)
-regressor48.fit(x, y)
-regressor72.fit(x, y)
-
-y24_pred = regressor24.predict(x24)
-y48_pred = regressor48.predict(x48)
-y72_pred = regressor72.predict(x72)
+y24_pred = joblib_24_model.predict(x24)
+y48_pred = joblib_48_model.predict(x48)
+y72_pred = joblib_72_model.predict(x72)
 
 # %% Convert cmu_num to cmu_name
 
@@ -106,12 +94,42 @@ x48 = x48.drop(columns=['cmu_num'],axis=1)
 x72['cmu_name'] = x72.apply(lambda row: 'U' + row.cmu_num, axis=1)
 x72 = x72.drop(columns=['cmu_num'],axis=1)
 
+x24['precip_pred'] = y24_pred
+x48['precip_pred'] = y48_pred
+x72['precip_pred'] = y72_pred
+
+# > 0.9	    Very High	5
+# > 0.75	High	    4
+# > 0.5	    Moderate	3
+# > 0.25	Low	        2 
+# < 0.25	Very Low    1
+
+def convertPrecipRisk(df):
+    if(df['precip_pred'] >= (0.9*df['rainfall_threshold'])):
+        df['precip_pred'] = 5
+    elif(df['precip_pred'] >= (0.75*df['rainfall_threshold'])):
+        df['precip_pred'] = 4
+    elif(df['precip_pred'] >= (0.5*df['rainfall_threshold'])):
+        df['precip_pred'] = 3
+    elif(df['precip_pred'] >= (0.25*df['rainfall_threshold'])):
+        df['precip_pred'] = 2
+    else:
+        df['precip_pred'] = 1
+
+convertPrecipRisk(x24)
+convertPrecipRisk(x48)
+convertPrecipRisk(x72)
+
 # %% Export the predicted values
 
-x24['precip_pred']= y24_pred
-x48['precip_pred']= y48_pred
-x72['precip_pred']= y72_pred
+# x is the dataframe which has ndfd cmu calculations with all the 24, 48, 72 hour modelled data
+x = x24
+x['prob_1d_perc']= x24['precip_pred']
+x['prob_2d_perc']= x48['precip_pred']
+x['prob_3d_perc']= x72['precip_pred']
+x = x.drop(columns=['pop12_perc', 'qpf_in', 'rainfall_threshold', 'month'], axis=1)
 
-x24.to_csv(r'x24.csv', index=False)
-x48.to_csv(r'x48.csv', index=False)
-x72.to_csv(r'x72.csv', index=False)
+x24.to_csv(r'analysis/data/tabular/outputs/ndfd_sco_data/cmu_calcs/x24.csv', index=False)
+x48.to_csv(r'analysis/data/tabular/outputs/ndfd_sco_data/cmu_calcs/x48.csv', index=False)
+x72.to_csv(r'analysis/data/tabular/outputs/ndfd_sco_data/cmu_calcs/x72.csv', index=False)
+x.to_csv(r'analysis/data/tabular/outputs/ndfd_sco_data/cmu_calcs/ndfd_cmu_calcs_rf.csv', index=False)
