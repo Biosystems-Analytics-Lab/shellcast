@@ -27,10 +27,6 @@ ${RSCRIPT_PATH}Rscript ndfd_convert_df_to_raster_script.R | tee ${OUTPUT_PATH}02
 # /usr/local/bin/Rscript ndfd_analyze_forecast_data_script.R | tee opt/analysis/data/tabular/outputs/terminal_data/03_analyze_out_$(date '+%Y%m%d').txt
 ${RSCRIPT_PATH}Rscript ndfd_analyze_forecast_data_script.R | tee ${OUTPUT_PATH}03_analyze_out_$(date '+%Y%m%d').txt
 
-# step 4
-# opt/anaconda3/bin/python rf_model_precip.py | tee opt/analysis/data/tabular/outputs/terminal_data/04_python_output_$(date '+%Y%m%d').txt
-${PYTHON_PATH}python3 rf_model_precip.py | tee ${OUTPUT_PATH}04_rf_model_output_$(date '+%Y%m%d').txt
-
 # See main README for details on thow to set up both the TCP connection.
 
 # login to google cloud platform

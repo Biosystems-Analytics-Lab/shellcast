@@ -4,6 +4,11 @@
 # author: sheila saia
 # date created: 20200525
 # email: ssaia@ncsu.edu
+# ---- revision ----
+# purpose of revision: takes raw ndfd tabular data and outputs summarized data that are used in machine learning models to predict area-weighted precipitation for each cmu
+# revised by: natalie nelson
+# date revision created: 20210608
+# email: nnelson4@ncsu.edu
 
 
 # ---- notes ----
@@ -175,10 +180,11 @@ ndfd_cmu_calcs_data <- data.frame(row_num = as.numeric(),
                                   cmu_name = as.character(),
                                   rainfall_thresh_in = as.numeric(),
                                   datetime_uct = as.character(),
+                                  month = as.numeric(),
                                   valid_period_hrs = as.numeric(),
                                   pop12_perc = as.numeric(),
-                                  qpf_in = as.numeric(),
-                                  prob_close_perc = as.numeric())
+                                  qpf_in = as.numeric())
+                                  # prob_close_perc = as.numeric() # REMOVE FOR NEW ML WORKFLOW
 
 # valid period list
 valid_period_list <- c(24, 48, 72)
@@ -249,30 +255,32 @@ for (i in 1:length(valid_period_list)) {
     temp_cmu_pop12_result <- round(sum(temp_pop12_area_weighted_df$area_weighted_avg), 2)
     temp_cmu_qpf_result <- round(sum(temp_qpf_area_weighted_df$area_weighted_avg), 2)
     
+    # --- REMOVE FOR NEW ML WORKFLOW ---
     # calculate probability of closure
     # check if testing mode
     # if not testing mode calculate probability of closure as you would in production
-    if (notification_flag == "production") {
-      temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in / temp_cmu_qpf_result)), 1) # from equation 1 in proposal
-    }
+    # if (notification_flag == "production") {
+      #temp_cmu_prob_close_result <- round((temp_cmu_pop12_result * exp(-temp_cmu_rain_in / temp_cmu_qpf_result)), 1) # from equation 1 in proposal
+    # }
 
     # if testing mode then more frequent approach to ensure more frequent notifications
-    else {
-      num_vals <- length(temp_cmu_qpf_result)
-      random_unif_vals <- round(runif(num_vals, min = notification_dist_min, max = notification_dist_max), 1) # random uniform distribution
-      temp_cmu_prob_close_result <- random_unif_vals
+    # else {
+      # num_vals <- length(temp_cmu_qpf_result)
+      # random_unif_vals <- round(runif(num_vals, min = notification_dist_min, max = notification_dist_max), 1) # random uniform distribution
+      # temp_cmu_prob_close_result <- random_unif_vals
       # temp_cmu_prob_closure_result <- if_else(temp_cmu_prob_close_result * notification_factor > 100, 100, temp_cmu_prob_close_result * notification_factor) # to test notifications
-    }
+    # }
 
     # save data
     temp_ndfd_cmu_calcs_data <- data.frame(row_num = cmu_row_num,
                                            cmu_name = temp_cmu_name,
                                            rainfall_thresh_in = temp_cmu_rain_in,
                                            datetime_uct = ndfd_date_uct,
+                                           month = lubridate::month(ndfd_date_uct),
                                            valid_period_hrs = temp_valid_period,
                                            pop12_perc = temp_cmu_pop12_result,
-                                           qpf_in = temp_cmu_qpf_result,
-                                           prob_close_perc = temp_cmu_prob_close_result)
+                                           qpf_in = temp_cmu_qpf_result)
+                                           # prob_close_perc = temp_cmu_prob_close_result) # REMOVE FOR NEW ML WORKFLOW
 
     # bind results
     ndfd_cmu_calcs_data <-  rbind(ndfd_cmu_calcs_data, temp_ndfd_cmu_calcs_data)
@@ -295,39 +303,48 @@ print(paste0(ndfd_date_uct, " spatial averaging complete"))
 
 
 # ---- 8. reformat cmu calcs for db ----
+# --- REMOVE FOR NEW ML WORKFLOW; USE IN LATER SCRIPT ---
 # cmu_name, prob_1d_perc, prob_2d_perc, prob_3d_perc
-ndfd_cmu_calcs_data_spread <- ndfd_cmu_calcs_data %>%
-  dplyr::mutate(day = ymd(datetime_uct),
-                prob_close = round(prob_close_perc, 0)) %>%
-  dplyr::select(cmu_name, day, valid_period_hrs, prob_close) %>%
-  dplyr::mutate(valid_period = case_when(valid_period_hrs == 24 ~ "prob_1d_perc",
-                                         valid_period_hrs == 48 ~ "prob_2d_perc",
-                                         valid_period_hrs == 72 ~ "prob_3d_perc")) %>%
-  dplyr::select(-valid_period_hrs) %>%
-  tidyr::pivot_wider(id_cols = c(cmu_name, day),
-                     names_from = valid_period,
-                     values_from = prob_close,
-                     values_fn = max) %>% # will take the max prob. closure value if there are multiple
-  dplyr::select(-day)
+# ndfd_cmu_calcs_data_spread <- ndfd_cmu_calcs_data %>%
+#   dplyr::mutate(day = ymd(datetime_uct),
+#                 prob_close = round(prob_close_perc, 0)) %>%
+#   dplyr::select(cmu_name, day, valid_period_hrs, prob_close) %>%
+#   dplyr::mutate(valid_period = case_when(valid_period_hrs == 24 ~ "prob_1d_perc",
+#                                          valid_period_hrs == 48 ~ "prob_2d_perc",
+#                                          valid_period_hrs == 72 ~ "prob_3d_perc")) %>%
+#   dplyr::select(-valid_period_hrs) %>%
+#   tidyr::pivot_wider(id_cols = c(cmu_name, day),
+#                      names_from = valid_period,
+#                      values_from = prob_close,
+#                      values_fn = max) %>% # will take the max prob. closure value if there are multiple
+#   dplyr::select(-day)
 
 # View(ndfd_cmu_calcs_data_spread)
 
 
 # ---- 9. export area weighted, spreaded ndfd cmu calcs ----
-# export calcs for 1-day, 2-day, and 3-day forecasts
-# write_csv(ndfd_cmu_calcs_data, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs_", latest_ndfd_date_uct_str, ".csv")) # includes date in file name
-write_csv(ndfd_cmu_calcs_data_spread, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs.csv"))
+# export area weighted averages for qpf, pop for each cmu
+# write_csv(ndfd_cmu_calcs_data_spread, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs.csv"))
+write_csv(ndfd_cmu_calcs_data, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs.csv"))
+# export data in 24h, 48h, and 72h subsets
+ndfd_cmu_calcs_data_24 <- ndfd_cmu_calcs_data %>% filter(valid_period_hrs == 24)
+ndfd_cmu_calcs_data_48 <- ndfd_cmu_calcs_data %>% filter(valid_period_hrs == 48)
+ndfd_cmu_calcs_data_72 <- ndfd_cmu_calcs_data %>% filter(valid_period_hrs == 72)
+write_csv(ndfd_cmu_calcs_data_24, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs_24h.csv"))
+write_csv(ndfd_cmu_calcs_data_48, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs_48h.csv"))
+write_csv(ndfd_cmu_calcs_data_72, paste0(ndfd_tabular_data_output_path, "cmu_calcs/ndfd_cmu_calcs_72h.csv"))
 
 print("finished analyzing forecast data")
 
 
 # ---- 10. append data for long-term analysis ----
-# reformat cmu data
-ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
-  dplyr::select(-row_num) %>%
-  dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
-
-# append all three datasets
-write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
-
-print("appended forecast data for long-term analysis")
+# --- REMOVE FOR NEW ML WORKFLOW; USE IN LATER SCRIPT ---
+# # reformat cmu data
+# ndfd_cmu_calcs_data_to_append <- ndfd_cmu_calcs_data %>%
+#   dplyr::select(-row_num) %>%
+#   dplyr::mutate(flag = rep(notification_flag, dim(ndfd_cmu_calcs_data)[1]))
+# 
+# # append all three datasets
+# write_csv(ndfd_cmu_calcs_data_to_append, path = paste0(ndfd_tabular_data_appended_output_path, "ndfd_cmu_calcs_appended.csv"), append = TRUE)
+# 
+# print("appended forecast data for long-term analysis")
