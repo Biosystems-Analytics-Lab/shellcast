@@ -48,7 +48,7 @@ sleep 5s
 
 # step 4
 # opt/anaconda3/bin/python gcp_update_mysqldb_script.py | tee opt/analysis/data/tabular/outputs/terminal_data/04_update_db_out_$(date '+%Y%m%d').txt
-${PYTHON_PATH}python3 gcp_update_mysqldb_script.py | tee ${OUTPUT_PATH}04_update_db_out_$(date '+%Y%m%d').txt
+${PYTHON_PATH}python3 gcp_update_mysqldb_script.py | tee ${OUTPUT_PATH}05_update_db_out_$(date '+%Y%m%d').txt
 
 # close connections
 kill -INT $PID1 #-SIGINT doesn't work here (only in the terminal manually)
