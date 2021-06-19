@@ -75,6 +75,21 @@ def sendNotificationsWithAWSSES(emailNotifications, textNotifications):
     time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
   return responses
 
+def probabilityToRisk(closureValue):
+  flag = ""
+  if(closureValue == 1):
+    flag = "Very Low"
+  elif(closureValue == 2):
+    flag = "Low"
+  elif(closureValue == 3):
+    flag = "Moderate"
+  elif(closureValue == 4):
+    flag = "High"
+  elif(closureValue == 5):
+    flag = "Very High"
+  return flag
+
+
 @cron.route('/sendNotifications')
 @cronOnly
 def sendNotifications():
@@ -107,7 +122,7 @@ def sendNotifications():
         if ((prob.prob_1d_perc and prob.prob_1d_perc >= user.prob_pref) or
             (prob.prob_2d_perc and prob.prob_2d_perc >= user.prob_pref) or
             (prob.prob_3d_perc and prob.prob_3d_perc >= user.prob_pref)):
-          leaseInfo = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
+          leaseInfo = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, probabilityToRisk(prob.prob_1d_perc), probabilityToRisk(prob.prob_2d_perc), probabilityToRisk(prob.prob_3d_perc))
           notificationText.append(leaseInfo)
           needToSendNotification = True
     # add a disclaimer to the end of the notifications
