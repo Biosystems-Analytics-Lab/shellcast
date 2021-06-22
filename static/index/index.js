@@ -34,21 +34,31 @@ const LEASE_TABLE_ID = 'lease-table';
 const GROWING_UNIT_BOUNDS_PATH = 'static/cmu_bounds.geojson';
 /** The color used to fill in growing units without a closure probability. */
 const COLOR_NULL = 'transparent';
-/** The color used to fill in growing units with a 0-40% closure probability. */
-const COLOR_0_40 = '#4eb265';
-/** The color used to fill in growing units with a 40-60% closure probability. */
-const COLOR_40_60 = '#fecc5c';
-/** The color used to fill in growing units with a 60-80% closure probability. */
-const COLOR_60_80 = '#fd8d3c';
-/** The color used to fill in growing units with a 80-100% closure probability. */
-const COLOR_80_100 = '#e31a1c';
+// /** The color used to fill in growing units with a 0-40% closure probability. */
+// const COLOR_0_40 = '#4eb265';
+// /** The color used to fill in growing units with a 40-60% closure probability. */
+// const COLOR_40_60 = '#fecc5c';
+// /** The color used to fill in growing units with a 60-80% closure probability. */
+// const COLOR_60_80 = '#fd8d3c';
+// /** The color used to fill in growing units with a 80-100% closure probability. */
+// const COLOR_80_100 = '#e31a1c';
+const COLOR_VERY_LOW = '#4eb265';
+const COLOR_LOW = '#fecc5c';
+const COLOR_MODERATE = '#fd8d3c';
+const COLOR_HIGH = '#e31a1c';
+const COLOR_VERY_HIGH = '#8B0000';
 /** The text and colors used for the legend. */
 const LEGEND_SCALE = [
   { text: 'No data', color: COLOR_NULL},
-  { text: '0 - 40%', color: COLOR_0_40},
-  { text: '40 - 60%', color: COLOR_40_60},
-  { text: '60 - 80%', color: COLOR_60_80},
-  { text: '80 - 100%', color: COLOR_80_100}
+  // { text: '0 - 40%', color: COLOR_0_40},
+  // { text: '40 - 60%', color: COLOR_40_60},
+  // { text: '60 - 80%', color: COLOR_60_80},
+  // { text: '80 - 100%', color: COLOR_80_100}
+  { text: 'Very Low', color: COLOR_VERY_LOW},
+  { text: 'Low', color: COLOR_LOW},
+  { text: 'Moderate', color: COLOR_MODERATE},
+  { text: 'High', color: COLOR_HIGH},
+  { text: 'Very High', color: COLOR_VERY_HIGH}
 ];
 
 // a reference to the Google map object
@@ -224,9 +234,9 @@ function addGrowingUnitDataToMap(growingUnitData) {
     mapInfoWindow.setPosition(pos);
     mapInfoWindow.setContent(`
       <div>Growing Unit: ${cmuName}
-      <br>Today %: ${handleUndef(prob_1d_perc)}
-      <br>Tomorrow %: ${handleUndef(prob_2d_perc)}
-      <br>In 2 days %: ${handleUndef(prob_3d_perc)}
+      <br>Today: ${handleUndef(prob_1d_perc)}
+      <br>Tomorrow: ${handleUndef(prob_2d_perc)}
+      <br>In 2 days: ${handleUndef(prob_3d_perc)}
       </div>
     `);
     mapInfoWindow.open(map);
@@ -238,9 +248,9 @@ function addLeaseDataToMap(leaseData) {
   for (let lease of leaseData) {
     const leaseInfoContent = (`
       <div>Lease ID: ${lease.ncdmf_lease_id}
-      <br>Today %: ${handleUndef(lease.prob_1d_perc)}
-      <br>Tomorrow %: ${handleUndef(lease.prob_2d_perc)}
-      <br>In 2 days %: ${handleUndef(lease.prob_3d_perc)}
+      <br>Today: ${handleUndef(lease.prob_1d_perc)}
+      <br>Tomorrow: ${handleUndef(lease.prob_2d_perc)}
+      <br>In 2 days: ${handleUndef(lease.prob_3d_perc)}
       </div>
     `);
     const marker = new google.maps.Marker({
@@ -293,10 +303,15 @@ function styleFeatureBasedOnDay(day) {
  */
 function getColor(value) {
   let color = 'transparent';
-  if (value >= 0) color = COLOR_0_40;
-  if (value >= 40) color = COLOR_40_60;
-  if (value >= 60) color = COLOR_60_80;
-  if (value >= 80) color = COLOR_80_100;
+  // if (value >= 0) color = COLOR_0_40;
+  // if (value >= 40) color = COLOR_40_60;
+  // if (value >= 60) color = COLOR_60_80;
+  // if (value >= 80) color = COLOR_80_100;
+  if (value === 1) color = COLOR_VERY_LOW;
+  if (value === 2) color = COLOR_LOW;
+  if (value === 3) color = COLOR_MODERATE;
+  if (value === 4) color = COLOR_HIGH;
+  if (value === 5) color = COLOR_VERY_HIGH;
   if (value === null) color = 'transparent';
   return color;
 }
