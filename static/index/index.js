@@ -276,7 +276,18 @@ function getLatLngFromArray(geometry) {
 }
 
 function handleUndef(value) {
-  return (value || value === 0) ? value : '-';
+  flag = ""
+  if(value === 1)
+    flag = "Very Low"
+  elif(value === 2)
+    flag = "Low"
+  elif(value === 3)
+    flag = "Moderate"
+  elif(value === 4)
+    flag = "High"
+  elif(value === 5)
+    flag = "Very High"
+  return (flag) ? flag : '-';
 }
 
 /**
