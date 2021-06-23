@@ -123,7 +123,7 @@ function initLeaseTable(leaseData) {
     };
     rows.push(rowData);
   }
-  $(`#${LEASE_TABLE_ID}`).bootstrapTable('load', leaseData);
+  $(`#${LEASE_TABLE_ID}`).bootstrapTable('load', rows);
 }
 
 /**
