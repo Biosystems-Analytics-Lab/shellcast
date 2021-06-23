@@ -113,15 +113,17 @@ function initGrowingUnitTable(growingUnitData) {
  * Fills the lease table with lease records.
  */
 function initLeaseTable(leaseData) {
-  // const rows = [];
-  // for (let lease of leaseData) {
-  //   const rowData = {
-  //     ncdmf_lease_id: areaId,
-  //     prob_1d_perc: leaseData.prob_1d_perc,
-  //   };
-  //   rows.push(rowData);
-  // }
-  $(`#${LEASE_TABLE_ID}`).bootstrapTable('load', leaseData);
+  const rows = [];
+  for (let lease of leaseData) {
+    const rowData = {
+      ncdmf_lease_id: areaId,
+      prob_1d_perc: `${handleUndef(lease.prob_1d_perc)}`,
+      prob_2d_perc: `${handleUndef(lease.prob_2d_perc)}`,
+      prob_3d_perc: `${handleUndef(lease.prob_3d_perc)}`
+    };
+    rows.push(rowData);
+  }
+  $(`#${LEASE_TABLE_ID}`).bootstrapTable('load', rows);
 }
 
 /**
