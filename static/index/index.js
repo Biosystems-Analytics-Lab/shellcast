@@ -279,13 +279,13 @@ function handleUndef(value) {
   let flag = ""
   if(value === 1)
     flag = "Very Low"
-  else if(value === 2)
+  if(value === 2)
     flag = "Low"
-  else if(value === 3)
+  if(value === 3)
     flag = "Moderate"
-  else if(value === 4)
+  if(value === 4)
     flag = "High"
-  else if(value === 5)
+  if(value === 5)
     flag = "Very High"
   return (value || value === 0) ? flag : '-';
 }
