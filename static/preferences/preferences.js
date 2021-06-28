@@ -116,7 +116,7 @@ function generateExampleNotification(noNotifications, selectedProb) {
   if (noNotifications) {
     return '<p>-- You will not receive any notifications. --</p>';
   }
-  return `<pre>Lease: ABC-123\n  Today: ${selectedProb + 10}%\n  Tomorrow: ${selectedProb - 13}%\n  In 2 days: ${selectedProb + 5}%</pre>`;
+  return `<pre>One or more of your leases has a high percent chance of closing today, tomorrow or in 2 days.\nVisit <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details.</pre>`;
 }
 
 /**
@@ -165,6 +165,7 @@ function onProfileFormChange(e) {
       selectedProb = Number(radio.value);
     }
   }
+  console.log(selectedProb);
   document.getElementById('example-notification').innerHTML = generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
 
   // enable save and cancel buttons
