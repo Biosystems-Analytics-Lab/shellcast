@@ -42,7 +42,7 @@ def createApp(configObj):
   # initialize database connection
   db.init_app(app)
 
-  # Application to convert the probability to Risk
+  # application to convert the probability to risk factor in html.jinja
   @app.context_processor
   def my_utility_processor():
     def probabilityToRisk(closureValue):

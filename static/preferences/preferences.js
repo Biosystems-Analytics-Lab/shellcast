@@ -110,7 +110,7 @@ function maskPhoneNumber(phoneNumber='') {
 /**
  * 
  * @param {boolean} noNotifications whether or not the user enabled notifications
- * @param {number} selectedProb the user's selected probabity preference
+ * @param {number} selectedProb the user's selected probability preference
  */
 function generateExampleNotification(noNotifications, selectedProb) {
   if (noNotifications) {
