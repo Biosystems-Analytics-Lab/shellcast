@@ -2,7 +2,7 @@
 """
 # ---- script header ----
 script name: rf_model_precip.py
-purpose of script: This script predicts the given precipitation in inches for the given input parameters.
+purpose of script: This script predicts the given precipitation in inches for the given input parameters and calculates the risk.
 email: ethedla@ncsu.edu
 date created: 20210609
 
@@ -73,6 +73,7 @@ joblib_24_model = joblib.load(joblib_file_24)
 joblib_48_model = joblib.load(joblib_file_48)
 joblib_72_model = joblib.load(joblib_file_72)
 
+print("RF models loaded")
 
 # %% Predict the rainfall
 
@@ -94,6 +95,9 @@ x24['precip_pred'] = y24_pred
 x48['precip_pred'] = y48_pred
 x72['precip_pred'] = y72_pred
 
+print("Predicted the rainfall")
+
+# %% Calculate the risk factor for the precipitation predicted
 def convertPrecipRisk(df):
     # > 0.9	    Very High	5
     # > 0.75	High	    4
@@ -108,6 +112,8 @@ def convertPrecipRisk(df):
 convertPrecipRisk(x24)
 convertPrecipRisk(x48)
 convertPrecipRisk(x72)
+
+print("Converted to risk factor")
 
 
 # %% Export the predicted values
@@ -125,3 +131,5 @@ x24.to_csv(ndfd_tabular_data_output_path+'cmu_calcs/x24.csv', index=False)
 x48.to_csv(ndfd_tabular_data_output_path+'cmu_calcs/x48.csv', index=False)
 x72.to_csv(ndfd_tabular_data_output_path+'cmu_calcs/x72.csv', index=False)
 x.to_csv(ndfd_tabular_data_output_path+'cmu_calcs/ndfd_cmu_calcs_rf.csv', index=False)
+
+print("Saved the files")

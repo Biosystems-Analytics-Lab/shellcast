@@ -22,7 +22,7 @@ CHARSET = 'UTF-8'
 # The text that is at the beginning of every notification.
 NOTIFICATION_HEADER = 'https://go.ncsu.edu/shellcast\n\n'
 # The template for lease information in notifications.
-LEASE_TEMPLATE =  'One or more of your leases has a high percent chance of closing today, tomorrow or in 2 days.\nVisit go.ncsu.edu/shellcast for details.\nLease: {}\n  Today: {}%\n  Tomorrow: {}%\n  In 2 days: {}%\n'
+LEASE_TEMPLATE =  'One or more of your leases has a high percent chance of closing today, tomorrow or in 2 days.\nVisit go.ncsu.edu/shellcast for details.\n\nLease: {}\n  Today: {}\n  Tomorrow: {}\n  In 2 days: {}\n'
 # The text that is at the end of every notification.
 NOTIFICATION_FOOTER = '\nThese predictions are in no way indicative of whether or not a lease will actually be temporarily closed for harvest.'
 # The amount of time between sending emails
