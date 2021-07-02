@@ -116,7 +116,7 @@ function generateExampleNotification(noNotifications, selectedProb) {
   if (noNotifications) {
     return '<p>-- You will not receive any notifications. --</p>';
   }
-  return `<pre>One or more of your leases has a high percent chance of closing today, tomorrow or in 2 days.\nVisit <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details.</pre>`;
+  return `<pre>One or more of your leases is at risk of closing today, tomorrow or in 2 days.\nVisit <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details.</pre>`;
 }
 
 /**
