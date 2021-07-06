@@ -30,7 +30,7 @@ EMAIL_SEND_INTERVAL = 0.1
 # The subject for text notifications
 TEXT_NOTIFICATION_SUBJECT = ''
 # The text for text notifications (max length of 138 characters)
-TEXT_NOTIFICATION_TEXT = 'One or more of your leases has a high percent chance of closing today, tomorrow, or in 2 days. Visit go.ncsu.edu/shellcast for details.'
+TEXT_NOTIFICATION_TEXT = 'One or more of your leases has a high risk of closing today, tomorrow, or in 2 days. Visit go.ncsu.edu/shellcast for details.'
 
 NOTIFICATION_TYPE_EMAIL = 'email'
 NOTIFICATION_TYPE_TEXT = 'text'
