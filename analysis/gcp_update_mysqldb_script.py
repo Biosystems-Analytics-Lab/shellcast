@@ -49,7 +49,7 @@ data_base_path = Config.DATA_PATH
 # sga_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/sga_calcs/ndfd_sga_calcs.csv"
 
 # cmu data path
-cmu_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/cmu_calcs/ndfd_cmu_calcs.csv"
+cmu_data_path = data_base_path + "tabular/outputs/ndfd_sco_data/cmu_calcs/ndfd_cmu_calcs_rf.csv"
 
 # lease spatial data
 lease_spatial_data_path = data_base_path + "spatial/outputs/ncdmf_data/lease_centroids/lease_centroids_db_wgs84.csv"

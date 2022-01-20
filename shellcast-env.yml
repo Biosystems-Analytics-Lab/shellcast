@@ -1,0 +1,23 @@
+name: shellcast
+channels:
+  - conda-forge
+dependencies:
+  - r
+  - r-sf
+  - r-geojsonsf
+  - r-raster
+  - r-rgdal
+  - r-tidyverse
+  - r-lubridate
+  - r-lwgeom
+  - r-here
+  - python=3.7
+  - requests
+  - numpy
+  - pandas
+  - pydap
+  - sqlalchemy
+  - pymysql
+  - gdal
+  - proj
+  - geos

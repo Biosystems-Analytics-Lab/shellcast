@@ -1,5 +1,7 @@
 # ignore VS Code settings
 .vscode
+# Ignore model files
+*.pkl
 # ignore Python caches
 __pycache__
 .pytest_cache

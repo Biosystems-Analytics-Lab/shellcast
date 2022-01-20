@@ -16,13 +16,13 @@ from routes.authentication import cronOnly
 # This address must be verified with Amazon SES.
 SENDER = 'ShellCast <shellcastapp@ncsu.edu>'
 # The subject line template for all emails.
-SUBJECT_TEMPLATE = 'ShellCast Predictions: % Chance of Lease Closure for {}'
+SUBJECT_TEMPLATE = 'ShellCast Forecasts for {}'
 # The character encoding for all emails.
 CHARSET = 'UTF-8'
 # The text that is at the beginning of every notification.
 NOTIFICATION_HEADER = 'https://go.ncsu.edu/shellcast\n\n'
 # The template for lease information in notifications.
-LEASE_TEMPLATE =  'Lease: {}\n  Today: {}%\n  Tomorrow: {}%\n  In 2 days: {}%\n'
+LEASE_TEMPLATE =  'One or more of your leases is at risk of closing today, tomorrow or in 2 days.\nVisit go.ncsu.edu/shellcast for details.\n\nLease: {}\n  Today: {}\n  Tomorrow: {}\n  In 2 days: {}\n'
 # The text that is at the end of every notification.
 NOTIFICATION_FOOTER = '\nThese predictions are in no way indicative of whether or not a lease will actually be temporarily closed for harvest.'
 # The amount of time between sending emails
@@ -30,7 +30,7 @@ EMAIL_SEND_INTERVAL = 0.1
 # The subject for text notifications
 TEXT_NOTIFICATION_SUBJECT = ''
 # The text for text notifications (max length of 138 characters)
-TEXT_NOTIFICATION_TEXT = 'One or more of your leases has a high percent chance of closing today, tomorrow, or in 2 days. Visit go.ncsu.edu/shellcast for details.'
+TEXT_NOTIFICATION_TEXT = 'One or more of your leases is at risk of closing today, tomorrow, or in 2 days. Visit go.ncsu.edu/shellcast for details.'
 
 NOTIFICATION_TYPE_EMAIL = 'email'
 NOTIFICATION_TYPE_TEXT = 'text'
@@ -75,6 +75,21 @@ def sendNotificationsWithAWSSES(emailNotifications, textNotifications):
     time.sleep(EMAIL_SEND_INTERVAL) # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
   return responses
 
+def probabilityToRisk(closureValue):
+  flag = ""
+  if(closureValue == 1):
+    flag = "Very Low"
+  elif(closureValue == 2):
+    flag = "Low"
+  elif(closureValue == 3):
+    flag = "Moderate"
+  elif(closureValue == 4):
+    flag = "High"
+  elif(closureValue == 5):
+    flag = "Very High"
+  return flag
+
+
 @cron.route('/sendNotifications')
 @cronOnly
 def sendNotifications():
@@ -107,7 +122,7 @@ def sendNotifications():
         if ((prob.prob_1d_perc and prob.prob_1d_perc >= user.prob_pref) or
             (prob.prob_2d_perc and prob.prob_2d_perc >= user.prob_pref) or
             (prob.prob_3d_perc and prob.prob_3d_perc >= user.prob_pref)):
-          leaseInfo = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, prob.prob_1d_perc, prob.prob_2d_perc, prob.prob_3d_perc)
+          leaseInfo = LEASE_TEMPLATE.format(lease.ncdmf_lease_id, probabilityToRisk(prob.prob_1d_perc), probabilityToRisk(prob.prob_2d_perc), probabilityToRisk(prob.prob_3d_perc))
           notificationText.append(leaseInfo)
           needToSendNotification = True
     # add a disclaimer to the end of the notifications
