@@ -12,7 +12,7 @@
     <h1>How do I use ShellCast?</h1>
     {# How It Works Video #}
     <div id="how-it-works-video">
-      <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/WcRYwMtgQjk"
+      <iframe width="100%" height="100%" src="https://www.youtube.com/embed/WwYPQOs1t6A"
         frameborder="0" allow="clipboard-write"
         allowfullscreen
       ></iframe>
@@ -24,39 +24,37 @@
 
     <h1>What is ShellCast?</h1>
     <p>
-      ShellCast is a forecast tool that helps North Carolina shellfish
-      growers anticipate temporary harvest area closures due to excess rainfall
-      and make data-driven management decisions. Forecast information on temporary
-      closures is helpful because closures impact business: shellfish growers cannot
-      harvest shellfish when a temporary closure is in effect.
+      ShellCast is a forecast tool that helps North Carolina shellfish growers 
+      anticipate temporary harvest area closures due to excess rainfall and make 
+      data-driven management decisions. Forecast information on temporary closures 
+      is helpful because closures impact business: shellfish growers cannot harvest 
+      shellfish when a temporary closure is in effect.
     </p>
     <p>
-      ShellCast only offers forecasts of the percent chance of a growing area
-      temporarily closing, and does not provide information on closures currently
-      in effect. For more information on active closures, refer to proclamations
-      posted by the
+      ShellCast only offers forecasts of the risk (very low, low, moderate, high, 
+      very high) of a growing area temporarily closing, and does not provide information 
+      on closures currently in effect. For more information on active closures, refer 
+      to proclamations posted by the
       <a href="http://portal.ncdenr.org/web/mf/proclamations-polluted-areas">North Carolina Division of Marine Fisheries</a>
       or the <a href="https://ncdenr.maps.arcgis.com/apps/webappviewer/index.html?id=5759aa19d7484a3b82a8e440fba643aa">Shellfish Sanitation Temporary Closure Public Viewer</a>.
     </p>
 
     <h1>Why use ShellCast?</h1>
     <p>
-      Once they sign up and log into their ShellCast account, shellfish growers
-      can add their lease sites and view forecast information for each of their
-      leases on the ShellCast map page. They can also see forecasts for nearby
-      growing areas on this same map. The forecasts provide estimates on the
-      percent chance that a lease site or growing area will temporarily close
-      today, tomorrow, or in 2 days due to excess rainfall. It is beneficial to
-      add leases because lease rainfall thresholds can vary and lead to different
-      chances of closure even with the same growing area.
+      Once they sign up and log into their ShellCast account, shellfish growers can 
+      add their lease sites and view forecast information for each of their leases 
+      on the ShellCast map page. They can also see forecasts for nearby growing 
+      areas on this same map. The forecasts provide estimates on the risk that a 
+      lease site or growing area will temporarily close today, tomorrow, or in 2 days 
+      due to excess rainfall. It is beneficial to add leases because lease rainfall 
+      thresholds can vary and lead to different chances of closure even within the same growing area.
     </p>
     <p>
-      While adding their leases to ShellCast, shellfish growers can also sign
-      up to receive email or text message notifications if their shellfish
-      lease sites are likely to be temporarily closed  today, tomorrow, or in
-      2 days. Please note that leases outside of conditionally approved areas
-      will not be searchable because ShellCast cannot generate a percent
-      chance of closure for these leases.
+      While adding their leases to ShellCast, shellfish growers can also sign up to 
+      receive email or text message notifications if their shellfish lease sites are 
+      likely to be temporarily closed today, tomorrow, or in 2 days. Please note that 
+      leases outside of conditionally approved areas will not be searchable because 
+      ShellCast cannot generate forecasts for these leases.
     </p>
     <p>
       ShellCast is free to use, but carrier messaging rates may apply for those who
@@ -65,7 +63,8 @@
     <p>Example email notification:</p>
     <img
       src="{{ url_for('static', filename='img/example_email_notification.png') }}"
-      alt="Screenshot of email notification showing forecasted percent chance of closure details for each lease and a link to return to the ShellCast web application to see more information."
+      alt="Screenshot of email notification showing forecasted risk of closure details 
+      for each lease and a link to return to the ShellCast web application to see more information."
       style="width: 100%;"
     >
 
@@ -75,28 +74,41 @@
       through the <a href="https://climate.ncsu.edu/">North Carolina State Climate Office</a>
       with shellfish harvest area and grower lease information from the
       <a href="https://bit.ly/3e5mzxl">North Carolina Division of Marine Fisheries</a>
-      to calculate the percent chance of closure for each lease registered in ShellCast.
-      We calculate the percent chance of closure using rainfall closure threshold depths
+      to calculate the risk of closure for each lease registered in ShellCast.
+      We calculate the risk of closure using rainfall closure threshold depths
       from the <a href="http://portal.ncdenr.org/web/mf/shellfish-sanitation-and-recreational-water-quality">North Carolina Office of Shellfish Sanitation and Recreational Water Quality</a>.
-      After calculating this percent chance of closure, we update the ShellCast web
+      , and then determine the risk of temporary closure for each lease registered in ShellCast. ShellCast defines temporary closure risk as:
+    </p>
+    <ul>
+      <li>“Very High”: Predicted rainfall at a lease is at least 90% of the rainfall threshold</li>
+      <li>“High”: Predicted rainfall at a lease is between 75-90% of the rainfall threshold</li>
+      <li>“Moderate”: Predicted rainfall at a lease is between 50-75% of the rainfall threshold</li>
+      <li>“Low”: Predicted rainfall at a lease is between 25-50% of the rainfall threshold</li>
+      <li>“Very Low”: Predicted rainfall at a lease is less than 25% of the rainfall threshold</li>
+    </ul>
+    <p>
+      After calculating this risk of closure, we update the ShellCast web
       application, and send out notifications once daily at 7am ET.
     </p>
     <img
       src="{{ url_for('static', filename='img/shellcast_infographic.png') }}"
       class="infographic"
-      alt="Image showing ShellCast data analysis pipeline and outputs from gathering weather forecast data on far left (picture of thundercloud), to running analysis (picture of two gears), to updating the ShellCast web application (computer monitor with ShellCast logo), to notifiying users via text message or email of the percent chance of closure on the far right (cell phone with notification)."
+      alt="Image showing ShellCast data analysis pipeline and outputs from gathering weather 
+      forecast data on far left (picture of thundercloud), to running analysis (picture of two 
+      gears), to updating the ShellCast web application (computer monitor with ShellCast logo), 
+      to notifiying users via text message or email of the risk of closure on the far right 
+      (cell phone with notification)."
     >
     <p>
-      Shellfish growers using ShellCast can select a threshold above which they would
-      like to receive email or text message notifications. For example, if they select
-      a threshold of 75%, they will receive email or text notifications when one of
-      their leases has a 75 percent chance or greater of closing today, tomorrow, or
-      in 2 days.
+      Shellfish growers using ShellCast can select a risk category at which they would like to 
+      receive email or text message notifications. For example, if they select a threshold of 
+      “Moderate or higher”, they will receive email or text notifications when one of their 
+      leases has a moderate risk or greater of closing today, tomorrow, or in 2 days.
     </p>
     <p>
       New users can start receiving ShellCast notifications as early as 7am ET the day
       after sign up. Whether they receive a ShellCast notification depends on the closure
-      threshold they set in their notification settings and the percent chance and depth
+      risk threshold they set in their notification settings and the amount
       of forecasted rainfall in the next few days.  The “My Leases” table values on
       <a href="/">the main map page</a> will be populated as soon as leases are added and saved.
     </p>
@@ -104,46 +116,33 @@
 
     <h1>What do ShellCast values mean?</h1>
     <p>
-      ShellCast provides users with two different scales of forecasts for three
-      different time periods. The two different scales of forecasts include the
-      larger shellfish growing units (e.g., the shaded boundaries on the main
-      map page) and smaller shellfish lease boundaries (e.g., the pins on the
-      main map page). You can also view this information in the two tables below
-      the map. Note that shellfish growing units are smaller than shellfish
-      growing areas, which are defined by the North Carolina Division of Marine Fisheries. 
+      ShellCast provides users with two different scales of forecasts for three different time 
+      periods. The two different scales of forecasts include the larger shellfish growing units 
+      (e.g., the shaded boundaries on the main map page) and smaller shellfish lease boundaries 
+      (e.g., the pins on the main map page). You can also view this information in the two tables 
+      below the map. Note that shellfish growing units are smaller than shellfish growing areas, 
+      which are defined by the North Carolina Division of Marine Fisheries. 
     </p>
     <p>
-      Each forecasted percent chance of closure is available for three different
+      Each forecasted risk of closure is available for three different
       time periods: today, tomorrow, and in 2 days. These forecasts are not
-      cumulative. That is, the forecasted percent chance of closure in 2 days
+      cumulative. That is, the forecasted risk of closure in 2 days
       only accounts for the rain expected for a 24-hour period two days from now.
-      The forecasted percent change of closure in 2 days does not consider rain
+      The forecasted risk of closure in 2 days does not consider rain
       that falls today and tomorrow. 
     </p>
     <p>
-      As an example, say you get the email below for one of your leases.
-    </p>
-    <img
-      src="{{ url_for('static', filename='img/example_email_notification.png') }}"
-      alt="Screenshot of email notification showing forecasted percent chance of closure details for each lease and a link to return to the ShellCast web application to see more information."
-      style="width: 100%;"
-    >
-
-    <p>
-      In the example above, ShellCast is forecasting the percent chance of closure
-      for today to be 20%, which is fairly low. Remember, anything less than 50%
-      has worse odds than flipping a coin. However, there’s an 80% chance that
-      your lease will be closed tomorrow and a smaller, but still greater than 50%,
-      chance that your lease will be closed the day after tomorrow. Given this
-      information and your knowledge of your shellfish operations, you may decide
-      to harvest your shellfish today. Doing this means you would be able to get
-      your shellfish to market sooner rather than waiting until your lease is
-      potentially approved and reopened for harvest by the North Carolina Division
-      of Marine Fisheries.
+      As an example, say you get an email from ShellCast notifying you that one of your 
+      leases has a Very Low risk of closure today, Very High risk tomorrow, and Moderate 
+      risk in 2 days. Given this information and your knowledge of your shellfish operations, 
+      you may decide to harvest your shellfish today. Doing this means you would be able 
+      to get your shellfish to market sooner rather than waiting until your lease is 
+      potentially closed and later reopened for harvest by the North Carolina Division of Marine Fisheries.
     </p>
     <p>
-      If you’re still confused, please check out <a href="#how-it-works-video">our video</a> or
-      contact us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.
+      If you have any additional questions, please check out <a href="#how-it-works-video">our video</a> or
+      <a href="https://ncsu-shellcast.appspot.com/faqs">FAQ page</a> or contact us at 
+      <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.
     </p>
 
     <h1>What are we doing to improve ShellCast?</h1>

@@ -13,7 +13,7 @@ def test_sendNotificationsWithAWSSES(app, monkeyPatchBotoClient):
     emailNotificationsToSend = [
       ('blah@ncsu.edu', ['EmailNotification1'], 1),
       ('shellcastapp@ncsu.edu', ['EmailNotification2'], 2),
-      ('bleh3@ncsu.edu', ['EmailNotification3'], 3),
+      ('ethedla@ncsu.edu', ['EmailNotification3'], 3),
     ]
     textNotificationsToSend = [
       ('1234567890@sms.blah.com', 'SMSNotification1', 1),
@@ -60,9 +60,9 @@ def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
 
   # add some closure probabilities for those leases
   probabilities = [
-    CMUProbability(cmu_name='U001', prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80),
-    CMUProbability(cmu_name='U002', prob_1d_perc=45, prob_2d_perc=49, prob_3d_perc=49),
-    CMUProbability(cmu_name='U003', prob_1d_perc=32, prob_2d_perc=33, prob_3d_perc=69)
+    CMUProbability(cmu_name='U001', prob_1d_perc=1, prob_2d_perc=4, prob_3d_perc=4),
+    CMUProbability(cmu_name='U002', prob_1d_perc=2, prob_2d_perc=4, prob_3d_perc=4),
+    CMUProbability(cmu_name='U003', prob_1d_perc=2, prob_2d_perc=3, prob_3d_perc=2)
   ]
   dbSession.add_all(probabilities)
   dbSession.commit()
@@ -85,14 +85,14 @@ def test_sendNotifications(client, dbSession, monkeyPatchBotoClient):
   assert len(results) == 1
   assert 'https://go.ncsu.edu/shellcast' in results[0].notification_text
   assert 'Lease: 45678' in results[0].notification_text
-  assert 'Today: 60%' in results[0].notification_text
-  assert 'Tomorrow: 70%' in results[0].notification_text
-  assert 'In 2 days: 80%' in results[0].notification_text
+  assert 'Today: Very Low' in results[0].notification_text
+  assert 'Tomorrow: High' in results[0].notification_text
+  assert 'In 2 days: High' in results[0].notification_text
   assert not 'Lease: 12345' in results[0].notification_text
   assert 'Lease: 82945' in results[0].notification_text
-  assert 'Today: 32%' in results[0].notification_text
-  assert 'Tomorrow: 33%' in results[0].notification_text
-  assert 'In 2 days: 69%' in results[0].notification_text
+  assert 'Today: Low' in results[0].notification_text
+  assert 'Tomorrow: Moderate' in results[0].notification_text
+  assert 'In 2 days: Low' in results[0].notification_text
   assert 'These predictions are in no way indicative of whether or not a lease will actually be temporarily closed for harvest.' in results[0].notification_text
   assert 'email' == results[0].notification_type
 
@@ -143,9 +143,9 @@ def test_sendNotifications_deleted_users(client, dbSession, monkeyPatchBotoClien
 
   # add some closure probabilities for those leases
   probabilities = [
-    CMUProbability(cmu_name='U001', prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80),
-    CMUProbability(cmu_name='U002', prob_1d_perc=45, prob_2d_perc=49, prob_3d_perc=49),
-    CMUProbability(cmu_name='U003', prob_1d_perc=32, prob_2d_perc=33, prob_3d_perc=69)
+    CMUProbability(cmu_name='U001', prob_1d_perc=1, prob_2d_perc=4, prob_3d_perc=4),
+    CMUProbability(cmu_name='U002', prob_1d_perc=2, prob_2d_perc=4, prob_3d_perc=4),
+    CMUProbability(cmu_name='U003', prob_1d_perc=2, prob_2d_perc=3, prob_3d_perc=2)
   ]
   dbSession.add_all(probabilities)
   dbSession.commit()

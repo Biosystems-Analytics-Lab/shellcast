@@ -8,11 +8,11 @@
 
   <!-- FirebaseUI JS -->
   <script defer src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
-
+  
   <!-- Custom JS -->
   <script defer src="{{ url_for('static', filename='preferences/preferences.js') }}"></script>
   <!-- Custom CSS -->
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='preferences/preferences.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='preferences/preferences.css') }}">  
 {% endblock %}
 
 {% block content %}
@@ -104,19 +104,18 @@
             ShellCast webpage.
           </small>
 
-          <label>I want to receive notifications for my leases when the % chance of temporary harvest closure is:</label>
+          <label>I want to receive notifications for my leases when the risk of temporary harvest closure is:</label>
           {% for probOption in probOptions %}
             <div class="form-check">
               <input class="form-check-input" type="radio" name="notification-prob" id="notification-prob-{{ probOption }}" value="{{ probOption }}">
-              <label class="form-check-label" for="notification-prob-{{ probOption }}">{{ probOption }}% or higher</label>
+              <label class="form-check-label" for="notification-prob-{{ probOption }}"> {{ probabilityToRisk(probOption) }} or higher</label>
             </div>
           {% endfor %}
           <small class="form-text text-muted">
-            Choose the % chance at which you would like to receive
-            notifications for a lease. For example, if you choose
-            "50% or higher", then you will receive a notification
-            when any one of your leases has at least a 50% chance of being
-            temporarily closed today, tomorrow, or in 2 days.
+            Choose the risk category at which you would like to receive 
+            notifications for a lease. For example, if you choose “Moderate or higher”, 
+            you will receive a notification when any one of your leases has at 
+            least a moderate risk of being temporarily closed today, tomorrow, or in 2 days.
           </small>
 
           <label for="example-notification">Example notification:</label>
@@ -140,7 +139,7 @@
         <a href="https://arcg.is/1ieXrX">NC DMF Shellfish Leasing Application</a>.
         Use the number labeled as "Lease ID". Please note that leases outside of
         conditionally approved areas will not be searchable because ShellCast cannot
-        generate a percent chance of closure for these leases.
+        generate a forecast for these leases.
       </p>
 
       <div class="mb-3 search-bar">

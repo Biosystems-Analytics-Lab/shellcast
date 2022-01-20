@@ -42,6 +42,24 @@ def createApp(configObj):
   # initialize database connection
   db.init_app(app)
 
+  # application to convert the probability to risk factor in html.jinja
+  @app.context_processor
+  def my_utility_processor():
+    def probabilityToRisk(closureValue):
+      flag = ""
+      if(closureValue == 1):
+        flag = "Very Low"
+      elif(closureValue == 2):
+        flag = "Low"
+      elif(closureValue == 3):
+        flag = "Moderate"
+      elif(closureValue == 4):
+        flag = "High"
+      elif(closureValue == 5):
+        flag = "Very High"
+      return flag
+    return dict(probabilityToRisk=probabilityToRisk)
+
   return app
 
 app = None

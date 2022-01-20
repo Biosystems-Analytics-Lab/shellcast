@@ -49,7 +49,7 @@ def faqsPage():
 @pages.route('/preferences')
 def preferencesPage():
   serviceProviders = db.session.query(PhoneServiceProvider.id, PhoneServiceProvider.name).all()
-  probOptions = [25, 50, 75]
+  probOptions = [3, 4, 5]
   return render_template('preferences.html.jinja', serviceProviders=serviceProviders, probOptions=probOptions)
 
 @pages.route('/signin')
