@@ -111,20 +111,23 @@ ndfd_qpf_raster_3day_nc_albers <- raster::raster(paste0(ndfd_spatial_data_input_
 
 # spatial data
 # sga bounds buffered
-sga_bounds_buffer_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_10kmbuf_albers.shp")) %>% st_set_crs(crs = 5070)
+# sga_bounds_buffer_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_10kmbuf_albers.shp")) %>% st_set_crs(crs = 5070)
+sga_bounds_buffer_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_10kmbuf_albers.shp")) 
 
 # sga data
 sga_bounds_simple_albers <- st_read(paste0(sga_spatial_data_input_path, "sga_bounds_simple_albers.shp"))
-nc_bounds_buffer_albers <- st_read(paste0(nc_buffer_spatial_input_path, "nc_bounds_10kmbuf_albers.shp")) %>% st_set_crs(crs = 5070)
 
 # cmu bounds buffered
-cmu_bounds_buffer_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_10kmbuf_albers.shp")) %>% st_set_crs(crs = 5070)
+# cmu_bounds_buffer_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_10kmbuf_albers.shp")) %>% st_set_crs(crs = 5070)
+cmu_bounds_buffer_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_10kmbuf_albers.shp")) 
 
 # cmu bounds
-cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_albers.shp")) %>% st_set_crs(crs = 5070)
+# cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_albers.shp")) %>% st_set_crs(crs = 5070)
+cmu_bounds_albers <- st_read(paste0(cmu_spatial_data_input_path, "cmu_bounds_albers.shp")) 
 
 # lease centroids
-lease_centroids_albers <- st_read(paste0(lease_spatial_data_input_path, "lease_centroids_albers.shp")) %>% st_set_crs(crs = 5070)
+# lease_centroids_albers <- st_read(paste0(lease_spatial_data_input_path, "lease_centroids_albers.shp")) %>% st_set_crs(crs = 5070)
+lease_centroids_albers <- st_read(paste0(lease_spatial_data_input_path, "lease_centroids_albers.shp"))
 
 # all spatial data should have crs = 5070
 # check crs
