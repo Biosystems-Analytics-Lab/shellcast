@@ -55,3 +55,7 @@ def preferencesPage():
 @pages.route('/signin')
 def signinPage():
   return render_template('signin.html.jinja')
+
+@pages.route('/feedback')
+def feedbackPage():
+  return render_template('feedback.html.jinja')
