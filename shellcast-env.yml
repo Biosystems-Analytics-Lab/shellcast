@@ -21,3 +21,5 @@ dependencies:
   - gdal
   - proj
   - geos
+  - joblib==1.0.1
+  - scikit-learn==0.23.2
