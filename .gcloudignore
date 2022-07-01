@@ -6,6 +6,9 @@
 # For more information, run:
 #   $ gcloud topic gcloudignore
 
+# pyenv
+.python-version
+
 # ignore this file itself
 .gcloudignore
 # ignore Git stuff
