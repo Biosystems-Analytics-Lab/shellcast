@@ -1,3 +1,5 @@
+# pyenv
+.python-version
 # ignore VS Code settings
 .vscode
 # Ignore model files

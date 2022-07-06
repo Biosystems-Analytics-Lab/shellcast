@@ -213,10 +213,14 @@ async function initMap() {
 function addGrowingUnitDataToMap(growingUnitData) {
   // set feature properties based on the growing unit data
   for (let [cmuName, data] of Object.entries(growingUnitData)) {
-    const curFeature = map.data.getFeatureById(cmuName);
-    curFeature.setProperty('prob_1d_perc', data.prob_1d_perc);
-    curFeature.setProperty('prob_2d_perc', data.prob_2d_perc);
-    curFeature.setProperty('prob_3d_perc', data.prob_3d_perc);
+    if (map.data.getFeatureById(cmuName)) {
+      const curFeature = map.data.getFeatureById(cmuName);
+      curFeature.setProperty('prob_1d_perc', data.prob_1d_perc);
+      curFeature.setProperty('prob_2d_perc', data.prob_2d_perc);
+      curFeature.setProperty('prob_3d_perc', data.prob_3d_perc);
+    } else {
+      console.log(cmuName + 'not found.');
+    }
   }
 
   // set up an info window to appear when clicking on any growing unit
