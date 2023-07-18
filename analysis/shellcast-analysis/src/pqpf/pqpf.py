@@ -445,6 +445,9 @@ class PQPF:
         logger.info(utils.done_str)
 
     def check_grb_files(self):
+        """
+        Check downloaded PQPF data is current.
+        """
         logger.info('[Check GRB files dates]')
         grb_file_dates = []
         to_db_bool = False
@@ -485,19 +488,19 @@ class PQPF:
         files = self.get_files_to_download()
         self.download_grbs(files)
         to_db_bool = self.check_grb_files()
-        csv_out_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_{self.outfile_date}.csv')
-        # Process data
-        self.small_grb()
-        thresholds = self.get_thresholds()
-        self.grb_to_tiff(thresholds)
-        for key, vals in lyrs.items():
-            df = self.ras_values_to_pts(vals[0], key)
-            csv_path = self.cmu_mean(df, vals[1], key)
-            csv_fpaths.append(csv_path)
-        self.csv_concat(csv_fpaths[0], csv_fpaths[1], csv_out_fpath)
 
         # Save data to DB
         if to_db_bool:
+            csv_out_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_{self.outfile_date}.csv')
+            # Process data
+            self.small_grb()
+            thresholds = self.get_thresholds()
+            self.grb_to_tiff(thresholds)
+            for key, vals in lyrs.items():
+                df = self.ras_values_to_pts(vals[0], key)
+                csv_path = self.cmu_mean(df, vals[1], key)
+                csv_fpaths.append(csv_path)
+            self.csv_concat(csv_fpaths[0], csv_fpaths[1], csv_out_fpath)
             self.save_to_db(csv_out_fpath)
         else:
             logger.info(f'Raw GRB files date is not today. {"!"*5} DATA NOT SAVED IN DATABASE {"!"*5}')
@@ -520,14 +523,14 @@ class PQPF:
         self.download_grbs(files)
         to_db_bool = self.check_grb_files()
 
-        # Process data
-        self.small_grb()
-        self.grb_to_tiff(thresholds)
-        self.tiff_resample()
-
         # Save data to DB
         csv_path = self.zonal_stats_to_csv()
+
         if to_db_bool:
+            # Process data
+            self.small_grb()
+            self.grb_to_tiff(thresholds)
+            self.tiff_resample()
             self.save_to_db(csv_path)
         else:
             logger.info(f'Raw GRB files date is not today. {"!"*5} DATA NOT SAVED IN DATABASE {"!"*5}')
