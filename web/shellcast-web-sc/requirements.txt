@@ -1,0 +1,9 @@
+Flask==2.2.3
+Flask-SQLAlchemy>=3.0.3
+PyMySQL==1.0.2
+firebase-admin==4.3.0
+email_validator==1.1.2
+pytz==2020.1
+boto3==1.26.60
+cryptography==39.0.0
+google-cloud-logging==3.5.0
