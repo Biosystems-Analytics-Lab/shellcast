@@ -28,15 +28,8 @@ Google Cloud Platform
 - Firebase
   - Authentication - ShellCast uses Firebase authentication to manage user signup and login.
 
-Google
-- Maps API - ShellCast uses the Google Maps JavaScript API for displaying a map of the North Carolina coast with an overlay of the NCDMF growing areas and user leases.
-
 Amazon Web Services
 - Simple Email Service - ShellCast uses AWS SES to send closure notifications to users through email and text.
-
-NCSU Virtual Computing Lab (VCL)
-- Available through https://vcl.wordpress.ncsu.edu/
-- Linux Server - ShellCast uses a custom Linux server to run the closure analysis code on a regular basis.
 
 NCSU Enterprise GitHub
 - Available through https://github.ncsu.edu/login
@@ -46,15 +39,15 @@ NCSU Enterprise GitHub
 
 ![A diagram showing the data flow of the ShellCast application.](docs/images/architecture_diagram.png)
 
-1. The NC Climate Office provides APIs for a variety of weather data.
+1. Obtain NOAA PQPF data from FTP server.
 2. Rainfall forecasts are retrieved every morning.
 3. The analysis server calculates closure probabilities for growing units based on the rainfall forecasts and rainfall closure thresholds for those growing units. See [docs/ANALYSIS.md](/docs/ANALYSIS.md) for more information.
 4. The calculated probabilities for every growing unit are uploaded to the database every morning.
 5. The database is a MySQL 5.7 instance hosted on Google Cloud SQL. See [docs/DATABASE.md](/docs/DATABASE.md) for more information.
-6. Calculated probabilites are retrieved by the web server
+6. Calculated probabilities are retrieved by the web server
 7. The web server is a Python Flask application hosted on Google App Engine. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
 8. As requests are made from a web browser, the web server responds to those requests.
-9. A user can access the ShellCast web site using any modern web browser on a computer, phone, or tablet.
+9. A user can access the ShellCast website using any modern web browser on a computer, phone, or tablet.
 10. User information and preferences are propagated back to the database.
 11. Notifications are sent to users every morning based on their notification preferences. Notifications are sent using Amazon Web Services Simple Email Service.
 12. Email notifications show a detailed list of a user's leases that may close soon. Email notifications are sent using the user's email address.
@@ -73,4 +66,4 @@ Instructions explaining how to perform a variety of tasks can be found in the fo
 
 ## 4. Contact Information
 
-If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu). 
+If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Makiko Shukunobe (mshukun at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu). 
