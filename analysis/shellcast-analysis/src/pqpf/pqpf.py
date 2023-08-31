@@ -1,12 +1,12 @@
 import configparser
 import sys
 import os
-import gc
 import logging.config
 import functools as ft
 import pygrib
 import warnings
 import rasterio
+import platform
 import pandas as pd
 import geopandas as gpd
 import sqlalchemy.engine
@@ -18,8 +18,9 @@ from shapely.errors import ShapelyDeprecationWarning
 from datetime import datetime
 from typing import List, Type
 from rasterstats import zonal_stats
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from . import utils
+
 
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
@@ -36,6 +37,8 @@ class PQPF:
         Args:
             state (str): State abbreviation
         """
+        self.os_type = 'Other' if platform.system() == 'Darwin' else 'Windows'
+
         self.outfile_date = None
         self.config = configparser.ConfigParser()
         self.config.read(ct.CONFIG_INI)
@@ -140,10 +143,13 @@ class PQPF:
         """
         logger.info('[Subset GRB file for small area]')
         try:
+            wgrib2 = 'wgrib2'
+            if self.os_type == 'Other':
+                wgrib2 = '/usr/local/bin/wgrib2'
             utils.delete_files(self.grb_subsets_dir)
             for grb in [os.path.join(self.grb_raw_dir, f) for f in os.listdir(self.grb_raw_dir) if f.endswith('.grb')]:
                 out_grb_path = os.path.join(self.grb_subsets_dir, f'sbs_{os.path.basename(grb)}')
-                cmd = ['wgrib2', grb, '-small_grib', self.config[self.state]['LON_WE'],
+                cmd = [wgrib2, grb, '-small_grib', self.config[self.state]['LON_WE'],
                        self.config[self.state]['LAT_SN'], out_grb_path]
                 logger.info(cmd)
                 utils.cmd_subprocess(cmd)
@@ -160,6 +166,9 @@ class PQPF:
         """
         logger.info('[Transform GRB to Tiff for each threshold]')
         try:
+            gdal_translate = 'gdal_translate'
+            if self.os_type == 'Other':
+                gdal_translate = '/usr/local/bin/gdal_translate'
             # Delete previous outputs
             utils.delete_files(self.tiffs_dir)
 
@@ -177,7 +186,7 @@ class PQPF:
                             if threshold == inches:
                                 rainfall_str = str(threshold).replace('.', 'p')
                                 tiff_path = os.path.join(self.tiffs_dir, f'{ct.TIFF_PREFIX}_{fname}_{rainfall_str}.tif')
-                                cmd = ['gdal_translate', '-b', f'{idx + 1}', '-of', 'GTiff', grb_fpath, tiff_path]
+                                cmd = [gdal_translate, '-b', f'{idx + 1}', '-of', 'GTiff', grb_fpath, tiff_path]
                                 utils.cmd_subprocess(cmd)
             logger.info(utils.done_str)
         except Exception as e:
@@ -208,9 +217,6 @@ class PQPF:
         except Exception as e:
             msg = 'Failed to get rainfall thresholds.'
             utils.error_process(self.state, msg, e)
-        else:
-            del gdf
-            gc.collect()
 
     def ras_values_to_pts(self, pts_shp, what_lyr) -> Type:
         """
@@ -253,9 +259,6 @@ class PQPF:
         except Exception as e:
             msg = 'Raster values to points failed.'
             utils.error_process(self.state, msg, e)
-        else:
-            del gdf
-            gc.collect()
 
     def cmu_mean(self, df, group_col, what_lyr) -> str:
         """
@@ -295,10 +298,6 @@ class PQPF:
 
         except Exception as e:
             msg = 'CMU mean process failed.'
-            utils.error_process(self.state, msg, e)
-        else:
-            del aggs
-            gc.collect()
 
     def tiff_resample(self) -> None:
         """
@@ -306,12 +305,15 @@ class PQPF:
         """
         logger.info('[Resample TIFF files]')
         try:
+            gdalwarp = 'gdalwarp'
+            if self.os_type == 'Other':
+                gdalwarp = '/usr/local/bin/gdalwarp'
             resample_dir = os.path.join(self.data_root, 'intermediate/resample')
             utils.create_directory(resample_dir, delete=True)
             tiffs = utils.list_files(self.tiffs_dir, '.tif')
             for tiff in tiffs:
-                out_fpath = os.path.join(resample_dir, os.path.basename(tiff))
-                cmd = ['gdalwarp', '-tr', f'{ct.GRB_RES_X / 100}', f'{ct.GRB_RES_Y / 100}', '-r', 'bilinear',
+                out_fpath = os.path.join(resample_dir, f'rs_{os.path.basename(tiff)}')
+                cmd = [gdalwarp, '-tr', f'{ct.GRB_RES_X / 100}', f'{ct.GRB_RES_Y / 100}', '-r', 'bilinear',
                        '-dstnodata',
                        '-999', '-overwrite', tiff, out_fpath]
                 utils.cmd_subprocess(cmd)
@@ -400,9 +402,9 @@ class PQPF:
                 df = pd.read_csv(csv_path, index_col=False)
                 if len(df.index) > 0:
                     with engine.connect() as conn:
-                        conn.execute('CALL DeleteCmuProbsToday()')
+                        conn.execute(text('CALL DeleteCmuProbsToday()'))
                         df.to_sql('cmu_probabilities', con=conn, if_exists='append', index=False)
-                        queryset = conn.execute('CALL SelectCmuProbsToday()')
+                        queryset = conn.execute(text('CALL SelectCmuProbsToday()'))
                         if queryset.rowcount == len(df.index):
                             logger.info(f'{queryset.rowcount} rows added to DB.')
             logger.info(utils.done_str)
@@ -415,7 +417,7 @@ class PQPF:
         try:
             engine = sqlalchemy.create_engine(self.connect_str)
             conn = engine.connect()
-            tables = conn.execute('SHOW TABLES;')
+            # tables = conn.execute('SHOW TABLES;')
             # print(tables.all())
             conn.close()
             engine.dispose()
@@ -523,14 +525,12 @@ class PQPF:
         self.download_grbs(files)
         to_db_bool = self.check_grb_files()
 
-        # Save data to DB
-        csv_path = self.zonal_stats_to_csv()
-
         if to_db_bool:
             # Process data
             self.small_grb()
             self.grb_to_tiff(thresholds)
             self.tiff_resample()
+            csv_path = self.zonal_stats_to_csv()
             self.save_to_db(csv_path)
         else:
             logger.info(f'Raw GRB files date is not today. {"!"*5} DATA NOT SAVED IN DATABASE {"!"*5}')

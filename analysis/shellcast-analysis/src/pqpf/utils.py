@@ -39,7 +39,7 @@ def error_log(err):
 def error_process(state, message, error):
     logger.error(message)
     error_log(error)
-    send_email(state, message)
+    # send_email(state, message)
     sys.exit(1)
 
 
@@ -90,10 +90,10 @@ def cmd_subprocess(cmd: List[str]) -> None:
         # logger.info(codecs.decode(out, 'UTF-8'))
         rc = proc.returncode
     except Exception as e:
-        error_log(logger, e)
+        error_log(e)
     else:
         if rc:
-            error_log(logger, err)
+            error_log(err)
             logger.error(codecs.decode(err, 'UTF-8'))
             logger.error('PROCESS INCOMPLETE')
             sys.exit(1)
@@ -172,7 +172,7 @@ def send_email(state, message):
             smtp.login(notif['EMAIL_SENDER'], notif['GMAIL_API_CREDENTIAL'])
             smtp.sendmail(notif['EMAIL_SENDER'], notif['EMAIL_RECEIVER'], em.as_string())
     except Exception as e:
-        error_log(logger, e)
+        error_log(e)
         exit(1)
 
 

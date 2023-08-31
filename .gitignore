@@ -2,9 +2,9 @@
 .idea/
 .DS_Store
 
-cloud_sql_proxy.exe
-sqlauthproxy.bat
-config.ini
+**/cloud-sql-proxy*
+**/sqlauthproxy*
+**/config*
 logs/
 tests/
 raw/
@@ -53,3 +53,4 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+/web/requirements.txt

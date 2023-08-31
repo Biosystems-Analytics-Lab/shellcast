@@ -37,4 +37,6 @@ GRB_RES_Y = 2539.702
 # Z_RUN = '12'
 # TO_HOUR = 0
 
+# wgrib2 directory
+DARWIN_WGRIB2_PATH = '/usr/local/bin'
 
