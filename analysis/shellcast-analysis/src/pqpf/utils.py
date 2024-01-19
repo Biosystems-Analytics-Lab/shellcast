@@ -8,14 +8,21 @@ import shutil
 import re
 import logging
 import configparser
+import pandas as pd
+import geopandas as gpd
+from sqlalchemy import create_engine, text
+from decimal import localcontext, Decimal, ROUND_HALF_UP, ROUND_HALF_DOWN
 from typing import List
 from email.message import EmailMessage
+from osgeo import gdal
+from ftplib import FTP, error_perm
 import constants as ct
 
+gdal.UseExceptions()
 config = configparser.ConfigParser()
 config.read(ct.CONFIG_INI)
 
-done_str = f'{"*"*10} Done {"*"*10}\n'
+done_str = f'{"*" * 10} Done {"*" * 10}\n'
 logger = logging.getLogger(__name__)
 
 
@@ -36,7 +43,16 @@ def error_log(err):
     logger.error(msg)
 
 
-def error_process(state, message, error):
+def error_process(message: str, error):
+    """
+
+    Args:
+        message: Error message for log
+        error: Exception object
+
+    Returns:
+
+    """
     logger.error(message)
     error_log(error)
     # send_email(state, message)
@@ -74,6 +90,14 @@ def delete_files(directory: str) -> None:
                 os.remove(fpath)
 
 
+def get_raw_grb_list(directory: str) -> List[str]:
+    grb_lst = []
+    for f in os.listdir(directory):
+        if f.endswith('grb'):
+            grb_lst.append(os.path.join(directory, f))
+    return grb_lst
+
+
 def cmd_subprocess(cmd: List[str]) -> None:
     """
     Runs CMD
@@ -93,8 +117,9 @@ def cmd_subprocess(cmd: List[str]) -> None:
         error_log(e)
     else:
         if rc:
-            error_log(err)
-            logger.error(codecs.decode(err, 'UTF-8'))
+            msg = codecs.decode(err, 'UTF-8')
+            # error_log(msg)
+            logger.error(msg)
             logger.error('PROCESS INCOMPLETE')
             sys.exit(1)
 
@@ -106,7 +131,7 @@ def regex_find(regex: str, text: str) -> List[str]:
         regex (str): Regex pattern
         text (str): Text
 
-    Returns (List[str}): List of matched strings when there are matches, otherwise returns None.
+    Returns (List[str]): List of matched strings when there are matches, otherwise returns None.
 
     """
     pattern = re.compile(regex)
@@ -132,7 +157,7 @@ def list_grbs_not_today(file_dir: str) -> List[str]:
     return files
 
 
-def delete_grbs(file_dir: str) -> None:
+def delete_outdated_grbs(file_dir: str) -> None:
     """
     Deletes outdated GRB and other than GRB files.
     Args:
@@ -159,13 +184,17 @@ def list_files(f_dir, ext):
     return files
 
 
-def send_email(state, message):
+def send_email(message, state=None):
     try:
         notif = config['Notification']
         em = EmailMessage()
         em['From'] = notif['EMAIL_SENDER']
         em['To'] = notif['EMAIL_RECEIVER']
-        em['Subject'] = f'{state} {notif["EMAIL_SUBJECT"]}'
+        if state:
+            em['Subject'] = f'{state} {notif["EMAIL_SUBJECT"]}'
+        else:
+            em['Subject'] = f'{notif["EMAIL_SUBJECT"]}'
+
         em.set_content(message)
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
@@ -182,3 +211,147 @@ def calculate_duration(start, stop):
     logger.info(f'End:\t\t{stop}')
     logger.info(f'Duration: {elapsed}')
 
+
+def run_gdal_to_tiff(in_fpath, out_fpath, band, tsrs=None):
+    try:
+        input = gdal.Open(in_fpath)
+        in_fname = os.path.basename(in_fpath).split('.')[0]
+
+        if tsrs:
+            warp_options = gdal.WarpOptions(format='GTiff', srcBands=band, dstSRS=tsrs)
+        else:
+            warp_options = gdal.WarpOptions(format='GTiff', srcBands=band)
+
+        warp = gdal.Warp(out_fpath, input, options=warp_options)
+        logger.info(f'{in_fname} --- converted')
+        warp = None  # Closes the files
+    except Exception as e:
+        error_log(e)
+
+
+def run_gdal_resample(in_fpath, out_fpath, xres, yres, nodata):
+    try:
+        in_fname = os.path.basename(in_fpath)
+        out_fname = os.path.basename(out_fpath)
+        input = gdal.Open(in_fpath)
+        warp_options = gdal.WarpOptions(xRes=xres, yRes=yres, resampleAlg='bilinear', dstNodata=nodata)
+        warp = gdal.Warp(out_fpath, input, options=warp_options)
+        logger.info(f'{in_fname} to {out_fname} ---> completed')
+        warp = None
+    except Exception as e:
+        error_log(e)
+
+
+def round_half_up(num):
+    with localcontext() as ctx:
+        ctx.rounding = ROUND_HALF_UP
+        n = Decimal(num)
+        return n.to_integral_value()
+
+
+def round_half_down(num):
+    with localcontext() as ctx:
+        ctx.rounding = ROUND_HALF_DOWN
+        n = Decimal(num)
+        return n.to_integral_value()
+
+
+def download_grbs(grb_raw_dir, files, ftp_url, ftp_cwd) -> None:
+    """
+    Download PQPF GRB files from FTP.
+    Args:
+        grb_raw_dir (str): Path to GRIB raw files
+        files (List[str]): List of GRB files
+        ftp_url (str): FTP URL
+        ftp_cwd (str): FTP current working directory
+    """
+    logger.info('[Download GRIBs from FTP]')
+    try:
+        if files:
+            ftp = FTP(ftp_url)
+            ftp.login()
+            ftp.encoding = 'utf-8'
+            ftp.cwd(ftp_cwd)
+            for fname in files:
+                grb_path = os.path.join(grb_raw_dir, fname)
+                try:
+                    with open(grb_path, 'wb') as f:
+                        ftp.retrbinary("RETR " + fname, f.write)
+                    logger.info(f'{fname} downloaded.')
+
+                except error_perm:
+                    print('ERR', fname)
+                    os.unlink(grb_path)
+            ftp.quit()
+        else:
+            logger.info('Skip download')
+        logger.info(done_str)
+    except Exception as e:
+        msg = 'GRB file download failed.'
+        error_process(msg, e)
+
+
+def get_thresholds(lease_shp, thresholds_col_name) -> List[float]:
+    """
+    Get unique rain threshold (inches) values.
+
+    Args
+        lease_shp (str): The lease shp name
+        thresholds_col_name (str): Threshold column name
+    Returns (List[float]): A list of unique rainfall thresholds
+    """
+    logger.info('[Get unique rainfall thresholds]')
+    try:
+        gdf = gpd.read_file(lease_shp)
+        thresholds = sorted(gdf[thresholds_col_name].unique())  # Returns list of class numpy.float64
+        if len(thresholds) > 0:
+            thresholds_num = [float(threshold) for threshold in thresholds]
+            thresholds_str = ', '.join([str(threshold) for threshold in thresholds])
+            logger.info(f'Thresholds: {thresholds_str}')
+            logger.info(done_str)
+            return thresholds_num
+        else:
+            raise
+    except Exception as e:
+        msg = 'Failed to get rainfall thresholds.'
+        error_process(msg, e)
+
+
+def db_connection_test(connect_str):
+    logger.info('[DB connection test]')
+    try:
+        engine = create_engine(connect_str)
+        conn = engine.connect()
+        # tables = conn.execute('SHOW TABLES;')
+        # print(tables.all())
+        conn.close()
+        engine.dispose()
+        logger.info(f'{"*" * 10} Connected {"*" * 10}\n')
+    except Exception as e:
+        msg = 'DB connection failed.'
+        error_process(msg, e)
+
+
+def save_to_db(connect_str, csv_path) -> None:
+    """
+    Saves the data to DB.
+    Args:
+        connect_str (str): DB connection string
+        csv_path (str): CMU probabilities CSV file path
+    """
+    logger.info('[Save to DB]')
+    try:
+        engine = create_engine(connect_str)
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path, index_col=False)
+            if len(df.index) > 0:
+                with engine.begin() as conn:
+                    conn.execute(text('CALL DeleteCmuProbsToday()'))
+                    df.to_sql('cmu_probabilities', con=conn, if_exists='append', index=False)
+                    queryset = conn.execute(text('CALL SelectCmuProbsToday()'))
+                    if queryset.rowcount == len(df.index):
+                        logger.info(f'{queryset.rowcount} rows added to DB.')
+        logger.info(done_str)
+    except Exception as e:
+        msg = 'Save to DB failed.'
+        error_process(msg, e)

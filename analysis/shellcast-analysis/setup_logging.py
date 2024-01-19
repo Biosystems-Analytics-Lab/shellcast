@@ -1,8 +1,10 @@
 import logging.config
 import os
 import yaml
+from pathlib import Path
 
-LOGS_DIR = os.path.join(os.path.dirname(__file__), 'logs')
+LOGS_DIR = str(Path(Path().absolute().parents[1], 'logs'))
+
 
 def create_log_files(state):
     log_dir = os.path.join(LOGS_DIR, state.lower())
@@ -14,8 +16,9 @@ def create_log_files(state):
 
     for log_file in log_files:
         if not os.path.exists(log_file):
-            log_file = open(info_log_fpath, 'w')
+            log_file = open(log_file, 'w')
             log_file.close()
+
 
 def setup_logger_yaml(logging_yaml_fpath):
     with open(logging_yaml_fpath, 'r') as stream:

@@ -1,0 +1,191 @@
+.content {
+  padding: 1rem;
+}
+
+#account-sign-in {
+  display: none;
+}
+
+#account-dropdown-div {
+  display: none;
+}
+
+#account-dropdown {
+  color: #007fad;
+}
+
+#account-dropdown:hover {
+  color: #7ED3F6;
+}
+
+.navbar-logo {
+  position: relative;
+  top: -5px;
+}
+
+@media only screen and (min-width: 992px) {
+  .navbar-logo {
+    top: -15px;
+    margin-top: 5px;
+  }
+}
+
+.text-bubble {
+  background: #efefef;
+  border: 1px solid #a7a7a7;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  line-height: 1.3;
+  max-width: 800px;
+  padding: 15px;
+  position: relative;
+  display: inline-block;
+}
+
+.text-bubble pre {
+  font-family: Univers,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.text-bubble__arrow {
+  border-left: 21px solid transparent;
+  border-top: 20px solid rgba(0, 0, 0, 0.2);
+  bottom: -25px;
+  position: absolute;
+  right: 15px;
+}
+
+.text-bubble__arrow::before {
+  border-left: 23px solid transparent;
+  border-top: 23px solid #a7a7a7;
+  bottom: 2px;
+  content: "";
+  position: absolute;
+  right: 5px;
+}
+
+.text-bubble__arrow::after {
+  border-left: 21px solid transparent;
+  border-top: 21px solid #efefef;
+  bottom: 4px;
+  content: "";
+  position: absolute;
+  right: 6px;
+}
+
+.page-main-header {
+  text-align: center;
+}
+
+footer {
+  text-align: center;
+  background-color: #007fad;
+  color: white;
+  padding: 0.5rem;
+  margin-top: 2rem;
+}
+
+footer a {
+  color: white;
+}
+
+footer a:hover {
+  color: #003da4;
+}
+
+.support-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.support-logos a {
+  margin: 1rem;
+}
+
+.support-logos img {
+  height: 100px;
+}
+
+/* Bootstrap overrides */
+.navbar {
+  background-color: white;
+  border-bottom: 2px #007fad solid;
+  box-shadow: 0 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.navbar-toggler {
+  border-color: rgba(0,0,0,.1);
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-nav .dropdown-menu {
+  float: left;
+  min-width: 0;
+}
+
+.dropdown {
+  cursor: pointer;
+}
+
+.dropdown-item {
+  cursor: pointer;
+}
+
+.navbar-brand {
+  padding-bottom: 0;
+}
+
+.container {
+  max-width: 800px;
+}
+
+.bg-primary {
+  background-color: #007fad!important;
+}
+
+a, .btn-link, .dropdown-item {
+  color: #007fad;
+}
+
+a:hover, a:focus, .btn-link:hover, .dropdown-item:hover {
+  color: #7ED3F6;
+  background-color: transparent;
+}
+
+.btn-primary, .btn-primary:disabled {
+  background-color: #007fad;
+  border-color: #007fad;
+}
+
+.btn-primary:hover {
+  background-color: #7ED3F6;
+  border-color: #7ED3F6;
+}
+
+.dropdown-item:active {
+  background-color: #007fad;
+  color: white;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active {
+  background-color: #007fad;
+  border-color: #007fad;
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  color: #fff;
+  background-color: #c82333;
+  border-color: #bd2130;
+}
