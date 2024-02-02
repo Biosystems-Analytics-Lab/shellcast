@@ -5,6 +5,7 @@
 **/cloud-sql-proxy*
 **/sqlauthproxy*
 **/config*
+**/tpxmrg_inventory.json
 logs/
 tests/
 raw/

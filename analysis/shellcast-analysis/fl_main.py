@@ -34,10 +34,8 @@ if __name__ == '__main__':
     db = 'gcp.mysql'
 
     # --- Download and process total precipitation XMRG dataset ---
-    # tpxmrg = TPXMRG('FL', 7)
-    # tpxmrg.main()
-    #
-    # subprocess.run([str(Path(script_dir, 'fl_pqpf/xmrg_proc.sh'))], shell=True)
+    tpxmrg = TPXMRG('FL', 7)
+    tpxmrg.main()
 
     # --- PQPF analysis ---
     pqpf = FLPQPF(db)

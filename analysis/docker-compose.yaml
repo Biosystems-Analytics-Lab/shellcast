@@ -1,8 +1,0 @@
-version: '3.8'
-
-services:
-  wgrib:
-    image: analyticsfire/wgrib:alpine3.7
-    volumes:
-      - ./shellcast-analysis/data/:/data
-    tty: true
