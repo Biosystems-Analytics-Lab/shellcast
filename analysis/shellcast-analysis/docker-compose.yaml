@@ -1,3 +1,6 @@
+# Using the official mysql image from the Docker Hub
+# During development, this database can be used for testing.
+
 version: '3.3'
 services:
   db:
@@ -6,7 +9,7 @@ services:
     environment:
       MYSQL_DATABASE: 'db'
       # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'mshukun'
+      MYSQL_USER: 'your_username'
       # You can use whatever password you like
       MYSQL_PASSWORD: '12345'
       # Password for root access
