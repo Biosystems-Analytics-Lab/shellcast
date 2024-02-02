@@ -73,7 +73,7 @@ if __name__ == '__main__':
     # setup for running locally (development configuration)
     app = createApp(DevConfig())
     # run the app locally
-    app.run(host=DevConfig.HOST, port=DevConfig.PORT, debug=True)
+    app.run(host=DevConfig.HOST, port=DevConfig.PORT, debug=True, use_reloader=False)
 else:  # else the app is being run from a WSGI application such as gunicorn
     logging.info('Starting app with production configuration')
 
