@@ -111,8 +111,8 @@ def getGrowingUnitProbabilities():
   growingUnitProbs = db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).limit(numGrowingUnits)
   growingUnitProbsAsDicts = {}
   for unit in growingUnitProbs:
-    leaseId = unit.lease_id
-    growingUnitProbsAsDicts[leaseId] = unit.asDict()
+    cmuName = unit.cmu_name
+    growingUnitProbsAsDicts[cmuName] = unit.asDict()
 
   return jsonify(growingUnitProbsAsDicts)
 

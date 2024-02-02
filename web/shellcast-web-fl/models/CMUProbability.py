@@ -7,15 +7,15 @@ from models import db
 class CMUProbability(db.Model):
   __tablename__ = 'cmu_probabilities'
   id = Column(Integer, primary_key=True)
-  lease_id = Column(String(10), nullable=False)
+  cmu_name = Column(String(10), nullable=False)
   prob_1d_perc = Column(Integer)
   created = Column(DateTime, server_default=functions.now())
 
   def asDict(self):
     return {
-      'lease_id': self.lease_id,
+      'cmu_name': self.cmu_name,
       'prob_1d_perc': self.prob_1d_perc,
     }
 
   def __repr__(self):
-    return '<CMUProbability: {}, {}>'.format(self.lease_id, self.prob_1d_perc)
+    return '<CMUProbability: {}, {}>'.format(self.cmu_name, self.prob_1d_perc)

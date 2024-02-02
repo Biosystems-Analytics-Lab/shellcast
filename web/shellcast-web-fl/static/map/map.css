@@ -68,10 +68,10 @@
 }
 
 .legend {
-    margin-top: 100px;
+    bottom: 100px;
     width: 100px;
     height: auto;
-    /*position: absolute;*/
+    position: absolute;
 }
 
 .day-selector {
