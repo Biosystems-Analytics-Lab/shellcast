@@ -6,11 +6,13 @@
 **/sqlauthproxy*
 **/config*
 **/tpxmrg_inventory.json
+**/delete
 logs/
 tests/
 raw/
 intermediate/
 outputs/
+**/lease_db_data.py
 
 
 venv/
