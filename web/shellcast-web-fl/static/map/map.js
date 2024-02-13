@@ -7,7 +7,7 @@
 /** The ID of the HTML element that holds the map. */
 const MAP_EL_ID = 'closure-map';
 /** Options for the map. */
-const mapCenter = [-79.806128, 33.168926]
+// const mapCenter = [-79.806128, 33.168926]
 // const apiKey = 'AAPK2655f317f81245c58119c0996f1b4cd0-pnk__kwFxo5jqD_HOcLjR-eBMM-WiGvpYSEsc3OQWaCmH-QNcMl2FWjUOdFzNjz'
 
 //** The ID of the growing unit table element. */
@@ -15,7 +15,7 @@ const GROWING_UNIT_TABLE_ID = 'growing-unit-table';
 /** The ID of the lease table element. */
 const LEASE_TABLE_ID = 'lease-table';
 /** The path to the growing unit boundaries file. */
-const GROWING_UNIT_BOUNDS_PATH = 'static/fl_cmu_bounds.geojson';
+const GROWING_UNIT_BOUNDS_PATH = 'static/fl_cmu_boundary.geojson';
 /** The color used to fill in growing units without a closure probability. */
 const COLOR_NULL = 'transparent';
 // /** The color used to fill in growing units with a Very Low risk. */
@@ -131,8 +131,6 @@ function initLeaseTable(leaseData) {
         const rowData = {
             lease_id: lease.lease_id,
             prob_1d_perc: `${handleUndef(lease.prob_1d_perc)}`,
-            // prob_2d_perc: `${handleUndef(lease.prob_2d_perc)}`,
-            // prob_3d_perc: `${handleUndef(lease.prob_3d_perc)}`
         };
         rows.push(rowData);
     }
@@ -179,36 +177,6 @@ function createLegend() {
     return legend;
 }
 
-/**
- * Create closure day button selector on map.
- * @param map
- * @returns {Element}
- */
-// function createDaySelector(map) {
-//     const htmlStr = `
-//     <div class="btn-group btn-group-toggle btn-group-vertical day-selector" data-toggle="buttons">
-//       <label class="btn btn-outline-secondary active">
-//         <input type="radio" id="1day" checked> Today
-//       </label>
-//       <label class="btn btn-outline-secondary">
-//         <input type="radio" id="2day"> Tomorrow
-//       </label>
-//       <label class="btn btn-outline-secondary">
-//         <input type="radio" id="3day"> In 2 days
-//       </label>
-//     </div>
-//   `;
-//     const daySelector = strToEl(htmlStr);
-//     daySelector.style.backgroundColor = 'white';
-//     daySelector.style.margin = '10px';
-//     daySelector.style.border = '1px solid black';
-//     for (let i = 0; i < daySelector.childElementCount; i++) {
-//         const button = daySelector.children[i];
-//         // button.addEventListener('click', () => map.data.setStyle(styleFeatureBasedOnDay(i + 1)));
-//         button.addEventListener('click', () => setCmuPolyStyleByDay(i + 1));
-//     }
-//     return daySelector;
-// }
 
 /**
  * Add GeoJson CMU polygon feature to closure probabilities properties.
@@ -221,8 +189,6 @@ async function getGeoJsonAddProbs(growingUnitData) {
             for (let [cmuName, data] of Object.entries(growingUnitData)) {
                 if (feature.properties.cmu_name == cmuName) {
                     feature.properties.prob_1d_perc = data.prob_1d_perc;
-                    // feature.properties.prob_2d_perc = data.prob_2d_perc;
-                    // feature.properties.prob_3d_perc = data.prob_3d_perc;
                 }
             }
         });
@@ -250,8 +216,9 @@ function setCmuPolyStyleByDay(day) {
             stroke: new ol.style.Stroke({
                 color: 'rgba(255, 255, 255, 0.5)', width: 1
             }),
+            // Map label
             text: new ol.style.Text({
-                text: feature.get('lease_id'),
+                text: feature.get('cmu_name'),
                 font: 'Arial',
                 size: '12px',
                 fill: new ol.style.Fill({
@@ -269,12 +236,6 @@ function setCmuPolyStyleByDay(day) {
     });
 }
 
-class View {
-    constructor(param) {
-        
-    }
-
-}
 
 /**
  * Create map.
@@ -329,10 +290,6 @@ async function initMap(growingUnitData) {
     //     })
     // }); // #6
 
-    // const osm = new ol.layer.Tile({
-    //     source: new ol.source.OSM()
-    // }); // #6
-
     const osmHumanitarian = new ol.layer.Tile({
         source: new ol.source.OSM({
             source: "http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
@@ -361,11 +318,6 @@ async function initMap(growingUnitData) {
     });
     map.addControl(legendPanel); // #8
 
-    // const daySelector = createDaySelector(map);
-    // let daySelectorPanel = new ol.control.Control({
-    //     element: daySelector
-    // });
-    // map.addControl(daySelectorPanel); // #9
 
     map.on('singleclick', function (evt) {
         const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
@@ -375,7 +327,6 @@ async function initMap(growingUnitData) {
             let coordinate = evt.coordinate;    //default projection is EPSG:3857 you may want to use ol.proj.transform
             const desc = (`<div>CMU Name: ${feature.get('cmu_name')}
                 <br>Today: ${handleUndef(feature.get('prob_1d_perc'))}
-
                 </div>`)
             content.innerHTML = desc;
             popupOverlay.setPosition(coordinate);
@@ -395,8 +346,6 @@ async function createLeasePointFeatures(leaseData) {
         const leaseInfoContent = (`
           <div>Lease ID: ${item.lease_id}
           <br>Today: ${handleUndef(item.prob_1d_perc)}
-          <br>Tomorrow: ${handleUndef(item.prob_2d_perc)}
-          <br>In 2 days: ${handleUndef(item.prob_3d_perc)}
           </div>
         `);
 

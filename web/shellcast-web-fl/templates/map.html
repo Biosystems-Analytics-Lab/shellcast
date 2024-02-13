@@ -19,7 +19,8 @@
                 <p><strong>Last updated:</strong> {{ lastUpdated }} ({{ hoursAgo }} hours ago)</p>
             </div>
             <div>
-                <p><strong>Today:</strong> {{ day1 }}</p>
+{#                <p><strong>Today:</strong> {{ day1 }}</p>#}
+                <small style="color: red;"><i>Zoom in to shellfish harvesting area to see probability of closure</i></small>
             </div>
             <a href="#closure-tables">Table View</a>
         </div>
@@ -37,17 +38,17 @@
         <div id="popup-content"></div>
     </div>
 
-    <label class="sr-only" for="closure-map" id="Map alt text">
-        Satellite imagery-based map of the North Carolina coast overlaid with
-        shellfish growing unit polygons and shaded green, yellow, orange, and
-        red based on the forecasted percent chance of closure for today,
-        tomorrow, and in two days. When a user is logged into ShellCast they
-        can also see map pins for the locations of their shellfish leases.
-        Clicking on a map pin or shellfish growing unit polygon reveals the
-        forecasted percent chance of closure for today, tomorrow, and in two
-        days. These values can also be viewed in the “My Leases” and
-        “Shellfish Growing Units” tables below the map.
-    </label>
+{#    <label class="sr-only" for="closure-map" id="Map alt text">#}
+{#        Satellite imagery-based map of the North Carolina coast overlaid with#}
+{#        shellfish growing unit polygons and shaded green, yellow, orange, and#}
+{#        red based on the forecasted percent chance of closure for today,#}
+{#        tomorrow, and in two days. When a user is logged into ShellCast they#}
+{#        can also see map pins for the locations of their shellfish leases.#}
+{#        Clicking on a map pin or shellfish growing unit polygon reveals the#}
+{#        forecasted percent chance of closure for today, tomorrow, and in two#}
+{#        days. These values can also be viewed in the “My Leases” and#}
+{#        “Shellfish Growing Units” tables below the map.#}
+{#    </label>#}
 
     <br>
 
@@ -112,8 +113,8 @@
             <div id="growing-unit-table-explanation">
                 <p>
                     The forecasts shown provide the risk of temporary closure
-                    for leases in each of the conditionally approved SC Division of
-                    Marine Fisheries shellfish growing units.
+                    for leases in each of the conditionally approved FL Department of
+                    Agriculture Consumer Services shellfish growing units.
                 </p>
             </div>
 

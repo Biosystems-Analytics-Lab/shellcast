@@ -99,13 +99,14 @@ class FLPQPF:
         """
         logger.info('[Process A]')
         gdf = gpd.read_file(self.lease_shp)
-        # TODO add days to shapefile
+        gdf['days'] = gdf['days'].astype('int')  # Convert to int
+        gdf['rain_in'] = gdf['rain_in'].astype('float')  # Convert to float
         # df = pd.read_csv(os.path.join(os.path.dirname(self.lease_shp), 'fl_individual_leases_and_auz_pts.csv'))
-        uni_days = sorted(gdf['days'].unique()) # List[int]
+        uni_days = sorted(gdf['days'].unique())  # List[int]
         tp_tiffs = utils.list_files(self.tp_outputs_dir, 'tif')  # [path to tp_24h.tif, path to tp_48h.tif, ...]
 
         result_gdf = gpd.GeoDataFrame()
-        for day in sorted(uni_days):
+        for day in uni_days:
             gdf_q = gdf.query(f'days == {day}').copy()
             coords = [(Point(i).x, Point(i).y) for i in gdf_q.geometry]
 
@@ -149,6 +150,7 @@ class FLPQPF:
         # gdf = gpd.read_file(self.lease_shp)
         # result_gdf = gpd.GeoDataFrame()
         thresholds = sorted(list(df[PQPF_TH].drop_duplicates()))
+        # thresholds = sorted(list(df[PQPF_TH].unique()))
         pqpf_tiffs = utils.list_files(self.tiffs_dir, 'tif')
         df_to_concat = []
 
@@ -174,7 +176,7 @@ class FLPQPF:
                             logger.info(f'{len(gdf_q.index)} rows from {os.path.basename(pqpf_tiff)}({threshold})')
                         # result_gdf = pd.concat([result_gdf, gdf_q])
         if len(df_to_concat) > 0:
-            result_gdf = gpd.GeoDataFrame(pd.concat(df_to_concat, ignore_index=True) )
+            result_gdf = gpd.GeoDataFrame(pd.concat(df_to_concat, ignore_index=True))
             # result_gdf.loc[result_gdf[TP_CALC] < 0, PQPF_PROC] = 1
             logger.info(utils.done_str)
             return result_gdf
@@ -203,7 +205,6 @@ class FLPQPF:
 
         """
         logger.info('[Categorize PQPF value group by lease]')
-        del df['Rainfall']
         del df['geometry']
         vals = df[PQPF_PROC]
         condition_lst = [vals >= 0.9, vals >= 0.75, vals >= 0.5, vals >= 0.25, vals < 0.25]
@@ -238,7 +239,6 @@ class FLPQPF:
 
         stop = datetime.now()
         utils.calculate_duration(start, stop)
-
 
 # if __name__ == '__main__':
 #     db = 'gcp.mysql'

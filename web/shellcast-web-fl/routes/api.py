@@ -127,7 +127,7 @@ def userLeases(user):
     return {
       'lease_id': lease.lease_id,
       'grow_area_name': lease.leases.grow_area_name,
-      'rainfall_desc': lease.leases.grow_area_desc,
+      'rainfall_desc': lease.leases.rainfall_desc,
       'cmu_name': lease.leases.cmu_name,
     }
   if (request.method == 'GET'):
