@@ -45,7 +45,7 @@ CREATE TABLE user_leases (
 	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id int(5) UNSIGNED ZEROFILL NOT NULL,
 	lease_id varchar(20) NOT NULL,
-	deleted datetime DEFAULT NOW(),
+	deleted TINYINT(1) DEFAULT 0,
 	created datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
     CONSTRAINT unique_leases_per_user UNIQUE (user_id, lease_id)
