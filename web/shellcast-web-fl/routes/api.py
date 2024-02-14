@@ -127,6 +127,7 @@ def userLeases(user):
     return {
       'lease_id': lease.lease_id,
       'grow_area_name': lease.leases.grow_area_name,
+      'grow_area_desc': lease.leases.grow_area_type,
       'rainfall_desc': lease.leases.rainfall_desc,
       'cmu_name': lease.leases.cmu_name,
     }
@@ -147,8 +148,8 @@ def userLeases(user):
         userLease.deleted = False
       else:
         # create a new lease record
-        new_user_lease = {'lease_id': leaseId}
-        userLease = UserLease(user_id=user.id, **new_user_lease)
+        # new_user_lease = {'lease_id': leaseId}
+        userLease = UserLease(user_id=user.id, lease_id=leaseId)
       try:
         db.session.add(userLease)
         db.session.commit()

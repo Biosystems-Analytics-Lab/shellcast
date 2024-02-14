@@ -1,6 +1,7 @@
 Flask
 Flask-SQLAlchemy
 PyMySQL
+PyYAML
 firebase-admin
 email_validator
 pytz

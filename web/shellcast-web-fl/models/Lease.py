@@ -23,7 +23,6 @@ class Lease(db.Model):
   updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
   user_leases = relationship('UserLease', back_populates='leases')
-
   def asDict(self):
     return {
       'lease_id': self.lease_id,
@@ -40,4 +39,4 @@ class Lease(db.Model):
     }
 
   def __repr__(self):
-    return '<Lease: {}, {}, {}>'.format(self.lease_id, self.cmu_name, self.grow_area_name)
+    return '<Lease: {}, {}, {}>'.format(self.lease_id, self.grow_area_name, self.cmu_name)

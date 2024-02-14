@@ -23,16 +23,16 @@ class UserLease(db.Model):
     return {
       'lease_id': self.lease_id,
       'grow_area_name': self.leases.grow_area_name if len(self.leases.grow_area_name) > 0 else 'N/A',
-      'grow_area_desc': self.leases.grow_area_desc if len(self.leases.grow_area_desc) > 0 else 'N/A',
+      'grow_area_type': self.leases.grow_area_type if len(self.leases.grow_area_type) > 0 else 'N/A',
       'cmu_name': self.leases.cmu_name if len(self.leases.cmu_name) > 0 else 'N/A',
-      'rainfall_thresh_in': self.leases.rainfall_thresh_in,
+      'rainfall_desc': self.leases.rainfall_desc if len(self.leases.rainfall_desc) > 0 else 'N/A',
       'latitude': self.leases.latitude,
       'longitude': self.leases.longitude,
       'deleted': self.deleted
     }
 
   def getLatestProbability(self):
-    leaseProb = db.session.query(CMUProbability).filter_by(lease_id=self.lease_id).order_by(CMUProbability.id.desc()).first()
+    leaseProb = db.session.query(CMUProbability).filter_by(cmu_name=self.leases.cmu_name).order_by(CMUProbability.id.desc()).first()
     return leaseProb
 
   def __repr__(self):
@@ -40,8 +40,8 @@ class UserLease(db.Model):
       self.user_id,
       self.lease_id,
       self.leases.grow_area_name if len(self.leases.grow_area_name) > 0 else 'N/A',
-      self.leases.grow_area_desc if len(self.leases.grow_area_desc) > 0 else 'N/A',
+      self.leases.grow_area_type if len(self.leases.grow_area_type) > 0 else 'N/A',
       self.leases.cmu_name if len(self.leases.cmu_name) > 0 else 'N/A',
-      self.leases.rainfall_thresh_in
+      self.leases.rainfall_desc if len(self.leases.rainfall_desc) > 0 else 'N/A'
     )
 

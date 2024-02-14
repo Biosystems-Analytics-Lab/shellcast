@@ -9,7 +9,7 @@ import pytz
 # the number of seconds in one hour
 SECONDS_IN_HOURS = 3600
 
-pages = Blueprint('', __name__)
+pages = Blueprint('shellcast-fl', __name__)
 @pages.route('/')
 def indexPage():
   return render_template('index.html')
