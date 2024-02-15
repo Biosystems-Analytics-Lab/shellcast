@@ -3,7 +3,7 @@ from models import db
 from models.CMUProbability import CMUProbability
 from models.PhoneServiceProvider import PhoneServiceProvider
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import pytz
 
 # the number of seconds in one hour

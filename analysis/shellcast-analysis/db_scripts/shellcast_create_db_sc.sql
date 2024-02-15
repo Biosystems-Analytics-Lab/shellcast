@@ -68,7 +68,7 @@ CREATE TABLE notification_log (
 
 -- Stores the growing units.
 -- CREATE TABLE cmus (
--- 	id varchar(10) NOT NULL PRIMARY KEY,
+-- 	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,,
 -- 	cmu_name varchar(10) NOT NULL,
 -- 	created datetime DEFAULT NOW()
 -- );

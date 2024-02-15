@@ -27,7 +27,16 @@ CREATE TABLE users (
     FOREIGN KEY (service_provider_id) REFERENCES phone_service_providers(id)
 );
 
--- Stores information about all potential leases retrieved from the NCDMF API.
+-- Stores the growing units.
+-- DROP TABLE IF EXISTS cmus;
+CREATE TABLE cmus (
+	id varchar(10) NOT NULL PRIMARY KEY,
+	sh_name varchar(50) NULL,
+	created datetime DEFAULT NOW()
+);
+
+-- Stores information about all potential leases retrieved from the API.
+-- DROP TABLE IF EXISTS leases;
 CREATE TABLE leases (
 	lease_id varchar(20) NOT NULL PRIMARY KEY,
 	cmu_name varchar(10) NOT NULL,
@@ -41,7 +50,8 @@ CREATE TABLE leases (
 	latitude double NOT NULL,
 	longitude double NOT NULL,
 	created datetime DEFAULT NOW(),
-	updated datetime DEFAULT NOW() ON UPDATE NOW()
+	updated datetime DEFAULT NOW() ON UPDATE NOW(),
+	FOREIGN KEY (cmu_name) REFERENCES cmus(id)
 );
 
 -- Stores information about user leases.
@@ -68,38 +78,60 @@ CREATE TABLE notification_log (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Stores the growing units.
-CREATE TABLE cmus (
-	id varchar(10) NOT NULL PRIMARY KEY,
-	cmu_name varchar(10) NOT NULL,
-	created datetime DEFAULT NOW()
-);
-
 -- Stores the closure probabilities for each growing unit.
 CREATE TABLE cmu_probabilities (
   id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
   cmu_name varchar(10) NOT NULL,
   prob_1d_perc tinyint(3) NULL,
-  created datetime DEFAULT NOW()
+  created datetime DEFAULT NOW(),
+  FOREIGN KEY (cmu_name) REFERENCES cmus(id)
 );
 
 -- Mobile phone service providers
 INSERT INTO phone_service_providers (`name`, `mms_gateway`, `sms_gateway`)
 VALUES
-  ('AT&T', 'mms.att.net', 'txt.att.net'),
-  ('T-Mobile', 'tmomail.net', 'tmomail.net'),
-  ('Verizon', 'vzwpix.com', 'vtext.com'),
-  ('Sprint (Pre-merger)', 'pm.sprint.com', 'messaging.sprintpcs.com'),
-  ('US Cellular', 'mms.uscc.net', 'email.uscc.net'),
-  ('Straight Talk', 'mypixmessages.com', 'vtext.com'),
-  ('Xfinity Mobile', 'mypixmessages.com', 'vtext.com'),
-  ('Virgin Mobile', 'vmpix.com', 'vmobl.com'),
-  ('Metro PCS', 'mymetropcs.com', 'mymetropcs.com'),
-  ('Boost Mobile', 'myboostmobile.com', 'sms.myboostmobile.com'),
-  ('Cricket Wireless', 'mms.cricketwireless.net', 'mms.cricketwireless.net'),
-  ('Google Fi', 'msg.fi.google.com', 'msg.fi.google.com')
+    ('AT&T', 'mms.att.net', 'txt.att.net'),
+    ('T-Mobile', 'tmomail.net', 'tmomail.net'),
+    ('Verizon', 'vzwpix.com', 'vtext.com'),
+    ('Sprint (Pre-merger)', 'pm.sprint.com', 'messaging.sprintpcs.com'),
+    ('US Cellular', 'mms.uscc.net', 'email.uscc.net'),
+    ('Straight Talk', 'mypixmessages.com', 'vtext.com'),
+    ('Xfinity Mobile', 'mypixmessages.com', 'vtext.com'),
+    ('Virgin Mobile', 'vmpix.com', 'vmobl.com'),
+    ('Metro PCS', 'mymetropcs.com', 'mymetropcs.com'),
+    ('Boost Mobile', 'myboostmobile.com', 'sms.myboostmobile.com'),
+    ('Cricket Wireless', 'mms.cricketwireless.net', 'mms.cricketwireless.net'),
+    ('Google Fi', 'msg.fi.google.com', 'msg.fi.google.com')
 ;
 
+
+INSERT INTO cmus (`id`, `sh_name`)
+VALUES
+    ('02_1','Pensacola Bay System'),
+    ('02_3','Pensacola Bay System'),
+    ('08_9','West Bay'),
+    ('12_10','East Bay'),
+    ('18_3','Alligator Harbor'),
+    ('22_6','Wakulla'),
+    ('22_8','Wakulla'),
+    ('25_6','Horseshoe Beach'),
+    ('30_1','Cedar Key'),
+    ('30_10','Cedar Key'),
+    ('48_1','Lower Tampa Bay'),
+    ('58_5','Gasparilla Sound'),
+    ('62_5','Pine Island Sound'),
+    ('62_6','Pine Island Sound'),
+    ('66_1','Ten Thousand Islands'),
+    ('72_2','North Indian River'),
+    ('74_1','Body F'),
+    ('82_27','South Volusia'),
+    ('82_32','South Volusia'),
+    ('82_9','South Volusia'),
+    ('88_10','South St. Johns')
+;
+
+
+-- Stored procedures
 USE shellcast_fl;
 DELIMITER //
 CREATE PROCEDURE SelectCmuProbsToday()
