@@ -227,7 +227,7 @@ function setCmuPolyStyleByDay(day) {
         color: fillColor,
       }),
       stroke: new ol.style.Stroke({
-        color: "rgba(255, 255, 255, 0.5)",
+        color: "rgba(0, 0, 0, 0.5)",
         width: 1,
       }),
       // Map label
