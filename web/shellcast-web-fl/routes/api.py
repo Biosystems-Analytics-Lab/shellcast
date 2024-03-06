@@ -93,7 +93,11 @@ def getLeaseClosureProbabilities(user):
   """
   leases = db.session.query(UserLease).filter_by(user_id=user.id, deleted=False).all()
   def getLeaseProbForLease(lease):
-    probDict = {'lease_id': lease.lease_id, 'latitude': lease.leases.latitude, 'longitude': lease.leases.longitude}
+    probDict = {
+      'lease_id': lease.lease_id,
+      'latitude': lease.leases.latitude,
+      'longitude': lease.leases.longitude
+    }
     leaseProb = lease.getLatestProbability()
     if (leaseProb):
       probDict['prob_1d_perc'] = leaseProb.prob_1d_perc
@@ -111,7 +115,7 @@ def getGrowingUnitProbabilities():
   growingUnitProbs = db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).limit(numGrowingUnits)
   growingUnitProbsAsDicts = {}
   for unit in growingUnitProbs:
-    cmuName = unit.cmu_name
+    cmuName = unit.cmu_id
     growingUnitProbsAsDicts[cmuName] = unit.asDict()
 
   return jsonify(growingUnitProbsAsDicts)
@@ -126,10 +130,12 @@ def userLeases(user):
   def leaseToDict(lease):
     return {
       'lease_id': lease.lease_id,
-      'grow_area_name': lease.leases.grow_area_name,
-      'grow_area_desc': lease.leases.grow_area_type,
-      'rainfall_desc': lease.leases.rainfall_desc,
-      'cmu_name': lease.leases.cmu_name,
+      'parcel_number': lease.leases.parcel_number,
+      'parcel_name': lease.leases.parcel_name,
+      'grow_area_type': lease.leases.grow_area_type,
+      'rainfall_desc': lease.leases.cmus.rainfall_desc,
+      'cmu_id': lease.leases.cmu_id,
+      'sh_name': lease.leases.cmus.sh_name
     }
   if (request.method == 'GET'):
     leases = db.session.query(UserLease).filter_by(user_id=user.id, deleted=False).all()
