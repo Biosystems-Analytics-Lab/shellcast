@@ -255,9 +255,10 @@ async function saveProfileFormChanges() {
  * @param {object} lease the lease data to populate the form with
  */
 function createLeaseInfoEl(lease) {
-  const leaseType =
-    lease.grow_area_desc.charAt(0).toUpperCase() +
-    lease.grow_area_desc.slice(1);
+  // const leaseType =
+  //   lease.grow_area_type.charAt(0).toUpperCase() +
+  //   lease.grow_area_type.slice(1);
+  const threshold = lease.rainfall_desc.replace('"', '"');
   const LEASE_INFO_EL = `
     <div class="card">
       <div class="card-header" id="heading-${lease.lease_id}">
@@ -278,26 +279,23 @@ function createLeaseInfoEl(lease) {
               <label for="lease-${lease.lease_id}-lease-id">Lease ID</label>
               <input type="text" class="form-control" id="lease-${lease.lease_id}-lease-id" value="${lease.lease_id}" name="lease-id" readonly>
             </div>
-
             <div class="mb-3">
-              <label for="lease-${lease.lease_id}-grow-area">FDACS Growing Area</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area" value="${lease.grow_area_name}" readonly>
+              <label for="lease-${lease.lease_id}-grow-area">Shellfish Growing Unit ID</label>
+              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area" value="${lease.cmu_id}" readonly>
             </div>
-
             <div class="mb-3">
-              <label for="lease-${lease.lease_id}-grow-area-desc">Growing Area Description</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area-desc" value="${leaseType}" readonly>
+              <label for="lease-${lease.lease_id}-grow-area">Shellfish Growing Area Type</label>
+              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area" value="${lease.grow_area_type}" readonly>
             </div>
-
-            <div class="mb-3"
-              <label for="lease-${lease.id}-grow-unit">Shellfish Growing Unit</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-unit" value="${lease.cmu_name}" readonly>
+            <div class="mb-3">
+              <label for="lease-${lease.lease_id}-grow-area-name">Growing Area Name</label>
+              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area-name" value="${lease.sh_name}" readonly>
             </div>
-
             <div class="mb-3">
               <label for="lease-${lease.lease_id}-rainfall-threshold">Lease Closure Rainfall Threshold (inches)</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-rainfall-threshold" value="${lease.rainfall_desc}" readonly>
+              <input type="text" class="form-control" id="lease-${lease.lease_id}-rainfall-threshold" value="${threshold}" readonly>
             </div>
+            
             <small class="form-text text-muted">
               The rainfall threshold is the amount of rainfall in inches within a
               24-hour period that results in a lease being temporarily closed for
@@ -320,6 +318,7 @@ function buildLeaseInfoEls() {
   leasesAccordion.innerHTML = "";
   for (let lease of leases) {
     console.log("building lease form", lease);
+    lease.rainfall_desc = lease.rainfall_desc.replace(/\"/g, "&quot;");
     leasesAccordion.innerHTML += createLeaseInfoEl(lease);
   }
 
