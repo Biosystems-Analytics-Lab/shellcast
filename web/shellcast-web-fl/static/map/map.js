@@ -328,7 +328,7 @@ async function initMap(growingUnitData) {
   });
 
   map.getView().fit(cmuLyr.getSource().getExtent());
-  map.getView().setZoom(7);
+  map.getView().setZoom();
   let extent = map.getView().calculateExtent();
 
   map.setView(
