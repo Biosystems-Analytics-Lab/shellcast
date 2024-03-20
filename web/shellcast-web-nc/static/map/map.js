@@ -354,8 +354,7 @@ async function initMap(growingUnitData) {
     overlays: [popupOverlay],
     view: new ol.View({
       center: ol.proj.fromLonLat(mapCenter),
-      maxResolution: 2000,
-      zoom: 2,
+      zoom: 8,
     }),
   }); // # Set map
 

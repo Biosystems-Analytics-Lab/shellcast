@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, jsonify
+from flask import Flask
 
 import firebase_admin
 
