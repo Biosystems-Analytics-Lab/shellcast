@@ -7,8 +7,6 @@
 const MAP_EL_ID = "closure-map";
 /** Options for the map. */
 const mapCenter = [-79.806128, 33.168926];
-// const apiKey = 'AAPK2655f317f81245c58119c0996f1b4cd0-pnk__kwFxo5jqD_HOcLjR-eBMM-WiGvpYSEsc3OQWaCmH-QNcMl2FWjUOdFzNjz'
-
 //** The ID of the growing unit table element. */
 const GROWING_UNIT_TABLE_ID = "growing-unit-table";
 /** The ID of the lease table element. */
