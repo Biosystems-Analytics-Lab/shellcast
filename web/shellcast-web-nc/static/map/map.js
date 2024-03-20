@@ -352,19 +352,13 @@ async function initMap(growingUnitData) {
     target: mapEl,
     layers: [osmHumanitarian, cmuLyr],
     overlays: [popupOverlay],
+    view: new ol.View({
+      center: ol.proj.fromLonLat(mapCenter),
+      maxResolution: 2000,
+      zoom: 2,
+    }),
   }); // # Set map
 
-  map.getView().fit(cmuLyr.getSource().getExtent());
-  map.getView().setZoom(8);
-  let extent = map.getView().calculateExtent();
-
-  map.setView(
-    new ol.View({
-      center: ol.proj.toLonLat(map.getView().getCenter()),
-      zoom: 8,
-      extent: extent,
-    }),
-  );
   const legend = createLegend();
   let legendPanel = new ol.control.Control({
     element: legend,
