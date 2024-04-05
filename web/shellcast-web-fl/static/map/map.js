@@ -125,6 +125,7 @@ function initGrowingUnitTable(growingUnitData) {
     const rowData = {
       cmu_name: cmuName,
       sh_name: data.sh_name,
+      rainfall_desc: data.rainfall_desc,
       prob_1d_perc: `${handleUndef(data.prob_1d_perc)}`,
       // prob_2d_perc: `${handleUndef(data.prob_2d_perc)}`,
       // prob_3d_perc: `${handleUndef(data.prob_3d_perc)}`
