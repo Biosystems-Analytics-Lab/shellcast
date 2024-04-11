@@ -1,38 +1,83 @@
+#leases-map {
+    height: 46vh;
+    width: 100%;
+    display: table;
+    /*padding-top: 43vh;*/
+    font-size: small;
+}
+
+#lease-legend {
+    display: table;
+    margin-left: 20px;
+    margin-top: 43vh;
+    font-size: small;
+}
+
+.legend-key {
+    display: table-cell;
+    width: 30px;
+    margin-left: 10px;
+    border: 1px solid black;
+}
+
+.legend-text {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 5px;
+    padding-right: 10px;
+}
+
 #delete-account-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #forms {
-  margin: auto;
-  max-width: 900px;
+    margin: auto;
+    max-width: 900px;
 }
 
 .search-bar {
-  position: relative;
+    position: relative;
 }
 
 .search-results {
-  display: none;
-  position: absolute;
-  z-index: 1000;
-  width: 100%;
-  max-height: 175px;
-  overflow: hidden;
-  overflow-y: scroll;
-  border: 1px solid #999;
-  border-top: 0 solid #fff;
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    max-height: 175px;
+    overflow: hidden;
+    overflow-y: scroll;
+    border: 1px solid #999;
+    border-top: 0 solid #fff;
 }
 
 .notification-options > label {
-  display: block;
-  margin-top: 8px;
-  margin-bottom: 0;
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 0;
 }
 
 .lease-form-buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+
+    > .col,
+    > [class*="col-"] {
+        padding-right: 0;
+        padding-left: 0;
+    }
 }

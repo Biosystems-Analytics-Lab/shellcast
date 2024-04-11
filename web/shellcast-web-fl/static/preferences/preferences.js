@@ -3,6 +3,8 @@
 /* The number of milliseconds between when a user changes the lease search
    text and when an API request is sent for a lease search */
 const LEASE_SEARCH_DELAY = 400;
+/** The path to the growing unit boundaries file. */
+const LEASES_BOUNDS_PATH = "static/fl_leases_boundary.geojson";
 
 let profileInfo = {};
 let leases = [];
@@ -250,6 +252,39 @@ async function saveProfileFormChanges() {
   initProfileForm(profileInfo, true);
 }
 
+async function getGeoJsonLeases() {
+  let auz_leases = [];
+  let individual_leases = [];
+  let data = fetch(LEASES_BOUNDS_PATH)
+    .then((response) => response.json())
+    .then((data) => {
+      data.features.forEach((feature) => {
+        if (feature.properties.src_merge == "AUZ") {
+          if (auz_leases.indexOf(feature.properties.PARCEL_NAM) === -1) {
+            auz_leases.push(feature.properties.PARCEL_NAM);
+          }
+        } else if (feature.properties.src_merge == "individual lease") {
+          if (individual_leases.indexOf(feature.properties.WATERBODY) === -1) {
+            individual_leases.push(feature.properties.WATERBODY);
+          }
+        }
+      });
+    });
+  const auzDiv = document.querySelector("#auz-menu");
+  for (let i = 0; auz_leases.length; i++) {
+    console.log(auz_leases[i]);
+    // auzDiv.innerHTML += `<a class="dropdown-item" href="#">auz_leases[i]</a>`;
+  }
+}
+
+// function createDropdowns(leases) {
+//   const auzDiv = document.querySelector("#auz-menu");
+//   console.log(leases.auz.length);
+//   // leases.auz.forEach((name) => {
+//   //   auzDiv.innerHTML += `<a class="dropdown-item" href="#">${name}</a>`;
+//   // });
+// }
+
 /**
  * Returns an HTML string describing a collapsible lease info form.
  * @param {object} lease the lease data to populate the form with
@@ -441,15 +476,15 @@ function clearLeaseSearch() {
   searchResultsDiv.style.display = "none";
 }
 
-function showSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById("lease-search-results");
-  searchResultsDiv.style.display = "flex";
-}
-
-function hideSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById("lease-search-results");
-  searchResultsDiv.style.display = "none";
-}
+// function showSearchResultsDiv() {
+//   const searchResultsDiv = document.getElementById("lease-search-results");
+//   searchResultsDiv.style.display = "flex";
+// }
+//
+// function hideSearchResultsDiv() {
+//   const searchResultsDiv = document.getElementById("lease-search-results");
+//   searchResultsDiv.style.display = "none";
+// }
 
 function searchLeasesOnDelay() {
   if (leaseSearchTimer !== null) {
@@ -508,6 +543,9 @@ async function handleSignedInUser(user) {
 
   // setup lease forms
   buildLeaseInfoEls();
+  await getGeoJsonLeases();
+  // console.log(leases_lst);
+  // createDropdowns(leases_lst);
 }
 
 /**
