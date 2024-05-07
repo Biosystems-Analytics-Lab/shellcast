@@ -22,20 +22,19 @@ do
   counter=$((counter+1))
 done
 
-# Set conda environment
-export PROJ_LIB=/Users/makiko/miniconda3/envs/ncl_stable/share/proj
-export GDAL_DATA=/Users/makiko/miniconda3/envs/ncl_stable/share/gdal
-source /Users/makiko/miniconda3/etc/profile.d/conda.sh
-conda activate ncl_stable
-
-# ----- Process data -----
+# ----- Clean directory -----
+rm -f -R $TP_OUTPUTS_DIR
+mkdir $TP_OUTPUTS_DIR
+chmod -R 777 $TP_OUTPUTS_DIR
 rm -f -R $INTERMEDIATE_PROC_DIR
 mkdir $INTERMEDIATE_PROC_DIR
 cd $INTERMEDIATE_PROC_DIR
+
+# ----- Process data -----
 # Merge
 cdo -O -mergetime $CNV_GRIB2_DIR'/*grb' all.grb
 # Reproject to WGS84 from Polarstereographic projection
-gdalwarp -t_srs EPSG:4326 all.grb $INTERMEDIATE_PROC_DIR'/proj.grb'
+gdalwarp -t_srs EPSG:4326 all.grb proj.grb
 # Crop AOI
 wgrib2 proj.grb -small_grib -88:-80 24:31 small.grb
 # Convert GRIB to NetCDF
@@ -47,11 +46,7 @@ cdo -O setattribute,"tp_1h@units=inches" calc.nc unit.nc
 # Computes the accumulation of the given variable over time
 cdo -O timcumsum unit.nc timcumsum.nc
 
-
-rm -f -R $TP_OUTPUTS_DIR
-mkdir $TP_OUTPUTS_DIR
-chmod -R 777 $TP_OUTPUTS_DIR
-
+# ----- Convert to TIFF -----
 for ((i=24; i<=$counter; i+=24 ));
   do
     # Select 24, 48, 72, 96, and 120 hours accumulation data
@@ -61,4 +56,3 @@ for ((i=24; i<=$counter; i+=24 ));
     gdalwarp -of GTiff -t_srs EPSG:4326 'tp_'$i'h'.nc $outfile
 done
 
-conda deactivate

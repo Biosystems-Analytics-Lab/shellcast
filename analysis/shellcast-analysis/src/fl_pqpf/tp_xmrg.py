@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import List, Dict
-from pqpf import utils
+import utils
 import constants as ct
 from ftplib import FTP, error_perm
 
