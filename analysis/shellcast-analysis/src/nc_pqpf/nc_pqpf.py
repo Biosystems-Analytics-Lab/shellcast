@@ -10,9 +10,8 @@ from shapely.geometry import Point
 from shapely.errors import ShapelyDeprecationWarning
 from datetime import datetime
 from typing import List, Type
-from pqpf import utils
-from pqpf.pqpf_proc_dirs import ProcDirs
-from pqpf.pqpf_procs import PQPFProcs
+import utils
+from pqpf_procs import ProcDirs, PQPFProcs
 
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
@@ -20,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class NCPQPF:
-    def __init__(self, db):
+    def __init__(self, db, save=True):
         self.state = 'NC'
         pqpf_dirs = ProcDirs(self.state, db)
         self.config = pqpf_dirs.config
@@ -46,33 +45,34 @@ class NCPQPF:
         ]
 
         self.procs = PQPFProcs(self.state, db)
+        self.save = save
 
-    # def nc_get_thresholds(self) -> List[float]:
-    #     """
-    #     Get unique rain_in values.
-    #
-    #     Args
-    #         lease_shp (str): The lease shp name
-    #     Returns (List[float]): A list of unique rainfall thresholds
-    #     """
-    #     logger.info('[Get unique rainfall thresholds]')
-    #     try:
-    #         gdf = gpd.read_file(self.lease_shp)
-    #         gdf = gdf[self.use_cols]
-    #         thresholds = sorted(gdf.rain_in.unique())  # Returns list of class numpy.float64
-    #         if len(thresholds) > 0:
-    #             thresholds_num = [float(threshold) for threshold in thresholds]
-    #             thresholds_str = ', '.join([str(threshold) for threshold in thresholds])
-    #             logger.info(f'Thresholds: {thresholds_str}')
-    #             logger.info(utils.done_str)
-    #             return thresholds_num
-    #         else:
-    #             raise
-    #     except Exception as e:
-    #         msg = 'Failed to get rainfall thresholds.'
-    #         utils.error_process(msg, e)
+    def nc_get_thresholds(self) -> List[float]:
+        """
+        Get unique rain_in values.
 
-    def ras_values_to_pts(self, pts_shp, what_lyr) -> Type:
+        Args
+            lease_shp (str): The lease shp name
+        Returns (List[float]): A list of unique rainfall thresholds
+        """
+        logger.info('[Get unique rainfall thresholds]')
+        try:
+            gdf = gpd.read_file(self.lease_shp)
+            gdf = gdf[self.use_cols]
+            thresholds = sorted(gdf.rain_in.unique())  # Returns list of class numpy.float64
+            if len(thresholds) > 0:
+                thresholds_num = [float(threshold) for threshold in thresholds]
+                thresholds_str = ', '.join([str(threshold) for threshold in thresholds])
+                logger.info(f'Thresholds: {thresholds_str}')
+                logger.info(utils.done_str)
+                return thresholds_num
+            else:
+                raise
+        except Exception as e:
+            msg = 'Failed to get rainfall thresholds.'
+            utils.error_process(msg, e)
+
+    def ras_values_to_pts(self, pts_shp, what_lyr):
         """
         --- [ NC ] ---
         Assign PQPF raster values to leases.
@@ -206,7 +206,8 @@ class NCPQPF:
                 csv_path = self.cmu_mean(df, vals[1], key)
                 csv_fpaths.append(csv_path)
             self.csv_concat(csv_fpaths[0], csv_fpaths[1], csv_out_fpath)
-            utils.save_to_db(self.connect_str, csv_out_fpath)
+            if self.save:
+                utils.save_to_db(self.connect_str, csv_out_fpath)
         else:
             logger.info(f'Raw GRB files date is not today. {"!" * 5} DATA NOT SAVED IN DATABASE {"!" * 5}')
 
