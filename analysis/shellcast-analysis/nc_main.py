@@ -30,7 +30,7 @@ if __name__ == '__main__':
     db = 'gcp.mysql'
 
     # --- PQPF analysis ---
-    pqpf = NCPQPF(db, save=False)
+    pqpf = NCPQPF(db, save=True)
     pqpf.main()
 
     # ---------------------

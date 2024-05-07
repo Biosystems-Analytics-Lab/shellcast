@@ -1,6 +1,6 @@
 """
 Project: ShellCast North Carolina
-Date: November 2022 - 2023
+Date: November 2023 - 2024
 """
 import sys
 from pathlib import Path
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     tpxmrg.main()
 
     # --- PQPF analysis ---
-    pqpf = FLPQPF(db, save=False)
+    pqpf = FLPQPF(db, save=True)
     pqpf.main()
 
     # ---------------------

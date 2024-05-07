@@ -5,6 +5,7 @@ Date: November 2022 - 2023
 import sys
 from pathlib import Path
 
+
 shellcast_analysis_dir = str(Path().absolute().parents[1])
 script_dir = str(Path(Path().absolute(), 'src'))
 sys.path.append(script_dir)
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     db = 'gcp.mysql'
 
     # --- PQPF analysis ---
-    pqpf = SCPQPF(db, save=False)
+    pqpf = SCPQPF(db, save=True)
     pqpf.main()
     # ---------------------
     logger.info(f'{"=" * 50}')
