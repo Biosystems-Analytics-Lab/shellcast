@@ -5,32 +5,24 @@ This markdown file describes the components and set up of the daily analysis CRO
 ## Table of Contents
 
 0. [Background](#0-background)
-
 1. [List of Acronyms](#1-list-of-acronyms)
-
-2. [Description of Analysis scripts](#2-description-of-analysis-scripts)
-
-3. [VCL Set Up](#3-vcl-set-up)
-
-4. [CRON Job Set Up](#4-cron-job-set-up)
-
-5. [CRON Job Script Run Order](#5-cron-job-script-run-order)
-
-6. [Description of CRON Job Outputs](#6-description-of-cron-job-outputs)
-
-7. [Pushing Changes to GitHub](#7-pushing-changes-to-github)
-
-8. [Updating Leases](#8-updating-leases)
-
+2. [Description of Analysis Scripts](#2-description-of-analysis-scripts)
+3. [CRON Job Set Up](#4-cron-job-set-up)
+4. [Pushing Changes to GitHub](#7-pushing-changes-to-github)
+5. [Updating Leases](#8-updating-leases)
 9. [Contact Information](#9-contact-information)
 
 ## 0. Background
+The main purpose of the scripts in the analysis folder is to: (1) pull Probabilistic Quantitative Precipitation 
+Forecasting (PQPF) data from a remote server at the NOAA, (2) do geospatial analysis based on given thresholds 
+determined by organizations, (3) classify step 2 values, and (4) update the ShellCast MySQL database. For a schematic 
+representation of this workflow, including how they relate to other major components of the ShellCast web application,
+see the ShellCast [architecture overview flowchart](/../../#2-architecture-overview). The current ShellCast forecast is 
+for North Carolina, South Carolina, and Florida.
 
-The main purpose of the scripts in the analysis folder are to: (1) pull rainfall data from a remote server at the North Carolina State Climate Office, (2) do some calculations with that rainfall data, and (3) update the ShellCast MySQL database based on those calculations. For a schematic representation of this workflow, including the how they relate to other major components of the ShellCast web application, see the ShellCast [architecture overview flowchart](/../../#2-architecture-overview).
+The analysis daily CRON job ensures that the three steps described above will run every day at 6:40 am ET on the 
+temporary project computer (iMac).  
 
-The analysis daily CRON job ensures that the three steps descirbed above will run every day at 6am ET on the virtual computing lab server (or on a personal machine).
-
-**NOTE:** At this point in time (i.e., 2020-12-18) the analysis is running on a personal computer and also the analysis weekly CRON job is not functional because the North Carolina Division of Marine Fisheries lease app REST API is not finalized/functional. Once it is, ShellCast will require a second (weekly) CRON job that will update shellfish lease information, which is required when running the rainfall calculations script (see step number 2 above).
 
 ## 1. List of Acronyms
 
@@ -38,294 +30,115 @@ The analysis daily CRON job ensures that the three steps descirbed above will ru
 - North Carolina Division of Marine Fisheries (NCDMF)
 - National Digital Forecast Dataset (NDFD)
 - North Carolina State Climate Office (SCO)
-- Virtual Computing Lab (VCL)
 - Google Cloud Platform (GCP)
+- National Oceanic and Atmospheric Administration (NOAA)
+- Climate Data Operators (CDO)
+- Probabilistic Quantitative Precipitation Forecasting (PQPF)
+- Shellfish Harvested Area (SHA)
+- Contiguous United States, and as the 48 contiguous states (CONUS)
 
-## 2. Description of Analysis Scripts
+## 2. Analysis and Scripts
 
-1. `ndfd_get_forecast_data_script.py` - This script gets the NDFD .bin file from the SCO server and converts it to a pandas dataframe. This script is run daily.
+### Preprocessing input data
 
-2. `ndfd_convert_df_to_raster_script.R` - This script converts the NDFD pandas dataframe to a raster object that is used for downstream R analysis. This script is run daily.
+ArcGIS Pro is used to preprocess the input data. Modelbuilder was used to create the processing tools for each state. Assigning shellfish harvested area rainfall threshold to leases within the area, checking and fixing geometry, and assigning appropriate column names to attributes tables are among the tasks. Contact the project PI for ArcGIS Pro project files. 
 
-3. `ndfd_analyze_forecast_data_script.R` - This script takes the raster object as well as other spatial information about the NC coast (shellfish growing area boundaries, conditional management boundaries, lease boundaries, etc.) and does calculations for each scale so they can be used to update the ShellCast MySQL database. This script is run daily.
+*Note*: Input data needs to be updated periodically. Currently, NCSU is responsible for updating input data. We may be able to automate updates if organizations publish shapefiles online in the data format we require.
 
-4. `gcp_update_mysqldb_script.py` - This script takes the data outputs from the analysis script and pushes them to the ShellCast MySQL database. This script is run daily.
+### Analysis
 
-5. `ncdmf_tidy_sga_data_script.R` - This script takes the NCDFM shellfish growing area boundaries spatial dataset and cleans it up for use with the analysis script listed above (number 3). This script is run annually when shellfish growing areas change.
+Each state has its own geospatial analysis, however, North Carolina and Florida analysis share the same analogy; 1) finding the probability of precipitation from PQPF data for each lease location, 2) finding the mean value within the SHA area, 3) classifying the values into very low, low, moderate, high, and very high, and 4) saving categorized values to a remote MySQL database. Analysis for Florida adds complexity due to duration-based rainfall thresholds (e.g. 5 days > 3.5"). In addition to PQPF, daily quality controlled rainfall estimates are used to calculate rainfall accumulation. 
 
-6. `ncdmf_tidy_cmu_bounds_script.R` - This script takes the NCDFM conditional management unit boundaries spatial dataset and cleans it up for use with the analysis script listed above (number 3). This script is run annually when conditional management units change.
+In South Carolina analysis, SHA are considered lease areas. The mean PQPF for each SHA is calculated using geospatial statistics, classified, and then stored remotely.
 
-7. `ncdmf_get_lease_data_script.R` - This script is not yet included but will be created when the NCDMF finalizes the REST API for its publicly available lease dataset. This dataset is available in a viewer tool [here](https://www.arcgis.com/apps/webappviewer/index.html?id=de86f3bb9e634005b12f69a8a5947367&extent=-8551979.8781%2C4121555.1994%2C-8515290.1046%2C4140072.0696%2C102100). This script will run weekly to incorporate changes to leases made by NCDFM.
+### Scripts
 
-8. `ncdmf_tidy_lease_data_script.R` - This script takes the NCDFM shellfish lease boundaries spatial dataset and cleans it up for use with the analysis script listed above (number 3). This script will run weekly when conditional management units change.
+* `src`-  all analysis code
+  * `{state}_pqpf` - code for geospatial analysis specific to a state
+  * `pqpf` - code for common processes
+* `shellcast-analysis/{state}_main.py` -  This script runs geospatial analysis and saves the output data to a remote MySQL server. 
+  * Prerequisites : create a virtual environment and connect to a remote MySQL server.
+* `setup_logging.py` and `{state}_logging.yaml` - Logs file settings
+* `config.ini` - A configuration file for analyzing data and setting up remote database servers.
+* `config.sh` -  This script specifies the script path and the remote server name. The `analysis_run.sh` file refers to this file.
+* `analysis_run.sh` -  This script is configured to run a cron job. The script activates the virtual environment, connects to the remote MySQL database, and runs `{state}_main.py`. Modifying this script file is recommended if you wish to run a state analysis only by commenting out the other states.
 
-**NOTE:** Scripts 1 through 4 are run daily while scripts 5 through 8 are run periodically (weekly or annually, depending on the script). See full script descriptions for specific timing details.
+## 3. Data
 
-## 3. VCL Set Up
+**Data**
 
-**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
+1. PQPF  (NOAA) Grib2 format
+2. Daily quality controlled rainfall estimates (NOAA) Grib1 format - FL only
 
-Setting up the VCL using NCSU computing resources frees up use of a work machine and also ensures more consistent working conditions because the work machine doesn't have to be constantly on to run. There are two major steps to setting up the analysis CRON job on a VCL machine: (1) create the image and (2) launch the image as a server.
+**Input Data**
 
-### 3.1 Creating the VCL Image
+1. NC lease and SHA shapefiles
+2. SC SHA shapefiles
+3. FL lease and SHA shapefiles
 
-Go to [VCL at NCSU](https://vcl.ncsu.edu/), click on "Reservations" and login using your Unity ID and password. After login in, click on "Reservations" again and then "New Reservation". A window will pop up and you want to select "Imaging Reservation" with Ubuntu 18.04 LTS Base and choose "Now" and a duration that's appropriate for set up--at least 1 to 3 hours is recommended (**Figure 1.**). Then click "Create Reservation". You will need to wait a few minutes while this image is created. Click on "Connect!" and you will see a pop up window with more information on how to connect (**Figure 2.**). Then you will need to copy the ip address of the image for use in the next step.
 
-![Figure 1 shows a screenshot with the options to create a VCL image reservation.](images/vcl_image_reservation.png)
-<br> **Figure 1.** New VCL image reservation options.
 
-![Figure 2 shows a screenshot with the options to create a VCL image reservation.](images/vcl_image_info.png)
-<br> **Figure 2.** VCL image IP information.
+## 4. Development Environment Set Up
 
-Once you created the image and have an IP address, open up a new terminal window, and follow the following steps.
+### 4.1 Install and initialize Google Cloud SDK
 
-```{bash}
-# 1. secure connect to the VCL image using <your unity ID>@<the IP address>
-ssh unityid@ip
+The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download, install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
 
-# 2. download Mini Conda 3
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+### 4.2 Download Cloud SQL proxy
 
-# 3. execute Mini Conda 3 download
-bash Miniconda3-latest-Linux-x86_64.sh
+You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/). Optionaly, iinstall [MySQL Workbench](https://dev.mysql.com/downloads/workbench) to visualize and query the database.
 
-# 4. exit out of environment and secure connect back in using step 1
+### 4.3 Clone the ShellCast GitHub repository
 
-# 5. clone the shellcast repo into the image
-git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git
+Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
-# 6. go into the shellcast directory
-cd shellcast
+### 4.4 Setup Python virtual environment
 
-# 7. track and checkout the vcl branch
-git checkout --track origin/vcl
+Use environment management tool of your choice. Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
 
-# 8. if step 7 doesn't work then run this step and try step 7 again
-git fetch --all
+### 4.5 Download and Compile Wgrib2
 
-# 9. return to the home directory
-cd
+Wgrib2 is used to crop CONUS PQPF data according to the area of interest. 
 
-# 10. copy the shellcast environment yaml set up file into the home directory
-cp shellcast/analysis/shellcast-env.yml shellcast-env.yml
+Download the application on [here](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2) and follow [these instructions](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING). For Mac user, this website [theweatherguy blog](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) might help. It is necessary to install the gcc/gfortran compilers for Wgrib2 compilation. You can download `gcc` using Homebrew on Mac by running `brew install gcc`. It contains gcc, g++, gfortran, etc. 
 
-# 11. use F to create an environment (i.e., install packages and versions that are compatible) based on the requirements in the shellcast environmental yaml file  
-conda env create --prefix /home/ssaia/env_shellcast -f shellcast-env.yml
-# The user will have to replace "ssaia" with their Unity ID. The `--prefix` means that the environment will only be activated in this particular location.
+### 4.6 Download and Compile NCEPLIBS GRIB Utility and Dependencies
 
-# 12. activate the environment you created
-conda activate /home/ssaia/env_shellcast
-# The user will have to replace "ssaia" with their Unity ID.
+`cnvgrib` converts daily quality controlled rainfall estimates from Grib1 to Grib2 format. 
 
-# 13. see that the packages are loaded
-conda list --explicit
+Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util) website. The steps for compiling dependencies and utility can be found in ncep_lib_utils.sh. It is recommended that each dependency be compiled separately to ensure successful compilation. The third-party libraries Jasper, libpng, and zlib must be installed before the dependencies are compiled. 
 
-# 14. nativate into the shellcast directory
-cd shellcast
+For example, Homebrewer on Mac
 
-# 15. copy the Python config file template into the analysis directory
-cp config-template.py ./analysis/config.py
-
-# 16. navigate into the analysis directory and fill in the missing parts of the config.py file using nano
-cd analysis
-nano config.py
+```
+brew install jasper
 ```
 
-### 3.2 Creating the VCL Server Reservation
-
-**THIS DOCUMENTATION SECTION IS STILL IN PROGRESS.**
-
-## 4. CRON Job Set Up
-
-If VCL options are not available, the CRON job can be set up on a work computer. This case applies to a Mac machine running macOS Mojave version 10.14.6 with a 2.3 GHz Intel Core i5 processor, 16 GB 2133 MHz DDR4 memory, and Intel Iris Plus Graphics 640 1536 MB graphics card.
-
-To set up the CRON job on the work Mac, there are three main steps: (1) setting up your local machine to run ShellCast analysis scripts, (2) setting up GCP credentials so the ShellCast MySQL database can be updated daily via the Python script, and (3) scheduling the CRON job.
-
-### 4.1 Setting Up Python and R
-
-For a full explanation of how to set up your local machine to run ShellCast analysis scripts see [DEVELOPER.md](/docs/DEVELOPER.md/#47-setup-python-and-r-for-shellcast-data-analysis).
-
-### 4.2 Setting Up GCP Credentials
-
-Run the code below in the command line. You're web browser will pop open and you'll need to give permission to sign into the email account associated with your account on the ShellCast GCP project. You will need administrator privledges with the ShellCast web application to update the MySQL database.
-
-```{bash}
-gcloud auth application-default login
 ```
-Copy the location of the json credential file and keep that in a safe location in case you need it later. It will look something like "/Users/sheila/.config/gcloud/application_default_credentials.json". The json file will be downloaded to /Users/username/.config/gcloud/application_default_credentials.json following authentication.
-
-### 4.3 Scheduling the CRON Job on a Personal Machine (i.e., a Mac)
-
-The daily CRON job uses Mac's `launchd` program, which should be already installed, and will run each day at 6am as long as the work/host computer is powered on and the CRON job script is still loaded. Text and email notifications are sent out at 7:00am ET by the GCP CRON job. There are several steps to scheduling the CRON job on a mac.
-
-First, you need to give the terminal permission to run the script. On the Mac, go to `Settings > Security & Privacy`. Click on `Full Disk Access` on the left list and go to the `Privacy` tab (**Figure 3.**). Add `Terminal` (in `Applications > Utilities`) to this list. To save this you will have to sign in as an administrator to the machine you're working on. Be sure to lock the administrator privileges before you close the Settings window.
-
-![Figure 3 shows a screenshot of the full disk access settings window for a Mac.](images/full_disk_access.png)
-<br> **Figure 3.** Full Disk Access Settings window for a Mac.
-
-Next, running a CRON job with the `launchd` program requires a correctly formatted plist file (here, `com.shellcast.dailyanalysis.cronjob.plist`). This [blog post by Cecina Babich Morrow](https://babichmorrowc.github.io/post/launchd-jobs/) was especially helpful and the official documentation is [here](https://www.launchd.info/). If you need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trail version.
-
-Next, you need to copy the config-template.sh file into the analysis directory, save it as config.sh, and edit the paths so they reflect those on your local machine. That process will look something like the following (in the terminal window).
-
-```{bash}
-# 1. copy template into the analysis folder as config.sh
-cp .../shellcast/config-template.sh .../shellcast/analysis/config.sh
-# make sure you replace ".../" with the full path to the shellcast repo
-
-# NOTE: The config.sh file will be ignored by git, but it's best to not put sensitive information in since it will be printed out in the analysis output scripts.
-
-# 2. use your favorite text editor to change "ADD_VALUE_HERE" to whatever your local machine path is for that field
-
-# 3. save the config.sh file
+brew install libpng
 ```
 
-Next, the bash (.sh) script you're running in the CRON job and all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for each file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make each of them executable.
-
-```{bash}
-# make a script executable
-chmod +x shellcast_daily_analysis.sh
+``` 
+brew install zlib
 ```
 
-If needed, repeat this use of `chmod` for each of the Python and R scripts listed below in "CRON Job Script Run Order". All of them need to be executable.
+### 4.7 Install CDO 
 
-**Note:** I've (Sheila) successfully run the CRON job without the plist file being executable.
+Daily quality controlled rainfall estimates are processed using CDO. 
 
-Next, when you're ready to run the CRON job, do the following:
+You can download CDO using Homebrew on Mac by running ```brew install cdo```
 
-In the terminal, navigate to the LaunchAgents directory.
+## 5. CRON Job Set Up
 
-```{bash}
-cd ~/Library/LaunchAgents
-```
+Tools for CRON jobs can be chosen freely by developers. Currently, ShellCast analyses are run on the temporary iMac computer using the `crontab` command. 
 
-Then if the plist file is not there, copy it to this location.
+```TODO: Add how to set crontab and how to debug **** or run-as-cron```
 
-```{bash}
-# make sure to change the "..." to the full path to the shellcast repo directory
-# cp .../analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
-
-# it will look something like this:
-# cp /Users/sheila/Documents/github_ncsu/shellcast/analysis/com.shellcast.dailyanalysis.cronjob.plist com.shellcast.dailyanalysis.cronjob.plist
-```
-
-Then check that you're working with the right plist file using nano.
-
-```{bash}
-nano com.shellcast.dailyanalysis.cronjob.plist
-```
-
-Or with atom.
-
-```{bash}
-atom com.shellcast.dailyanalysis.cronjob.plist
-```
-
-Next, change the paths in the plist file so they are appropriate for your Mac machine. This includes the (1) `ProgramArguments` section, which is the path to `shellcast_daily_analysis.sh` file, (2) `WorkingDirectory` section, which is the path to the ShellCast analysis directory, (3) `StandardErrorPath` and `StandardOutPath` which are paths to the error (`.err`) and  output (`.out`) files in the analysis data directory. Make sure to save changes to the plist file. See [Description of CRON Job Outputs](#6-description-of-cron-job-outputs) below for recommendations on where to direct outputs.
-
-Then load the CRON job, run the following in the LaunchAgents directory.
-
-```{bash}
-launchctl load com.shellcast.dailyanalysis.cronjob.plist
-```
-
-To stop the CRON job, run the following in the LaunchAgents directory.
-
-```{bash}
-launchctl unload com.shellcast.dailyanalysis.cronjob.plist
-```
-
-To see if a LaunchAgent is loaded you can use the following.
-```{bash}
-launchctl list
-```
-
-Also, you can go to `Applications > Utilities > Console` and then look at system log to see current loaded and active programs.
-
-Last, if you want to check that the plist script is loaded ok or need help debugging the plist script, [LaunchControl](https://www.soma-zone.com/LaunchControl/) is a helpful app for finding errors using the trial version. You can also see that the status of the cron job is "Ok" like in Figure 4.
-
-![Figure 4 shows a screenshot of LaunchControl plist file for ShellCast](images/launchcontrol_image.png)
-<br> **Figure 4.** LaunchControl screenshot.
-
-If debugging (see Section 4.3 below), you can open up LaunchControl to check that that plist file is unloaded. Change the time in the plist file, load it, wait, and then check LaunchControl for status. Sometimes the errors in LaunchControl are not helpful (e.g., "Error 1") but other times it will tell you if you need to make the bash script executable. When in down you might have a process running from a previous time you tried to run the script that you have to kill. To do this use htop. Search within htop for "sql" and kill the process. Then start again with checking to make sure the script is unloaded, reload it, wait, etc. It's a little tedious...typical debugging.
-
-Depending on the number of plist files you have on your local machine, you may need to increase the priority of the the ShellCast plist file so that the code runs faster (because it has higher priority). To do this you would need to go into the plist script, increase the priority level from 10 to 15, for example, save the plist file, unload it, reload it, and check the amount of time it takes to run the next morning.
-
-### 4.3 Other Debugging
-
-If you don't want to wait for 6am to test whether the plist script works (very likely!), you can navigate to the plist script in your LaunchAgents directory, open the plist script, and edit the time for something like 5 min in the future. I recommend saving the file, unloading, and re-loading the file to make sure the changes are present using the bash commands given above. You can also open up the LaunchControl app and check that time time changed.
-
-Change the hour and minute integers in the section of the plist file below. For example, if you wanted to run the script at 4:05pm your local time the plist file would look like the plist file section below. 
-```
-<!-- now trying to run it at 4:05pm my local time -->
-  <key>StartCalendarInterval</key>
-  <dict>
-    <key>Hour</key>
-    <integer>16</integer>
-    <key>Minute</key>
-    <integer>5</integer>
-  </dict>
-```
-Note that hour ranges from 0-23 and minute ranges from 0-59. The timezone used will be based on whatever timezone your computer uses. Also, `<!-- text here -->` is the syntax to comment in plist files.
-
-If you're having issues with the CRON job running, you can also try running the bash script on its own and checking if a particular script it giving issues.
-
-To run the bash script (.sh) not in a CRON job (for debugging), use the code below. This must be run from the analysis directory. Outputs from each R and Python script will be saved into the terminal\_data directory.
-
-The bash (.sh) script as well as so all the other Python and R scripts that run within the bash script have to be executable. Check to see that they are executable from the terminal window using `ls -l`. You should see "x"s in the far left column for the file (e.g., "-rwxr-xr-x"). If it's no executable (e.g., "-rw-r--r--"), then use `chmod` to make it executable.
-
-```{bash}
-chmod +x shellcast_daily_analysis.sh
-```
-
-If needed, repeat this use of `chmod` for each of the Python and R scripts listed below in "CRON Job Script Run Order".
-
-To run the bash script, open the terminal in the analysis directory and type the following:
-
-```{bash}
-sh shellcast_daily_analysis.sh
-
-# for debugging
-# sh shellcast_daily_analysis_debug.sh
-```
-
-If you want to check whether the SQL database updated correctly. You can follow the following steps.
-1. Open up a new terminal window, navigate to your home directory (type `cd`), and enter the code below. This assumes that you've already set up the Google Cloud TCP connection described in the [DEVELOPER.md](/docs/DEVELOPER.md).
-```{bash}
-./cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306
-```
-2. Wait for it to connect. It should say something like "Ready for new connections" when you can move to the next step.
-3. Open up Sequel Pro and enter the database name and password for the Google Cloud SQL Database. The port number is 3306.
-4. On the top left corner of Sequel Pro click on "Choose Database..." and navigate to `shellcast`. You can click on the `cmu_probabilites` table, select the "Content" tab, and sort the "created" column to see if your scrip ran and updated the database (Figure 5). You can also look at Section 6 below for more info on how to see files that would have helpful debugging information.
-5. Close the connection by going back to the terminal from step #1 and type control+C. You will get a message that says something like "Received TERM signal. Waiting up to 0s before terminating."
-
-![Figure 5 shows a screenshot of Sequel Pro cmu_probabilies table for ShellCast](images/sequelpro_image.png)
-<br> **Figure 5.** Sequel Pro screenshot.
-
-## 5. CRON Job Script Run Order
-
-Each day the `shellcast_daily_analysis.sh`, which is called in the `launchcd` plist file, will run the following R and Python scripts in the order noted below. For a description of each script see the [script description section above](#2-description-of-analysis-scripts).
-
-1. `ndfd_get_forecast_data_script.py`
-
-2. `ndfd_convert_df_to_raster_script.R`
-
-3. `ndfd_analyze_forecast_data_script.R`
-
-4. `gcp_update_mysqldb_script.py`
-
-## 6. Description of CRON Job Outputs
-
-The CRON job .err and .out files are exported to the folder specified in the .plist file. A second set of outputs (one for each of the four analysis scripts) is saved to the output path location noted in the config.sh file. We recommend the .err and .out files be exported to shellcast > analysis > data > tabular > outputs > cronjob_data. We recommend the config.sh outputs be exported to shellcast > analysis > data > tabular > outputs > terminal_data.
-
-The .err file includes appended error messages for each run of the analysis. The .out file includes all messages that would have been printed in the terminal. Like the .err file, the .out file outputs are appended after each run of the analysis, which can be hard to sort through.
-
-To make it easier to see issues with the different scripts, each run of the analysis will generate four files in the terminal_data directory. These include: `01_get_forecast_output_DATE.text`, `02_convert_df_out_DATE.text`, `03_analyze_out_DATE.text`, `04_update_db_out_DATE.text`. Each corresponds to the outputs that would have been printed in the terminal for each of the four scripts described in [CRON Job Script Run Order](#5-cron-job-script-run-order) above.
-
-## 7. Pushing Changes to GitHub
+## 6. Pushing Changes to GitHub
 
 When appropriate, changes need to be pushed to the NCSU Enterprise GitHub repository **as well as** the GitHub (public) respository as described in the [DEVELOPER.md documentation](/docs/DEVELOPER.md).
 
-## 8. Updating Leases
+## 7. Updating Leases
 
 Untill we're able to get REST API access from the North Carolina Division of Marine Fisheries (NCDMF), we'll have to manually update the leases. We've chatted with Teri Dane and Mike Griffin of NCDMF about this and they've agreed to give us updates quarterly.
 
@@ -335,6 +148,6 @@ To mannually update the leases in the ShellCast SQL database, follow these steps
 2. Run the `ncdmf_tidy_lease_data_script.R` either in the command line or in RStudio. This script will generate `lease_centroids_albers.shp` and `lease_bounds_albers.shp` in the shellcast repository. That is these files will be exported to the `lease_centroids` and `lease_bounds` directories, respectively, within the analysis > data > spatial > outputs > ncdmf_data directory.
 3. The next day, the `gcp_update_mysqldb_script.py` script will check to see if there are new leases to be added to the SQL database. It will update them if there are and all other downstream analyses will be run normally with the newly updated leases.
 
-## 9. Contact Information
+## 8. Contact Information
 
 If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
