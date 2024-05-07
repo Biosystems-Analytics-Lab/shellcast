@@ -3,7 +3,53 @@ import os
 import yaml
 from pathlib import Path
 
-LOGS_DIR = str(Path(Path().absolute().parents[1], 'logs'))
+LOGS_DIR = str(Path(Path().absolute().parent, 'logs'))
+
+
+def set_logging_config(state):
+    logging_config = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'standard': {
+                'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            },
+        },
+        'handlers': {
+            'console': {
+                'level': 'INFO',
+                'class': 'logging.StreamHandler',
+                'formatter': 'standard',
+            },
+            'info_file_handler': {
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'standard',
+                'filename': os.path.join(LOGS_DIR, state.lower(), 'info.log'),
+                'maxBytes': 10485760,
+                'backupCount': 20,
+                'encoding': 'utf8'
+            },
+            'error_file_handler': {
+                'level': 'ERROR',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'standard',
+                'filename': os.path.join(LOGS_DIR, state.lower(), 'error.log'),
+                'maxBytes': 10485760,
+                'backupCount': 20,
+                'encoding': 'utf8'
+            }
+        },
+        'loggers': {
+            '': {
+                'handlers': ['console', 'info_file_handler', 'error_file_handler'],
+                'level': 'INFO',
+                'propagate': True
+            }
+        }
+    }
+
+    return logging_config
 
 
 def create_log_files(state):
@@ -18,6 +64,12 @@ def create_log_files(state):
         if not os.path.exists(log_file):
             log_file = open(log_file, 'w')
             log_file.close()
+
+
+def setup_logger(state):
+    logging_config = set_logging_config(state)
+    logging.config.dictConfig(logging_config)
+    logging.captureWarnings(True)
 
 
 def setup_logger_yaml(logging_yaml_fpath):
