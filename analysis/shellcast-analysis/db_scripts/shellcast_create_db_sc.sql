@@ -46,8 +46,8 @@ CREATE TABLE user_leases (
 	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id int(5) UNSIGNED ZEROFILL NOT NULL,
 	lease_id varchar(20) NOT NULL,
+	deleted TINYINT(1) DEFAULT 0,
 	created datetime DEFAULT NOW(),
-    deleted datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
 	FOREIGN KEY (user_id) REFERENCES users(id),
 	FOREIGN KEY (lease_id) REFERENCES leases(lease_id)
@@ -68,7 +68,7 @@ CREATE TABLE notification_log (
 
 -- Stores the growing units.
 -- CREATE TABLE cmus (
--- 	id varchar(10) NOT NULL PRIMARY KEY,
+-- 	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,,
 -- 	cmu_name varchar(10) NOT NULL,
 -- 	created datetime DEFAULT NOW()
 -- );

@@ -5,14 +5,17 @@
 **/cloud-sql-proxy*
 **/sqlauthproxy*
 **/config*
+**/tpxmrg_inventory.json
+**/delete
 logs/
 tests/
 raw/
 intermediate/
 outputs/
-intermediate/
-dependencies/
+**/lease_db_data.py
 
+
+venv/
 
 # History files
 .Rhistory
@@ -54,3 +57,11 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 /web/requirements.txt
+
+/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-bacio/
+/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-bufr/
+/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-g2/
+/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-grib_util/
+/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-ip/
+/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-sp/
+/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-w3emc/

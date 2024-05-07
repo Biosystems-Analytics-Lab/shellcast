@@ -266,10 +266,6 @@ async function initMap(growingUnitData) {
     //     })
     // }); // #6
 
-    // const osm = new ol.layer.Tile({
-    //     source: new ol.source.OSM()
-    // }); // #6
-
     const osmHumanitarian = new ol.layer.Tile({
         source: new ol.source.OSM({
             source: "http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"

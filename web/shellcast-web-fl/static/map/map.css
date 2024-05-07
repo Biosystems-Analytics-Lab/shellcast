@@ -1,0 +1,132 @@
+#closure-map {
+    height: 70vh;
+}
+
+#closure-tables {
+    display: flex;
+    flex-direction: column;
+}
+
+#lease-table-div {
+    grid-area: l;
+    display: none;
+}
+
+#growing-unit-table-div {
+    grid-area: a;
+}
+
+#lease-table-div .fixed-table-container.fixed-height {
+    height: 20vh !important;
+}
+
+#growing-unit-table-div .fixed-table-container.fixed-height {
+    height: 30vh !important;
+}
+
+#lease-table-explanation {
+    grid-area: il;
+    padding: 10px;
+    display: none;
+}
+
+/* #create-account-message {
+  grid-area: il;
+  padding: 10px;
+} */
+
+#growing-unit-table-explanation {
+    grid-area: ia;
+    padding: 10px;
+}
+
+.date-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+}
+
+.date-info p {
+    margin: 0;
+    margin-right: 1rem;
+    display: inline-block;
+}
+
+/* Changes for wide screens */
+@media only screen and (min-width: 992px) {
+    #closure-tables {
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto auto;
+        grid-template-areas:
+      "il l l"
+      "ia a a";
+    }
+}
+
+.legend {
+    bottom: 100px;
+    width: 100px;
+    height: auto;
+    position: absolute;
+}
+
+.day-selector {
+    width: 100px;
+    height: auto;
+    /*position: relative;*/
+}
+
+.ol-popup {
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #cccccc;
+    bottom: 12px;
+    left: -50px;
+    width: 146px;
+    min-width: 0px;
+    font-size: 13px;
+    font-family: "Arial";
+    display: inline-block;
+}
+
+.ol-popup:after, .ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ol-popup:after {
+    border-top-color: white;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+}
+
+.ol-popup:before {
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+}
+
+/*.ol-popup-closer {*/
+/*    text-decoration: none;*/
+/*    position: absolute;*/
+/*    top: 2px;*/
+/*    right: 8px;*/
+/*}*/
+
+/*.ol-popup-closer:after {*/
+/*    content: "✖";*/
+/*}*/

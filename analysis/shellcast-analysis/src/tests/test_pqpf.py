@@ -3,7 +3,7 @@
 import unittest
 import os
 from tempfile import TemporaryDirectory
-from pqpf import pqpf
+import pqpf
 from ..constants import TODAY, REG_PATTERN_TODAY, REG_PATTERN_GRB_HOURS
 from datetime import datetime
 

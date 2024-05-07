@@ -1,13 +1,14 @@
 import unittest
-from main import createApp
+# from main import createApp
 from config import TestConfig, Config
-from main import createApp
+# from main import createApp
 
 class TestFoo(unittest.TestCase):
 
     def setUp(self):
-        self.app = createApp(TestConfig)
-        print(Config.SQLALCHEMY_DATABASE_URI)
+        # self.app = createApp(TestConfig)
+        url = Config.SQLALCHEMY_DATABASE_URI
+        print(url.getter())
         print('here')
 
     def test_Print(self):

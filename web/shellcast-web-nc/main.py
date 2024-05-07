@@ -6,7 +6,6 @@ from flask import Flask, render_template, jsonify
 import firebase_admin
 
 from models import db
-
 from routes.pages import pages
 from routes.api import api
 from routes.cron import cron
@@ -71,7 +70,9 @@ if __name__ == '__main__':
   app = createApp(DevConfig())
   # run the app locally
   app.run(host=DevConfig.HOST, port=DevConfig.PORT, debug=True)
+  print()
 else: # else the app is being run from a WSGI application such as gunicorn
   logging.info('Starting app with production configuration')
   # setup for production configuration
   app = createApp(Config())
+

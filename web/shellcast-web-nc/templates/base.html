@@ -13,37 +13,37 @@
           content="shellfish,rainfall,conditionally approved,growing area,waters,harvest,temporary,closure,closed,north carolina,nc,nc state,ncsu,biosystems,analytics">
 
     {% block ncsu_bootstrap_css %}
-    {# <!-- NC State Bootstrap CSS --> #}
-    <link href="https://cdn.ncsu.edu/brand-assets/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+        {# <!-- NC State Bootstrap CSS --> #}
+        <link href="https://cdn.ncsu.edu/brand-assets/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
     {% endblock %}
 
     {% block bootstrap_js %}
-    {# <!-- Bootstrap JS --> #}
-    <script defer src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-    <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
+        {# <!-- Bootstrap JS --> #}
+        <script defer src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+                integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+                crossorigin="anonymous"></script>
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
     {% endblock %}
 
     {% block firebase_js %}
-    {# <!-- Firebase JS --> #}
-    <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+        {# <!-- Firebase JS --> #}
+        <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
     {% endblock %}
 
     {% block common_css %}
-    {# <!-- Custom CSS --> #}
-    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='common/common.css') }}">
+        {# <!-- Custom CSS --> #}
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='common/common.css') }}">
     {% endblock %}
 
     {% block common_js %}
-    {# <!-- Custom JS --> #}
-    <script defer src="{{ url_for('static', filename='common/common.js') }}"></script>
+        {# <!-- Custom JS --> #}
+        <script defer src="{{ url_for('static', filename='common/common.js') }}"></script>
     {% endblock %}
 
     {% block additional_head %}{% endblock %}
@@ -60,11 +60,11 @@
 
 {# a macro for creating a nav item in the nav bar #}
 {% macro navLink(pageName, navRoute, navItemText) -%}
-{% if curPageName == pageName %}
-<a class="nav-item nav-link active" href="#">{{ navItemText ~ srCurNav }}</a>
-{% else %}
-<a class="nav-item nav-link" href="{{ navRoute }}">{{ navItemText }}</a>
-{% endif %}
+    {% if curPageName == pageName %}
+        <a class="nav-item nav-link active" href="#">{{ navItemText ~ srCurNav }}</a>
+    {% else %}
+        <a class="nav-item nav-link" href="{{ navRoute }}">{{ navItemText }}</a>
+    {% endif %}
 {%- endmacro %}
 
 {# the set of nav items to display in the nav bar #}
@@ -72,44 +72,45 @@
 "/how-it-works", "How ShellCast Works"), ("faqs", "/faqs", "FAQs"), ("feedback", "/feedback", "Feedback")] %}
 
 {% block navigation %}
-{# <!-- Navigation --> #}
-<nav class="navbar navbar-expand-lg" id="navigation-bar">
-    <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">
-        <img src="{{ url_for('static', filename='img/shellcast_logo.png') }}" alt="ShellCast logo" class="navbar-logo"
-             loading="lazy" height="50" width="195">
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
-            aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-stretch" id="navbar">
-        {# Navbar for navigation links #}
-        <div class="navbar-nav">
-            {# iterate through navItems to construct the nav bar#}
-            {% for pageName, navRoute, navItemText in navItems -%}
-            {{- navLink(pageName, navRoute, navItemText) -}}
-            {%- endfor %}
-        </div>
+    {# <!-- Navigation --> #}
+    <nav class="navbar navbar-expand-lg" id="navigation-bar">
+        <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">
+            <img src="{{ url_for('static', filename='img/shellcast_logo.png') }}" alt="ShellCast logo"
+                 class="navbar-logo"
+                 loading="lazy" height="50" width="195">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-stretch" id="navbar">
+            {# Navbar for navigation links #}
+            <div class="navbar-nav">
+                {# iterate through navItems to construct the nav bar#}
+                {% for pageName, navRoute, navItemText in navItems -%}
+                    {{- navLink(pageName, navRoute, navItemText) -}}
+                {%- endfor %}
+            </div>
 
-        {# Navbar for account dropdown menu #}
-        <div class="navbar-nav ml-auto">
-            {# Shows when signed out #}
-            <a id="account-sign-in" class="nav-item nav-link" href="/signin">Sign In/Create Account</a>
-            {# Shows when signed in #}
-            <div class="nav-item dropdown" id="account-dropdown-div">
-                <a class="nav-link dropdown-toggle" id="account-dropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    Account
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="account-dropdown">
-                    <a class="dropdown-item" id="account-dropdown-preferences" href="/preferences">Preferences</a>
-                    <button class="dropdown-item" id="account-dropdown-sign-out">Sign Out</button>
+            {# Navbar for account dropdown menu #}
+            <div class="navbar-nav ml-auto">
+                {# Shows when signed out #}
+                <a id="account-sign-in" class="nav-item nav-link" href="/signin">Sign In/Create Account</a>
+                {# Shows when signed in #}
+                <div class="nav-item dropdown" id="account-dropdown-div">
+                    <a class="nav-link dropdown-toggle" id="account-dropdown" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Account
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="account-dropdown">
+                        <a class="dropdown-item" id="account-dropdown-preferences" href="/preferences">Preferences</a>
+                        <button class="dropdown-item" id="account-dropdown-sign-out">Sign Out</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
-</nav>
+        </div>
+    </nav>
 {% endblock %}
 
 {# <!-- Content --> #}
@@ -119,29 +120,33 @@
 </div>
 
 {% block footer %}
-{# <!-- Footer --> #}
-<footer>
-    <p>ShellCast is supported by</p>
-    <div class="support-logos">
-        <a href="https://ncseagrant.ncsu.edu/"><img src="{{ url_for('static', filename='img/nc_sea_grant_logo.png') }}"
-                                                    alt="NC Sea Grant" loading="lazy" height="100"></a>
-        <a href="https://www.bae.ncsu.edu/"><img src="{{ url_for('static', filename='img/nc_state_bae_logo.png') }}"
-                                                 alt="NC State Biological and Agricultural Engineering" loading="lazy"
-                                                 height="100"></a>
-        <a href="https://secoora.org/"><img src="{{ url_for('static', filename='img/secoora_logo.png') }}" alt="SECOORA"
-                                            loading="lazy" height="100"></a>
-    </div>
+    {# <!-- Footer --> #}
+    <footer>
+        <p>ShellCast is supported by</p>
+        <div class="support-logos">
+            <a href="https://ncseagrant.ncsu.edu/"><img
+                    src="{{ url_for('static', filename='img/nc_sea_grant_logo.png') }}"
+                    alt="NC Sea Grant" loading="lazy" height="100"></a>
+            <a href="https://www.bae.ncsu.edu/"><img src="{{ url_for('static', filename='img/nc_state_bae_logo.png') }}"
+                                                     alt="NC State Biological and Agricultural Engineering"
+                                                     loading="lazy"
+                                                     height="100"></a>
+            <a href="https://secoora.org/"><img src="{{ url_for('static', filename='img/secoora_logo.png') }}"
+                                                alt="SECOORA"
+                                                loading="lazy" height="100"></a>
+        </div>
 
-    <p>Contact us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a></p>
+        <p>Contact us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a></p>
 
-    <p><a href="#" onclick="$('#disclaimer-privacy-modal').modal('show');">Disclaimer</a> | <a
-            href="https://docs.google.com/document/d/e/2PACX-1vRWCpV0MJbKJNFmPC8etjjRQEw75XyHlA_bnfVn7KbNjNMJ90RH-3jTe6YPs0RVL-UO27yv9c2OGF4L/pub"
-            target="_blank" rel="noopener noreferrer">Privacy Policy</a></p>
+        <p><a href="#" onclick="$('#disclaimer-privacy-modal').modal('show');">Disclaimer</a> | <a
+                href="https://docs.google.com/document/d/e/2PACX-1vRWCpV0MJbKJNFmPC8etjjRQEw75XyHlA_bnfVn7KbNjNMJ90RH-3jTe6YPs0RVL-UO27yv9c2OGF4L/pub"
+                target="_blank" rel="noopener noreferrer">Privacy Policy</a></p>
 
-    <p>ShellCast is open source software. Find the code <a href="https://github.com/Biosystems-Analytics-Lab/shellcast"
-                                                           target="_blank" rel="noopener noreferrer">here</a>.</p>
-    <p>NC State is an equal opportunity institution.</p>
-</footer>
+        <p>ShellCast is open source software. Find the code <a
+                href="https://github.com/Biosystems-Analytics-Lab/shellcast"
+                target="_blank" rel="noopener noreferrer">here</a>.</p>
+        <p>NC State is an equal opportunity institution.</p>
+    </footer>
 {% endblock %}
 
 {# <!-- Disclaimer/Privacy Policy Modal --> #}
@@ -154,15 +159,9 @@
             </div>
             <div class="modal-body">
                 <p>
-                    ShellCast forecasts offer predictions that are in no way indicative of
-                    whether or not a growing unit will actually be temporarily closed for
-                    harvest. Please only use ShellCast for planning purposes. For official
-                    information on closures, refer to the
-                    <a href="http://portal.ncdenr.org/web/mf/proclamations-polluted-areas">North Carolina Division of
-                        Marine Fisheries</a>
-                    or the <a
-                            href="https://ncdenr.maps.arcgis.com/apps/webappviewer/index.html?id=5759aa19d7484a3b82a8e440fba643aa">Shellfish
-                        Sanitation Temporary Closure Public Viewer</a>.
+                    ShellCast forecasts offer predictions that are in no way indicative of whether or not a growing unit
+                    will actually be temporarily closed for harvest. Please only use ShellCast for planning purposes.
+                    For official information on closures, contact your state's shellfish sanitation office.
                     Learn more about ShellCast forecasts on the <a href="/how-it-works">How ShellCast Works</a> page.
                 </p>
                 <p>
@@ -181,7 +180,6 @@
     </div>
 </div>
 
-
 <!--<div class="modal fade" id="disclaimer-privacy-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="disclaimer-privacy-label" aria-hidden="true">-->
 <!--  <div class="modal-dialog">-->
 <!--    <div class="modal-content">-->
@@ -196,6 +194,26 @@
 <!--      </div>-->
 <!--      <div class="modal-footer">-->
 <!--        <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="modal fade" id="disclaimer-privacy-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="disclaimer-privacy-label" aria-hidden="true">-->
+<!--  <div class="modal-dialog">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h5 class="modal-title" id="disclaimer-privacy-label">Temporary Unavailable</h5>-->
+<!--      </div>-->
+<!--      <div class="modal-body">-->
+<!--        <p style="font-size: 20px; color: black">-->
+<!--          We apologize that the website is currently unavailable. Our team is working on resolving the issue.-->
+<!--            We appreciate your patience and understanding. We will keep you updated on the progress of the issue.-->
+<!--            For any further inquiries, please feel free to contact us.-->
+<!--        </p>-->
+<!--      </div>-->
+<!--      <div class="modal-footer">-->
+<!--        <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>-->
 <!--      </div>-->
 <!--    </div>-->
 <!--  </div>-->

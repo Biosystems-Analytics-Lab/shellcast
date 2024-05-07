@@ -4,15 +4,20 @@ from pathlib import Path
 
 # [ Directories ]
 ROOT_DIR = Path(__file__).resolve().parent.parent
-PREPROC_DATA_DIR = os.path.join(ROOT_DIR, 'data/preprocs')
+# PREPROC_DATA_DIR = os.path.join(ROOT_DIR, 'data/preprocs')
 PQPF_DATA_DIR = os.path.join(ROOT_DIR, 'data/pqpf')
+TP_DATA_DIR = os.path.join(ROOT_DIR, 'data/tp')
+TP_DATA_CATALOG_PATH = os.path.join(TP_DATA_DIR, 'tpxmrg_inventory.json')
 
 # [ File path]
 CONFIG_INI = os.path.join(ROOT_DIR, 'config.ini')
 
 # [ FTP ]
-FTP_URL = 'ftp.wpc.ncep.noaa.gov'
-FTP_CWD = 'pqpf/conus/pqpf_24hr/'
+PQPF_FTP_URL = 'ftp.wpc.ncep.noaa.gov'
+PQPF_FTP_CWD = 'pqpf/conus/pqpf_24hr/'
+TG_FTP_URL = 'tgftp.nws.noaa.gov'
+TG_FTP_CWD = 'data/rfc/serfc/misc/'
+
 
 # [ Regex Patterns]
 TODAY = datetime.today().strftime('%Y%m%d')
@@ -28,6 +33,7 @@ TIFF_PREFIX = 'tp'
 
 # [ Other ]
 VALID_HOURS = ['f030', 'f054', 'f078']
+PQPF_THRESHOLDS = [0.25, 0.5, 1, 1.5, 2.0, 2.5, 3, 4, 6, 8, 16]
 Z_RUN = '06'
 TO_HOUR = -6
 GRB_RES_X = 2539.703
@@ -39,4 +45,7 @@ GRB_RES_Y = 2539.702
 
 # wgrib2 directory
 DARWIN_WGRIB2_PATH = '/usr/local/bin'
+
+# conda activate path
+CONDA_ACTIVATE = '/Users/makiko/miniconda3/etc/profile.d/conda.sh'
 
