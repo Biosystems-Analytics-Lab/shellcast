@@ -3,26 +3,23 @@ Project: ShellCast North Carolina
 Date: November 2022 - 2023
 """
 import sys
-import os
-import subprocess
 from pathlib import Path
 
-# script_dir = os.path.join(os.path.dirname(__file__), '..', '..')
+
 shellcast_analysis_dir = str(Path().absolute().parents[1])
 script_dir = str(Path(Path().absolute(), 'src'))
 sys.path.append(script_dir)
 
-import setup_logging
+import setup_logging  # noqa: E402
 
 STATE = 'FL'
 
 setup_logging.create_log_files(STATE)
-setup_logging.setup_logger_yaml(os.path.join(os.path.dirname(__file__), 'fl_logging.yaml'))
-# setup_logging.setup_logger_yaml(yaml_fpath)
+setup_logging.setup_logger(STATE)
 
-from fl_pqpf.tp_xmrg import TPXMRG
-from fl_pqpf.fl_pqpf import FLPQPF
-import logging
+from fl_pqpf.tp_xmrg import TPXMRG  # noqa: E402
+from fl_pqpf.fl_pqpf import FLPQPF  # noqa: E402
+import logging  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -34,11 +31,11 @@ if __name__ == '__main__':
     db = 'gcp.mysql'
 
     # --- Download and process total precipitation XMRG dataset ---
-    tpxmrg = TPXMRG('FL', 7)
+    tpxmrg = TPXMRG('FL', 14)
     tpxmrg.main()
 
     # --- PQPF analysis ---
-    pqpf = FLPQPF(db)
+    pqpf = FLPQPF(db, save=False)
     pqpf.main()
 
     # ---------------------

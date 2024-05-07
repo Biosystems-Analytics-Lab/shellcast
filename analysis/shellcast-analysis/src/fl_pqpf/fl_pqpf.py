@@ -6,14 +6,11 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 import math
-from decimal import Decimal
-
 from shapely.geometry import Point
 from shapely.errors import ShapelyDeprecationWarning
 from datetime import datetime
-from pqpf import utils
-from pqpf.pqpf_proc_dirs import ProcDirs
-from pqpf.pqpf_procs import PQPFProcs
+import utils
+from pqpf_procs import ProcDirs, PQPFProcs
 import constants as ct
 
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
@@ -65,7 +62,7 @@ def pqpf_threshold_stringify(num):
 
 
 class FLPQPF:
-    def __init__(self, db):
+    def __init__(self, db, save=True):
         self.state = 'FL'
         pqpf_dirs = ProcDirs(self.state, db)
         self.config = pqpf_dirs.config
@@ -87,6 +84,7 @@ class FLPQPF:
         self.tp_outputs_dir = utils.create_directory(os.path.join(self.tp_data_dir, 'outputs'))
 
         self.procs = PQPFProcs(self.state, db)
+        self.save = save
 
     def tp_accum_ras_values_to_pts(self):
         """
@@ -235,7 +233,8 @@ class FLPQPF:
             self.pqpf_probability_into_category(pqpf_df, csv_lease_fpath)
             self.cmu_mean(pqpf_df, csv_cmu_fpath)
 
-            utils.save_to_db(self.connect_str, csv_cmu_fpath)
+            if self.save:
+                utils.save_to_db(self.connect_str, csv_cmu_fpath)
 
         stop = datetime.now()
         utils.calculate_duration(start, stop)
