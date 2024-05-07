@@ -10,16 +10,15 @@ from shapely.errors import ShapelyDeprecationWarning
 from datetime import datetime
 from typing import Type
 from rasterstats import zonal_stats
-from pqpf import utils
-from pqpf.pqpf_proc_dirs import ProcDirs
-from pqpf.pqpf_procs import PQPFProcs
+import utils
+from pqpf_procs import ProcDirs, PQPFProcs
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 logger = logging.getLogger(__name__)
 
 
 class SCPQPF:
-    def __init__(self, db):
+    def __init__(self, db, save=True):
         self.state = 'SC'
         self.outfile_date = None
         pqpf_dirs = ProcDirs(self.state, db)
@@ -29,11 +28,14 @@ class SCPQPF:
         self.grb_raw_dir = pqpf_dirs.grb_raw_dir
         self.tiffs_dir = pqpf_dirs.tiffs_dir
         self.lease_shp = pqpf_dirs.lease_shp
+        self.outputs_dir = pqpf_dirs.outputs_dir
+        self.outfile_date = pqpf_dirs.outfile_date
         self.use_cols = [
             self.config[self.state]['LEASE_SHP_COL_LEASE_ID'],
             'geometry'
         ]
         self.procs = PQPFProcs(self.state, db)
+        self.save = save
 
     def tiff_resample(self) -> None:
         """
@@ -149,7 +151,8 @@ class SCPQPF:
             self.procs.grb_to_tiff(thresholds)
             self.tiff_resample()
             csv_path = self.zonal_stats_to_csv()
-            utils.save_to_db(self.connect_str, csv_path)
+            if self.save:
+                utils.save_to_db(self.connect_str, csv_path)
         else:
             logger.info(f'Raw GRB files date is not today. {"!" * 5} DATA NOT SAVED IN DATABASE {"!" * 5}')
         stop = datetime.now()
