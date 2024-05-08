@@ -1,4 +1,5 @@
 import os
+import sys
 import logging.config
 import warnings
 import rasterio
@@ -6,11 +7,10 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 import math
-from decimal import Decimal
-
 from shapely.geometry import Point
 from shapely.errors import ShapelyDeprecationWarning
 from datetime import datetime
+from pathlib import Path
 import utils
 from pqpf_procs import ProcDirs, PQPFProcs
 import constants as ct
@@ -203,8 +203,6 @@ class FLPQPF:
         #  >= 0.25	Low	        2
         #  < 0.25	Very Low    1
 
-        Returns:
-
         """
         logger.info('[Categorize PQPF value group by lease]')
         del df['geometry']
@@ -217,8 +215,26 @@ class FLPQPF:
         logger.info(f'{os.path.basename(out_csv_path)} --- created')
         logger.info(utils.done_str)
 
+    def check_tp_outputs(self):
+        tiffs = list(map(str, Path(self.tp_outputs_dir).glob('*.tif')))
+        if len(tiffs) == 0:
+            logger.error('No TP outputs found')
+            sys.exit(1)
+        else:
+            for tiff in tiffs:
+                float_timestamp = os.path.getctime(tiff)  # Get creation time
+                datestamp = datetime.fromtimestamp(float_timestamp).date()
+                today = datetime.today().date()
+                if datestamp != today:
+                    return False
+        return True
+
     def main(self):
         start = datetime.now()
+        has_data = self.check_tp_outputs()
+        if not has_data:
+            logger.error('No TP outputs found')
+            sys.exit(1)
         utils.db_connection_test(self.connect_str)
         utils.delete_outdated_grbs(self.grb_raw_dir)
         files = self.procs.get_files_to_download()
@@ -243,7 +259,8 @@ class FLPQPF:
         stop = datetime.now()
         utils.calculate_duration(start, stop)
 
+
 # if __name__ == '__main__':
 #     db = 'gcp.mysql'
-#     pqpf = FLPQPF(db)
+#     pqpf = FLPQPF(db, save=False)
 #     pqpf.main()

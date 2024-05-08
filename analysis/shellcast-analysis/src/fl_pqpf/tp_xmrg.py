@@ -9,6 +9,7 @@ import json
 import os
 import logging
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -279,6 +280,7 @@ class TPXMRG:
 
             if hours > 0:
                 utils.cmd_subprocess([self.tp_proc_sh, str(hours)])
+
             else:
                 raise MissingTPGRBsError
 
