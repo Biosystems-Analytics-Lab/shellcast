@@ -31,7 +31,7 @@ if __name__ == '__main__':
     db = 'gcp.mysql'
 
     # --- Download and process total precipitation XMRG dataset ---
-    tpxmrg = TPXMRG('FL', 14)
+    tpxmrg = TPXMRG('FL', 7)
     tpxmrg.main()
 
     # --- PQPF analysis ---

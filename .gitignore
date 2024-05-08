@@ -65,3 +65,5 @@ vignettes/*.pdf
 /analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-ip/
 /analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-sp/
 /analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-w3emc/
+.python-version
+analysis/shellcast-analysis/small.grb
