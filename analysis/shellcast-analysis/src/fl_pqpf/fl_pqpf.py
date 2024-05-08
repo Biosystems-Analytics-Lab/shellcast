@@ -6,6 +6,8 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 import math
+from decimal import Decimal
+
 from shapely.geometry import Point
 from shapely.errors import ShapelyDeprecationWarning
 from datetime import datetime
@@ -142,6 +144,7 @@ class FLPQPF:
             df:
 
         Returns:
+            DataFrame:
 
         """
         logger.info('[Process B]')
@@ -181,7 +184,8 @@ class FLPQPF:
 
     def cmu_mean(self, df, csv_out_fpath):
         logger.info('[Categorize PQPF value group by CMU]')
-        s_arr = df.groupby(['cmu_name'])['pqpf_proc_val'].mean()
+        df = df.rename(columns={'cmu_name': 'cmu_id'})
+        s_arr = df.groupby(['cmu_id'])['pqpf_proc_val'].mean()
         new_df = pd.DataFrame(s_arr).reset_index()
         vals = new_df[PQPF_PROC]
         condition_lst = [vals >= 0.9, vals >= 0.75, vals >= 0.5, vals >= 0.25, vals < 0.25]

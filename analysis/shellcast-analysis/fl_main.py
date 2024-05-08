@@ -6,8 +6,8 @@ import sys
 from pathlib import Path
 
 
-shellcast_analysis_dir = str(Path().absolute().parents[1])
-script_dir = str(Path(Path().absolute(), 'src'))
+shellcast_analysis_dir = str(Path(__file__).resolve().parent)
+script_dir = str(Path(Path(shellcast_analysis_dir), 'src'))
 sys.path.append(script_dir)
 
 import setup_logging  # noqa: E402
