@@ -6,11 +6,9 @@ CLOUD_SQL_PATH="{your directory}/shellcast/analysis/shellcast-analysis/cloud-sql
 # Name of Cloud SQL Instance
 CLOUD_SQL_INSTANCE_NAME=""
 
-# cloud sql port number
+# MySQL port
 CLOUD_SQL_PORT="3306"
 
-
-PYTHON_PATH="{path to python}"
 VENV_ACTIVATE_PATH="{path to vertual environment activate}"
 
 FL_MAIN_PY="/{your directory}/shellcast/analysis/shellcast-analysis/fl_main.py"
