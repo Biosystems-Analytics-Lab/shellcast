@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     logger.info(f'{"="*50}')
-    logger.info('\t\t\t  Start NC ShellCast Analysis')
+    logger.info('\tStart NC ShellCast Analysis')
     logger.info(f'{"="*50}')
     # DB connection information in config.ini
     db = 'gcp.mysql'
