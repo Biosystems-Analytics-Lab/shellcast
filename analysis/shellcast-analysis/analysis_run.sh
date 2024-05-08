@@ -12,9 +12,10 @@ ${CLOUD_SQL_PATH} --port 3306 ${CLOUD_SQL_INSTANCE_NAME} & PID1=$!
 
 source ${VENV_ACTIVATE_PATH}
 
-python $FL_MAIN_PY
+# Keep FL at the end
 python $NC_MAIN_PY
 python $SC_MAIN_PY
+python $FL_MAIN_PY
 
 deactivate
 
