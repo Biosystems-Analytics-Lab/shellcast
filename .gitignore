@@ -4,7 +4,8 @@
 
 **/cloud-sql-proxy*
 **/sqlauthproxy*
-**/config*
+**/config.sh
+**/config.ini
 **/tpxmrg_inventory.json
 **/delete
 logs/
