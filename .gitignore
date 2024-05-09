@@ -8,6 +8,8 @@
 **/config.ini
 **/tpxmrg_inventory.json
 **/delete
+**/bin
+**/dependencies
 logs/
 tests/
 raw/
