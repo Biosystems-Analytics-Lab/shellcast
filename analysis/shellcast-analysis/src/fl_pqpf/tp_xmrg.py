@@ -279,8 +279,7 @@ class TPXMRG:
             hours = self.days_to_process_tp_data(checked_inventory)
 
             if hours > 0:
-                utils.cmd_subprocess([self.tp_proc_sh, str(hours)])
-
+                subprocess.call(self.tp_proc_sh, shell=True)
             else:
                 raise MissingTPGRBsError
 
