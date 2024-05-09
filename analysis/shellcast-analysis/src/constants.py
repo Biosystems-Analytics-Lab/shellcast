@@ -45,7 +45,3 @@ GRB_RES_Y = 2539.702
 
 # wgrib2 directory
 DARWIN_WGRIB2_PATH = '/usr/local/bin'
-
-# conda activate path
-CONDA_ACTIVATE = '/Users/makiko/miniconda3/etc/profile.d/conda.sh'
-
