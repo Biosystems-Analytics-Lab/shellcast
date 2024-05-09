@@ -39,19 +39,18 @@ NCSU Enterprise GitHub
 
 ![A diagram showing the data flow of the ShellCast application.](docs/images/architecture_diagram.png)
 
-1. Obtain NOAA PQPF data from FTP server.
-2. Rainfall forecasts are retrieved every morning.
-3. The analysis server calculates closure probabilities for growing units based on the rainfall forecasts and rainfall closure thresholds for those growing units. See [docs/ANALYSIS.md](/docs/ANALYSIS.md) for more information.
-4. The calculated probabilities for every growing unit are uploaded to the database every morning.
-5. The database is a MySQL 5.7 instance hosted on Google Cloud SQL. See [docs/DATABASE.md](/docs/DATABASE.md) for more information.
-6. Calculated probabilities are retrieved by the web server
-7. The web server is a Python Flask application hosted on Google App Engine. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
-8. As requests are made from a web browser, the web server responds to those requests.
-9. A user can access the ShellCast website using any modern web browser on a computer, phone, or tablet.
-10. User information and preferences are propagated back to the database.
-11. Notifications are sent to users every morning based on their notification preferences. Notifications are sent using Amazon Web Services Simple Email Service.
-12. Email notifications show a detailed list of a user's leases that may close soon. Email notifications are sent using the user's email address.
-13. Text notifications consist of a short message with a link back to ShellCast site. Text notifications are sent using the user's phone number and the SMS gateway for the user's phone service provider.
+1. Download NOAA PQPF and daily quality controlled rainfall estimates from FTP server every morning.
+2. The analysis server calculates closure probabilities for growing units based on the rainfall forecasts and rainfall closure thresholds for those growing units. See [docs/ANALYSIS.md](/docs/ANALYSIS.md) for more information.
+3. The calculated probabilities for every growing unit are uploaded to the database every morning.
+4. The database is a MySQL 5.7 instance hosted on Google Cloud SQL. See [docs/DATABASE.md](/docs/DATABASE.md) for more information.
+5. Calculated probabilities are retrieved by the web server
+6. The web server is a Python Flask application hosted on Google App Engine. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
+7. As requests are made from a web browser, the web server responds to those requests.
+8. A user can access the ShellCast website using any modern web browser on a computer, phone, or tablet.
+9. User information and preferences are propagated back to the database.
+10. Notifications are sent to users every morning based on their notification preferences. Notifications are sent using Amazon Web Services Simple Email Service.
+11. Email notifications show a detailed list of a user's leases that may close soon. Email notifications are sent using the user's email address.
+12. Text notifications consist of a short message with a link back to ShellCast site. Text notifications are sent using the user's phone number and the SMS gateway for the user's phone service provider.
 
 ## 3. Documentation Overview
 

@@ -36,12 +36,15 @@ temporary project computer (iMac).
 - Probabilistic Quantitative Precipitation Forecasting (PQPF)
 - Shellfish Harvested Area (SHA)
 - Contiguous United States, and as the 48 contiguous states (CONUS)
+- North Carolina Department of Environmental Quality (NCDEQ)
+- South Carolina Department of Health and Environmental Control (SCDHEC)
+- Florida Department of Agriculture and Consumer Services (FDACS)
 
 ## 2. Analysis and Scripts
 
 ### Preprocessing input data
 
-ArcGIS Pro is used to preprocess the input data. Modelbuilder was used to create the processing tools for each state. Assigning shellfish harvested area rainfall threshold to leases within the area, checking and fixing geometry, and assigning appropriate column names to attributes tables are among the tasks. Contact the project PI for ArcGIS Pro project files. 
+ArcGIS Pro Modelbuilder was used to create the processing tools for each state. Assigning shellfish harvested area rainfall threshold to leases within the area, checking and fixing geometry, and assigning appropriate column names to attributes tables are among the tasks. 
 
 *Note*: Input data needs to be updated periodically. Currently, NCSU is responsible for updating input data. We may be able to automate updates if organizations publish shapefiles online in the data format we require.
 
@@ -49,13 +52,13 @@ ArcGIS Pro is used to preprocess the input data. Modelbuilder was used to create
 
 Each state has its own geospatial analysis, however, North Carolina and Florida analysis share the same analogy; 1) finding the probability of precipitation from PQPF data for each lease location, 2) finding the mean value within the SHA area, 3) classifying the values into very low, low, moderate, high, and very high, and 4) saving categorized values to a remote MySQL database. Analysis for Florida adds complexity due to duration-based rainfall thresholds (e.g. 5 days > 3.5"). In addition to PQPF, daily quality controlled rainfall estimates are used to calculate rainfall accumulation. 
 
-In South Carolina analysis, SHA are considered lease areas. The mean PQPF for each SHA is calculated using geospatial statistics, classified, and then stored remotely.
+In South Carolina analysis, SHA are considered lease areas. The mean PQPF for each SHA is calculated using geospatial statistics and follow step 3) and 4) as described above.
 
 ### Scripts
 
 * `src`-  all analysis code
   * `{state}_pqpf` - code for geospatial analysis specific to a state
-  * `pqpf` - code for common processes
+  * `pqpf_proc.py` and `utils.py` - code for common processes
 * `shellcast-analysis/{state}_main.py` -  This script runs geospatial analysis and saves the output data to a remote MySQL server. 
   * Prerequisites : create a virtual environment and connect to a remote MySQL server.
 * `setup_logging.py` and `{state}_logging.yaml` - Logs file settings
@@ -64,65 +67,105 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 * `analysis_run.sh` -  This script is configured to run a cron job. The script activates the virtual environment, connects to the remote MySQL database, and runs `{state}_main.py`. Modifying this script file is recommended if you wish to run a state analysis only by commenting out the other states.
 
 ## 3. Data
+### 3.1 PQPF data
+**Source**: NOAA </br>
+**About PQPF**:  https://www.wpc.ncep.noaa.gov/pqpf/about_pqpf_products.shtml </br>
+**Z run**: 06Z </br>
+**Interval**: 24 hours </br>
+**Data format**: Grib2 </br>
+**Projection**: Lambert Conformal Conic 2SP </br>
+**Special resolution**: approx. 2.5km </br>
+**Data type**: Exceedance grids </br>
+**Data files**: </br>
 
-**Data**
+* pqpf_p24i_conus_{date}06f030.grb - 24 hour totals starting 12Z Monday and ending 12Z Tuesday (Day 1)
+* pqpf_p24i_conus_{date}06f054.grb - 24 hour totals starting 12Z Tuesday and ending 12Z Wednesday (Day 2)
+* pqpf_p24i_conus_{date}06f078.grb - 24 hour totals starting 12Z Wednesday and ending 12Z Thursday (Day 3)
 
-1. PQPF  (NOAA) Grib2 format
-2. Daily quality controlled rainfall estimates (NOAA) Grib1 format - FL only
+**GRIB file content**:
 
-**Input Data**
+- 0.25"   |Total_precipitation_surface_24_Hour_Accumulation_probability_above_6p35
+- 0.5"     |Total_precipitation_surface_24_Hour_Accumulation_probability_above_12p7
+- 1"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_25p4
+- 1.5"     |Total_precipitation_surface_24_Hour_Accumulation_probability_above_38p1
+- 2"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_50p8
+- 2.5"     |Total_precipitation_surface_24_Hour_Accumulation_probability_above_63p5
+- 3"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_76p2
+- 4"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_101p6
+- 5"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_127
+- 6"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_152p4
+- 8"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_203p2
+- 16"      |Total_precipitation_surface_24_Hour_Accumulation_probability_above_406p4
 
-1. NC lease and SHA shapefiles
-2. SC SHA shapefiles
-3. FL lease and SHA shapefiles
+**Notes**:
+- NC thresholds (as of April 2024): 1.0, 1.5, 2.0, 2.5, 3.0, 4.0
+- SC thresholds (as of April 2024): 4.0
+- FL thresholds (as of April 2024): 
+
+### 3.2 Daily quality controlled rainfall estimates (FL only)
+**Source**: NOAA </br>
+**Interval**: Hourly </br>
+**Format**: Grib1 </br>
+**Projection**: Polar Stereographic </br>
+**Special resolution**: approx. 4.7km </br>
+**Data**: Total precipitation surface 1 Hour Accumulation </br>
+**Data files**: xmrg{date}{utc}z.grb
+
+### 3.3 Input Data
+
+1. NC lease and SHA shapefiles (NCDEQ)
+2. SC SHA shapefiles (SCDHEC)
+3. FL lease and SHA shapefiles (FDACS)
 
 
 
 ## 4. Development Environment Set Up
 
-### 4.1 Install and initialize Google Cloud SDK
+### 4.1 Clone the ShellCast GitHub repository
+
+Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+
+### 4.2 Install and initialize Google Cloud SDK
 
 The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download, install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
 
-### 4.2 Download Cloud SQL proxy
+### 4.3 Download Cloud SQL proxy
 
 You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/). Optionaly, iinstall [MySQL Workbench](https://dev.mysql.com/downloads/workbench) to visualize and query the database.
-
-### 4.3 Clone the ShellCast GitHub repository
-
-Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
 ### 4.4 Setup Python virtual environment
 
 Use environment management tool of your choice. Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
+
+### 4.5 Create config.ini and config.sh files
+Create `config.ini` and `config.sh` files from `config_template.ini` and `config_template.sh`. 
+
+
+`config.ini` file should be updated whenever a change occurs in the fields, data names, or areas of interest.
 
 ### 4.5 Download and Compile Wgrib2
 
 Wgrib2 is used to crop CONUS PQPF data according to the area of interest. 
 
 Download the application on [here](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2) and follow [these instructions](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING). For Mac user, this website [theweatherguy blog](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) might help. It is necessary to install the gcc/gfortran compilers for Wgrib2 compilation. You can download `gcc` using Homebrew on Mac by running `brew install gcc`. It contains gcc, g++, gfortran, etc. 
+If you are new to compiling software, you might find the following resources helpful:
+  * https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/
+  * https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/compile_questions.html
+  * https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING
+  * https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/_README.cygwin
+  * https://theweatherguy.net/blog/weather-links-info/how-to-install-and-compile-wgrib2-on-mac-os-10-14-6-mojave/
 
-### 4.6 Download and Compile NCEPLIBS GRIB Utility and Dependencies
+### 4.6 Download and Compile NCEPLIBS GRIB Utility and Dependencies (FL only)
 
 `cnvgrib` converts daily quality controlled rainfall estimates from Grib1 to Grib2 format. 
 
-Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util) website. The steps for compiling dependencies and utility can be found in ncep_lib_utils.sh. It is recommended that each dependency be compiled separately to ensure successful compilation. The third-party libraries Jasper, libpng, and zlib must be installed before the dependencies are compiled. 
+Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util) website. The steps for compiling dependencies and utility can be found in `ncep-lib-utils/ncep_lib_utils.sh`. It is recommended that each dependency be compiled separately to ensure successful compilation. </br></br>
+In the script you see `make -j4` which means that the compilation will be done in parallel using 4 threads. You can change the number of threads.
+The rule of thumb seems to be `-j <number of cores>` or `-j <number of cores * 1.5>`. Increasing too high may result in slower performance.</br></br>
+The third-party libraries `Jasper`, `libpng`, and `zlib` must be installed before the dependencies are compiled.
+On MacOS, you can install these dependencies using Homebrew: `brew install jasper`, `brew install libpng`, and `brew install zlib`.
 
-For example, Homebrewer on Mac
-
-```
-brew install jasper
-```
-
-```
-brew install libpng
-```
-
-``` 
-brew install zlib
-```
-
-### 4.7 Install CDO 
+### 4.7 Install CDO (FL only)
 
 Daily quality controlled rainfall estimates are processed using CDO. 
 
@@ -131,8 +174,13 @@ You can download CDO using Homebrew on Mac by running ```brew install cdo```
 ## 5. CRON Job Set Up
 
 Tools for CRON jobs can be chosen freely by developers. Currently, ShellCast analyses are run on the temporary iMac computer using the `crontab` command. 
+`crontab -l` will list all the current cron jobs. To edit the cron jobs, run `crontab -e`.
+It will open default text editor (e.g. nano, vi, vim, and etc) where you can add the following line to run the analysis every day at 6:40 am ET and save logs.
+For example, your default editor is vi, type `i` to insert text, and then type the following line. After that, press `esc` and type `:wq` to save and exit.</br>
+</br>
+```40 6 * * * source {path to }/analysis_run.sh >> ~Desktop/cron.log 2>&1```
 
-```TODO: Add how to set crontab and how to debug **** or run-as-cron```
+Note that In pqpf_proc.py, subprocess is used to call Wgrib2 to crop PQPF data. Wgrib2 was unable to run when cron job was set. To work around this issue, the full path had to be included in the code.
 
 ## 6. Pushing Changes to GitHub
 
