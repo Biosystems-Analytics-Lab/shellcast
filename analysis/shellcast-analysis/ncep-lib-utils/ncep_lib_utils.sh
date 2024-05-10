@@ -75,7 +75,7 @@ echo $ROOT
 #make install
 
 # --- Notes for NCEPLIBS-grib_util ----
-# Version 1.3 has error
+# Version 1.4
 # make[2]: *** [src/tocgrib/tocgrib] Error 1
   #make[1]: *** [src/tocgrib/CMakeFiles/tocgrib.dir/all] Error 2
 # I commented out lines that for "tocgrib" from  src/CMakeList.txt
