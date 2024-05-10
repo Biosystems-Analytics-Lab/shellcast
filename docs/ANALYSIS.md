@@ -1,6 +1,6 @@
 # ANALYSIS.md
 
-This markdown file describes the components and set up of the daily analysis CRON job that updates the ShellCast web application at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast).
+ShellCast analysis and setup are described in this file. The analysis includes North Carolina, South Carolina, and Florida as of May 2024. The outputs of the analysis are stored in the MySQL database of Google Cloud SQL. For information on how to set up the database, please refer to [DATABASE.md](DATABASE.md).
 
 ## Table of Contents
 
@@ -28,27 +28,28 @@ temporary project computer (iMac).
 
 - North Carolina State University (NCSU)
 - North Carolina Division of Marine Fisheries (NCDMF)
-- National Digital Forecast Dataset (NDFD)
-- North Carolina State Climate Office (SCO)
-- Google Cloud Platform (GCP)
-- National Oceanic and Atmospheric Administration (NOAA)
-- Climate Data Operators (CDO)
-- Probabilistic Quantitative Precipitation Forecasting (PQPF)
-- Shellfish Harvested Area (SHA)
-- Contiguous United States, and as the 48 contiguous states (CONUS)
 - North Carolina Department of Environmental Quality (NCDEQ)
 - South Carolina Department of Health and Environmental Control (SCDHEC)
 - Florida Department of Agriculture and Consumer Services (FDACS)
+- National Oceanic and Atmospheric Administration (NOAA)
+- Probabilistic Quantitative Precipitation Forecasting (PQPF)
+- Google Cloud Platform (GCP)
+- Climate Data Operators (CDO)
+- Shellfish Harvested Area (SHA)
+- Contiguous United States, and as the 48 contiguous states (CONUS)
 
 ## 2. Analysis and Scripts
 
 ### Preprocessing input data
 
-ArcGIS Pro Modelbuilder was used to create the processing tools for each state. Assigning shellfish harvested area rainfall threshold to leases within the area, checking and fixing geometry, and assigning appropriate column names to attributes tables are among the tasks. 
+ESRI ArcGIS Pro Modelbuilder was used to create the processing tools for each state. Assigning shellfish harvested area rainfall threshold to leases within the area, checking and fixing geometry, and assigning appropriate column names to attributes tables are among the tasks. The ArcGIS Pro project file is not included in the repository.
 
 *Note*: Input data needs to be updated periodically. Currently, NCSU is responsible for updating input data. We may be able to automate updates if organizations publish shapefiles online in the data format we require.
 
 ### Analysis
+
+**Requisites:**
+*The MySQL Google Cloud SQL database, tables, and data need to be set up. please refer to [DATABASE.md](DATABASE.md) for more information.* </br>
 
 Each state has its own geospatial analysis, however, North Carolina and Florida analysis share the same analogy; 1) finding the probability of precipitation from PQPF data for each lease location, 2) finding the mean value within the SHA area, 3) classifying the values into very low, low, moderate, high, and very high, and 4) saving categorized values to a remote MySQL database. Analysis for Florida adds complexity due to duration-based rainfall thresholds (e.g. 5 days > 3.5"). In addition to PQPF, daily quality controlled rainfall estimates are used to calculate rainfall accumulation. 
 
@@ -118,7 +119,6 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 3. FL lease and SHA shapefiles (FDACS)
 
 
-
 ## 4. Development Environment Set Up
 
 ### 4.1 Clone the ShellCast GitHub repository
@@ -135,13 +135,14 @@ You can download and setup the Cloud SQL proxy by following [these instructions]
 
 ### 4.4 Setup Python virtual environment
 
-Use environment management tool of your choice. Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
+Use environment management tool of your choice, however,  Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
 
 ### 4.5 Create config.ini and config.sh files
 Create `config.ini` and `config.sh` files from `config_template.ini` and `config_template.sh`. 
 
-
 `config.ini` file should be updated whenever a change occurs in the fields, data names, or areas of interest.
+
+
 
 ### 4.5 Download and Compile Wgrib2
 
@@ -155,6 +156,14 @@ If you are new to compiling software, you might find the following resources hel
   * https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/_README.cygwin
   * https://theweatherguy.net/blog/weather-links-info/how-to-install-and-compile-wgrib2-on-mac-os-10-14-6-mojave/
 
+If you encounter a subprocess not running issue under cron on MacOS, you might want to try a few things.
+
+* Turn on Terminal in Full Disk Access - **System Settings** > **Privacy and Security** > **Full Disk Access** > turn on **Terminal**
+
+* In the event that the subprocess is unable to call third-party applications, such as Wgrib2, use the full path to the application
+
+* Add Full Disk Access to the application if the subprocess fails to call third-party applications such as Wgrib2. 
+
 ### 4.6 Download and Compile NCEPLIBS GRIB Utility and Dependencies (FL only)
 
 `cnvgrib` converts daily quality controlled rainfall estimates from Grib1 to Grib2 format. 
@@ -162,8 +171,10 @@ If you are new to compiling software, you might find the following resources hel
 Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util) website. The steps for compiling dependencies and utility can be found in `ncep-lib-utils/ncep_lib_utils.sh`. It is recommended that each dependency be compiled separately to ensure successful compilation. </br></br>
 In the script you see `make -j4` which means that the compilation will be done in parallel using 4 threads. You can change the number of threads.
 The rule of thumb seems to be `-j <number of cores>` or `-j <number of cores * 1.5>`. Increasing too high may result in slower performance.</br></br>
-The third-party libraries `Jasper`, `libpng`, and `zlib` must be installed before the dependencies are compiled.
-On MacOS, you can install these dependencies using Homebrew: `brew install jasper`, `brew install libpng`, and `brew install zlib`.
+The third-party libraries `Jasper`, `libpng`, `zlib`, `BLAS`, and `LAPACK` must be installed before the dependencies are compiled.
+On MacOS, you can install these dependencies using Homebrew: `brew install jasper`, `brew install libpng`, `brew install zlib`, and `brew install openblas`. The `openblas` installs both BLAS and LAPACK libraries. </br></br>
+
+If you encounter compilation problems with tools other than the cnvgrib tool, you can disable compilation by commenting out tool names in ncep-lib-utils/NCEPLIBS-grib_util/src/CMakeLists.txt (e.g. # add_subdirectory(tocgrib)).
 
 ### 4.7 Install CDO (FL only)
 
@@ -173,6 +184,17 @@ You can download CDO using Homebrew on Mac by running ```brew install cdo```
 
 ## 5. CRON Job Set Up
 
+### 5.1 Executable Files
+The cron job environment differs from the development environment. It is important that system be able to access files and directories as well as executable files in order to execute them. Run the following command in the terminal. 
+
+```chmod +x {path to bash script}```  
+* shellcast-analysis/analysis_run.sh
+* analysis/shellcast-analysis/config.sh
+* shellcast-analysis/src/fl_pqpf/xmrg_proc.sh
+* shellcast-analysis/ncep-lib-utils/nceplibs/bin/cnvgrib
+
+### 5.2 Crontab Set Up
+
 Tools for CRON jobs can be chosen freely by developers. Currently, ShellCast analyses are run on the temporary iMac computer using the `crontab` command. 
 `crontab -l` will list all the current cron jobs. To edit the cron jobs, run `crontab -e`.
 It will open default text editor (e.g. nano, vi, vim, and etc) where you can add the following line to run the analysis every day at 6:40 am ET and save logs.
@@ -181,6 +203,12 @@ For example, your default editor is vi, type `i` to insert text, and then type t
 ```40 6 * * * source {path to }/analysis_run.sh >> ~Desktop/cron.log 2>&1```
 
 Note that In pqpf_proc.py, subprocess is used to call Wgrib2 to crop PQPF data. Wgrib2 was unable to run when cron job was set. To work around this issue, the full path had to be included in the code.
+
+### 5.3 File Permissions
+If a cron job encounters an file permission issue, run the following code. `shellcast-analysys/data` directory may be prone to the issue since it stores data outputs.</br><br>
+```chmod -R {permission numbers} {foldername or pathname}```
+</br></br>
+In case you are not familiar with permission numbers, you can learn from [RedHat's explanation of Linux file permissions](https://www.redhat.com/sysadmin/linux-file-permissions-explained). It is important to note that 777 is full permission, which raises security concerns. Any security concerns should be addressed with appropriate permissions. 
 
 ## 6. Pushing Changes to GitHub
 

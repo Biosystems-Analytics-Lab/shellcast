@@ -1,7 +1,7 @@
 # WEB.md
 
-This document is intended to help a developer get up and running with ShellCast.
-
+ShellCast's web setup is described in this file.</br></br>
+ShellCast was initially developed for North Carolina and later expanded to South Carolina and Florida. In order to achieve fast development, the web application was duplicated for SC and FL and modified accordingly. However, for scalability, separating APIs from front-end web components may be considered in the future.</br></br>
 _Please note that some steps in this document will only work on a Unix machine (Linux/Mac). There are certainly work arounds for Windows, but I did not thoroughly look into these and document them._
 
 ## Table of Contents
@@ -34,18 +34,21 @@ _Please note that some steps in this document will only work on a Unix machine (
 - __static__ - Contains all of the static content for each web page (CSS, JS, images, etc).
 - __models__ - Contains all of the Object Relational Mapping (ORM) models that are used to interact with the database.
 - __routes__ - Contains all of the routes that are registered with the Flask application.
-- __tests__ - Contains all of the unit tests for the application.
-- __db-scripts__ - Contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
-- __analysis__ - Contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](docs/ANALYSIS.md).
-- __docs__ - Contains all of the documentation for the ShellCast application.
+- __tests__ - Contains all of the unit tests for the application. _❗This feature is not currently available. This needs to be updated._
 
-## 2. Notable Technologies Used
+
+## 2. Notable Technologies and Services Used
 
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/) - Flask is a lightweight web app framework written in Python.  It is used for all of the backend logic of the web app.
 - [SQLAlchemy](https://www.sqlalchemy.org/) - SQLAlchemy is a Python framework used to interact with databases.  It is used in this project mainly for its ORM functionality.
 - [Jinja](https://jinja.palletsprojects.com/en/2.11.x/) - Jinja is a templating language.  It is used to build templates for the pages of the site.
 - [Python](https://www.python.org/download/releases/3.0/) - Python (version 3) is used here for data analysis. We recommend downloading Python using Miniconda as explained in [Setup Python and R for ShellCast Data Analysis](#47-setup-python-and-r-for-shellcast-data-analysis) below.
+- [OpenLayers](https://openlayers.org/) - OpenLayers is a Open Source JavaScript library used to display the map on the index page.
 - [git](https://git-scm.com/) - We use git for version control and collaboration.
+- [Google App Engine](https://cloud.google.com/appengine) - Google App Engine is a platform as a service (PaaS) that allows you to build and deploy web applications on Google's infrastructure.
+- [Google Cloud SQL](https://cloud.google.com/sql) - Google Cloud SQL is a fully-managed relational database service for MySQL, PostgreSQL, and SQL Server. ShellCast uses a MySQL database for storing all persistent information.
+- [Google Cloud Proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy) - The Cloud SQL Proxy is a tool that allows you to connect to your Cloud SQL instance without having to deal with IP whitelisting or SSL certificates.
+- [Firebase](https://firebase.google.com/) - Firebase is a platform developed by Google for creating mobile and web applications. ShellCast uses Firebase authentication to manage user signup and login.
 
 ## 3. General Notes
 
@@ -63,16 +66,17 @@ Clone the GitHub repository to your machine by running `git clone https://github
 
 The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download, install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
 
-### 4.3 Download Cloud SQL proxy
-
-You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
 
 ### 4.4 Setup Python virtual environment
 
-1. Make sure that you have Python 3.11 or higher installed on your machine.
-2. From the root directory of your local repository, create a virtual environment by running `python3 -m venv venv`.
+1. Make sure Google App Engine supports Python version installed on your machine. See Google documentation [here](https://cloud.google.com/sdk/docs/install#supported_python_versions). 
+2. Create a virtual environment using your familiar environment management tool. For example, you can use [venv](https://docs.python.org/3/library/venv.html).
 3. Activate the virtual environment by running `source venv/bin/activate` if on a Linux or Mac machine. If on a Windows machine, run `venv\Scripts\activate.bat`.  Now "python" will refer to the virtual environment's copy of Python 3. You can deactivate the virtual environment by running `deactivate` (Linux/Mac/Windows).
 4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
+
+### 4.5 Download Cloud SQL proxy
+
+You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
 
 ### 4.5 Make a Unix socket directory
 
@@ -96,51 +100,6 @@ So what you need to do at this point is:
   - Click generate new private key and store the file securely on your machine.  If you save it inside of the repo as `firebase-admin-sdk-credentials.json`, then it should be ignored by both .gitignore and .gcloudignore.  If you store it outside of the repo, then you won't have to worry about it being pushed to GitHub when you commit or Google Cloud when you deploy.  You do __NOT__ want to push this file to either of those places because it contains extremely sensitive information.
 2. Now that you have the credentials file, you just have to create an environment variable called `GOOGLE_APPLICATION_CREDENTIALS` which stores the absolute path to the file and the Admin SDK will implicitly find it as if running in App Engine.  On Linux/Mac you can run `export GOOGLE_APPLICATION_CREDENTIALS="/path/to/firebase-admin-sdk-credentials.json"`.  On Windows in Powershell you can run `$env:GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\firebase-admin-sdk-credentials.json"`.
 
-### 4.8 Setup Python and ShellCast Data Analysis
-
-Follow the steps below to run the ShellCast data analysis scripts on your local machine. This will be similar for setting up the virtual computing laboratory (VCL) environment as described in [ANALYSIS.md](/docs/ANALYSIS.md/#3-vcl-set-up).
-
-If you haven't installed it on your local machine, first install git following the directions [here](https://github.com/git-guides/install-git). If you have Homebrew installed on your local machine, you can also use that to install git as described [here](https://git-scm.com/download/mac).
-
-Next, follow the steps below in the terminal window to set up your local machine to be able to run ShellCast data analysis scripts.
-
-```{bash}
-# 1. download Mini Conda 3
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-
-# 2. execute Mini Conda 3 download
-bash Miniconda3-latest-Linux-x86_64.sh
-
-# 3. navigate to where you want to keep your shellcast directory and clone the shellcast repo there using the following code
-git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git
-
-# 4. make sure you have the repo downloaded
-ls
-
-# 5. return to the home directory
-cd
-
-# 6. copy the shellcast environment yaml set up file into the home directory
-cp .../shellcast/analysis/shellcast-env.yml shellcast-env.yml
-# make sure you replace ".../" with the full path to the shellcast repo
-
-# 7. use conda to create an environment based on the requirements in the shellcast environmental yaml file  
-conda env create --prefix /home/ssaia/env_shellcast -f shellcast-env.yml
-# The user will have to replace "ssaia" with their Unity ID.
-
-# 8. activate the environment you created
-conda activate /home/ssaia/env_shellcast
-# The user will have to replace "ssaia" with their Unity ID.
-
-# 9. see that the packages are loaded
-conda list --explicit
-
-# 10. to see other conda environment help see the cheat sheet here:
-# https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf
-```
-
-This will set up an environment that has Python and R while also installing all the packages that are required to run the ShellCast analysis scripts. If you'd like to install R and RStudio manually on your local machine (this might help to have RStudio when debugging), you can install R by downloading it from CRAN [here](https://cran.r-project.org/mirrors.html) and you can install RStudio by downloading it [here](https://www.rstudio.com/products/rstudio/download/#download).
-
 ## 5. Common Development Tasks
 
 ### 5.1 Use the Cloud SQL proxy (TCP and Unix socket)
@@ -151,15 +110,33 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 
 ### 5.2 Run the application locally
 
-1. Make sure the Python virtual environment is activated and that you are in the root of your local repository.
+1. Make sure the Python virtual environment is activated under the `web` directory.
 2. Make sure the Cloud SQL proxy is started with a Unix socket (see [Use the Cloud SQL proxy](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
-3. Run the Python app by running `python main.py`.
-4. Now you can navigate to [http://localhost:3361](http//:localhost:3361) in your browser to see the web app.
+3. Change directory `cd shellcast-web-{state}`
+4. Run the Python app by running `python main.py`.
+5. Now you can navigate to [http://localhost:3361](http//:localhost:3361) in your browser to see the web app.
 
 ### 5.3 Deploy the app to Google App Engine
 
 1. Make sure that you are signed in and using the correct project (ncsu-shellcast) by running `gcloud info`.
-2. From the root directory of your local repository, you can deploy the application to Google App Engine by running `gcloud app deploy`.
+2. From the `shellcast-web-{state}` directory, you can deploy the application to Google App Engine by running `gcloud app deploy`. Gcloud app deploy migrates traffic to a newer version by default. If you do not want traffic to migrate to a new version, you can deploy application with --no-promote option, `gcloud app deploy --no-promote`. For more information, read [gcloud app deploy ](https://cloud.google.com/sdk/gcloud/reference/app/deploy) documentation.
+
+### 5.4 Clean up Google App Engine storage
+Please read the [An Overview of App Engine](https://cloud.google.com/appengine/docs/legacy/standard/php/an-overview-of-app-engine#limits) document before deploying your application. ShellCast uses a free app service that allows 5 services and 15 versions per app. It is recommended that when you deploy an app, you delete versions you are not using, along with cached container images for better resource management. If you exceed the limits, you may be charged for the additional resources used. For more information, see [App Engine Pricing](https://cloud.google.com/appengine/pricing).
+
+#### 5.4.1 Delete old versions of the app
+For easier monitoring of deployed versions, you should sign in to Google Cloud Console before deploying applications. Go to __App Engine__ in __Google Cloud Console__ and look under __Services__ for __Versions__. Delete unused versions of each app service.
+
+#### 5.4.2 Delete container images
+Instructions are provided for deleting container images in [Clean up images in Container Registry](https://cloud.google.com/artifact-registry/docs/transition/clean-up-images-gcr).
+
+__You can delete container images:__</br>
+1. Sign in __Google Cloud Console__ and go to __Cloud Storage__
+2. Click `us.artifact.[project name].appspot.com` in Bucket list
+3. Browse `us.artifact.{project name}.appspot.com/containers/images`
+4. Delete all hashed name files </br>
+
+_Note: As you are deleting all of them, you cannot use the cached image for the next deployment of your application. If this is the case, use `gcloud app deploy --no-cache`._ </br></br>
 
 ### 5.4 Mirroring code updates on GitHub public repo
 
@@ -168,7 +145,8 @@ By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database i
 
 We created the GitHub public repo and initiated remote mirroring after realizng the public view of the NCSU Enterprise GitHub repo was only public with NCSU authentication (i.e., public to only folks affiliated with NCSU).
 
-## 6. Testing
+## 6. Testing 
+⚠️ The test is not working at the moment. Updates are required.
 
 [pytest](https://docs.pytest.org/en/latest/) is used for unit testing.  [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) is used to generate code coverage reports.  The unit tests use pytest fixtures quite extensively.  See the [pytest fixtures documentation](https://docs.pytest.org/en/stable/fixture.html) for more information.  All of the fixtures are specified in tests/conftest.py.
 

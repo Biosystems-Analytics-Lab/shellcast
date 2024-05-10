@@ -20,28 +20,31 @@ _The following instructions assume that you are using [Sequel Pro](https://seque
 
 ShellCast uses a MySQL 5.7 instance hosted on Google Cloud SQL.
 
-There are 6 tables.
+There are 7 tables for North Carolina and Florida. There is no 'cmu' table for South Carolina. Each state has a slightly different set of table columns. The database table schema can be found in the `analysis/shellcast-analysis/db_scripts` directory in the sql files.
 - users
   - Stores information about users.
   - User accounts and authentication are mainly handled by Firebase.  In our database, we simply create a user record when a new user registers through Firebase and store the Firebase UID in the record along with other information.
 - user_leases
   - Stores the leases that users have added to their accounts.
   - Leases are associated with a particular user.  If two users create two of the exact same leases, then they will still be stored as two different records in the database.
-- ncmdf_leases
-  - Stores all of the leases registered with the North Carolina Division of Marine Fisheries (NCDMF).  These are the leases that users can search for in the application and then add to their accounts.
-  - The records in this table are "manually" added and should be updated periodically.  There were intentions to automate the retrieval of leases directly from NCDMF's database on a regular basis, but this has not been set up.
+- leases
+  - Stores all of the leases registered with an organization in each state.  These are the leases that users can search for in the application and then add to their accounts.
+  - The records in this table are "manually" added and should be updated periodically.
 - cmus
-  - Stores the NCDMF conditional management units (CMU).
+  - Stores the conditional management units (CMU) or shellfish harvested area (SHA).
+  - Records in this table are manually added and should be updated when any changes occur.
 - cmu_probabilities
   - Stores calculated closure probabilities for each CMU.
-  - These probabilities are calculated and added to the database on a daily basis.  The probability for the CMU that a given lease belongs to is also the probability for that lease.
+  - These probabilities are calculated and added to the database on a daily basis. The probability for the CMU that a given lease belongs to is also the probability for that lease.
 - notification_log
   - Stores a log of all notifications that are sent to users.
   - Each notification is associated with a user that the notification is sent to as well as the closure probability that triggered the notification.
+- phone_service_providers
+  - Stores information about phone service providers.
+  - This table is used to determine the email-to-SMS gateway for a user's phone number.  This is used to send text notifications to users.
 
-![A diagram showing the fields for each database table and the relationships between them.](images/database_diagram.png)
-
-There are 3 "databases" in the MySQL instance: `shellcast`, `shellcast_dev`, and `shellcast_testing`.  `shellcast` is the production database that the live, public site uses.  `shellcast_dev` is the development database that is used when running the application on a local machine.  `shellcast_testing` is a database that is used for running the unit tests for the application.  `shellcast_testing` is wiped clean after every test.
+There are 3 "databases" in the MySQL instance: `shellcast_fl`, `shellcast_nc`, and `shellcast_sc` production database that the live, public site uses.  `shellcast_dev` is the development database that is used when running the application on a local machine.  `shellcast_testing` is a database that is used for running the unit tests for the application.  `shellcast_testing` is wiped clean after every test. </br></br>
+Alternatively, you can use locally installed MySQL or a Docker MySQL image for ShellCast analysis development. Modify the `config.ini` database connection variable and the database name in `[state]_main.py` to use the new database connection.
 
 ## 2. Connecting to Google Cloud SQL
 
@@ -50,7 +53,7 @@ There are 3 "databases" in the MySQL instance: `shellcast`, `shellcast_dev`, and
 3. Start a TCP connection by running the first command in the [Use the Cloud SQL proxy](DEVELOPER.md#51-use-the-cloud-sql-proxy-tcp-and-unix-socket) section in the [docs/DEVELOPER.md](/docs/DEVELOPER.md) documentation.
 4. Now you can connect to the database instance with Sequel Pro (or any other SQL client) with the following connection details:
   - Host: 127.0.0.1
-  - Username: root
+  - Username: (you should get the password from the maintainers of ShellCast if you're working on ShellCast)
   - Password: (you should get the password from the maintainers of ShellCast if you're working on ShellCast)
   - Database: shellcast
   - Port: 3306
@@ -58,7 +61,8 @@ There are 3 "databases" in the MySQL instance: `shellcast`, `shellcast_dev`, and
 
 ## 3. Downloading Database Tables
 
-You can download the current state of the database as CSV files using Sequel Pro.
+You can download the current state of the database as CSV files using Sequel Pro or MySQL Workbench.</br></br>
+__Instructions for Sequel Pro__: </br>
 1. Select all of the tables you'd like to download records for.
 2. Click the gear icon at the bottom left of the window.
 3. Choose "Export > As CSV file...".

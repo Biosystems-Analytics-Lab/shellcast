@@ -9,15 +9,22 @@ For more information, please visit [our informational page](https://sustainable-
 
 ## Table of Contents
 
-1. [Third-Party Services](#1-third-party-services)
+1. [Folders](#1-folders)
+2. [Third-Party Services](#2-third-party-services)
+3. [Architecture Overview](#3-architecture-overview)
+4. [Documentation Overview](#4-documentation-overview)
+5. [Contact Information](#5-contact-information)
 
-2. [Architecture Overview](#2-architecture-overview)
+## 1. Folders
+- __analysis__ - Contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](docs/ANALYSIS.md).
+- __db-scripts__ - Contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
+- __docs__ - Contains all of the documentation for the ShellCast application.
+- __web__ - Contains all of the code related to the web application.  This code is hosted on Google App Engine and is the main interface for users to interact with the application.
+  - __shellcast-web-fl__ - ShellCast web for FL
+  - __shellcast-web-nc__ - ShellCast web for NC
+  - __shellcast-web-sc__ - ShellCast web for SC
 
-3. [Documentation Overview](#3-documentation-overview)
-
-4. [Contact Information](#4-contact-information)
-
-## 1. Third-Party Services
+## 2. Third-Party Services
 
 Various third-party services are used as part of the ShellCast web app.
 
@@ -35,7 +42,7 @@ NCSU Enterprise GitHub
 - Available through https://github.ncsu.edu/login
 - The NCSU Enterprise GitHub repo is also mirrored to add and push to a remote GitHub (public) repo at https://github.com/Biosystems-Analytics-Lab/shellcast. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
 
-## 2. Architecture Overview
+## 3. Architecture Overview
 
 ![A diagram showing the data flow of the ShellCast application.](docs/images/architecture_diagram.png)
 
@@ -52,7 +59,7 @@ NCSU Enterprise GitHub
 11. Email notifications show a detailed list of a user's leases that may close soon. Email notifications are sent using the user's email address.
 12. Text notifications consist of a short message with a link back to ShellCast site. Text notifications are sent using the user's phone number and the SMS gateway for the user's phone service provider.
 
-## 3. Documentation Overview
+## 4. Documentation Overview
 
 Instructions explaining how to perform a variety of tasks can be found in the following documents in the `docs` directory [here](/docs/).
 
@@ -62,7 +69,8 @@ Instructions explaining how to perform a variety of tasks can be found in the fo
 - [docs/DEVELOPER.md](/docs/DEVELOPER.md) explains the structure of the repository, how to setup a full development environment, and how to perform common development tasks.
 - [docs/LICENSE.md](/docs/LICENSE.md) explains the ShellCast license.
 - [docs/MANUAL_UPDATES.md](/docs/MANUAL_UPDATES.md) explains how to make simple updates to ShellCast.
+- [docs/WEB.md](/docs/WEB.md) explains the various web pages and how to set up the web on Google App Engine.
 
-## 4. Contact Information
+## 5. Contact Information
 
 If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Makiko Shukunobe (mshukun at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu). 
