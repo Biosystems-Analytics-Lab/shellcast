@@ -65,6 +65,8 @@ CREATE TABLE user_leases (
 	created datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
     CONSTRAINT unique_leases_per_user UNIQUE (user_id, lease_id)
+    FOREIGN KEY (user_id) REFERENCES user(id)
+    FOREIGN KEY (lease_id) REFERENCES leases(id)
 );
 
 -- Stores a log of all notifications that are sent to users.

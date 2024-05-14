@@ -81,6 +81,7 @@ CREATE TABLE cmu_probabilities (
   prob_2d_perc tinyint(3) NULL,
   prob_3d_perc tinyint(3) NULL,
   created datetime DEFAULT NOW()
+  FOREIGN KEY (lease_id) REFERENCES leases(lease_id)
 );
 
 -- Mobile phone service providers
