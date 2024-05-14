@@ -62,24 +62,23 @@ _Please note that some steps in this document will only work on a Unix machine (
 
 Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
-### 4.2 Install and initialize Google Cloud SDK
-
-The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download, install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
-
-
-### 4.4 Setup Python virtual environment
+### 4.2 Setup Python virtual environment
 
 1. Make sure Google App Engine supports Python version installed on your machine. See Google documentation [here](https://cloud.google.com/sdk/docs/install#supported_python_versions). 
 2. Create a virtual environment using your familiar environment management tool. For example, you can use [venv](https://docs.python.org/3/library/venv.html).
 3. Activate the virtual environment by running `source venv/bin/activate` if on a Linux or Mac machine. If on a Windows machine, run `venv\Scripts\activate.bat`.  Now "python" will refer to the virtual environment's copy of Python 3. You can deactivate the virtual environment by running `deactivate` (Linux/Mac/Windows).
 4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
 
-### 4.5 Install MySQL
+### 4.3 Install and initialize Google Cloud SDK
+
+The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download, install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
+
+### 4.4 Install MySQL
 Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
 
-### 4.6 Cloud SQL Proxy
+### 4.5 Cloud SQL Proxy
 
-#### 4.6.1 Setup the Cloud SQL Proxy
+#### 4.5.1 Setup the Cloud SQL Proxy
 
 Download the cloud SQL proxy if you haven't already done so.  Regardless of where you download it, you can connect to your cloud SQL database from there, but we recommend downloading it under the root of your project for convenience. 
 
@@ -87,7 +86,7 @@ Cloud SQ Proxy can be downloaded from below links along with instructions.
 - https://github.com/GoogleCloudPlatform/cloud-sql-proxy
 - https://cloud.google.com/sql/docs/mysql/sql-proxy 
 
-#### 4.6.2 Cloud SQL Proxy Connection
+#### 4.5.2 Cloud SQL Proxy Connection
 
 _This step cannot be performed on a Windows machine._
 

@@ -2,26 +2,21 @@
 
 This document is intended to help a developer understand the ShellCast database structure and make changes to the database.
 
-_The following instructions assume that you are using [Sequel Pro](https://sequelpro.com/) as your database client.  Unfortunately, Sequel Pro is only available on Mac, however, you should be able to use any database client to access the database by following the instructions under [Connecting to Cloud SQL](#2-connecting-to-google-cloud-sql).  A powerful alternative to Sequel Pro is [DBeaver](https://dbeaver.io/) which is free, open source, and multiplatform._
-
 ## Table of Contents
 
 1. [Database Design](#1-database-design)
-
 2. [Connecting to Google Cloud SQL](#2-connecting-to-google-cloud-sql)
-
 3. [Downloading Database Tables](#3-downloading-database-tables)
-
 4. [Editing User Information and Leases](#4-editing-user-information-and-leases)
-
 5. [Contact Information](#5-contact-information)
 
 ## 1. Database Design
 
-ShellCast uses a MySQL 5.7 instance hosted on Google Cloud SQL.
-⚒️_TODO: Upgrade to MySQL 8.0_
+ShellCast uses a MySQL 5.7 instance hosted on Google Cloud SQL.</br>
+⚒️ _TODO: Upgrade to MySQL 8.0_
 
-There are 7 tables for North Carolina and Florida. There is no 'cmu' table for South Carolina. Each state has a slightly different set of table columns. The database table schema can be found in the `analysis/shellcast-analysis/db_scripts` directory in the sql files.
+Database table descriptions as below. Each state has a slightly different set of table columns. The database table schema can be found in the `analysis/shellcast-analysis/db_scripts` directory in the sql files.
+
 - users
   - Stores information about users.
   - User accounts and authentication are mainly handled by Firebase.  In our database, we simply create a user record when a new user registers through Firebase and store the Firebase UID in the record along with other information.
@@ -44,45 +39,62 @@ There are 7 tables for North Carolina and Florida. There is no 'cmu' table for S
   - Stores information about phone service providers.
   - This table is used to determine the email-to-SMS gateway for a user's phone number.  This is used to send text notifications to users.
 
-There are 3 "databases" in the MySQL instance: `shellcast_fl`, `shellcast_nc`, and `shellcast_sc` production database that the live, public site uses.  `shellcast_dev` is the development database that is used when running the application on a local machine.  `shellcast_testing` is a database that is used for running the unit tests for the application.  `shellcast_testing` is wiped clean after every test. </br></br>
+There are 3 "databases" in the Cloud SQL MySQL instance: `shellcast_fl`, `shellcast_nc`, and `shellcast_sc` production database that the live, public site uses.  `shellcast_dev` is the development database that is used when running the application on a local machine.  `shellcast_testing` is a database that is used for running the unit tests for the application.  `shellcast_testing` is wiped clean after every test. </br></br>
 Alternatively, you can use locally installed MySQL or a Docker MySQL image for ShellCast analysis development. Modify the `config.ini` database connection variable and the database name in `[state]_main.py` to use the new database connection.
 
-![`shellcast_fl`](images/shellcast_fl_db.png)
+Database diagrams for each state are shown below:
 
 
 
+__DB Name: shellcast_nc__
 ![shellcast_nc](/Users/makiko/CGAProjects/NCSUGitHubProjects/shellcast/docs/images/shellcast_nc_db.png)
 
+
+
+__DB Name: shellcast_sc__
 ![shellcast_sc](/Users/makiko/CGAProjects/NCSUGitHubProjects/shellcast/docs/images/shellcast_sc_db.png)
 
-## 2. Connecting to Google Cloud SQL
 
-1. Complete the [Install and initialize Google Cloud SDK](DEVELOPER.md#41-install-and-initialize-google-cloud-sdk)
-2. Complete the [Download Cloud SQL proxy](DEVELOPER.md#42-download-cloud-sql-proxy).
-3. Start a TCP connection by running the first command in the [Use the Cloud SQL proxy](DEVELOPER.md#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)
-4. Now you can connect to the database instance with Sequel Pro (or any other SQL client) with the following connection details:
-  - Host: 127.0.0.1
-  - Username: (you should get the password from the maintainers of ShellCast if you're working on ShellCast)
-  - Password: (you should get the password from the maintainers of ShellCast if you're working on ShellCast)
-  - Port: 3306
+
+__DB Name: shellcast_fl__
+![`shellcast_fl`](images/shellcast_fl_db.png)
+
+## 2. Connecting to Google Cloud SQL with MySQL Workbench
+
+1. Install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
+
+2. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
+3. Install MySQL Workbench - [MySQL Community Downloads](https://dev.mysql.com/downloads/workbench/).
+4. Download the cloud SQL proxy if you haven't already done so.  Regardless of where you download it, you can connect to your cloud SQL database from there, but we recommend downloading it under the root of your project for convenience. Cloud SQ Proxy can be downloaded from below links along with instructions.
+   - https://github.com/GoogleCloudPlatform/cloud-sql-proxy
+   - https://cloud.google.com/sql/docs/mysql/sql-proxy 
+5. Make TCP connection ```./cloud-sql-proxy --port 3306 "{instance_connection_name}"```. You can obtain "instance connection name" from the Google Cloud Console. Go to [View instance information](https://console.cloud.google.com/sql/instances) and click "Instance ID". Copy "Connection name" under "Connect to this instance" section and Rreplace "{instance_connection_name}".
+6. Connect to the database instance with MySQL Workbench
+   - Now you can connect to the database instance with the following connection details:
+     - Host: 127.0.0.1
+     - Username: (you should get the password from the maintainers of ShellCast if you're working on ShellCast)
+     - Password: (you should get the password from the maintainers of ShellCast if you're working on ShellCast)
+     - Port: 3306
+7. You can close MySQL Workbench connection by closing DB connection tab.
+8. `Ctrl+C` to close the Cloud SQL Proxy connection.
 
 ## 3. Downloading Database Tables
 
-3.1 Using MySQL Client
-1. See [Connect using a MySQL client](https://cloud.google.com/sql/docs/mysql/connect-admin-ip#install-mysql-client)
-2. ```sql 
-   SELECT * FROM shellcast_nc.cmu_probabilities INTO OUTFILE '/path/to/directory/nc_cmu_probabilities.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
-   ```
-3.2 Using MySQL Workbench
+3.1 Using MySQL Workbench
+
 1. Download MySQL Workbench from [here](https://dev.mysql.com/downloads/workbench/)
 2. Use Cloud SQL Proxy to connect to the database 
 3. See [Creating A New MySQL Connection](https://dev.mysql.com/doc/workbench/en/wb-getting-started-tutorial-create-connection.html)
-3. You can download the current state of the database as CSV files using MySQL Workbench Sequel Pro or .</br></br>
-__Instructions for Sequel Pro__: </br>
-1. Select all of the tables you'd like to download records for.
-2. Click the gear icon at the bottom left of the window.
-3. Choose "Export > As CSV file...".
-4. A new window should open where you can change some settings related to the export.  The default settings are probably what you want, so just choose where you want to the files to be saved to and click "Export".
+4. You can download the current state of the database as CSV files using MySQL Workbench Sequel Pro or .</br>
+
+### 3.2 Using MySQL Client
+
+1. See [Connect using a MySQL client](https://cloud.google.com/sql/docs/mysql/connect-admin-ip#install-mysql-client)
+2. In terminal, type in SQL query to download the table as a CSV file. For example, to download the `cmu_probabilities` table in the `shellcast_nc` database, you can use the following query:
+
+```sql 
+   SELECT * FROM shellcast_nc.cmu_probabilities INTO OUTFILE '/path/to/directory/nc_cmu_probabilities.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+```
 
 ## 4. Editing User Information and Leases
 
