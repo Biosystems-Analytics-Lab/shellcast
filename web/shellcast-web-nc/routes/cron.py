@@ -16,7 +16,7 @@ from routes.authentication import cronOnly
 # This address must be verified with Amazon SES.
 SENDER = 'ShellCast <shellcastapp@ncsu.edu>'
 # The subject line template for all emails.
-SUBJECT_TEMPLATE = 'ShellCast Forecasts for {}'
+SUBJECT_TEMPLATE = 'NC ShellCast Forecasts for {}'
 # The character encoding for all emails.
 CHARSET = 'UTF-8'
 # The text that is at the beginning of every notification.
