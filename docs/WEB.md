@@ -74,15 +74,78 @@ The Google Cloud SDK is principally a command line tool that allows you to inter
 3. Activate the virtual environment by running `source venv/bin/activate` if on a Linux or Mac machine. If on a Windows machine, run `venv\Scripts\activate.bat`.  Now "python" will refer to the virtual environment's copy of Python 3. You can deactivate the virtual environment by running `deactivate` (Linux/Mac/Windows).
 4. Install the app and testing dependencies by running `pip install -r requirements.txt` and then `pip install -r requirements-test.txt`.  If you get errors that mention `error: invalid command 'bdist_wheel'`, then try running `pip install wheel` first.
 
-### 4.5 Download Cloud SQL proxy
+### 4.5 Install MySQL
+Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
 
-You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
+### 4.6 Cloud SQL Proxy
 
-### 4.5 Make a Unix socket directory
+#### 4.6.1 Setup the Cloud SQL Proxy
 
-_This step cannot be performed on a Windows machine. This step is ultimately needed to connect to the database through the Unix socket option of the Cloud SQL proxy. To work around this, I would look into changing the SQLALCHEMY_DATABASE_URI property of your config.py file (see the section below) for the DevConfig and TestConfig objects. You should be able to change the URI so that it connects through a TCP connection in the Dev and Test configurations while still connecting through a Unix socket once deployed to GCP (that's when the regular Config object (production) configuration is used)._
+Download the cloud SQL proxy if you haven't already done so.  Regardless of where you download it, you can connect to your cloud SQL database from there, but we recommend downloading it under the root of your project for convenience. 
 
-To use the Cloud SQL proxy for local development and testing of the web app, a directory is needed for a Unix socket. From the root directory of your local repository, make a new directory named "cloudsql" by running `mkdir cloudsql`.
+Cloud SQ Proxy can be downloaded from below links along with instructions.
+- https://github.com/GoogleCloudPlatform/cloud-sql-proxy
+- https://cloud.google.com/sql/docs/mysql/sql-proxy 
+
+#### 4.6.2 Cloud SQL Proxy Connection
+
+_This step cannot be performed on a Windows machine._
+
+1. Create a "cloudsql" directory under each "shellcast-web-{state}" directory and change the permissions of the directory to 777.
+```bash 
+cd {path to }/shellcast-web-{state}
+mkdir cloudsql
+chmod 777 ./cloudsql
+```
+2. Connect to the database using a Unix socket.</br>
+_You can obtain "instance connection name" from the Google Cloud Console. Go to [View instance information](https://console.cloud.google.com/sql/instances) and click Instance ID. Copy "Connection name" under "Connect to this instance" section and Rreplace "{instance_connection_name}"._
+```bash
+cd {path to cloud-slq-proxy}
+./cloud-sql-proxy --unix-socket "./web/shellcast-web-nc/cloudsql" "{instance_connection_name}"
+```
+If the connection is successful, the following Unix socket file will be created in the "cloudsql" directory. VS Code and PyCharm appear to show this file, but not the Finder.
+
+![unix socket](./images/unix_socket.png)
+
+3. `Ctrl+C` to stop the proxy. It will delete the Unix socket file.
+
+__Notes:__</br>
+State-specific web applications are hosted by different Google App Engine services, and they are connected to the database through Unix sockets. 
+```python 
+# config.py
+
+@property
+def SQLALCHEMY_DATABASE_URI(self):
+  return 'mysql+pymysql://{}:{}@/{}?unix_socket={}{}'.format(
+  self.DB_USER, self.DB_PASS, self.DB_NAME,
+  self.DB_UNIX_SOCKET_PATH_PREFIX, self.CLOUD_SQL_INSTANCE_NAME)
+```
+
+For development, you can use TCP connection.
+
+1. Modifying __SQLALCHEMY_DATABASE_URI__ property in "config.py".
+```python
+# config.py
+
+# TCP connection
+  @property
+  def SQLALCHEMY_DATABASE_URI(self):
+    uri = sqlalchemy.engine.url.URL.create(
+      drivername="mysql+pymysql",
+      username=Config.DB_USER,
+      password=Config.DB_PASS,
+      host=Config.DB_HOST,
+      port=Config.DB_PORT,
+      database=Config.DB_NAME
+    )
+    return uri.render_as_string(hide_password=False)
+```
+2. Start the Cloud SQL proxy with TCP connection.
+```bash
+./cloud-sql-proxy --port 3306 "{instance_connection_name}"
+```
+3. Restore Unix socket connection when you deploy the application to Google App Engine.
+
 
 ### 4.6 Make a configuration file based on the template file
 
@@ -103,10 +166,12 @@ So what you need to do at this point is:
 ## 5. Common Development Tasks
 
 ### 5.1 Use the Cloud SQL proxy (TCP and Unix socket)
-
-By using the Cloud SQL proxy, you can connect to the Google Cloud SQL database instances using any tool that can connect with a TCP connection or a Unix socket (NOTE: you can't use Unix sockets on Windows).  The Cloud SQL proxy also allows the web application to reach the Cloud SQL database for use with local development and testing.
-- To use the Cloud SQL proxy with a TCP connection, run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database=tcp:3306`.
-- To use the Cloud SQL proxy with a Unix socket, you need to make a directory for the Unix socket and then run `<PATH TO PROXY SCRIPT>/cloud_sql_proxy -instances=ncsu-shellcast:us-east1:ncsu-shellcast-database -dir=<PATH TO UNIX SOCKET DIRECTORY>`.  If you're having issues with the Unix socket being created correctly, then make sure your `cloudsql/` directory (and thus your local shellcast repository) is not too deep in your file system.  Unix sockets have a limit on the length of their paths, so make sure the path to your local shellcast repository is relatively shallow.
+1. Modify `cloud-sqp-proxy-tcp.sh` or `cloud-sql-proxy-unix`for Cloud SQL Database connection.
+2. Run the Cloud SQL proxy with TCP connection.
+```bash
+source cloud-sql-proxy-{tcp or unix}.sh
+```
+3. `Ctrl+C` to stop the proxy.
 
 ### 5.2 Run the application locally
 

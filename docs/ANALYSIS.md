@@ -123,7 +123,10 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 
 ### 4.1 Clone the ShellCast GitHub repository
 
-Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`.  It's recommended that you clone the repository to a relatively shallow path in your file system.  If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+Clone the GitHub repository to your machine by running 
+```bash 
+git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`
+```
 
 ### 4.2 Install and initialize Google Cloud SDK
 
@@ -131,7 +134,25 @@ The Google Cloud SDK is principally a command line tool that allows you to inter
 
 ### 4.3 Download Cloud SQL proxy
 
-You can download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). Take note of where you download the proxy script. You will need to run it often, so keep it in a place that's easy to reference. Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/). Optionaly, iinstall [MySQL Workbench](https://dev.mysql.com/downloads/workbench) to visualize and query the database.
+__Prerequisite__: MySQL need to be installed on your machine. If you don't have MySQL installed, download MySQL from [here](https://dev.mysql.com/downloads/mysql/).
+
+Download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). 
+```bash
+cd {path to}/shellcast
+curl -o cloud-sql-proxy {url to download the proxy}
+chmod +x ./cloud-sql-proxy
+```
+TCP connection is used for connecting to the database. Run the following command to start the proxy. 
+```bash
+./cloud-sql-proxy --port 3306 {instance name}
+```
+You can quit proxy by `Control + c`. It is recommended creating a bash file in the same directory including code below since you will be using it frequently. 
+```bash
+#!/bin/sh
+./cloud-sql-proxy --port 3306 {instance name}
+```
+To connect to Cloud SQL instance, `source ./{filename}.sh` in the terminal.
+
 
 ### 4.4 Setup Python virtual environment
 
@@ -143,12 +164,11 @@ Create `config.ini` and `config.sh` files from `config_template.ini` and `config
 `config.ini` file should be updated whenever a change occurs in the fields, data names, or areas of interest.
 
 
-
 ### 4.5 Download and Compile Wgrib2
 
 Wgrib2 is used to crop CONUS PQPF data according to the area of interest. 
 
-Download the application on [here](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2) and follow [these instructions](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING). For Mac user, this website [theweatherguy blog](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) might help. It is necessary to install the gcc/gfortran compilers for Wgrib2 compilation. You can download `gcc` using Homebrew on Mac by running `brew install gcc`. It contains gcc, g++, gfortran, etc. 
+Download the application on [here](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2) and follow [these instructions](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING). For Mac user, this website [theweatherguy blog](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) might help. It is necessary to install the gcc/gfortran compilers for Wgrib2 before the compilation. You can download `gcc` using Homebrew on Mac by running `brew install gcc`. It contains gcc, g++, gfortran, etc. 
 If you are new to compiling software, you might find the following resources helpful:
   * https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/
   * https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/compile_questions.html
@@ -156,7 +176,7 @@ If you are new to compiling software, you might find the following resources hel
   * https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/_README.cygwin
   * https://theweatherguy.net/blog/weather-links-info/how-to-install-and-compile-wgrib2-on-mac-os-10-14-6-mojave/
 
-If you encounter a subprocess not running issue under cron on MacOS, you might want to try a few things.
+In case, you encounter a subprocess not running issue under cron on MacOS, you might want to try a few things.
 
 * Turn on Terminal in Full Disk Access - **System Settings** > **Privacy and Security** > **Full Disk Access** > turn on **Terminal**
 
@@ -193,16 +213,27 @@ The cron job environment differs from the development environment. It is importa
 * shellcast-analysis/src/fl_pqpf/xmrg_proc.sh
 * shellcast-analysis/ncep-lib-utils/nceplibs/bin/cnvgrib
 
+### 5.2 Terminal Permission
+You need to give the terminal permission to run the script. On the Mac; 
+1. Go to __Settings__ > __Security & Privacy__
+2. Click on __Full Disk Access__
+3. Search __Terminal__ in the list and turn it on
+   1. If you don't see __Terminal__ in the list, click __+__ sign at the bottom
+   2. In __Privacy & Security__ dialog, type in your __Password__ > click __Modify Settings__
+   3. In __Application__ window, __Utilities__ > __Terminal__ > __Open__
+   4. Search __Terminal__ in the list and turn it on
+
+
 ### 5.2 Crontab Set Up
 
-Tools for CRON jobs can be chosen freely by developers. Currently, ShellCast analyses are run on the temporary iMac computer using the `crontab` command. 
+Tools for CRON jobs can be chosen freely by developers. Currently, ShellCast analyses are run on iMac computer using the `crontab` command. 
 `crontab -l` will list all the current cron jobs. To edit the cron jobs, run `crontab -e`.
 It will open default text editor (e.g. nano, vi, vim, and etc) where you can add the following line to run the analysis every day at 6:40 am ET and save logs.
 For example, your default editor is vi, type `i` to insert text, and then type the following line. After that, press `esc` and type `:wq` to save and exit.</br>
 </br>
 ```40 6 * * * source {path to }/analysis_run.sh >> ~Desktop/cron.log 2>&1```
 
-Note that In pqpf_proc.py, subprocess is used to call Wgrib2 to crop PQPF data. Wgrib2 was unable to run when cron job was set. To work around this issue, the full path had to be included in the code.
+_Note that In __pqpf_proc.py__, __subprocess__ is used to call __Wgrib2__ to crop PQPF data. __Wgrib2__ was unable to run when cron job was set. To work around this issue, the full path had to be included in the code._
 
 ### 5.3 File Permissions
 If a cron job encounters an file permission issue, run the following code. `shellcast-analysys/data` directory may be prone to the issue since it stores data outputs.</br><br>
