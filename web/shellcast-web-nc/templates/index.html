@@ -80,42 +80,33 @@
 {% endblock %}
 
 {# <!-- Content --> #}
-<div class="content">
-    <div class="container" style="padding-top:30px;">
-        <div class="d-flex flex-row justify-content-center">
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="static/img/nc.jpg" alt="NC state blue">
-                    <div class="card-body">
-                        <p class="card-text"></p>
-                        <div class="text-center">
-                            <a href="/map" class="btn btn-primary" style="width: 90%;">North Carolina</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="static/img/sc.jpg" alt="SC state blue">
-                    <div class="card-body">
-                        <p class="card-text"></p>
-                        <div class="text-center">
-                            <a href="https://shellcast-sc-dot-ncsu-shellcast.appspot.com/map" class="btn btn-primary" style="width: 90%;">South Carolina</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="static/img/fl.jpg" alt="FL state blue">
-                    <div class="card-body">
-                        <p class="card-text"></p>
-                        <div class="text-center">
-                            <a href="https://shellcast-fl-dot-ncsu-shellcast.appspot.com/map" class="btn btn-primary" style="width: 90%;"> Florida</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="content index-content">
+    <div class="cards-wrapper">
+        <div class="card-deck">
+          <div class="card">
+              <img class="card-img-top" src="static/img/nc.jpg" alt="NC state blue">
+              <div class="card-body">
+                  <div class="text-center">
+                      <a href="/map" class="btn btn-primary" style="width: 90%;">North Carolina</a>
+                  </div>
+              </div>
+          </div>
+          <div class="card">
+              <img class="card-img-top" src="static/img/sc.jpg" alt="SC state blue">
+              <div class="card-body">
+                  <div class="text-center">
+                      <a href="https://shellcast-sc-dot-ncsu-shellcast.appspot.com/map" class="btn btn-primary" style="width: 90%;">South Carolina</a>
+                  </div>
+              </div>
+          </div>
+          <div class="card">
+              <img class="card-img-top" src="static/img/fl.jpg" alt="FL state blue">
+              <div class="card-body">
+                  <div class="text-center">
+                      <a href="https://shellcast-fl-dot-ncsu-shellcast.appspot.com/map" class="btn btn-primary" style="width: 90%;"> Florida</a>
+                  </div>
+              </div>
+          </div>
         </div>
     </div>
 </div>

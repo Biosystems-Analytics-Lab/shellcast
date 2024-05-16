@@ -189,3 +189,24 @@ a:hover, a:focus, .btn-link:hover, .dropdown-item:hover {
   background-color: #c82333;
   border-color: #bd2130;
 }
+
+.cards-wrapper{
+  width: 76%;
+  margin-top: 30px;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+/*https://stackoverflow.com/questions/36430816/bootstrap-4-card-deck-with-number-of-columns-based-on-viewport*/
+@media (max-width: 900px) {
+    .card-deck .card {
+      min-width: 50.1%; /* 1 Column */
+      margin-bottom: 12px;
+    }
+}
+
+.index-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
