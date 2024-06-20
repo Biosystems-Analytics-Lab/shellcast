@@ -4,23 +4,13 @@
     <!-- Bootstrap Table -->
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
     <script defer src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
-
-    <!-- Custom JS -->
-    {#  <script defer src="https://maps.googleapis.com/maps/api/js?key= {{- mapsAPIKey -}} "></script>#}
-
+    <!-- Map -->
     <script defer src="{{ url_for('static', filename='map/map.js') }}" type="module"></script>
     <!-- Custom CSS -->
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='map/map.css') }}">
+    <!-- OpenLayers -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
-    {#    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"#}
-    {#          integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="#}
-    {#          crossorigin=""/>#}
-    {#    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"#}
-    {#            integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="#}
-    {#            crossorigin=""></script>#}
-    {#    <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>#}
-    {#    <script src="https://unpkg.com/esri-leaflet-vector@4.0.0/dist/esri-leaflet-vector.js" crossorigin=""></script>#}
 {% endblock %}
 
 {% block content %}
