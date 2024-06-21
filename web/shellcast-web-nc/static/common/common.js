@@ -17,32 +17,32 @@ const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 
 /**
- * Displays the UI for a signed-in user.
+ * Displays the UI for a signed in user.
  * @param {!firebase.User} user
  */
 function handleNavbarSignedIn(user) {
   // hide the "Sign In" link
-  document.getElementById("account-sign-in").style.display = "none";
+  document.getElementById('account-sign-in').style.display = 'none';
 
   // show the account dropdown menu
-  document.getElementById("account-dropdown-div").style.display = "block";
+  document.getElementById('account-dropdown-div').style.display = 'block';
 
   // change the dropdown menu's text
-  document.getElementById("account-dropdown").textContent = user.email;
+  document.getElementById('account-dropdown').textContent = user.email;
 }
 
 /**
- * Displays the UI for a signed-out user.
+ * Displays the UI for a signed out user.
  */
 function handleNavbarSignedOut() {
   // show the "Sign In" link
-  document.getElementById("account-sign-in").style.display = "block";
+  document.getElementById('account-sign-in').style.display = 'block';
 
   // hide the account dropdown menu
-  document.getElementById("account-dropdown-div").style.display = "none";
+  document.getElementById('account-dropdown-div').style.display = 'none';
 
   // change the dropdown menu's text
-  document.getElementById("account-dropdown").textContent = "Account";
+  document.getElementById('account-dropdown').textContent = 'Account';
 }
 
 async function authorizedFetch(url, options = {}) {
@@ -83,7 +83,7 @@ async function authorizedFetch(url, options = {}) {
     // init event listeners
     document
       .getElementById("account-dropdown-sign-out")
-      .addEventListener("click", async (event) => {
+      .addEventListener("click", async () => {
         await signOut(auth);
         location.reload();
       });
