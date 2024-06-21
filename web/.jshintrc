@@ -1,0 +1,12 @@
+{
+  "esversion": 8,
+  "browser": true,
+  "strict": "global",
+  "undef": true,
+  "unused": true,
+  "globals": {
+    "ol": true,
+    "firebase": true,
+    "$": true
+  }
+}
