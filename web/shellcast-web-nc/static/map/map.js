@@ -1,6 +1,6 @@
 "use strict";
 import {auth, authorizedFetch} from "../common/common.js";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js"; // Firebase configuration
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 /** The ID of the HTML element that holds the map. */
 const MAP_EL_ID = "closure-map";

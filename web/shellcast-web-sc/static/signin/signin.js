@@ -1,20 +1,30 @@
-const FIREBASE_UI_CONFIG = {
-  signInSuccessUrl: '/',
-  callbacks: {
-    // signInSuccessWithAuthResult: (authResult, redirectUrl) => {},
-    signInFailure: (error) => {
-      console.log('Failure during sign in');
-      console.log(error);
-    }
-  },
-  signInOptions: [
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-    // firebase.auth.TwitterAuthProvider.PROVIDER_ID
-  ],
-  credentialHelper: firebaseui.auth.CredentialHelper.NONE
-};
+"use strict";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { auth } from "../common/common.js";
 
-const ui = new firebaseui.auth.AuthUI(firebase.auth());
-ui.disableAutoSignIn();
-ui.start('#firebaseui-container', FIREBASE_UI_CONFIG);
+document
+  .getElementById("google-btn")
+  .addEventListener("click", async (event) => {
+    event.preventDefault();
+    if (!auth.currentUser) {
+      const provider = new GoogleAuthProvider();
+
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          if (result.user) {
+            window.location.href = "/map";
+          }
+        })
+        .catch((error) => {
+          // TODO: handle error properly (e.g., display error message in modal)
+          alert(error.message);
+          // // Handle Errors here.
+          // const errorCode = error.code;
+          // const errorMessage = error.message;
+          // const email = error.customData.email;
+        });
+    }
+  });
