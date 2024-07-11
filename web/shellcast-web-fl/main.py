@@ -1,20 +1,21 @@
-import os
 import logging
-from flask import Flask
+import os
 
 import firebase_admin
-
-from models import db
-
-from routes.pages import pages
-from routes.api import api
-from routes.cron import cron
+import requests
+from firebase_admin import auth
+from flask import Flask, request, Response
 
 from config import Config, DevConfig
+from models import db
+from routes.api import api
+from routes.cron import cron
+from routes.pages import pages
 
 # check if running on Google App Engine
-# (just checking for one of the environment variables found here: https://cloud.google.com/appengine/docs/standard/python3/runtime#environment_variables)
-if ('GAE_APPLICATION' in os.environ):
+# (just checking for one of the environment variables found here:
+# https://cloud.google.com/appengine/docs/standard/python3/runtime#environment_variables)
+if 'GAE_APPLICATION' in os.environ:
     # integrate Python logging module with Google Cloud Logging (captures INFO level and higher by default)
     import google.cloud.logging
 
@@ -61,6 +62,26 @@ def createApp(configObj):
             return flag
 
         return dict(probabilityToRisk=probabilityToRisk)
+
+    @app.route('/__/auth', methods=['POST', 'GET'])
+    def proxy_to_firebase():
+        id_token = request.headers.get('Authorization', '').split(' ').pop()
+        try:
+            auth.verify_id_token(id_token)
+        except ValueError:
+            firebase_url = 'https://ncsu-shellcast.firebaseio.com' + request.full_path
+            resp = requests.request(
+                method=request.method,
+                url=firebase_url,
+                headers={key: value for (key, value) in request.headers if key != 'Host'},
+                data=request.get_data(),
+                cookies=request.cookies,
+                allow_redirects=False)
+            excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+            headers = [(name, value) for (name, value) in resp.raw.headers.items()
+                       if name.lower() not in excluded_headers]
+            response = Response(resp.content, resp.status_code, headers)
+            return response
 
     return app
 
