@@ -1,6 +1,6 @@
 "use strict";
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-import {getAuth, onAuthStateChanged, signOut,} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js"; // Firebase configuration
+import {getAuth, onAuthStateChanged, signOut,} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 // Firebase configuration
 const FIREBASE_CONFIG = {
@@ -17,7 +17,7 @@ const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 
 /**
- * Displays the UI for a signed in user.
+ * Displays the UI for a signed-in user.
  * @param {!firebase.User} user
  */
 function handleNavbarSignedIn(user) {
@@ -32,7 +32,7 @@ function handleNavbarSignedIn(user) {
 }
 
 /**
- * Displays the UI for a signed out user.
+ * Displays the UI for a signed-out user.
  */
 function handleNavbarSignedOut() {
   // show the "Sign In" link
@@ -47,7 +47,8 @@ function handleNavbarSignedOut() {
 
 async function authorizedFetch(url, options = {}) {
   // request the token which may potentially be expired
-  // (don't get an updated token just yet because you are unnecessarily refreshing tokens with sign-in service providers and this might drive you over your daily quotas)
+  // (don't get an updated token just yet because you are unnecessarily refreshing tokens with sign-in service
+  // providers and this might drive you over your daily quotas)
   // TODO actually verify the statement above; it may no longer apply?!?!
   const userIdToken = await auth.currentUser.getIdToken(false);
   // add the auth token to the headers
