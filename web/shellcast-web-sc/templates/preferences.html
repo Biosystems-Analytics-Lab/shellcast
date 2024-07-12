@@ -3,16 +3,12 @@
 {% block title %}Preferences - ShellCast{% endblock %}
 
 {% block additional_head %}
-  <!-- FirebaseUI CSS -->
-  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
-
-  <!-- FirebaseUI JS -->
-  <script defer src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
   <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
   <!-- Custom JS -->
-  <script defer src="{{ url_for('static', filename='preferences/preferences.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
+  <script defer src="{{ url_for('static', filename='preferences/preferences.js') }}" type="module"></script>
   <script defer src="{{ url_for('static', filename='preferences/prefmap.js') }}"></script>
 
   <!-- Custom CSS -->
@@ -29,7 +25,9 @@
   <div id="user-signed-in" style="display: none">
 
     <div id="delete-account-div">
-      <button class="btn btn-danger" type="button" id="delete-account-btn" onclick="$('#account-deletion-modal').modal('show');">Delete Account</button>
+      <button class="btn btn-danger" type="button" id="delete-account-btn"
+              onclick="$('#account-deletion-modal').modal('show');">Delete Account
+      </button>
     </div>
 
     <div id="forms">
@@ -40,7 +38,8 @@
         {# Email #}
         <div class="mb-3">
           <label for="email">Email address</label>
-          <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com" aria-describedby="emailHelp">
+          <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com"
+                 aria-describedby="emailHelp">
           <div class="invalid-feedback">
             Please enter a valid email address.
           </div>
@@ -59,8 +58,11 @@
           <div class="mb-3 col" style="min-width: 300px;">
             <label for="phone-number">Mobile phone number</label>
             <div class="input-group">
-              <div class="input-group-prepend"><div class="input-group-text">+1</div></div>
-              <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(***) ***-****" aria-describedby="phoneHelp">
+              <div class="input-group-prepend">
+                <div class="input-group-text">+1</div>
+              </div>
+              <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(***) ***-****"
+                     aria-describedby="phoneHelp">
               <div class="invalid-feedback" style="width: 100%;">
                 Please enter a valid phone number.
               </div>
@@ -76,9 +78,9 @@
             <label for="service-provider">Mobile service provider</label>
             <select class="form-control" id="service-provider" name="service-provider">
               <option value="">-- Select one --</option>
-            {% for provider in serviceProviders %}
-              <option value="{{ provider.id }}">{{ provider.name }}</option>
-            {% endfor %}
+              {% for provider in serviceProviders %}
+                <option value="{{ provider.id }}">{{ provider.name }}</option>
+              {% endfor %}
             </select>
             <small id="serviceHelp" class="form-text text-muted" style="width: 100%;">
               Providing your mobile phone service provider allows us to send you text messages through your
@@ -113,16 +115,18 @@
           <label>I want to receive notifications for my leases when the risk of temporary harvest closure is:</label>
           {% for probOption in probOptions %}
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="notification-prob" id="notification-prob-{{ probOption }}" value="{{ probOption }}">
-              <label class="form-check-label" for="notification-prob-{{ probOption }}"> {{ probabilityToRisk(probOption) }} or higher</label>
+              <input class="form-check-input" type="radio" name="notification-prob"
+                     id="notification-prob-{{ probOption }}" value="{{ probOption }}">
+              <label class="form-check-label"
+                     for="notification-prob-{{ probOption }}"> {{ probabilityToRisk(probOption) }} or higher</label>
             </div>
           {% endfor %}
           <small class="form-text text-muted">
-            Choose the risk category at which you would like to receive notifications for a lease. 
-            For example, if you choose “Moderate or higher”, you will receive a notification when 
-            any one of your leases has at least a moderate risk of being temporarily closed today, 
-            tomorrow, or in 2 days. We believe you are more likely to receive inaccurate closure warnings 
-            if you select "Moderate or higher" since less rainfall would be needed to trigger a notification, 
+            Choose the risk category at which you would like to receive notifications for a lease.
+            For example, if you choose “Moderate or higher”, you will receive a notification when
+            any one of your leases has at least a moderate risk of being temporarily closed today,
+            tomorrow, or in 2 days. We believe you are more likely to receive inaccurate closure warnings
+            if you select "Moderate or higher" since less rainfall would be needed to trigger a notification,
             and weather forecasts predict small storms less accurately than large storms.
           </small>
 
@@ -151,15 +155,16 @@
 
       <div id="closure-map" style="height: 50vh"></div>
 
-        <div id="popup" class="ol-popup">
+      <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
         <div id="popup-content"></div>
 
-    </div>
+      </div>
       </br>
       <div class="mb-3 search-bar">
         <div class="input-group">
-          <input id="lease-search-text-input" type="text" class="form-control search-input" placeholder="Search for a lease id..." aria-label="Search for a lease id...">
+          <input id="lease-search-text-input" type="text" class="form-control search-input"
+                 placeholder="Search for a lease id..." aria-label="Search for a lease id...">
           <div class="input-group-append">
             <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
             <button class="btn btn-primary" type="button" id="lease-clear-btn">Clear</button>
@@ -179,7 +184,8 @@
   </div>
 
   {# <!-- Account Deletion Modal --> #}
-  <div class="modal fade" id="account-deletion-modal" tabindex="-1" aria-labelledby="account-deletion-label" aria-hidden="true">
+  <div class="modal fade" id="account-deletion-modal" tabindex="-1" aria-labelledby="account-deletion-label"
+       aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -191,12 +197,13 @@
           </p>
           <p>
             Your email address, phone number, mobile phone service provider, and
-            notification preferences will be removed from our database.  You can
+            notification preferences will be removed from our database. You can
             choose to make a new account with the same information later.
           </p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#account-deletion-modal').modal('hide');">Cancel</button>
+          <button type="button" class="btn btn-secondary" onclick="$('#account-deletion-modal').modal('hide');">Cancel
+          </button>
           <button type="button" class="btn btn-danger" id="confirm-account-deletion-btn">Delete Account</button>
         </div>
       </div>
