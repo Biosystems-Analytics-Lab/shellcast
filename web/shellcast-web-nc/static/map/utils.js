@@ -1,4 +1,6 @@
 "use strict";
+import {authorizedFetch} from "../common/common.js";
+
 /** The path to the growing unit boundaries file. */
 const GROWING_UNIT_BOUNDS_PATH = "static/cmu_bounds.geojson";
 /** Partner application points file */
