@@ -1,4 +1,6 @@
 "use strict";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import {auth, authorizedFetch} from "../common/common.js";
 
 /* The number of milliseconds between when a user changes the lease search
    text and when an API request is sent for a lease search */
@@ -22,7 +24,7 @@ async function getProfileInfo() {
     return await res.json();
   }
   console.log("Problem retrieving user profile information.");
-  console.log(res);
+  // console.log(res);
   return null;
 }
 
@@ -185,7 +187,7 @@ function onProfileFormChange(e) {
       selectedProb = Number(radio.value);
     }
   }
-  console.log(selectedProb);
+  // console.log(selectedProb);
   document.getElementById("example-notification").innerHTML =
     generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
 
@@ -272,7 +274,7 @@ async function getGeoJsonLeases() {
     });
   const auzDiv = document.querySelector("#auz-menu");
   for (let i = 0; auz_leases.length; i++) {
-    console.log(auz_leases[i]);
+    // console.log(auz_leases[i]);
     // auzDiv.innerHTML += `<a class="dropdown-item" href="#">auz_leases[i]</a>`;
   }
 }
@@ -352,7 +354,7 @@ function buildLeaseInfoEls() {
   const leasesAccordion = document.getElementById("leases-accordion");
   leasesAccordion.innerHTML = "";
   for (let lease of leases) {
-    console.log("building lease form", lease);
+    // console.log("building lease form", lease);
     lease.rainfall_desc = lease.rainfall_desc.replace(/\"/g, "&quot;");
     leasesAccordion.innerHTML += createLeaseInfoEl(lease);
   }
@@ -385,6 +387,7 @@ function initLeaseInfoEl(lease, ignoreAddingEventListeners) {
  * @param {string} leaseId the lease id of the lease to add
  */
 async function addLease(leaseId) {
+  console.log("adding lease", leaseId);
   const res = await authorizedFetch("/leases", {
     method: "POST",
     headers: { "Content-Type": "application/json;charset=utf-8" },
@@ -408,7 +411,7 @@ async function addLease(leaseId) {
 }
 
 async function deleteLease(leaseId) {
-  console.log(leaseId);
+  // console.log(leaseId);
   const res = await authorizedFetch("/leases", {
     method: "DELETE",
     headers: { "Content-Type": "application/json;charset=utf-8" },
@@ -446,7 +449,10 @@ async function searchLeases() {
     searchResultsDiv.innerHTML = "";
     if (returnedLeases.length > 0) {
       for (let lease of returnedLeases) {
-        searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action" onclick="addLease('${lease}')">${lease}</button>`;
+        searchResultsDiv.innerHTML += `<button class="list-group-item list-group-item-action">${lease}</button>`;
+      }
+      for (let button of searchResultsDiv.children) {
+        button.addEventListener("click", () => addLease(button.textContent));
       }
     } else {
       // show message saying no results were found
@@ -456,7 +462,7 @@ async function searchLeases() {
     searchResultsDiv.style.display = "flex";
   } else {
     console.log("There was an error while searching for leases.");
-    // show error message
+    // show an error message
     const searchResultsDiv = document.getElementById("lease-search-results");
     searchResultsDiv.innerHTML =
       '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
@@ -557,7 +563,7 @@ function handleSignedOutUser() {
 
 (async () => {
   // change UI based on auth state
-  firebase.auth().onAuthStateChanged((user) => {
+  onAuthStateChanged(auth, (user) => {
     user ? handleSignedInUser(user) : handleSignedOutUser();
   });
 })();

@@ -1,4 +1,6 @@
-'use strict';
+"use strict";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import {auth, authorizedFetch} from "../common/common.js";
 
 /* The number of milliseconds between when a user changes the lease search
    text and when an API request is sent for a lease search */
@@ -15,12 +17,12 @@ let leaseSearchTimer = null;
  * @return {object} the user's profile information (email and phone number)
  */
 async function getProfileInfo() {
-  const res = await authorizedFetch('/userInfo');
+  const res = await authorizedFetch("/userInfo");
   if (res.ok) {
     return await res.json();
   }
-  console.log('Problem retrieving user profile information.');
-  console.log(res);
+  console.log("Problem retrieving user profile information.");
+  // console.log(res);
   return null;
 }
 
@@ -33,17 +35,17 @@ async function getProfileInfo() {
  */
 function initProfileForm(profInfo, ignoreAddingEventListeners) {
   // setup profile information form
-  const profForm = document.forms['profile-information-form'];
-  const emailInput = profForm.elements['email-address'];
-  const phoneNumberInput = profForm.elements['phone-number'];
-  const serviceProviderInput = profForm.elements['service-provider'];
-  const noNotificationsCheckbox = profForm.elements['no-notifications'];
-  const emailCheckbox = profForm.elements['email-pref'];
-  const textCheckbox = profForm.elements['text-pref'];
+  const profForm = document.forms["profile-information-form"];
+  const emailInput = profForm.elements["email-address"];
+  const phoneNumberInput = profForm.elements["phone-number"];
+  const serviceProviderInput = profForm.elements["service-provider"];
+  const noNotificationsCheckbox = profForm.elements["no-notifications"];
+  const emailCheckbox = profForm.elements["email-pref"];
+  const textCheckbox = profForm.elements["text-pref"];
   const textCheckboxLabel = textCheckbox.labels[0];
-  const probRadios = profForm.elements['notification-prob'];
-  const cancelBtn = profForm.elements['prof-form-cancel-btn'];
-  const saveBtn = profForm.elements['prof-form-save-btn'];
+  const probRadios = profForm.elements["notification-prob"];
+  const cancelBtn = profForm.elements["prof-form-cancel-btn"];
+  const saveBtn = profForm.elements["prof-form-save-btn"];
 
   // set values for inputs
   emailInput.value = profInfo.email;
@@ -52,19 +54,23 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   noNotificationsCheckbox.checked = !profInfo.email_pref && !profInfo.text_pref;
   emailCheckbox.checked = profInfo.email_pref;
   // don't allow text notifications to be enabled unless user entered a phone number and service provider
-  if (profInfo.phone_number === undefined || profInfo.service_provider_id === undefined) {
-    textCheckboxLabel.innerHTML = 'Text (You must enter a phone number and service provider to enable text notitifications.)';
+  if (
+    profInfo.phone_number === undefined ||
+    profInfo.service_provider_id === undefined
+  ) {
+    textCheckboxLabel.innerHTML =
+      "Text (You must enter a phone number and service provider to enable text notitifications.)";
     textCheckbox.disabled = true;
     textCheckbox.checked = false;
   } else {
-    textCheckboxLabel.innerHTML = 'Text';
+    textCheckboxLabel.innerHTML = "Text";
     textCheckbox.disabled = false;
     textCheckbox.checked = profInfo.text_pref;
   }
   // set values for radio buttons
   for (let radio of probRadios) {
     const value = profInfo.prob_pref && profInfo.prob_pref.toString();
-    radio.checked = (radio.value === value);
+    radio.checked = radio.value === value;
     // disable the radios if "No notifications" is checked
     radio.disabled = noNotificationsCheckbox.checked;
   }
@@ -74,14 +80,21 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   saveBtn.disabled = true;
 
   // show example notification
-  document.getElementById('example-notification').innerHTML = generateExampleNotification(noNotificationsCheckbox.checked, profInfo.prob_pref);
+  document.getElementById("example-notification").innerHTML =
+    generateExampleNotification(
+      noNotificationsCheckbox.checked,
+      profInfo.prob_pref,
+    );
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
-    profForm.addEventListener('input', onProfileFormChange);
-    cancelBtn.addEventListener('click', cancelProfileFormChanges);
-    saveBtn.addEventListener('click', saveProfileFormChanges);
-    phoneNumberInput.addEventListener('input', (e) => (phoneNumberInput.value = maskPhoneNumber(e.target.value)));
+    profForm.addEventListener("input", onProfileFormChange);
+    cancelBtn.addEventListener("click", cancelProfileFormChanges);
+    saveBtn.addEventListener("click", saveProfileFormChanges);
+    phoneNumberInput.addEventListener(
+      "input",
+      (e) => (phoneNumberInput.value = maskPhoneNumber(e.target.value)),
+    );
   }
 }
 
@@ -89,10 +102,12 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
  * Formats a given string into a phone number (pulls out all digits and formats them).
  * @param {string} phoneNumber the string to format
  */
-function maskPhoneNumber(phoneNumber='') {
+function maskPhoneNumber(phoneNumber = "") {
   // get the digits from the input
-  const digits = phoneNumber.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-  
+  const digits = phoneNumber
+    .replace(/\D/g, "")
+    .match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+
   // format the digits based on how many there are
   const numDigitsEntered = digits[0].length;
   if (numDigitsEntered > 0) {
@@ -104,17 +119,17 @@ function maskPhoneNumber(phoneNumber='') {
     }
     return `(${digits[1]}`;
   }
-  return '';
+  return "";
 }
 
 /**
- * 
+ *
  * @param {boolean} noNotifications whether or not the user enabled notifications
  * @param {number} selectedProb the user's selected probability preference
  */
 function generateExampleNotification(noNotifications, selectedProb) {
   if (noNotifications) {
-    return '<p>-- You will not receive any notifications. --</p>';
+    return "<p>-- You will not receive any notifications. --</p>";
   }
   return `<pre>One or more of your leases is at risk of closing today, tomorrow or in 2 days.\nVisit <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details.</pre>`;
 }
@@ -125,31 +140,36 @@ function generateExampleNotification(noNotifications, selectedProb) {
  */
 function onProfileFormChange(e) {
   const profForm = e.target.form;
-  const phoneNumberInput = profForm.elements['phone-number'];
-  const serviceProviderInput = profForm.elements['service-provider'];
-  const noNotificationsCheckbox = profForm.elements['no-notifications'];
-  const emailCheckbox = profForm.elements['email-pref'];
-  const textCheckbox = profForm.elements['text-pref'];
+  const phoneNumberInput = profForm.elements["phone-number"];
+  const serviceProviderInput = profForm.elements["service-provider"];
+  const noNotificationsCheckbox = profForm.elements["no-notifications"];
+  const emailCheckbox = profForm.elements["email-pref"];
+  const textCheckbox = profForm.elements["text-pref"];
   const textCheckboxLabel = textCheckbox.labels[0];
-  const probRadios = profForm.elements['notification-prob'];
+  const probRadios = profForm.elements["notification-prob"];
 
   // noNotifications/email/text logic
   if (e.target === noNotificationsCheckbox) {
     noNotificationsCheckbox.checked = true;
     emailCheckbox.checked = textCheckbox.checked = false;
   } else if (e.target === emailCheckbox || e.target === textCheckbox) {
-    noNotificationsCheckbox.checked = !emailCheckbox.checked && !textCheckbox.checked;
+    noNotificationsCheckbox.checked =
+      !emailCheckbox.checked && !textCheckbox.checked;
   }
 
   // don't allow text notifications to be enabled unless user entered a phone number and service provider
-  const noPhoneNumber = phoneNumberInput.value === undefined || phoneNumberInput.value === '';
-  const noServiceProvider = serviceProviderInput.value === undefined || serviceProviderInput.value === '';
+  const noPhoneNumber =
+    phoneNumberInput.value === undefined || phoneNumberInput.value === "";
+  const noServiceProvider =
+    serviceProviderInput.value === undefined ||
+    serviceProviderInput.value === "";
   if (noPhoneNumber || noServiceProvider) {
-    textCheckboxLabel.innerHTML = 'Text (You must enter a phone number and service provider to enable text notitifications.)';
+    textCheckboxLabel.innerHTML =
+      "Text (You must enter a phone number and service provider to enable text notitifications.)";
     textCheckbox.disabled = true;
     textCheckbox.checked = false;
   } else {
-    textCheckboxLabel.innerHTML = 'Text';
+    textCheckboxLabel.innerHTML = "Text";
     textCheckbox.disabled = false;
   }
 
@@ -165,12 +185,13 @@ function onProfileFormChange(e) {
       selectedProb = Number(radio.value);
     }
   }
-  console.log(selectedProb);
-  document.getElementById('example-notification').innerHTML = generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
+  // console.log(selectedProb);
+  document.getElementById("example-notification").innerHTML =
+    generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
 
   // enable save and cancel buttons
-  profForm.elements['prof-form-cancel-btn'].disabled = false;
-  profForm.elements['prof-form-save-btn'].disabled = false;
+  profForm.elements["prof-form-cancel-btn"].disabled = false;
+  profForm.elements["prof-form-save-btn"].disabled = false;
 }
 
 /**
@@ -184,16 +205,18 @@ function cancelProfileFormChanges() {
  * Saves the changes made to the user's profile info and uploads the data to the server.
  */
 async function saveProfileFormChanges() {
-  const profForm = document.forms['profile-information-form'];
-  const helpText = document.getElementById('profile-form-help-text');
+  const profForm = document.forms["profile-information-form"];
+  const helpText = document.getElementById("profile-form-help-text");
 
   // gather data from form
-  const email = profForm.elements['email-address'].value;
-  const phoneNumber = profForm.elements['phone-number'].value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
-  const serviceProviderId = profForm.elements['service-provider'].value;
-  const emailPref = profForm.elements['email-pref'].checked;
-  const textPref = profForm.elements['text-pref'].checked;
-  const probRadios = profForm.elements['notification-prob'];
+  const email = profForm.elements["email-address"].value;
+  const phoneNumber = profForm.elements["phone-number"].value
+    .replace(/\D/g, "")
+    .match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
+  const serviceProviderId = profForm.elements["service-provider"].value;
+  const emailPref = profForm.elements["email-pref"].checked;
+  const textPref = profForm.elements["text-pref"].checked;
+  const probRadios = profForm.elements["notification-prob"];
   let selectedProb;
   for (let radio of probRadios) {
     if (radio.checked) {
@@ -207,23 +230,23 @@ async function saveProfileFormChanges() {
     service_provider_id: serviceProviderId,
     email_pref: emailPref,
     text_pref: textPref,
-    prob_pref: selectedProb
+    prob_pref: selectedProb,
   };
 
   // upload data to server and re-init form
-  const res = await authorizedFetch('/userInfo', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json;charset=utf-8'},
-    body: JSON.stringify(newProfileInfo)
+  const res = await authorizedFetch("/userInfo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json;charset=utf-8" },
+    body: JSON.stringify(newProfileInfo),
   });
   if (res.ok) {
     // overwrite the client copy of the profile info
     profileInfo = await res.json();
-    helpText.style.color = 'green';
-    helpText.innerHTML = 'Changes saved successfully!';
+    helpText.style.color = "green";
+    helpText.innerHTML = "Changes saved successfully!";
   } else {
     const json = await res.json();
-    helpText.style.color = 'red';
+    helpText.style.color = "red";
     helpText.innerHTML = json.errors[0];
   }
   initProfileForm(profileInfo, true);
@@ -291,9 +314,9 @@ function createLeaseInfoEl(lease) {
  * Builds all of the lease forms based on the data in the global leases array.
  */
 function buildLeaseInfoEls() {
-  // add lease forms to leases accordion
-  const leasesAccordion = document.getElementById('leases-accordion');
-  leasesAccordion.innerHTML = '';
+  // add lease forms to lease accordion
+  const leasesAccordion = document.getElementById("leases-accordion");
+  leasesAccordion.innerHTML = "";
   for (let lease of leases) {
     leasesAccordion.innerHTML += createLeaseInfoEl(lease);
   }
@@ -301,6 +324,7 @@ function buildLeaseInfoEls() {
   // init values and setup event listeners
   for (let lease of leases) {
     initLeaseInfoEl(lease);
+    ("");
   }
 }
 
@@ -317,7 +341,7 @@ function initLeaseInfoEl(lease, ignoreAddingEventListeners) {
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
-    deleteBtn.addEventListener('click', () => deleteLease(lease.lease_id));
+    deleteBtn.addEventListener("click", () => deleteLease(lease.lease_id));
   }
 }
 
@@ -326,10 +350,10 @@ function initLeaseInfoEl(lease, ignoreAddingEventListeners) {
  * @param {string} leaseId the SfCDMF lease id of the lease to add
  */
 async function addLease(leaseId) {
-  const res = await authorizedFetch('/leases', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json;charset=utf-8'},
-    body: JSON.stringify({lease_id: leaseId})
+  const res = await authorizedFetch("/leases", {
+    method: "POST",
+    headers: { "Content-Type": "application/json;charset=utf-8" },
+    body: JSON.stringify({ lease_id: leaseId }),
   });
   if (res.ok) {
     const lease = await res.json();
@@ -341,7 +365,7 @@ async function addLease(leaseId) {
     buildLeaseInfoEls();
   } else {
     const errors = (await res.json()).errors;
-    console.log('There was a problem while adding the lease.');
+    console.log("There was a problem while adding the lease.");
     console.log(errors);
   }
 
@@ -349,10 +373,10 @@ async function addLease(leaseId) {
 }
 
 async function deleteLease(leaseId) {
-  const res = await authorizedFetch('/leases', {
-    method: 'DELETE',
-    headers: {'Content-Type': 'application/json;charset=utf-8'},
-    body: JSON.stringify({lease_id: leaseId})
+  const res = await authorizedFetch("/leases", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json;charset=utf-8" },
+    body: JSON.stringify({ lease_id: leaseId }),
   });
   if (res.ok) {
     // find where the lease is in the local array of leases
@@ -361,7 +385,7 @@ async function deleteLease(leaseId) {
     buildLeaseInfoEls();
   } else {
     const errors = (await res.json()).errors;
-    console.log('There was a problem while deleting the lease.');
+    console.log("There was a problem while deleting the lease.");
     console.log(errors);
   }
 }
@@ -370,35 +394,40 @@ async function deleteLease(leaseId) {
  * Searches through leases by the SCDMF lease id with the text entered by the user.
  */
 async function searchLeases() {
-  const searchResultsDiv = document.getElementById('lease-search-results');
-  const userInput = document.getElementById('lease-search-text-input').value;
-  if (userInput === '') {
+  const searchResultsDiv = document.getElementById("lease-search-results");
+  const userInput = document.getElementById("lease-search-text-input").value;
+  if (userInput === "") {
     clearLeaseSearch();
     return;
   }
-  const res = await authorizedFetch('/searchLeases', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json;charset=utf-8'},
-    body: JSON.stringify({search: userInput})
+  const res = await authorizedFetch("/searchLeases", {
+    method: "POST",
+    headers: { "Content-Type": "application/json;charset=utf-8" },
+    body: JSON.stringify({ search: userInput }),
   });
   if (res.ok) {
     const returnedLeases = await res.json();
-    searchResultsDiv.innerHTML = '';
+    searchResultsDiv.innerHTML = "";
     if (returnedLeases.length > 0) {
       for (let lease of returnedLeases) {
-        searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action" onclick="addLease('${lease}')">${lease}</button>`;
+        searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action">${lease}</button>`;
+      }
+      for (let button of searchResultsDiv.children) {
+        button.addEventListener("click", () => addLease(button.textContent));
       }
     } else {
       // show message saying no results were found
-      searchResultsDiv.innerHTML = '<button type="button" class="list-group-item list-group-item-action">No leases with a similar ID were found.</button>';
+      searchResultsDiv.innerHTML =
+        '<button type="button" class="list-group-item list-group-item-action">No leases with a similar ID were found.</button>';
     }
-    searchResultsDiv.style.display = 'flex';
+    searchResultsDiv.style.display = "flex";
   } else {
-    console.log('There was an error while searching for leases.');
-    // show error message
-    const searchResultsDiv = document.getElementById('lease-search-results');
-    searchResultsDiv.innerHTML = '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
-    searchResultsDiv.style.display = 'flex';
+    console.log("There was an error while searching for leases.");
+    // show an error message
+    const searchResultsDiv = document.getElementById("lease-search-results");
+    searchResultsDiv.innerHTML =
+      '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
+    searchResultsDiv.style.display = "flex";
   }
 }
 
@@ -407,21 +436,21 @@ async function searchLeases() {
  */
 function clearLeaseSearch() {
   // clear search input
-  document.getElementById('lease-search-text-input').value = '';
+  document.getElementById("lease-search-text-input").value = "";
   // clear results
-  const searchResultsDiv = document.getElementById('lease-search-results');
-  searchResultsDiv.innerHTML = '';
-  searchResultsDiv.style.display = 'none';
+  const searchResultsDiv = document.getElementById("lease-search-results");
+  searchResultsDiv.innerHTML = "";
+  searchResultsDiv.style.display = "none";
 }
 
 function showSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById('lease-search-results');
-  searchResultsDiv.style.display = 'flex';
+  const searchResultsDiv = document.getElementById("lease-search-results");
+  searchResultsDiv.style.display = "flex";
 }
 
 function hideSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById('lease-search-results');
-  searchResultsDiv.style.display = 'none';
+  const searchResultsDiv = document.getElementById("lease-search-results");
+  searchResultsDiv.style.display = "none";
 }
 
 function searchLeasesOnDelay() {
@@ -432,59 +461,67 @@ function searchLeasesOnDelay() {
 }
 
 async function deleteAccount() {
-  const res = await authorizedFetch('/deleteAccount');
+  const res = await authorizedFetch("/deleteAccount");
   if (res.ok) {
-    window.location.replace('/');
+    window.location.replace("/");
   } else {
     const errors = (await res.json()).errors;
-    console.log('There was a problem while deleting the account.');
+    console.log("There was a problem while deleting the account.");
     console.log(errors);
   }
 }
 
 /**
- * Displays the UI for a signed in user and initializes the lease forms.
+ * Displays the UI for a signed-in user and initializes the lease forms.
  * @param {firebase.User} user
  */
 async function handleSignedInUser(user) {
   // hide signed-out view and show signed-in view
-  document.getElementById('user-signed-in').style.display = 'block';
-  document.getElementById('user-signed-out').style.display = 'none';
+  document.getElementById("user-signed-in").style.display = "block";
+  document.getElementById("user-signed-out").style.display = "none";
 
   // get user's profile information
   profileInfo = await getProfileInfo();
   initProfileForm(profileInfo);
 
   // setup delete account button
-  document.getElementById('confirm-account-deletion-btn').addEventListener('click', deleteAccount);
+  document
+    .getElementById("confirm-account-deletion-btn")
+    .addEventListener("click", deleteAccount);
 
   // setup lease search bar
-  document.getElementById('lease-search-text-input').addEventListener('input', searchLeasesOnDelay);
-  document.getElementById('lease-search-btn').addEventListener('click', searchLeases);
-  document.getElementById('lease-clear-btn').addEventListener('click', clearLeaseSearch);
+  document
+    .getElementById("lease-search-text-input")
+    .addEventListener("input", searchLeasesOnDelay);
+  document
+    .getElementById("lease-search-btn")
+    .addEventListener("click", searchLeases);
+  document
+    .getElementById("lease-clear-btn")
+    .addEventListener("click", clearLeaseSearch);
 
   // get user's leases
-  const res = await authorizedFetch('/leases');
+  const res = await authorizedFetch("/leases");
   if (res.ok) {
     leases = await res.json();
   } else {
-    console.log('There was a problem while retrieving the user\'s leases');
+    console.log("There was a problem while retrieving the user's leases");
   }
 
   // setup lease forms
   buildLeaseInfoEls();
-};
+}
 
 /**
- * Displays the UI for a signed out user.
+ * Displays the UI for a signed-out user.
  */
 function handleSignedOutUser() {
-  window.location.replace('/');
-};
+  window.location.replace("/");
+}
 
 (async () => {
   // change UI based on auth state
-  firebase.auth().onAuthStateChanged((user) => {
+  onAuthStateChanged(auth, (user) => {
     user ? handleSignedInUser(user) : handleSignedOutUser();
   });
 })();

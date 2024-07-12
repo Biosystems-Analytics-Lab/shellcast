@@ -1,7 +1,6 @@
 "use strict";
-/** ----- ShellCast South Carolina -----
- *
- */
+import {auth, authorizedFetch} from "../common/common.js";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 /** The ID of the HTML element that holds the map. */
 const MAP_EL_ID = "closure-map";
@@ -46,6 +45,8 @@ const LEGEND_SCALE = [
     color: COLOR_VERY_HIGH,
   },
 ];
+
+const DISCLAIMER_MODAL_ID = "disclaimer-privacy-modal";
 
 // a reference to the Google map object
 let map;
@@ -427,7 +428,6 @@ function addLeaseDataToMap(pointFeatures) {
 // Main
 (async () => {
   const growingUnitData = await getGrowingUnitData();
-  console.log(growingUnitData);
   await initMap(growingUnitData);
 
   // change placeholder text and title attribute for table search boxes
@@ -441,7 +441,7 @@ function addLeaseDataToMap(pointFeatures) {
   growingUnitTableSearchBox.title = "Search growing units table";
   initGrowingUnitTable(growingUnitData);
 
-  firebase.auth().onAuthStateChanged(async (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       // hide disclaimer/privacy policy modal
       $(`#${DISCLAIMER_MODAL_ID}`).modal("hide");
