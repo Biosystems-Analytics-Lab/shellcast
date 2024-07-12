@@ -1,6 +1,6 @@
 "use strict";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import {auth} from "../common/common.js";
+import {auth, authorizedFetch} from "../common/common.js";
 
 /* The number of milliseconds between when a user changes the lease search
    text and when an API request is sent for a lease search */
@@ -22,7 +22,7 @@ async function getProfileInfo() {
     return await res.json();
   }
   console.log("Problem retrieving user profile information.");
-  console.log(res);
+  // console.log(res);
   return null;
 }
 
@@ -185,7 +185,7 @@ function onProfileFormChange(e) {
       selectedProb = Number(radio.value);
     }
   }
-  console.log(selectedProb);
+  // console.log(selectedProb);
   document.getElementById("example-notification").innerHTML =
     generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
 
@@ -372,7 +372,7 @@ async function addLease(leaseId) {
 }
 
 async function deleteLease(leaseId) {
-  console.log(leaseId);
+  // console.log(leaseId);
   const res = await authorizedFetch("/leases", {
     method: "DELETE",
     headers: { "Content-Type": "application/json;charset=utf-8" },
@@ -410,7 +410,10 @@ async function searchLeases() {
     searchResultsDiv.innerHTML = "";
     if (returnedLeases.length > 0) {
       for (let lease of returnedLeases) {
-        searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action" onclick="addLease('${lease}')">${lease}</button>`;
+        searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action">${lease}</button>`;
+      }
+      for (let button of searchResultsDiv.children) {
+        button.addEventListener("click", () => addLease(button.textContent));
       }
     } else {
       // show message saying no results were found
@@ -440,16 +443,6 @@ function clearLeaseSearch() {
   searchResultsDiv.style.display = "none";
 }
 
-function showSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById("lease-search-results");
-  searchResultsDiv.style.display = "flex";
-}
-
-function hideSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById("lease-search-results");
-  searchResultsDiv.style.display = "none";
-}
-
 function searchLeasesOnDelay() {
   if (leaseSearchTimer !== null) {
     clearTimeout(leaseSearchTimer);
@@ -473,7 +466,7 @@ async function deleteAccount() {
  * @param {firebase.User} user
  */
 async function handleSignedInUser(user) {
-  // hide signed-out view and show signed-in view
+  // hide signed out view and show signed in view
   document.getElementById("user-signed-in").style.display = "block";
   document.getElementById("user-signed-out").style.display = "none";
 
@@ -510,7 +503,7 @@ async function handleSignedInUser(user) {
 }
 
 /**
- * Displays the UI for a signed out user.
+ * Displays the UI for a signed-out user.
  */
 function handleSignedOutUser() {
   window.location.replace("/map");
