@@ -176,3 +176,48 @@ export function getPartnerAppStyle(feature) {
     }),
   });
 }
+
+export let partnerAppLyrLegend = document.createElement("div");
+partnerAppLyrLegend.innerHTML = `
+<div id="partner-app-legend" style="position: absolute; top: 30px; right: 30px;">
+  <div id="accordion" style="width: 20rem">
+    <div class="card">
+      <div class="card-header text-center" id="headingOne" style="padding: .1rem;">
+        <h5 class="mb-0">
+          <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+            aria-controls="collapseOne">
+            Legend
+          </button>
+        </h5>
+      </div>
+      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+        <div class="card-body">
+          <h6>ShellCast</h6>
+          <small>ShellCast's growing unit boundary legend is shown to the left. The forecast can be changed by 
+          clicking "Today", "Tomorrow", and "In 2 days".</small>
+          <div style="line-height: 20px; vertical-align: middle; padding-top: 16px;">
+            <input type="checkbox" id="partner-legend" role="button"
+              style="width: 20px;height: 20px; vertical-align: middle;" checked>
+            <label class="form-check-label" for="partner-legend"><span>
+                <h6>&emsp13;Partner Sites</h6>
+              </span></label>
+          </div>      
+          <table class="partner-legend">
+            <tr>
+              <td class="legend-icon"><img src="./static/img/map/hb.png" alt="..."></td>
+              <td><small>How's the Beach Sites</small></td>
+            </tr>
+            <tr>
+              <td class="legend-icon"><img src="./static/img/map/vb.png" alt="..."></td>
+              <td><small>Beach Condition Monitoring System Sites</small></td>
+            </tr>
+            <tr>
+              <td class="legend-icon"><img src="./static/img/map/camera.png"</td>
+              <td><small>WebCOOS Camera Sites</small></td>
+            </tr>
+        </table>      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
