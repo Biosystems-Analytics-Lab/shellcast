@@ -248,7 +248,6 @@ function addLeaseDataToMap(pointFeatures) {
   });
 
   let leasePntLyr = new ol.layer.Vector({
-    name: LEASE_PNT_LYR_NAME,
     source: leasePntSource,
   });
   map.addLayer(leasePntLyr);
