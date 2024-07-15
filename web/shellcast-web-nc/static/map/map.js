@@ -76,16 +76,16 @@ function partnerLegendCheckbox() {
   document
     .getElementById("partner-legend")
     .addEventListener("change", function () {
-      let ul = document.getElementById("partner-lyr-ul");
+      let legendTb = document.getElementById("legend-table");
       let isVisible = partnerLyr.getVisible();
       if (this.checked) {
         if (!isVisible) {
           partnerLyr.setVisible(true);
-          ul.style.display = "block";
+          legendTb.style.display = "block";
         }
       } else {
         partnerLyr.setVisible(false);
-        ul.style.display = "none";
+        legendTb.style.display = "none";
       }
     });
 }
@@ -248,6 +248,7 @@ function addLeaseDataToMap(pointFeatures) {
   });
 
   let leasePntLyr = new ol.layer.Vector({
+    name: LEASE_PNT_LYR_NAME,
     source: leasePntSource,
   });
   map.addLayer(leasePntLyr);
@@ -262,6 +263,8 @@ function addLeaseDataToMap(pointFeatures) {
         if (layer) {
           lyrName = layer.get("name");
         }
+        console.log(feature);
+        console.log(lyrName);
         return feature;
       },
     );

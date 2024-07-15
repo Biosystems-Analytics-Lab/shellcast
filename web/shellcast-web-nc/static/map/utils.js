@@ -202,7 +202,7 @@ partnerAppLyrLegend.innerHTML = `
                 <h6>&emsp13;Partner Sites</h6>
               </span></label>
           </div>      
-          <table class="partner-legend">
+          <table id="legend-table" class="partner-legend">
             <tr>
               <td class="legend-icon"><img src="./static/img/map/hb.png" alt="..."></td>
               <td><small>How's the Beach Sites</small></td>
