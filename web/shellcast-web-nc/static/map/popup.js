@@ -1,11 +1,12 @@
 "use strict";
-import { handleUndef } from "./utils.js";
 
-const container = document.getElementById("popup");
+// Elements that make up the popup.
+const popupContainer = document.getElementById("popup");
+const popupHtmlContent = document.getElementById("popup-content");
 
-export function createShellCastPopupLayer() {
+function createShellCastPopupLayer() {
   return new ol.Overlay({
-    element: container,
+    element: popupContainer,
     autoPan: {
       animation: {
         duration: 250,
@@ -14,10 +15,77 @@ export function createShellCastPopupLayer() {
   });
 }
 
-export function generatePopUpContent(feature) {
-  return `<div>Growing Unit: ${feature.get("cmu_name")}
-                <br>Today: ${handleUndef(feature.get("prob_1d_perc"))}
-                <br>Tomorrow: ${handleUndef(feature.get("prob_2d_perc"))}
-                <br>In 2 days: ${handleUndef(feature.get("prob_3d_perc"))}
-                </div>`;
+function popupContent(title, siteName, iconUrl, text) {
+  return `<div id="closable-card" class="card mb-3 popup-background" style="width:350px">
+      <div class="card-header container-fluid">
+        <div class="row">
+          <div class="col-10 text-center" style="color: white;"><h6>${title}</h6></div>
+          <div class="col-2 float-right">
+            <button data-dismiss="alert" data-target="#closable-card" type="button" class="close" aria-label="Close">
+              <span aria-hidden="true"" ><h6>&times;</h6></span>
+            </button>
+          </div>
+        </div> 
+      </div>
+      <div class="card-body no-padding">
+        <div class="row g-0 no-margin">
+          <div class="col-md-4 popup-logo">
+            <img src="${iconUrl}" class="img-fluid card-image" alt="...">
+          </div>
+          <div class="col-md-8 popup-content">
+            <h5 class="card-title text-center">${siteName}</h5>
+            <p class="card-text">${text}</p>
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
+
+function partnerAppLyrPopupContent(feature) {
+  let property = feature.get("ID").substring(0, 2);
+  let siteName = feature.get("Site Name");
+  let url = feature.get("URL");
+  let contentText = "";
+  let title = "";
+  let iconUrl = "";
+  let hpUrl = "";
+  if (property === "HB") {
+    title = "HOW'S THE BEACH?";
+    iconUrl = "./static/img/map/howsthebeach-popup.png";
+    hpUrl = "https://howsthebeach.org/";
+    contentText = `<p class="small-font">Headed to the beach? Click <span><a href="${url}" target="_blank">here</a>
+                      </span> to see if the water quality is healthy before heading in.
+                      <br><span><a class="text-decoration-none" href="#" target="_blank">${hpUrl}</a></span></br>
+                      </p>`;
+  } else if (property === "WC") {
+    title = "Web Camera Observation Network";
+    iconUrl = "./static/img/map/secoora-popup.png";
+    hpUrl = "https://secoora.org/";
+    contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
+                      Web Camera at this location. This will open the WebCOOS camera site in a new tab.
+                      <br><span><a class="text-decoration-none" href="#" target="_blank">${hpUrl}</a></span>
+                      </p>`;
+  } else if (property === "VB") {
+    title = "Beach Condition Monitoring System";
+    iconUrl = "./static/img/map/mote-popup.png";
+    hpUrl = "https://visitbeaches.org/";
+    contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
+                        Beach Condition Monitoring System at this location. This will open the Mote Marine Laboratory 
+                        site in a new tab.
+                        <br><span><a class="text-decoration-none" href="#" target="_blank">${hpUrl}</a></span>
+                        </p>`;
+  }
+  popupHtmlContent.innerHTML = popupContent(
+    title,
+    siteName,
+    iconUrl,
+    contentText,
+  );
+}
+
+export {
+  createShellCastPopupLayer,
+  partnerAppLyrPopupContent,
+  popupContent,
+  popupHtmlContent,
+};

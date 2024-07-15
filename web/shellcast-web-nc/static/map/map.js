@@ -12,6 +12,7 @@ import {
   getPartnerSitesSourceData,
   handleUndef,
   markerSvg,
+  partnerAppLyrLegend,
 } from "./utils.js";
 import { createDaySelector, ShellCastLegend } from "./legends-dayselector.js";
 import {
@@ -19,12 +20,22 @@ import {
   initLeaseTable,
   setTableSearchBoxes,
 } from "./table.js";
-import { createShellCastPopupLayer, generatePopUpContent } from "./popup.js";
+import {
+  createShellCastPopupLayer,
+  partnerAppLyrPopupContent,
+  popupContent,
+  popupHtmlContent,
+} from "./popup.js";
 
 const shellCastLegend = new ShellCastLegend();
 /** The ID of the HTML element that holds the map. */
 const MAP_EL_ID = "closure-map";
 const DISCLAIMER_MODAL_ID = "disclaimer-privacy-modal";
+
+const CMU_LYR_NAME = "cmuLyr";
+const PARTNER_APP_LYR_NAME = "partnerAppLyr";
+const LEASE_PNT_LYR_NAME = "leasePntLyr";
+
 /** Options for the map. */
 const mapCenter = [-76.315151, 35.007934];
 // OSM humanitarian base layer
@@ -35,18 +46,13 @@ let map;
 let cmuLyr;
 // Partner app layer
 let partnerLyr;
-
 // CMU closure probability popup overlay
-let popupOverlay;
-// Elements that make up the popup.
-const content = document.getElementById("popup-content");
-
-//================== Map functions ==================
+let popupLyr;
 
 function createCmuLayer(cmuGeoJsonSource) {
   return new ol.layer.Vector({
     title: "CMU",
-    name: "cmu",
+    name: CMU_LYR_NAME,
     opacity: 0.7,
     source: cmuGeoJsonSource,
     extent: cmuGeoJsonSource.getExtent(),
@@ -57,14 +63,31 @@ function createCmuLayer(cmuGeoJsonSource) {
 }
 
 function createPartnerAppLayer(sourceData) {
-  console.log(sourceData);
   return new ol.layer.Vector({
-    name: "partnerAppLyr",
+    name: PARTNER_APP_LYR_NAME,
     source: sourceData,
     style: (feature) => {
       return getPartnerAppStyle(feature);
     },
   });
+}
+
+function partnerLegendCheckbox() {
+  document
+    .getElementById("partner-legend")
+    .addEventListener("change", function () {
+      let ul = document.getElementById("partner-lyr-ul");
+      let isVisible = partnerLyr.getVisible();
+      if (this.checked) {
+        if (!isVisible) {
+          partnerLyr.setVisible(true);
+          ul.style.display = "block";
+        }
+      } else {
+        partnerLyr.setVisible(false);
+        ul.style.display = "none";
+      }
+    });
 }
 
 /**
@@ -108,12 +131,12 @@ async function initMap(growingUnitData) {
   osmHumanitarianBaseLyr = createBaseLayer();
   setBoundingBoxMapExtent();
 
-  popupOverlay = createShellCastPopupLayer();
+  popupLyr = createShellCastPopupLayer();
 
   map = new ol.Map({
     target: mapEl,
     layers: [osmHumanitarianBaseLyr, cmuLyr, partnerLyr],
-    overlays: [popupOverlay],
+    overlays: [popupLyr],
     view: new ol.View({
       center: ol.proj.fromLonLat(mapCenter),
       zoom: 8,
@@ -125,35 +148,55 @@ async function initMap(growingUnitData) {
   });
   map.addControl(legendPanel); // #8
 
-  // ================== Add day selector panel ==================
+  // ================== Add day selector ==================
   const daySelector = createDaySelector();
-
-  // Add event listener to day selector buttons
-  // (function addDaySelectorEventListeners() {
-  //   for (let i = 0; i < daySelector.childElementCount; i++) {
-  //     const button = daySelector.children[i];
-  //     button.addEventListener("click", () => setCmuPolyStyleByDay(i + 1));
-  //   }
-  // })();
-
-  // ================== Add day selector panel to map ==================
   let daySelectorPanel = new ol.control.Control({
     element: daySelector,
   });
   map.addControl(daySelectorPanel);
 
+  // ================== Add partner app legend ==================
+  const partnerAppLegendControl = new ol.control.Control({
+    element: partnerAppLyrLegend,
+  });
+  map.addControl(partnerAppLegendControl);
+  partnerLegendCheckbox();
+
   // ================== Add popup event ==================
   map.on("singleclick", function (evt) {
-    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-      return feature;
-    });
-    if (feature && feature.get("type") !== "Point") {
-      console.log(feature);
-      let coordinate = evt.coordinate; //default projection is EPSG:3857 you may want to use ol.proj.transform
-      content.innerHTML = generatePopUpContent(feature);
-      popupOverlay.setPosition(coordinate);
+    let coordinate = evt.coordinate;
+    let lyrName;
+    const feature = map.forEachFeatureAtPixel(
+      evt.pixel,
+      function (feature, layer) {
+        if (layer) {
+          lyrName = layer.get("name");
+        }
+        return feature;
+      },
+    );
+    if (feature) {
+      if (lyrName === PARTNER_APP_LYR_NAME) {
+        partnerAppLyrPopupContent(feature);
+      } else if (lyrName === CMU_LYR_NAME) {
+        let title = "Growing Unit Closure Probability";
+        let iconUrl = "static/img/map/shellcast-popup.png";
+        let siteName = feature.get("cmu_name");
+        let text = `<p>
+                <b>Today:</b> ${handleUndef(feature.get("prob_1d_perc"))}
+                <br><b>Tomorrow:</b> ${handleUndef(feature.get("prob_2d_perc"))}
+                <br><b>In 2 days:</b> ${handleUndef(feature.get("prob_3d_perc"))}
+                </p>`;
+        popupHtmlContent.innerHTML = popupContent(
+          title,
+          siteName,
+          iconUrl,
+          text,
+        );
+      }
+      popupLyr.setPosition(coordinate);
     } else {
-      popupOverlay.setPosition(undefined);
+      popupLyr.setPosition(undefined);
     }
   });
 }
@@ -165,18 +208,14 @@ async function initMap(growingUnitData) {
  */
 async function createLeasePointFeatures(leaseData) {
   let features = leaseData.map((item) => {
-    const leaseInfoContent = `
-          <div>Lease ID: ${item.lease_id}
-          <br>Today: ${handleUndef(item.prob_1d_perc)}
-          <br>Tomorrow: ${handleUndef(item.prob_2d_perc)}
-          <br>In 2 days: ${handleUndef(item.prob_3d_perc)}
-          </div>
-        `;
     let longitude = item.longitude,
       latitude = item.latitude,
       iconFeature = new ol.Feature({
         geometry: new ol.geom.Point(ol.proj.fromLonLat([longitude, latitude])),
-        desc: leaseInfoContent,
+        lease_id: item.lease_id,
+        prob_1d_perc: item.prob_1d_perc,
+        prob_2d_perc: item.prob_2d_perc,
+        prob_3d_perc: item.prob_3d_perc,
         type: "Point",
       }),
       iconStyle = new ol.style.Style(
@@ -209,21 +248,37 @@ function addLeaseDataToMap(pointFeatures) {
   });
 
   let leasePntLyr = new ol.layer.Vector({
+    name: LEASE_PNT_LYR_NAME,
     source: leasePntSource,
   });
   map.addLayer(leasePntLyr);
 
   // Add mouseover event for popup
   map.on("pointermove", function (evt) {
-    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-      return feature;
-    });
-    if (feature && feature.get("type") === "Point") {
-      let coordinate = evt.coordinate; //default projection is EPSG:3857 you may want to use ol.proj.transform
-      content.innerHTML = feature.get("desc");
-      popupOverlay.setPosition(coordinate);
+    let coordinate = evt.coordinate;
+    let lyrName;
+    const feature = map.forEachFeatureAtPixel(
+      evt.pixel,
+      function (feature, layer) {
+        if (layer) {
+          lyrName = layer.get("name");
+        }
+        return feature;
+      },
+    );
+    if (lyrName === LEASE_PNT_LYR_NAME) {
+      let title = "Growing Unit Closure Probability";
+      let iconUrl = "static/img/map/shellcast-popup.png";
+      let siteName = feature.get("lease_id");
+      let text = `<p>
+                <b>Today:</b> ${handleUndef(feature.get("prob_1d_perc"))}
+                <br><b>Tomorrow:</b> ${handleUndef(feature.get("prob_2d_perc"))}
+                <br><b>In 2 days:</b> ${handleUndef(feature.get("prob_3d_perc"))}
+                </p>`;
+      popupHtmlContent.innerHTML = popupContent(title, siteName, iconUrl, text);
+      popupLyr.setPosition(coordinate);
     } else {
-      popupOverlay.setPosition(undefined);
+      popupLyr.setPosition(undefined);
     }
   });
 }
@@ -249,10 +304,8 @@ function addLeaseDataToMap(pointFeatures) {
       document.getElementById("create-account-message").style.display = "none";
 
       const leaseData = await getLeaseData();
-      console.log(leaseData);
       initLeaseTable(leaseData);
       createLeasePointFeatures(leaseData).then((features) => {
-        console.log(features);
         addLeaseDataToMap(features);
       });
       // addLeaseDataToMap(leaseData);
@@ -260,7 +313,7 @@ function addLeaseDataToMap(pointFeatures) {
       // show disclaimer/privacy policy modal
       $(`#${DISCLAIMER_MODAL_ID}`).modal("show");
 
-      // hide the leases table and explanation
+      // hide the lease table and explanation
       document.getElementById("lease-table-div").style.display = "none";
       document.getElementById("lease-table-explanation").style.display = "none";
 
