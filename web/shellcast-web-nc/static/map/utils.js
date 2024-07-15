@@ -179,7 +179,7 @@ export function getPartnerAppStyle(feature) {
 
 export let partnerAppLyrLegend = document.createElement("div");
 partnerAppLyrLegend.innerHTML = `
-<div id="partner-app-legend" style="position: absolute; top: 30px; right: 30px;">
+<div id="partner-sites-legend">
   <div id="accordion" style="width: 20rem">
     <div class="card">
       <div class="card-header text-center" id="headingOne" style="padding: .1rem;">
