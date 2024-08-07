@@ -4,7 +4,7 @@ import {authorizedFetch} from "../common/common.js";
 /** The path to the growing unit boundaries file. */
 const GROWING_UNIT_BOUNDS_PATH = "static/cmu_bounds.geojson";
 /** Partner application points file */
-const PARTNER_APP_POINTS_PATH = "static/beaches_nc.geojson";
+const PARTNER_APP_POINTS_PATH = "static/partner_sites_nc.geojson";
 
 export const markerSvg =
   '<svg id="marker" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 30 30" enable-background="new 0 0 30 30" xml:space="preserve">' +
@@ -19,10 +19,11 @@ export const colorPalette = {
   COLOR_VERY_HIGH: "rgba(139, 0, 0, 0.7)",
 };
 
-/**
- * Returns a color from the color scale based on the given value.
- * @param {number} value the value to get a color for
- */
+export const partnerSiteDomains = {
+  HB: "howsthebeach.org",
+  WC: "webcoos.srv.axds.co",
+  VB: "visitbeaches.org",
+};
 
 /**
  * Returns a value of the risk factor.
@@ -36,6 +37,16 @@ export function handleUndef(value) {
   if (value === 4) flag = "High";
   if (value === 5) flag = "Very High";
   return value || value === 0 ? flag : "-";
+}
+
+export function getDomainName(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch (e) {
+    console.error("Invalid URL", e);
+    return null;
+  }
 }
 
 /**
@@ -159,15 +170,16 @@ export function getBoundaryStyle(feature, day) {
   return fillBoundaryColor(value, featureName);
 }
 
-export function getPartnerAppStyle(feature) {
+export function clusterMemberStyle(feature) {
   const iconDir = "./static/img/map/";
-  let property = feature.get("ID").substring(0, 2);
+  let domainName = getDomainName(feature.get("url"));
+  // let property = feature.get("ID").substring(0, 2);
   let iconUrl;
-  if (property === "HB") {
+  if (domainName === partnerSiteDomains.HB) {
     iconUrl = iconDir + "hb.png";
-  } else if (property === "WC") {
+  } else if (domainName === partnerSiteDomains.WC) {
     iconUrl = iconDir + "camera.png";
-  } else if (property === "VB") {
+  } else if (domainName === partnerSiteDomains.VB) {
     iconUrl = iconDir + "vb.png";
   }
   return new ol.style.Style({
@@ -193,8 +205,8 @@ partnerAppLyrLegend.innerHTML = `
       <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
           <h6>ShellCast</h6>
-          <small>ShellCast's growing unit boundary legend is shown to the left. The forecast can be changed by 
-          clicking "Today", "Tomorrow", and "In 2 days".</small>
+          <small>The legend for ShellCast is shown to the left. The forecast date can be changed by clicking 
+          "Today", "Tomorrow" and "In 2 days".</small>
           <div style="line-height: 20px; vertical-align: middle; padding-top: 16px;">
             <input type="checkbox" id="partner-legend" role="button"
               style="width: 20px;height: 20px; vertical-align: middle;" checked>
@@ -209,7 +221,7 @@ partnerAppLyrLegend.innerHTML = `
             </tr>
             <tr>
               <td class="legend-icon"><img src="./static/img/map/vb.png" alt="..."></td>
-              <td><small>Beach Condition Monitoring System Sites</small></td>
+              <td><small>Beach Conditions Reporting System</small></td>
             </tr>
             <tr>
               <td class="legend-icon"><img src="./static/img/map/camera.png"</td>

@@ -3,12 +3,12 @@ import { auth } from "../common/common.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 import {
+  clusterMemberStyle,
   createCmuGeoJsonSource,
   getBoundaryStyle,
   getGeoJsonAddProbs,
   getGrowingUnitData,
   getLeaseData,
-  getPartnerAppStyle,
   getPartnerSitesSourceData,
   handleUndef,
   markerSvg,
@@ -36,8 +36,38 @@ const CMU_LYR_NAME = "cmuLyr";
 const PARTNER_APP_LYR_NAME = "partnerAppLyr";
 const LEASE_PNT_LYR_NAME = "leasePntLyr";
 
+const circleDistanceMultiplier = 1;
+const circleFootSeparation = 28;
+const circleStartAngle = Math.PI / 2;
+
+const outerCircleFill = new ol.style.Fill({
+  // color: "rgba(255, 153, 102, 0.3)",
+  color: "rgba(221, 221, 221, 0.5)",
+});
+const innerCircleFill = new ol.style.Fill({
+  // color: "rgba(255, 165, 0, 0.7)",
+  color: "rgba(187, 187, 187, 0.7)",
+});
+const textFill = new ol.style.Fill({
+  color: "#fff",
+});
+const textStroke = new ol.style.Stroke({
+  color: "rgba(0, 0, 0, 0.6)",
+  width: 3,
+});
+const innerCircle = new ol.style.Circle({
+  radius: 14,
+  fill: innerCircleFill,
+});
+const outerCircle = new ol.style.Circle({
+  radius: 20,
+  fill: outerCircleFill,
+});
+
 /** Options for the map. */
 const mapCenter = [-76.315151, 35.007934];
+const initialZoom = 8;
+let clickFeature, clickResolution;
 // OSM humanitarian base layer
 let osmHumanitarianBaseLyr;
 // a reference to the Google map object
@@ -46,8 +76,82 @@ let map;
 let cmuLyr;
 // Partner app layer
 let partnerLyr;
+let clusterCirclesLyr;
 // CMU closure probability popup overlay
 let popupLyr;
+
+async function createClusterSource(sourceData) {
+  return new ol.source.Cluster({
+    distance: 50,
+    source: sourceData,
+  });
+}
+
+function generatePointsCircle(count, clusterCenter, resolution) {
+  const circumference =
+    circleDistanceMultiplier * circleFootSeparation * (2 + count);
+  let legLength = circumference / (Math.PI * 2); //radius from circumference
+  const angleStep = (Math.PI * 2) / count;
+  const res = [];
+  let angle;
+
+  legLength = Math.max(legLength, 35) * resolution; // Minimum distance to get outside the cluster icon.
+
+  for (let i = 0; i < count; ++i) {
+    // Clockwise, like spiral.
+    angle = circleStartAngle + i * angleStep;
+    res.push([
+      clusterCenter[0] + legLength * Math.cos(angle),
+      clusterCenter[1] + legLength * Math.sin(angle),
+    ]);
+  }
+
+  return res;
+}
+
+function clusterStyle(feature) {
+  const size = feature.get("features").length;
+  if (size > 1) {
+    return [
+      new ol.style.Style({
+        image: outerCircle,
+      }),
+      new ol.style.Style({
+        image: innerCircle,
+        text: new ol.style.Text({
+          text: size.toString(),
+          fill: textFill,
+          stroke: textStroke,
+        }),
+      }),
+    ];
+  }
+  const originalFeature = feature.get("features")[0];
+  return clusterMemberStyle(originalFeature);
+}
+
+function clusterCircleStyle(cluster, resolution) {
+  if (cluster !== clickFeature || resolution !== clickResolution) {
+    return null;
+  }
+  const clusterMembers = cluster.get("features");
+  return generatePointsCircle(
+    clusterMembers.length,
+    cluster.getGeometry().getCoordinates(),
+    resolution,
+  ).reduce((styles, coordinates, i) => {
+    const point = new ol.geom.Point(coordinates);
+    styles.push(
+      clusterMemberStyle(
+        new ol.Feature.Feature({
+          ...clusterMembers[i].getProperties(),
+          geometry: point,
+        }),
+      ),
+    );
+    return styles;
+  }, []);
+}
 
 function createCmuLayer(cmuGeoJsonSource) {
   return new ol.layer.Vector({
@@ -62,13 +166,19 @@ function createCmuLayer(cmuGeoJsonSource) {
   });
 }
 
-function createPartnerAppLayer(sourceData) {
+async function createPartnerAppLayer(sourceData) {
+  const clusterSource = await createClusterSource(sourceData);
   return new ol.layer.Vector({
     name: PARTNER_APP_LYR_NAME,
+    source: clusterSource,
+    style: clusterStyle,
+  });
+}
+
+function createClusterCirclesLyr(sourceData) {
+  return new ol.layer.Vector({
     source: sourceData,
-    style: (feature) => {
-      return getPartnerAppStyle(feature);
-    },
+    style: clusterCircleStyle,
   });
 }
 
@@ -101,8 +211,8 @@ export function setCmuPolyStyleByDay(day) {
 }
 
 function setBoundingBoxMapExtent() {
-  cmuLyr.getSource().once("change", function () {
-    map.getView().fit(cmuLyr.getSource().getExtent());
+  partnerLyr.getSource().once("change", function () {
+    map.getView().fit(partnerLyr.getSource().getExtent());
   });
 }
 
@@ -112,6 +222,30 @@ function createBaseLayer() {
       source: "http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
     }),
   });
+}
+
+function createHomeExtentButton() {
+  const homeExtentButton = document.createElement("div");
+  homeExtentButton.id = "home-ext-btn";
+  homeExtentButton.innerHTML =
+    "<button style='border: none; background: none; outline: none;'><img src='./static/img/home.png' alt='Home button' style='width: 28px; height:28px;'/></button>";
+  homeExtentButton.style.marginTop = "60px";
+  return homeExtentButton;
+}
+
+function createPartnerSitesLegendButton() {
+  const partnerSitesLegendButton = document.createElement("div");
+  partnerSitesLegendButton.id = "partner-sites-legend-btn";
+  partnerSitesLegendButton.innerHTML =
+    "<button style='border: none; background: none; outline: none; float: right;'><img src='./static/img/map/legend.png' alt='Partner Sites button' style='width: 54px; height:54px;'/></button>";
+  partnerSitesLegendButton.style.top = "10px";
+  partnerSitesLegendButton.style.right = "10px";
+  partnerSitesLegendButton.style.position = "absolute";
+  partnerSitesLegendButton.style.zIndex = "-1";
+  // partnerSitesLegendButton.onclick(() => {
+  //   alert("Legend button clicked");
+  // });
+  return partnerSitesLegendButton;
 }
 
 /**
@@ -127,7 +261,8 @@ async function initMap(growingUnitData) {
   const partnerSitesSource = await getPartnerSitesSourceData();
 
   cmuLyr = createCmuLayer(cmuGeoJsonSource);
-  partnerLyr = createPartnerAppLayer(partnerSitesSource);
+  partnerLyr = await createPartnerAppLayer(partnerSitesSource);
+  clusterCirclesLyr = createClusterCirclesLyr(partnerSitesSource);
   osmHumanitarianBaseLyr = createBaseLayer();
   setBoundingBoxMapExtent();
 
@@ -135,13 +270,26 @@ async function initMap(growingUnitData) {
 
   map = new ol.Map({
     target: mapEl,
-    layers: [osmHumanitarianBaseLyr, cmuLyr, partnerLyr],
+    layers: [osmHumanitarianBaseLyr, cmuLyr, partnerLyr, clusterCirclesLyr],
     overlays: [popupLyr],
     view: new ol.View({
       center: ol.proj.fromLonLat(mapCenter),
-      zoom: 8,
+      zoom: initialZoom,
     }),
   }); // # Set map
+
+  const homeExtentButton = createHomeExtentButton();
+  homeExtentButton.onclick = () => {
+    map.getView().fit(partnerLyr.getSource().getExtent(), {
+      duration: 500,
+      padding: [50, 50, 50, 50],
+    });
+  };
+  const homeExtent = new ol.control.Control({
+    element: homeExtentButton,
+  });
+  map.addControl(homeExtent);
+
   const legendLeft = shellCastLegend.create();
   const legendPanel = new ol.control.Control({
     element: legendLeft,
@@ -163,6 +311,11 @@ async function initMap(growingUnitData) {
   partnerLegendCheckbox();
 
   // ================== Add popup event ==================
+  map.on("pointermove", function (evt) {
+    var hit = evt.map.hasFeatureAtPixel(evt.pixel);
+    this.getTargetElement().style.cursor = hit ? "pointer" : "";
+  });
+
   map.on("singleclick", function (evt) {
     let coordinate = evt.coordinate;
     let lyrName;
@@ -175,9 +328,34 @@ async function initMap(growingUnitData) {
         return feature;
       },
     );
+
     if (feature) {
       if (lyrName === PARTNER_APP_LYR_NAME) {
         partnerAppLyrPopupContent(feature);
+
+        let clusterMembers = feature.get("features");
+        if (clusterMembers.length > 1) {
+          // Calculate the extent of the cluster members.
+          const extent = new ol.extent.createEmpty();
+          clusterMembers.forEach((feature) =>
+            ol.extent.extend(extent, feature.getGeometry().getExtent()),
+          );
+          const view = map.getView();
+          const resolution = map.getView().getResolution();
+          if (
+            view.getZoom() === view.getMaxZoom() ||
+            (ol.extent.getWidth(extent) < resolution &&
+              ol.extent.getHeight(extent) < resolution)
+          ) {
+            // Show an expanded view of the cluster members.
+            clickFeature = clusterMembers[0];
+            clickResolution = resolution;
+            clusterCirclesLyr.setStyle(clusterCircleStyle);
+          } else {
+            // Zoom to the extent of the cluster members.
+            view.fit(extent, { duration: 500, padding: [80, 80, 80, 80] });
+          }
+        }
       } else if (lyrName === CMU_LYR_NAME) {
         let title = "Growing Unit Closure Probability";
         let iconUrl = "static/img/map/shellcast-popup.png";
@@ -196,6 +374,7 @@ async function initMap(growingUnitData) {
       }
       popupLyr.setPosition(coordinate);
     } else {
+      this.getTargetElement().style.cursor = "";
       popupLyr.setPosition(undefined);
     }
   });
@@ -207,7 +386,7 @@ async function initMap(growingUnitData) {
  * @returns {Promise<*>}
  */
 async function createLeasePointFeatures(leaseData) {
-  let features = leaseData.map((item) => {
+  return leaseData.map((item) => {
     let longitude = item.longitude,
       latitude = item.latitude,
       iconFeature = new ol.Feature({
@@ -218,24 +397,21 @@ async function createLeasePointFeatures(leaseData) {
         prob_3d_perc: item.prob_3d_perc,
         type: "Point",
       }),
-      iconStyle = new ol.style.Style(
-        /** @type {olx.style.IconOptions} */ {
-          image: new ol.style.Icon({
-            anchor: [0.5, 1],
-            anchorXUnits: "fraction",
-            anchorYUnits: "fraction",
-            // src: 'https://openlayers.org/en/latest/examples/data/icon.png'
-            src: "data:image/svg+xml," + encodeURI(markerSvg),
-            scale: 2,
-            imgSize: [26, 26],
-          }),
-        },
-      );
+      iconStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+          anchor: [0.5, 1],
+          anchorXUnits: "fraction",
+          anchorYUnits: "fraction",
+          // src: 'https://openlayers.org/en/latest/examples/data/icon.png'
+          src: "data:image/svg+xml," + encodeURI(markerSvg),
+          scale: 2,
+          imgSize: [26, 26],
+        }),
+      });
 
     iconFeature.setStyle(iconStyle);
     return iconFeature;
   });
-  return features;
 }
 
 /**
@@ -254,7 +430,7 @@ function addLeaseDataToMap(pointFeatures) {
   map.addLayer(leasePntLyr);
 
   // Add mouseover event for popup
-  map.on("pointermove", function (evt) {
+  map.on("click", function (evt) {
     let coordinate = evt.coordinate;
     let lyrName;
     const feature = map.forEachFeatureAtPixel(
@@ -263,8 +439,6 @@ function addLeaseDataToMap(pointFeatures) {
         if (layer) {
           lyrName = layer.get("name");
         }
-        console.log(feature);
-        console.log(lyrName);
         return feature;
       },
     );
