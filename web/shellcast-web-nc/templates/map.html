@@ -12,8 +12,8 @@
   <!-- Custom CSS -->
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='map/map.css') }}">
   <!-- OpenLayers -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
-  <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/ol/ol.css') }}">
+  <script src="{{ url_for('static', filename='node_modules/ol/dist/ol.js') }}"></script>
 {% endblock %}
 
 {% block content %}
