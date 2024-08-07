@@ -86,6 +86,19 @@ def createApp(configObj):
     return app
 
 
+def bundle_js(app):
+    from flask_assets import Environment, Bundle
+    assets = Environment(app)
+    assets.append_path('static')
+    js = Bundle(
+        'node_modules/dist/ol.js',
+        filters='jsmin',
+        output='dist/js/main.min.js'
+    )
+    assets.register('ol_js', js)
+    js.build()
+
+
 app = None
 
 # if running the file directly
