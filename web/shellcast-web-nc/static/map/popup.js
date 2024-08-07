@@ -1,4 +1,5 @@
 "use strict";
+import {getDomainName, partnerSiteDomains} from "./utils.js";
 
 // Elements that make up the popup.
 const popupContainer = document.getElementById("popup");
@@ -42,45 +43,48 @@ function popupContent(title, siteName, iconUrl, text) {
 }
 
 function partnerAppLyrPopupContent(feature) {
-  let property = feature.get("ID").substring(0, 2);
-  let siteName = feature.get("Site Name");
-  let url = feature.get("URL");
-  let contentText = "";
-  let title = "";
-  let iconUrl = "";
-  let hpUrl = "";
-  if (property === "HB") {
-    title = "HOW'S THE BEACH?";
-    iconUrl = "./static/img/map/howsthebeach-popup.png";
-    hpUrl = "https://howsthebeach.org/";
-    contentText = `<p class="small-font">Headed to the beach? Click <span><a href="${url}" target="_blank">here</a>
+  const features = feature.get("features");
+  if (features.length === 1) {
+    let domainName = getDomainName(features[0].get("url"));
+    let siteName = features[0].get("site_name");
+    let url = features[0].get("url");
+    let contentText = "";
+    let title = "";
+    let iconUrl = "";
+    let hpUrl = "";
+    if (domainName === partnerSiteDomains.HB) {
+      title = "HOW'S THE BEACH?";
+      iconUrl = "./static/img/map/howsthebeach-popup.png";
+      hpUrl = "https://howsthebeach.org/";
+      contentText = `<p class="small-font">Headed to the beach? Click <span><a href="${url}" target="_blank">here</a>
                       </span> to see if the water quality is healthy before heading in.
-                      <br><span><a class="text-decoration-none" href="#" target="_blank">${hpUrl}</a></span></br>
+                      <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span></br>
                       </p>`;
-  } else if (property === "WC") {
-    title = "Web Camera Observation Network";
-    iconUrl = "./static/img/map/secoora-popup.png";
-    hpUrl = "https://secoora.org/";
-    contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
+    } else if (domainName === partnerSiteDomains.WC) {
+      title = "Web Camera Observation Network";
+      iconUrl = "./static/img/map/secoora-popup.png";
+      hpUrl = "https://secoora.org/";
+      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
                       Web Camera at this location. This will open the WebCOOS camera site in a new tab.
-                      <br><span><a class="text-decoration-none" href="#" target="_blank">${hpUrl}</a></span>
+                      <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                       </p>`;
-  } else if (property === "VB") {
-    title = "Beach Condition Monitoring System";
-    iconUrl = "./static/img/map/mote-popup.png";
-    hpUrl = "https://visitbeaches.org/";
-    contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
+    } else if (domainName === partnerSiteDomains.VB) {
+      title = "Beach Conditions Reporting System";
+      iconUrl = "./static/img/map/mote-popup.png";
+      hpUrl = "https://visitbeaches.org/";
+      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
                         Beach Condition Monitoring System at this location. This will open the Mote Marine Laboratory 
                         site in a new tab.
-                        <br><span><a class="text-decoration-none" href="#" target="_blank">${hpUrl}</a></span>
+                        <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                         </p>`;
+    }
+    popupHtmlContent.innerHTML = popupContent(
+      title,
+      siteName,
+      iconUrl,
+      contentText,
+    );
   }
-  popupHtmlContent.innerHTML = popupContent(
-    title,
-    siteName,
-    iconUrl,
-    contentText,
-  );
 }
 
 export {
