@@ -1,0 +1,467 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.654636999999994,
+          36.014204999999997
+        ]
+      },
+      "properties": {
+        "FID": 0,
+        "descriptio": "Drain Pipe at Oregon St",
+        "site_type": "Water Quality",
+        "site_name": "14A",
+        "city": "Kill Devil Hills",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/14A"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.645743999999993,
+          35.998483
+        ]
+      },
+      "properties": {
+        "FID": 1,
+        "descriptio": "Drain Pipe at Lake Dr beach access",
+        "site_type": "Water Quality",
+        "site_name": "15",
+        "city": "Kill Devil Hills",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/15"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.630003000000002,
+          35.971319000000001
+        ]
+      },
+      "properties": {
+        "FID": 2,
+        "descriptio": "Drain Pipe at Curlew Street",
+        "site_type": "Water Quality",
+        "site_name": "16A",
+        "city": "Nags Head",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/16A"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.640237999999997,
+          35.989049000000001
+        ]
+      },
+      "properties": {
+        "FID": 3,
+        "descriptio": "Drain Pipe at mile post 10.5",
+        "site_type": "Water Quality",
+        "site_name": "16",
+        "city": "Nags Head",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/16"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.623278999999997,
+          35.958809000000002
+        ]
+      },
+      "properties": {
+        "FID": 4,
+        "descriptio": "Drain Pipe at mile post 12.5",
+        "site_type": "Water Quality",
+        "site_name": "17A",
+        "city": "Nags Head",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/17A"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.626902000000001,
+          35.965440999999998
+        ]
+      },
+      "properties": {
+        "FID": 5,
+        "descriptio": "Drain Pipe at Conch Street",
+        "site_type": "Water Quality",
+        "site_name": "17",
+        "city": "Nags Head",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/17"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.563049000000007,
+          35.846913999999998
+        ]
+      },
+      "properties": {
+        "FID": 6,
+        "descriptio": "Drain Pipe at S Nags Head/Federal Park Border",
+        "site_type": "Water Quality",
+        "site_name": "22",
+        "city": "Nags Head",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/22"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.649880999999993,
+          36.005944
+        ]
+      },
+      "properties": {
+        "FID": 7,
+        "descriptio": "Drain Pipe at Martin Street",
+        "site_type": "Water Quality",
+        "site_name": "85A",
+        "city": "Kill Devil Hills",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/85A"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.653030999999999,
+          36.011518000000002
+        ]
+      },
+      "properties": {
+        "FID": 8,
+        "descriptio": "Drain Pipe at MP 8 3/4",
+        "site_type": "Water Quality",
+        "site_name": "85",
+        "city": "Kill Devil Hills",
+        "county": "Dare County",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/85"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.680000000000007,
+          34.715000000000003
+        ]
+      },
+      "properties": {
+        "FID": 9,
+        "descriptio": "Radio Island Public Beach Access",
+        "site_type": "Water Quality",
+        "site_name": "C57",
+        "city": "Moorehead City",
+        "county": "CARTERET",
+        "state": "NC",
+        "url": "https://howsthebeach.org/killdevilhills/map/stationinfo/C57"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.115849999999966,
+          33.909424000000058
+        ]
+      },
+      "properties": {
+        "FID": 10,
+        "descriptio": "Middleton Park",
+        "site_type": "Water Quality",
+        "site_name": "Middleton Park",
+        "city": "Oak Island",
+        "county": "Brunswick",
+        "state": "NC",
+        "url": "https://visitbeaches.org/beach/98"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.887474999999938,
+          34.043126000000029
+        ]
+      },
+      "properties": {
+        "FID": 11,
+        "descriptio": "Carolina Beach",
+        "site_type": "Water Quality",
+        "site_name": "Carolina Beach",
+        "city": "Carolina Beach",
+        "county": "New Hanover",
+        "state": "NC",
+        "url": "https://visitbeaches.org/beach/99"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.788536999999963,
+          34.214313000000061
+        ]
+      },
+      "properties": {
+        "FID": 12,
+        "descriptio": "Johnnie Mercers Fishing Pier",
+        "site_type": "Water Quality",
+        "site_name": "Johnnie Mercers Fishing Pier",
+        "city": "Wrightsville Beach",
+        "county": "New Hanover",
+        "state": "NC",
+        "url": "https://visitbeaches.org/beach/100"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.544459999999958,
+          34.42521000000005
+        ]
+      },
+      "properties": {
+        "FID": 13,
+        "descriptio": "Surf City Beach",
+        "site_type": "Water Quality",
+        "site_name": "Surf City Beach",
+        "city": "Surf City",
+        "county": "Pender County",
+        "state": "NC",
+        "url": "https://visitbeaches.org/beach/112"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.22399999999999,
+          33.912999999999982
+        ]
+      },
+      "properties": {
+        "FID": 14,
+        "descriptio": "Beachfront (east view), Oak Island",
+        "site_type": "Camera",
+        "site_name": "Beachfront (east view), Oak Island",
+        "city": "Oak Island",
+        "county": "Brunswick",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/oakisland_east/"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.825999999999965,
+          36.377999999999986
+        ]
+      },
+      "properties": {
+        "FID": 16,
+        "descriptio": "Beachfront from Hampton Inn",
+        "site_type": "Camera",
+        "site_name": "Beachfront from Hampton Inn",
+        "city": "Corolla",
+        "county": "Currituck",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/currituck_hampton_inn/"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.814000000000021,
+          36.338999999999992
+        ]
+      },
+      "properties": {
+        "FID": 17,
+        "descriptio": "Beachfront from Sailfish Street Beach Access",
+        "site_type": "Camera",
+        "site_name": "Beachfront from Sailfish Street Beach Access",
+        "city": "Corolla",
+        "county": "Currituck",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/currituck_sailfish/"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.670999999999992,
+          34.718000000000004
+        ]
+      },
+      "properties": {
+        "FID": 18,
+        "descriptio": "Beaufort",
+        "site_type": "Camera",
+        "site_name": "Beaufort",
+        "city": "Beaufort",
+        "county": "Carteret",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/nwlon_duke_marine_lab/"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.597000000000037,
+          35.911999999999985
+        ]
+      },
+      "properties": {
+        "FID": 19,
+        "descriptio": "Jennette's Pier (north view)",
+        "site_type": "Camera",
+        "site_name": "Jennette's Pier (north view)",
+        "city": "Nags Head",
+        "county": "Dare",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/jennette_south/"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.593999999999994,
+          35.905999999999999
+        ]
+      },
+      "properties": {
+        "FID": 20,
+        "descriptio": "Jennette's Pier (south view)",
+        "site_type": "Camera",
+        "site_name": "Jennette's Pier (south view)",
+        "city": "Nags Head",
+        "county": "Dare",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/jennette_south/"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 22,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.862000000000023,
+          34.140000000000001
+        ]
+      },
+      "properties": {
+        "FID": 22,
+        "descriptio": "University of North Carolina Wilmington Dock (south view)",
+        "site_type": "Camera",
+        "site_name": "University of North Carolina Wilmington Dock (south view)",
+        "city": "Wilmington",
+        "county": "New Hanover",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/cms_dock_south/"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 23,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.812000000000012,
+          34.188999999999986
+        ]
+      },
+      "properties": {
+        "FID": 23,
+        "descriptio": "Masonboro Inlet",
+        "site_type": "Camera",
+        "site_name": "Masonboro Inlet",
+        "city": "Wrightsville Beach",
+        "county": "New Hanover",
+        "state": "NC",
+        "url": "https://webcoos.srv.axds.co/cameras/masonboro_inlet/"
+      }
+    }
+  ]
+}
