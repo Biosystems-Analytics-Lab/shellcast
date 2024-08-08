@@ -3,8 +3,9 @@ import { auth } from "../common/common.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 import {
-  clusterMemberStyle,
+  createClusterSource,
   createCmuGeoJsonSource,
+  createHomeExtentButton,
   getBoundaryStyle,
   getGeoJsonAddProbs,
   getGrowingUnitData,
@@ -26,48 +27,24 @@ import {
   popupContent,
   popupHtmlContent,
 } from "./popup.js";
+import {
+  clusterMemberStyle,
+  clusterStyle,
+  generatePointsCircle,
+} from "./cluster.js";
+import {
+  CMU_LYR_NAME,
+  INITIAL_ZOOM,
+  LEASE_PNT_LYR_NAME,
+  MAP_CENTER,
+  PARTNER_APP_LYR_NAME,
+} from "./map_constants.js";
 
 const shellCastLegend = new ShellCastLegend();
 /** The ID of the HTML element that holds the map. */
 const MAP_EL_ID = "closure-map";
 const DISCLAIMER_MODAL_ID = "disclaimer-privacy-modal";
 
-const CMU_LYR_NAME = "cmuLyr";
-const PARTNER_APP_LYR_NAME = "partnerAppLyr";
-const LEASE_PNT_LYR_NAME = "leasePntLyr";
-
-const circleDistanceMultiplier = 1;
-const circleFootSeparation = 28;
-const circleStartAngle = Math.PI / 2;
-
-const outerCircleFill = new ol.style.Fill({
-  // color: "rgba(255, 153, 102, 0.3)",
-  color: "rgba(221, 221, 221, 0.5)",
-});
-const innerCircleFill = new ol.style.Fill({
-  // color: "rgba(255, 165, 0, 0.7)",
-  color: "rgba(187, 187, 187, 0.7)",
-});
-const textFill = new ol.style.Fill({
-  color: "#fff",
-});
-const textStroke = new ol.style.Stroke({
-  color: "rgba(0, 0, 0, 0.6)",
-  width: 3,
-});
-const innerCircle = new ol.style.Circle({
-  radius: 14,
-  fill: innerCircleFill,
-});
-const outerCircle = new ol.style.Circle({
-  radius: 20,
-  fill: outerCircleFill,
-});
-
-/** Options for the map. */
-const mapCenter = [-76.315151, 35.007934];
-const initialZoom = 8;
-let clickFeature, clickResolution;
 // OSM humanitarian base layer
 let osmHumanitarianBaseLyr;
 // a reference to the Google map object
@@ -79,55 +56,28 @@ let partnerLyr;
 let clusterCirclesLyr;
 // CMU closure probability popup overlay
 let popupLyr;
+// Cluster layer events
+let clickFeature, clickResolution;
 
-async function createClusterSource(sourceData) {
-  return new ol.source.Cluster({
-    distance: 50,
-    source: sourceData,
+function createCmuLayer(cmuGeoJsonSource) {
+  return new ol.layer.Vector({
+    name: CMU_LYR_NAME,
+    opacity: 0.7,
+    source: cmuGeoJsonSource,
+    extent: cmuGeoJsonSource.getExtent(),
+    style: function (feature) {
+      return getBoundaryStyle(feature, 1);
+    },
   });
 }
 
-function generatePointsCircle(count, clusterCenter, resolution) {
-  const circumference =
-    circleDistanceMultiplier * circleFootSeparation * (2 + count);
-  let legLength = circumference / (Math.PI * 2); //radius from circumference
-  const angleStep = (Math.PI * 2) / count;
-  const res = [];
-  let angle;
-
-  legLength = Math.max(legLength, 35) * resolution; // Minimum distance to get outside the cluster icon.
-
-  for (let i = 0; i < count; ++i) {
-    // Clockwise, like spiral.
-    angle = circleStartAngle + i * angleStep;
-    res.push([
-      clusterCenter[0] + legLength * Math.cos(angle),
-      clusterCenter[1] + legLength * Math.sin(angle),
-    ]);
-  }
-
-  return res;
-}
-
-function clusterStyle(feature) {
-  const size = feature.get("features").length;
-  if (size > 1) {
-    return [
-      new ol.style.Style({
-        image: outerCircle,
-      }),
-      new ol.style.Style({
-        image: innerCircle,
-        text: new ol.style.Text({
-          text: size.toString(),
-          fill: textFill,
-          stroke: textStroke,
-        }),
-      }),
-    ];
-  }
-  const originalFeature = feature.get("features")[0];
-  return clusterMemberStyle(originalFeature);
+async function createPartnerAppLayer(sourceData) {
+  const clusterSource = await createClusterSource(sourceData);
+  return new ol.layer.Vector({
+    name: PARTNER_APP_LYR_NAME,
+    source: clusterSource,
+    style: clusterStyle,
+  });
 }
 
 function clusterCircleStyle(cluster, resolution) {
@@ -153,28 +103,6 @@ function clusterCircleStyle(cluster, resolution) {
   }, []);
 }
 
-function createCmuLayer(cmuGeoJsonSource) {
-  return new ol.layer.Vector({
-    title: "CMU",
-    name: CMU_LYR_NAME,
-    opacity: 0.7,
-    source: cmuGeoJsonSource,
-    extent: cmuGeoJsonSource.getExtent(),
-    style: function (feature) {
-      return getBoundaryStyle(feature, 1);
-    },
-  });
-}
-
-async function createPartnerAppLayer(sourceData) {
-  const clusterSource = await createClusterSource(sourceData);
-  return new ol.layer.Vector({
-    name: PARTNER_APP_LYR_NAME,
-    source: clusterSource,
-    style: clusterStyle,
-  });
-}
-
 function createClusterCirclesLyr(sourceData) {
   return new ol.layer.Vector({
     source: sourceData,
@@ -196,6 +124,7 @@ function partnerLegendCheckbox() {
       } else {
         partnerLyr.setVisible(false);
         legendTb.style.display = "none";
+        popupLyr.setPosition(undefined);
       }
     });
 }
@@ -210,12 +139,6 @@ export function setCmuPolyStyleByDay(day) {
   });
 }
 
-function setBoundingBoxMapExtent() {
-  partnerLyr.getSource().once("change", function () {
-    map.getView().fit(partnerLyr.getSource().getExtent());
-  });
-}
-
 function createBaseLayer() {
   return new ol.layer.Tile({
     source: new ol.source.OSM({
@@ -224,28 +147,69 @@ function createBaseLayer() {
   });
 }
 
-function createHomeExtentButton() {
-  const homeExtentButton = document.createElement("div");
-  homeExtentButton.id = "home-ext-btn";
-  homeExtentButton.innerHTML =
-    "<button style='border: none; background: none; outline: none;'><img src='./static/img/home.png' alt='Home button' style='width: 28px; height:28px;'/></button>";
-  homeExtentButton.style.marginTop = "60px";
-  return homeExtentButton;
+function addAllMapLayers(mapEl) {
+  return new ol.Map({
+    target: mapEl,
+    layers: [osmHumanitarianBaseLyr, cmuLyr, partnerLyr, clusterCirclesLyr],
+    overlays: [popupLyr],
+    view: new ol.View({
+      center: ol.proj.fromLonLat(MAP_CENTER),
+      zoom: INITIAL_ZOOM,
+    }),
+  });
 }
 
-function createPartnerSitesLegendButton() {
-  const partnerSitesLegendButton = document.createElement("div");
-  partnerSitesLegendButton.id = "partner-sites-legend-btn";
-  partnerSitesLegendButton.innerHTML =
-    "<button style='border: none; background: none; outline: none; float: right;'><img src='./static/img/map/legend.png' alt='Partner Sites button' style='width: 54px; height:54px;'/></button>";
-  partnerSitesLegendButton.style.top = "10px";
-  partnerSitesLegendButton.style.right = "10px";
-  partnerSitesLegendButton.style.position = "absolute";
-  partnerSitesLegendButton.style.zIndex = "-1";
-  // partnerSitesLegendButton.onclick(() => {
-  //   alert("Legend button clicked");
-  // });
-  return partnerSitesLegendButton;
+// This sets the initial map extent as a maximum extent.
+// User can't pan outside of this extent.
+function mapBoundingBox() {
+  map.setView(
+    new ol.View({
+      center: map.getView().getCenter(),
+      extent: map.getView().calculateExtent(map.getSize()),
+      zoom: map.getView().getZoom(),
+      padding: [50, 50, 50, 50],
+    }),
+  );
+  return map.getView().calculateExtent(map.getSize());
+}
+
+function addHomeExtentButton(map, extent) {
+  const homeExtentButton = createHomeExtentButton();
+  homeExtentButton.onclick = () => {
+    map.getView().fit(extent, {
+      duration: 1000,
+      padding: [50, 50, 50, 50],
+    });
+    popupLyr.setPosition(undefined);
+  };
+  const homeExtent = new ol.control.Control({
+    element: homeExtentButton,
+  });
+  map.addControl(homeExtent);
+}
+
+function addShellCastLegend(map) {
+  const legendLeft = shellCastLegend.create();
+  const legendPanel = new ol.control.Control({
+    element: legendLeft,
+  });
+  map.addControl(legendPanel);
+}
+
+function addDaySelector(map) {
+  const daySelector = createDaySelector();
+  let daySelectorPanel = new ol.control.Control({
+    element: daySelector,
+  });
+  map.addControl(daySelectorPanel);
+}
+
+function addPartnerSitesLegend(map) {
+  const partnerAppLegendControl = new ol.control.Control({
+    element: partnerAppLyrLegend,
+  });
+  map.addControl(partnerAppLegendControl);
+  partnerLegendCheckbox();
 }
 
 /**
@@ -256,63 +220,29 @@ function createPartnerSitesLegendButton() {
 async function initMap(growingUnitData) {
   const mapEl = document.getElementById(MAP_EL_ID);
   const cmuGeoJson = await getGeoJsonAddProbs(growingUnitData);
-  // console.log(cmuGeoJson);
-  const cmuGeoJsonSource = createCmuGeoJsonSource(cmuGeoJson);
+  const cmuGeoJsonSource = await createCmuGeoJsonSource(cmuGeoJson);
   const partnerSitesSource = await getPartnerSitesSourceData();
-
-  cmuLyr = createCmuLayer(cmuGeoJsonSource);
+  // Create map layers
+  cmuLyr = await createCmuLayer(cmuGeoJsonSource);
   partnerLyr = await createPartnerAppLayer(partnerSitesSource);
+
   clusterCirclesLyr = createClusterCirclesLyr(partnerSitesSource);
   osmHumanitarianBaseLyr = createBaseLayer();
-  setBoundingBoxMapExtent();
-
+  // setBoundingBoxMapExtent();
   popupLyr = createShellCastPopupLayer();
 
-  map = new ol.Map({
-    target: mapEl,
-    layers: [osmHumanitarianBaseLyr, cmuLyr, partnerLyr, clusterCirclesLyr],
-    overlays: [popupLyr],
-    view: new ol.View({
-      center: ol.proj.fromLonLat(mapCenter),
-      zoom: initialZoom,
-    }),
-  }); // # Set map
+  // Add all layers to the map
+  map = addAllMapLayers(mapEl);
+  // Get "partnerLyr" initial bounding box extent. Once "partnerLyr" turned off, a layer extent is not available.
+  const boundingBoxExt = mapBoundingBox();
+  addHomeExtentButton(map, boundingBoxExt);
+  addShellCastLegend(map);
+  addDaySelector(map);
+  addPartnerSitesLegend(map);
 
-  const homeExtentButton = createHomeExtentButton();
-  homeExtentButton.onclick = () => {
-    map.getView().fit(partnerLyr.getSource().getExtent(), {
-      duration: 500,
-      padding: [50, 50, 50, 50],
-    });
-  };
-  const homeExtent = new ol.control.Control({
-    element: homeExtentButton,
-  });
-  map.addControl(homeExtent);
-
-  const legendLeft = shellCastLegend.create();
-  const legendPanel = new ol.control.Control({
-    element: legendLeft,
-  });
-  map.addControl(legendPanel); // #8
-
-  // ================== Add day selector ==================
-  const daySelector = createDaySelector();
-  let daySelectorPanel = new ol.control.Control({
-    element: daySelector,
-  });
-  map.addControl(daySelectorPanel);
-
-  // ================== Add partner app legend ==================
-  const partnerAppLegendControl = new ol.control.Control({
-    element: partnerAppLyrLegend,
-  });
-  map.addControl(partnerAppLegendControl);
-  partnerLegendCheckbox();
-
-  // ================== Add popup event ==================
+  // Add event listeners
   map.on("pointermove", function (evt) {
-    var hit = evt.map.hasFeatureAtPixel(evt.pixel);
+    let hit = evt.map.hasFeatureAtPixel(evt.pixel);
     this.getTargetElement().style.cursor = hit ? "pointer" : "";
   });
 
@@ -380,6 +310,7 @@ async function initMap(growingUnitData) {
   });
 }
 
+// ================== Logged in users lease points ==================
 /**
  * Create point layer for user's registered lease locations.
  * @param leaseData
@@ -405,7 +336,7 @@ async function createLeasePointFeatures(leaseData) {
           // src: 'https://openlayers.org/en/latest/examples/data/icon.png'
           src: "data:image/svg+xml," + encodeURI(markerSvg),
           scale: 2,
-          imgSize: [26, 26],
+          size: [26, 26],
         }),
       });
 
@@ -459,7 +390,9 @@ function addLeaseDataToMap(pointFeatures) {
   });
 }
 
-// Main
+// ================== End: Logged-in users lease points ==================
+
+// ================== Main ==================
 (async () => {
   const growingUnitData = await getGrowingUnitData();
   await initMap(growingUnitData);
