@@ -1,11 +1,12 @@
 "use strict";
-import {getDomainName, partnerSiteDomains} from "./utils.js";
+import {HB_POPUP, PARTNER_SITE_DOMAINS, VB_POPUP, WC_POPUP,} from "./map_constants.js";
+import {getDomainName} from "./utils.js";
 
 // Elements that make up the popup.
 const popupContainer = document.getElementById("popup");
-const popupHtmlContent = document.getElementById("popup-content");
+export const popupHtmlContent = document.getElementById("popup-content");
 
-function createShellCastPopupLayer() {
+export function createShellCastPopupLayer() {
   return new ol.Overlay({
     element: popupContainer,
     autoPan: {
@@ -16,7 +17,7 @@ function createShellCastPopupLayer() {
   });
 }
 
-function popupContent(title, siteName, iconUrl, text) {
+export function popupContent(title, siteName, iconUrl, text) {
   return `<div id="closable-card" class="card mb-3 popup-background" style="width:350px">
       <div class="card-header container-fluid">
         <div class="row">
@@ -42,7 +43,7 @@ function popupContent(title, siteName, iconUrl, text) {
     </div>`;
 }
 
-function partnerAppLyrPopupContent(feature) {
+export function partnerAppLyrPopupContent(feature) {
   const features = feature.get("features");
   if (features.length === 1) {
     let domainName = getDomainName(features[0].get("url"));
@@ -52,28 +53,28 @@ function partnerAppLyrPopupContent(feature) {
     let title = "";
     let iconUrl = "";
     let hpUrl = "";
-    if (domainName === partnerSiteDomains.HB) {
-      title = "HOW'S THE BEACH?";
-      iconUrl = "./static/img/map/howsthebeach-popup.png";
-      hpUrl = "https://howsthebeach.org/";
+    if (domainName === PARTNER_SITE_DOMAINS.HB) {
+      title = HB_POPUP.title;
+      iconUrl = HB_POPUP.iconUrl;
+      hpUrl = HB_POPUP.hpUrl;
       contentText = `<p class="small-font">Headed to the beach? Click <span><a href="${url}" target="_blank">here</a>
                       </span> to see if the water quality is healthy before heading in.
                       <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span></br>
                       </p>`;
-    } else if (domainName === partnerSiteDomains.WC) {
-      title = "Web Camera Observation Network";
-      iconUrl = "./static/img/map/secoora-popup.png";
-      hpUrl = "https://secoora.org/";
+    } else if (domainName === PARTNER_SITE_DOMAINS.WC) {
+      title = WC_POPUP.title;
+      iconUrl = WC_POPUP.iconUrl;
+      hpUrl = WC_POPUP.hpUrl;
       contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
                       Web Camera at this location. This will open the WebCOOS camera site in a new tab.
                       <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                       </p>`;
-    } else if (domainName === partnerSiteDomains.VB) {
-      title = "Beach Conditions Reporting System";
-      iconUrl = "./static/img/map/mote-popup.png";
-      hpUrl = "https://visitbeaches.org/";
+    } else if (domainName === PARTNER_SITE_DOMAINS.VB) {
+      title = VB_POPUP.title;
+      iconUrl = VB_POPUP.iconUrl;
+      hpUrl = VB_POPUP.hpUrl;
       contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
-                        Beach Condition Monitoring System at this location. This will open the Mote Marine Laboratory 
+                        Beach Condition Reporting System at this location. This will open the Mote Marine Laboratory 
                         site in a new tab.
                         <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                         </p>`;
@@ -86,10 +87,3 @@ function partnerAppLyrPopupContent(feature) {
     );
   }
 }
-
-export {
-  createShellCastPopupLayer,
-  partnerAppLyrPopupContent,
-  popupContent,
-  popupHtmlContent,
-};
