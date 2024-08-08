@@ -1,15 +1,19 @@
 "use strict";
-import {authorizedFetch} from "../common/common.js";
-
-/** The path to the growing unit boundaries file. */
-const GROWING_UNIT_BOUNDS_PATH = "static/cmu_bounds.geojson";
-/** Partner application points file */
-const PARTNER_APP_POINTS_PATH = "static/partner_sites_nc.geojson";
+import { authorizedFetch } from "../common/common.js";
+import {
+  CAMERA_ICON,
+  GROWING_UNIT_BOUNDS_PATH,
+  HOME_ICON,
+  HOWS_THE_BEACH_ICON,
+  PARTNER_APP_POINTS_PATH,
+  VISIT_BEACHES_ICON,
+} from "./map_constants.js";
 
 export const markerSvg =
   '<svg id="marker" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 30 30" enable-background="new 0 0 30 30" xml:space="preserve">' +
   '<path fill="white" stroke="black" d="M22.906,10.438c0,4.367-6.281,14.312-7.906,17.031c-1.719-2.75-7.906-12.665-7.906-17.031S10.634,2.531,15,2.531S22.906,6.071,22.906,10.438z"/>' +
   '<circle fill="black" cx="15" cy="10.677" r="3.291"/></svg>';
+
 export const colorPalette = {
   COLOR_NULL: "transparent",
   COLOR_VERY_LOW: "#4eb265",
@@ -17,12 +21,6 @@ export const colorPalette = {
   COLOR_MODERATE: "#fd8d3c",
   COLOR_HIGH: "#e31a1c",
   COLOR_VERY_HIGH: "rgba(139, 0, 0, 0.7)",
-};
-
-export const partnerSiteDomains = {
-  HB: "howsthebeach.org",
-  WC: "webcoos.srv.axds.co",
-  VB: "visitbeaches.org",
 };
 
 /**
@@ -128,6 +126,13 @@ export async function getPartnerSitesSourceData() {
   });
 }
 
+export async function createClusterSource(sourceData) {
+  return new ol.source.Cluster({
+    distance: 50,
+    source: sourceData,
+  });
+}
+
 // ================== Styling ==================
 export function getColor(value) {
   let color = colorPalette.COLOR_NULL;
@@ -170,25 +175,6 @@ export function getBoundaryStyle(feature, day) {
   return fillBoundaryColor(value, featureName);
 }
 
-export function clusterMemberStyle(feature) {
-  const iconDir = "./static/img/map/";
-  let domainName = getDomainName(feature.get("url"));
-  // let property = feature.get("ID").substring(0, 2);
-  let iconUrl;
-  if (domainName === partnerSiteDomains.HB) {
-    iconUrl = iconDir + "hb.png";
-  } else if (domainName === partnerSiteDomains.WC) {
-    iconUrl = iconDir + "camera.png";
-  } else if (domainName === partnerSiteDomains.VB) {
-    iconUrl = iconDir + "vb.png";
-  }
-  return new ol.style.Style({
-    image: new ol.style.Icon({
-      src: iconUrl,
-    }),
-  });
-}
-
 export let partnerAppLyrLegend = document.createElement("div");
 partnerAppLyrLegend.innerHTML = `
 <div id="partner-sites-legend">
@@ -216,15 +202,15 @@ partnerAppLyrLegend.innerHTML = `
           </div>      
           <table id="legend-table" class="partner-legend">
             <tr>
-              <td class="legend-icon"><img src="./static/img/map/hb.png" alt="..."></td>
+              <td class="legend-icon"><img src=${HOWS_THE_BEACH_ICON} alt="How's the Beach"></td>
               <td><small>How's the Beach Sites</small></td>
             </tr>
             <tr>
-              <td class="legend-icon"><img src="./static/img/map/vb.png" alt="..."></td>
+              <td class="legend-icon"><img src=${VISIT_BEACHES_ICON} alt="Visit Beachs"></td>
               <td><small>Beach Conditions Reporting System</small></td>
             </tr>
             <tr>
-              <td class="legend-icon"><img src="./static/img/map/camera.png"</td>
+              <td class="legend-icon"><img src=${CAMERA_ICON} alt="WebCOOS"</td>
               <td><small>WebCOOS Camera Sites</small></td>
             </tr>
         </table>      
@@ -233,3 +219,10 @@ partnerAppLyrLegend.innerHTML = `
     </div>
   </div>
 </div>`;
+
+export function createHomeExtentButton() {
+  const homeExtentButton = document.createElement("div");
+  homeExtentButton.innerHTML = `<button id='home-ext-btn'><img id='home-ext-icon' src='${HOME_ICON}' alt='Home'/></button>`;
+  homeExtentButton.style.marginTop = "60px";
+  return homeExtentButton;
+}
