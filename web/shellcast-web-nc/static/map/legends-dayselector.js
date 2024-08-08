@@ -22,25 +22,15 @@ class ShellCastLegend {
 
   create() {
     const legend = document.createElement("div");
-    legend.className = "legend";
-    legend.style.border = "1px solid black";
-    legend.style.display = "grid";
-    legend.style.gridTemplateColumns = "auto 1rem";
-    legend.style.marginLeft = "10px";
-    legend.style.textAlign = "center";
-    legend.style.lineHeight = "2rem";
-    legend.style.fontSize = "1rem";
-    // add text and colors to legend
+    legend.id = "shellcast-legend";
     for (let step of LEGEND_SCALE) {
-      const textDiv = strToEl(`<div>${step.text}</div>`);
-      textDiv.style.paddingLeft = "3px";
-      textDiv.style.paddingRight = "3px";
-      textDiv.style.backgroundColor = "white";
+      const textDiv = strToEl(
+        `<div id="shellcast-legend-txt">${step.text}</div>`,
+      );
       legend.appendChild(textDiv);
       const colorDiv = document.createElement("div");
+      colorDiv.id = "shellcast-legend-color";
       colorDiv.style.backgroundColor = step.color;
-      colorDiv.style.borderLeft = "1px solid black";
-      colorDiv.style.borderTop = "1px solid black";
       legend.appendChild(colorDiv);
     }
     return legend;
@@ -71,7 +61,9 @@ export function createDaySelector() {
   daySelector.style.border = "1px solid black";
   for (let i = 0; i < daySelector.childElementCount; i++) {
     const button = daySelector.children[i];
-    button.addEventListener("click", () => setCmuPolyStyleByDay(i + 1));
+    button.addEventListener("click", () => {
+      setCmuPolyStyleByDay(i + 1);
+    });
   }
   return daySelector;
 }

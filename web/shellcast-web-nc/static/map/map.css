@@ -73,17 +73,33 @@
     }
 }
 
-.legend {
+/** ShellCast legend */
+#shellcast-legend {
     margin-top: 100px;
     width: 100px;
     height: auto;
-    /*position: absolute;*/
+    border: 1px solid black;
+    display: grid;
+    grid-template-columns: auto 1rem;
+    margin-left: 10px;
+    text-align: center;
+    line-height: 2rem;
+    font-size: 1rem;
+}
+
+#shellcast-legend-txt {
+    padding: 0 3px 0 3px;
+    background-color: white;
+}
+
+#shellcast-legend-color {
+    border-left: 1px solid black;
+    border-top: 1px solid black;
 }
 
 .day-selector {
     width: 100px;
     height: auto;
-    /*position: relative;*/
 }
 
 .popup-title {
@@ -96,8 +112,6 @@
 .card-popup {
     width: 400px;
     display: flex;
-    /*flex-direction: column;*/
-    /*justify-content: space-between;*/
 }
 
 .card-image {
@@ -158,4 +172,15 @@ table.partner-legend {
 td.legend-icon {
     width: 20px;
     padding-right: 12px;
+}
+
+#home-ext-btn {
+    border: none;
+    background: none;
+    outline: none;
+}
+
+#home-ext-icon {
+    width: 28px;
+    height: 28px;
 }
