@@ -283,7 +283,7 @@ async function initMap(growingUnitData) {
             clusterCirclesLyr.setStyle(clusterCircleStyle);
           } else {
             // Zoom to the extent of the cluster members.
-            view.fit(extent, { duration: 500, padding: [80, 80, 80, 80] });
+            view.fit(extent, { duration: 1000, padding: [80, 80, 80, 80] });
           }
         }
       } else if (lyrName === CMU_LYR_NAME) {
