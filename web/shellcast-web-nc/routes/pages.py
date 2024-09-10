@@ -60,11 +60,25 @@ def faqsPage():
     return render_template('faqs.html')
 
 
+def temp_remove_verizon(serviceProviders):
+    """ Temporarily remove Verizon from the list of service providers
+    """
+    verizon_idx = None
+    for idx, item in enumerate(serviceProviders):
+        if item.name == 'Verizon':
+            verizon_idx = idx
+            break
+    if verizon_idx is not None:
+        serviceProviders.pop(verizon_idx)
+    return serviceProviders
+
+
 @pages.route('/preferences')
 def preferencesPage():
     serviceProviders = db.session.query(PhoneServiceProvider.id, PhoneServiceProvider.name).all()
     probOptions = [3, 4, 5]
-    return render_template('preferences.html', serviceProviders=serviceProviders, probOptions=probOptions)
+    return render_template('preferences.html', serviceProviders=temp_remove_verizon(serviceProviders),
+                           probOptions=probOptions)
 
 
 @pages.route('/signin')
