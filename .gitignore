@@ -71,3 +71,5 @@ vignettes/*.pdf
 .python-version
 analysis/shellcast-analysis/small.grb
 
+
+/data_prep/fl/data/
