@@ -1,28 +1,31 @@
+import csv
+import logging.config
+import math
 import os
 import sys
-import logging.config
 import warnings
-import rasterio
-import pandas as pd
-import geopandas as gpd
-import numpy as np
-import math
-from shapely.geometry import Point
-from shapely.errors import ShapelyDeprecationWarning
 from datetime import datetime
 from pathlib import Path
+
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+import rasterio
+from shapely.errors import ShapelyDeprecationWarning
+from shapely.geometry import Point
+
+import constants as ct
 import utils
 from pqpf_procs import ProcDirs, PQPFProcs
-import constants as ct
 
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 logger = logging.getLogger(__name__)
 
 # FL Field names
-TP_ACCUM = 'tp_accum'  # Total precipitation accumulation in hours (e.g. 1 day = 24 hours, 2 days = 48 hours etc.)
+TP_ACCUM = 'tp_accum'  # Total precipitation accumulation in hours (e.g., 1 day = 24 hours, 2 days = 48 hours etc.)
 TP_CALC = 'dth_minus_tpa'  # Days rainfall threshold in inches - tp_accum
-PQPF_TH = 'pqpf_threshold'  # Find applicable PQPF threshold based on TP_CALC
+PQPF_TH = 'pqpf_threshold'  # Find the applicable PQPF threshold based on TP_CALC
 PQPF_PROC = 'pqpf_proc_val'  # PQPF probability
 PQPF_CAT = 'prob_1d_perc'
 
@@ -73,8 +76,9 @@ class FLPQPF:
         self.grb_raw_dir = pqpf_dirs.grb_raw_dir
         self.tiffs_dir = pqpf_dirs.tiffs_dir
         self.lease_shp = pqpf_dirs.lease_shp
+        self.intermediate_dir = pqpf_dirs.intermediate_dir
         self.outputs_dir = pqpf_dirs.outputs_dir
-        self.outfile_date = pqpf_dirs.outfile_date
+        self.date_today = pqpf_dirs.date_today
 
         # ----- Total precipitation 1 hour accumulation directories -----
         self.tp_data_dir = os.path.join(ct.TP_DATA_DIR, self.state.lower())
@@ -93,7 +97,7 @@ class FLPQPF:
         Steps:
         1. Get TP accumulation value from tp_{hours}h.tif.
         2. Calculate SHA rainfall threshold minus Step 1.
-        3. Get PQPF threshold based on Step 2.
+        3. Get a PQPF threshold based on Step 2.
 
         Returns:
         """
@@ -182,19 +186,6 @@ class FLPQPF:
             logger.info(utils.done_str)
             return result_gdf
 
-    def cmu_mean(self, df, csv_out_fpath):
-        logger.info('[Categorize PQPF value group by CMU]')
-        df = df.rename(columns={'cmu_name': 'cmu_id'})
-        s_arr = df.groupby(['cmu_id'])['pqpf_proc_val'].mean()
-        new_df = pd.DataFrame(s_arr).reset_index()
-        vals = new_df[PQPF_PROC]
-        condition_lst = [vals >= 0.9, vals >= 0.75, vals >= 0.5, vals >= 0.25, vals < 0.25]
-        cat_labels = [5, 4, 3, 2, 1]
-        new_df[PQPF_CAT] = np.select(condition_lst, cat_labels)
-        new_df[PQPF_CAT] = new_df[PQPF_CAT].round(0).astype(int)
-        new_df = new_df.drop([PQPF_PROC], axis=1)
-        new_df.to_csv(csv_out_fpath, index=False)
-
     def pqpf_probability_into_category(self, df, out_csv_path):
         """
         #  >= 0.9	Very High	5
@@ -206,14 +197,25 @@ class FLPQPF:
         """
         logger.info('[Categorize PQPF value group by lease]')
         del df['geometry']
-        vals = df[PQPF_PROC]
-        condition_lst = [vals >= 0.9, vals >= 0.75, vals >= 0.5, vals >= 0.25, vals < 0.25]
-        cat_labels = [5, 4, 3, 2, 1]
-        df[PQPF_CAT] = np.select(condition_lst, cat_labels)
+        condition_lst = utils.set_conditions_list(df[PQPF_PROC])
+        df[PQPF_CAT] = np.select(condition_lst, ct.CATEGORY_LABELS)
         df[PQPF_CAT] = df[PQPF_CAT].round(0).astype(int)
         df.to_csv(out_csv_path, index=False)
         logger.info(f'{os.path.basename(out_csv_path)} --- created')
         logger.info(utils.done_str)
+
+    def cmu_mean(self, df, csv_out_fpath):
+        logger.info('[Categorize PQPF value group by CMU]')
+        df = df.rename(columns={self.fl_config['LEASE_SHP_COL_CMU_NAME']: 'cmu_id'})
+        s_arr = df.groupby(['cmu_id'])[PQPF_PROC].mean()
+        new_df = pd.DataFrame(s_arr).reset_index()
+        condition_lst = utils.set_conditions_list(new_df[PQPF_PROC])
+        new_df[PQPF_CAT] = np.select(condition_lst, ct.CATEGORY_LABELS)
+        new_df[PQPF_CAT] = new_df[PQPF_CAT].round(0).astype(int)
+        new_df = new_df.drop([PQPF_PROC], axis=1)
+        season_df = df[['cmu_id', 'season']].drop_duplicates()
+        joined_df = new_df.join(season_df.set_index('cmu_id'), on='cmu_id')
+        joined_df.to_csv(csv_out_fpath, index=False)
 
     def check_tp_outputs(self):
         tiffs = list(map(str, Path(self.tp_outputs_dir).glob('*.tif')))
@@ -229,21 +231,43 @@ class FLPQPF:
                     return False
         return True
 
+    def get_season_now(self, in_csv_fpath, out_csv_fpath):
+        columns = ["cmu_id", "prob_1d_perc"]
+        with open(in_csv_fpath, 'r') as rf:
+            reader = csv.reader(rf)
+            next(reader)
+            with open(out_csv_fpath, 'w', newline='') as wf:
+                writer = csv.writer(wf)
+                writer.writerow(columns)
+                for row in reader:
+                    flag = False
+                    dt_str_lst = row[2].split(", ")
+                    if dt_str_lst and len(dt_str_lst) > 0:
+                        for dt_str in dt_str_lst:
+                            dt_dict = utils.convert_date_string(self.date_today, dt_str)
+                            if utils.is_season(self.date_today, dt_dict["start"], dt_dict["end"]):
+                                flag = True
+                                break
+                    # If not in season, assign 100
+                    writer.writerow([row[0], row[1]] if flag else [row[0], 100])  # cmu_id, prob_1d_perc
+
     def main(self):
         start = datetime.now()
-        has_data = self.check_tp_outputs()
-        if not has_data:
-            logger.error('No TP outputs found')
-            sys.exit(1)
-        utils.db_connection_test(self.connect_str)
-        utils.delete_outdated_grbs(self.grb_raw_dir)
-        files = self.procs.get_files_to_download()
-        utils.download_grbs(self.grb_raw_dir, files, ct.PQPF_FTP_URL, ct.PQPF_FTP_CWD)
-        to_db_bool = self.procs.check_grb_files()
-
+        # has_data = self.check_tp_outputs()
+        # if not has_data:
+        #     logger.error('No TP outputs found')
+        #     sys.exit(1)
+        # utils.db_connection_test(self.connect_str)
+        # utils.delete_outdated_grbs(self.grb_raw_dir)
+        # files = self.procs.get_files_to_download()
+        # utils.download_grbs(self.grb_raw_dir, files, ct.PQPF_FTP_URL, ct.PQPF_FTP_CWD)
+        # to_db_bool = self.procs.check_grb_files()
+        to_db_bool = True
         if to_db_bool:
-            csv_lease_fpath = os.path.join(self.outputs_dir, f'pqpf_lease_probs_{self.outfile_date}.csv')
-            csv_cmu_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_{self.outfile_date}.csv')
+            date_str = self.date_today.strftime('%Y-%m-%d')
+            csv_lease_fpath = os.path.join(self.outputs_dir, f'pqpf_lease_probs_season{date_str}.csv')
+            csv_cmu_tmp_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_tmp_{date_str}.csv')
+            csv_cmu_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_{date_str}.csv')
 
             # Process data
             self.procs.small_grb()
@@ -251,14 +275,13 @@ class FLPQPF:
             accum_df = self.tp_accum_ras_values_to_pts()
             pqpf_df = self.pqpf_ras_values_to_pts(accum_df)
             self.pqpf_probability_into_category(pqpf_df, csv_lease_fpath)
-            self.cmu_mean(pqpf_df, csv_cmu_fpath)
-
+            self.cmu_mean(pqpf_df, csv_cmu_tmp_fpath)
+            self.get_season_now(csv_cmu_tmp_fpath, csv_cmu_fpath)
             if self.save:
                 utils.save_to_db(self.connect_str, csv_cmu_fpath)
 
         stop = datetime.now()
         utils.calculate_duration(start, stop)
-
 
 # if __name__ == '__main__':
 #     db = 'gcp.mysql'
