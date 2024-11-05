@@ -1,21 +1,26 @@
+import codecs
+import configparser
+import json
+import logging
 import os
-import sys
-import subprocess
+import re
+import shutil
 import smtplib
 import ssl
-import codecs
-import shutil
-import re
-import logging
-import configparser
-import pandas as pd
-import geopandas as gpd
-from sqlalchemy import create_engine, text
+import subprocess
+import sys
+from datetime import datetime
 from decimal import localcontext, Decimal, ROUND_HALF_UP, ROUND_HALF_DOWN
-from typing import List
 from email.message import EmailMessage
-from osgeo import gdal
 from ftplib import FTP, error_perm
+from typing import List
+
+import geopandas as gpd
+import pandas as pd
+from cryptography.fernet import Fernet
+from osgeo import gdal
+from sqlalchemy import create_engine, text
+
 import constants as ct
 
 gdal.UseExceptions()
@@ -24,6 +29,12 @@ config.read(ct.CONFIG_INI)
 
 done_str = f'{"*" * 10} Done {"*" * 10}\n'
 logger = logging.getLogger(__name__)
+
+
+def read_file(file_path):
+    with open(file_path, 'rb') as rf:
+        data = rf.read()
+    return data
 
 
 def error_log(err):
@@ -67,6 +78,20 @@ def get_connection_string(config_db, db_name):
         config_db['PORT'],
         db_name)
     return connect_string
+
+
+def decrypt_json(encrypted_data, key):
+    """Decrypts a JSON string that was encrypted using Fernet."""
+    # Load the key
+    fernet = Fernet(key)
+    # Decrypt the JSON string
+    decrypted_bytes = fernet.decrypt(encrypted_data)
+    # Decode the decrypted bytes to a string
+    decrypted_string = decrypted_bytes.decode('utf-8')
+    # Parse the decrypted string as JSON
+    decrypted_json = json.loads(decrypted_string)
+
+    return decrypted_json
 
 
 def create_directory(directory: str, delete=False) -> str:
@@ -317,6 +342,10 @@ def get_thresholds(lease_shp, thresholds_col_name) -> List[float]:
         error_process(msg, e)
 
 
+def set_conditions_list(values):
+    return [values >= 0.9, values >= 0.75, values >= 0.5, values >= 0.25, values < 0.25]
+
+
 def db_connection_test(connect_str):
     logger.info('[DB connection test]')
     try:
@@ -355,3 +384,22 @@ def save_to_db(connect_str, csv_path) -> None:
     except Exception as e:
         msg = 'Save to DB failed.'
         error_process(msg, e)
+
+
+def convert_date_string(dt_today, date_str):
+    year = dt_today.year
+    date_lst = date_str.split("-")
+    dates = {"start": None, "end": None}
+    if len(date_lst) == 2:
+        start = date_lst[0].replace("/", "-")
+        end = date_lst[1].replace("/", "-")
+        dates["start"] = datetime.strptime(f"{year}-{start}", "%Y-%m-%d")
+        dates["end"] = datetime.strptime(f"{year}-{end}", "%Y-%m-%d")
+    return dates
+
+
+def is_season(date_today, start, end):
+    if start <= date_today <= end:
+        return True
+    else:
+        return False
