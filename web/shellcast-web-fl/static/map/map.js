@@ -197,12 +197,14 @@ function createLegend() {
  * @returns {Promise<any>}
  */
 async function getGeoJsonAddProbs(growingUnitData) {
-  let data = fetch(GROWING_UNIT_BOUNDS_PATH)
+//  let data = fetch(GROWING_UNIT_BOUNDS_PATH)
+    let data = fetch("/cmusGeoJson")
     .then((response) => response.json())
     .then((response) => {
       response.features.forEach((feature) => {
-        for (let [cmuName, data] of Object.entries(growingUnitData)) {
-          if (feature.properties.cmu_name == cmuName) {
+        for (let [cmuId, data] of Object.entries(growingUnitData)) {
+          console.log(cmuId, data);
+          if (feature.properties.uid == cmuId) {
             feature.properties.prob_1d_perc = data.prob_1d_perc;
           }
         }
