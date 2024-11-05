@@ -18,7 +18,6 @@ PQPF_FTP_CWD = 'pqpf/conus/pqpf_24hr/'
 TG_FTP_URL = 'tgftp.nws.noaa.gov'
 TG_FTP_CWD = 'data/rfc/serfc/misc/'
 
-
 # [ Regex Patterns]
 TODAY = datetime.today().strftime('%Y%m%d')
 REG_PATTERN_TODAY = r'{0}'.format(TODAY)
@@ -43,5 +42,10 @@ GRB_RES_Y = 2539.702
 # Z_RUN = '12'
 # TO_HOUR = 0
 
+# [Gcloud storage]
+BUCKET_NAME = 'shellcast_data_bucket1'
+
 # wgrib2 directory
 DARWIN_WGRIB2_PATH = '/usr/local/bin'
+
+CATEGORY_LABELS = [5, 4, 3, 2, 1]
