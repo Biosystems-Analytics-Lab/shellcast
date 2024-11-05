@@ -4,19 +4,23 @@ Notes: Florida's maximum accumulation of total precipitation is 7 days. The Shel
 for today. The forecast today and 6 days of past data make up a total of 7 days. Due to PQPF data availability,
 ShellCast defines a day as the period between 7 am and 24 hours prior.
 """
+
 import gzip
 import json
-import os
 import logging
+import os
 import shutil
 import subprocess
 import sys
-from pathlib import Path
 from datetime import datetime, timedelta
-from typing import List, Dict
-import utils
-import constants as ct
 from ftplib import FTP, error_perm
+from pathlib import Path
+from typing import List
+
+import pytz
+
+import constants as ct
+import utils
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +28,7 @@ logger = logging.getLogger(__name__)
 def divide_chunks(lst, n):
     # looping till length l
     for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+        yield lst[i : i + n]
 
 
 def reverse(lst):
@@ -36,12 +40,13 @@ def add_gz_to_filename(download_file_lst):
     result = []
     if len(download_file_lst) > 0:
         for f in download_file_lst:
-            result.append(f'{f}.gz')
+            result.append(f"{f}.gz")
         return result
 
 
 class MissingTPGRBsError(Exception):
-    """ Raw XMRG Total Precipitation file directory must contain 120 (5 days), 144 (6 days), or 163 (7days) files."""
+    """Raw XMRG Total Precipitation file directory must contain 120 (5 days), 144 (6 days), or 163 (7days) files."""
+
     pass
 
 
@@ -58,8 +63,8 @@ class TPXMRG:
             development environment time.
         """
         self.state = state.upper()
-        self.tp_proc_sh = os.path.join(os.path.dirname(__file__), 'xmrg_proc.sh')
-        self.tp_raw_dir = os.path.join(ct.TP_DATA_DIR, 'raw')
+        self.tp_proc_sh = os.path.join(os.path.dirname(__file__), "xmrg_proc.sh")
+        self.tp_raw_dir = os.path.join(ct.TP_DATA_DIR, "raw")
         utils.create_directory(self.tp_raw_dir)
         self.hour_from = hour_from
         self.max_threshold_days = 6
@@ -73,15 +78,15 @@ class TPXMRG:
             file_names: A list of hourly total precipitation date and time.
         """
         try:
-            today = datetime.today()
+            today = datetime.now(pytz.timezone("America/New_York")).today()
             days_in_hours = self.max_threshold_days * 24
             file_names = []
             new_datetime = today.replace(hour=self.hour_from, minute=0, second=0)
 
             while days_in_hours > 0:
                 past = new_datetime - timedelta(hours=days_in_hours)
-                dt_format = past.strftime('%m%d%Y%H')
-                fname = f'xmrg{dt_format}z.grb'
+                dt_format = past.strftime("%m%d%Y%H")
+                fname = f"xmrg{dt_format}z.grb"
                 file_names.append(fname)
                 days_in_hours -= 1
 
@@ -98,13 +103,13 @@ class TPXMRG:
         Returns:
             exist_files: A list of existing XMRG files.
         """
-        exist_files = [f.name for f in Path(self.tp_raw_dir).glob('xmrg*.grb')]
+        exist_files = [f.name for f in Path(self.tp_raw_dir).glob("xmrg*.grb")]
         return exist_files
 
     def ungz(self, gz_fpath):
-        unzipped = str(gz_fpath).split('.gz')[0]
-        with gzip.open(gz_fpath, 'rb') as rf:
-            with open(unzipped, 'wb') as wf:
+        unzipped = str(gz_fpath).split(".gz")[0]
+        with gzip.open(gz_fpath, "rb") as rf:
+            with open(unzipped, "wb") as wf:
                 shutil.copyfileobj(rf, wf)
                 os.remove(gz_fpath)
 
@@ -131,12 +136,16 @@ class TPXMRG:
         inventory = []
 
         for idx, vals in enumerate(chunk_lst):
-            dt_dict = {'day': idx + 1, 'values': [], 'check': None}
+            dt_dict = {"day": idx + 1, "values": [], "check": None}
             for val in vals:
-                data = {'tpxmrg_name': val, 'path': os.path.join(self.tp_raw_dir, val + '.gz'), 'exists': False}
+                data = {
+                    "tpxmrg_name": val,
+                    "path": os.path.join(self.tp_raw_dir, val + ".gz"),
+                    "exists": False,
+                }
                 if val in existing_files:
-                    data['exists'] = True
-                dt_dict['values'].append(data)
+                    data["exists"] = True
+                dt_dict["values"].append(data)
             inventory.append(dt_dict)
         return inventory
 
@@ -152,43 +161,50 @@ class TPXMRG:
         Returns (list[dict]): Updated data_inventory.
 
         """
-        logger.info('[Download GRIBs from FTP]')
+        logger.info("[Download GRIBs from FTP]")
 
         try:
             if data_inventory:
                 ftp = FTP(ftp_url)
                 ftp.login()
-                ftp.encoding = 'utf-8'
+                ftp.encoding = "utf-8"
                 ftp.cwd(ftp_cwd)
                 for item in data_inventory:
-                    if item['day'] < 6:
-                        for ele in item['values']:
-                            if not ele['exists']:
+                    if item["day"] < 6:
+                        for ele in item["values"]:
+                            if not ele["exists"]:
                                 try:
-                                    with open(ele['path'], 'wb') as f:
-                                        ftp.retrbinary("RETR " + ele['tpxmrg_name'] + '.gz', f.write)
-                                    self.ungz(ele['path'])
-                                    grb_fpath = ele['path'].split('.gz')[0]
+                                    with open(ele["path"], "wb") as f:
+                                        ftp.retrbinary(
+                                            "RETR " + ele["tpxmrg_name"] + ".gz",
+                                            f.write,
+                                        )
+                                    self.ungz(ele["path"])
+                                    grb_fpath = ele["path"].split(".gz")[0]
                                     file_size = os.path.getsize(grb_fpath)
                                     if file_size > 0:
-                                        ele['exists'] = True
+                                        ele["exists"] = True
                                         logger.info(f'{ele["tpxmrg_name"]} downloaded.')
                                     else:
-                                        os.remove(ele['path'])
-                                        logger.info(f'{ele["tpxmrg_name"]} file size 0 -> file deleted.')
+                                        os.remove(ele["path"])
+                                        logger.info(
+                                            f'{ele["tpxmrg_name"]} file size 0 -> file deleted.'
+                                        )
 
                                 except error_perm:
-                                    logger.error(f'Download failed -> {item["day"]}: {ele["tpxmrg_name"]}')
-                                    os.unlink(ele['path'])
+                                    logger.error(
+                                        f'Download failed -> {item["day"]}: {ele["tpxmrg_name"]}'
+                                    )
+                                    os.unlink(ele["path"])
                 ftp.quit()
             else:
-                logger.info('Skip download')
+                logger.info("Skip download")
             logger.info(utils.done_str)
 
             return data_inventory
 
         except Exception as e:
-            msg = 'TP GRB file download failed.'
+            msg = "TP GRB file download failed."
             utils.error_process(msg, e)
 
     @staticmethod
@@ -204,13 +220,13 @@ class TPXMRG:
 
         """
         for item in data_inventory:
-            for ele in item['values']:
-                if ele['exists']:
-                    item['check'] = True
+            for ele in item["values"]:
+                if ele["exists"]:
+                    item["check"] = True
                 else:
-                    item['check'] = False
+                    item["check"] = False
                     break
-        with open(ct.TP_DATA_CATALOG_PATH, 'w') as f:
+        with open(ct.TP_DATA_CATALOG_PATH, "w") as f:
             json.dump(data_inventory, f)
 
         return data_inventory
@@ -228,8 +244,8 @@ class TPXMRG:
         existing_files = self.list_existing_tp_data()
         required_files = []
         for item in data_inventory:
-            for ele in item['values']:
-                required_files.append(ele['tpxmrg_name'])
+            for ele in item["values"]:
+                required_files.append(ele["tpxmrg_name"])
         delete_files = list(set(existing_files).symmetric_difference(required_files))
 
         for f in delete_files:
@@ -251,7 +267,7 @@ class TPXMRG:
         xth_day = None
         for item in data_inventory:
             for num in range(1, self.max_threshold_days + 1):
-                if item['day'] == num and not item['check']:
+                if item["day"] == num and not item["check"]:
                     xth_day = num
                     break
             else:
@@ -271,7 +287,9 @@ class TPXMRG:
             existing_xmrg_files = self.list_existing_tp_data()
             inventory = self.tp_data_inventory(xmrg_files, existing_xmrg_files)
 
-            af_inventory = self.download_tp_data(inventory, ct.TG_FTP_URL, ct.TG_FTP_CWD)
+            af_inventory = self.download_tp_data(
+                inventory, ct.TG_FTP_URL, ct.TG_FTP_CWD
+            )
             checked_inventory = self.check_tp_data(af_inventory)
 
             self.delete_tp_data(checked_inventory)
@@ -284,10 +302,10 @@ class TPXMRG:
                 raise MissingTPGRBsError
 
         except Exception as e:
-            msg = 'XMRG processing failed.'
+            msg = "XMRG processing failed."
             utils.error_process(msg, e)
 
 
-if __name__ == '__main__':
-    tpxmrg = TPXMRG('FL', 7)
+if __name__ == "__main__":
+    tpxmrg = TPXMRG("FL", 7)
     tpxmrg.main()
