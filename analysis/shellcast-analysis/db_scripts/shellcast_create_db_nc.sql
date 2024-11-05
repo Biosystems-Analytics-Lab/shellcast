@@ -5,7 +5,7 @@ USE shellcast_nc;
 
 -- Stores the mobile phone service providers that we can send MMS messages to.
 CREATE TABLE phone_service_providers (
-	id int(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	id int AUTO_INCREMENT PRIMARY KEY,
 	name varchar(30) NOT NULL DEFAULT '',
 	mms_gateway varchar(30) NOT NULL DEFAULT '',
 	sms_gateway varchar(30) NOT NULL DEFAULT ''
@@ -13,14 +13,14 @@ CREATE TABLE phone_service_providers (
 
 -- Stores user information.
 CREATE TABLE users (
-	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	id int AUTO_INCREMENT PRIMARY KEY,
 	firebase_uid varchar(28) NULL,
 	phone_number varchar(11) NULL,
-	service_provider_id int(5) UNSIGNED ZEROFILL NULL,
+	service_provider_id int NULL,
 	email varchar(50) NOT NULL,
 	email_pref boolean NOT NULL DEFAULT false,
 	text_pref boolean NOT NULL DEFAULT false,
-	prob_pref tinyint(3) NOT NULL DEFAULT 75,
+	prob_pref tinyint NOT NULL DEFAULT 75,
 	deleted boolean DEFAULT false,
 	created datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
@@ -42,10 +42,10 @@ CREATE TABLE leases (
 
 -- Stores information about user leases.
 CREATE TABLE user_leases (
-	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id int(5) UNSIGNED ZEROFILL NOT NULL,
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id int NOT NULL,
 	lease_id varchar(20) NOT NULL,
-	deleted TINYINT(1) DEFAULT 0,
+	deleted tinyint DEFAULT 0,
 	created datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
     CONSTRAINT unique_leases_per_user UNIQUE (user_id, lease_id)
@@ -53,8 +53,8 @@ CREATE TABLE user_leases (
 
 -- Stores a log of all notifications that are sent to users.
 CREATE TABLE notification_log (
-	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-	user_id int(5) UNSIGNED ZEROFILL NOT NULL,
+	id int AUTO_INCREMENT PRIMARY KEY ,
+	user_id int NOT NULL,
 	address varchar(50) NOT NULL,
 	notification_text text(10000) NOT NULL,
 	notification_type varchar(10) NOT NULL,
@@ -66,18 +66,18 @@ CREATE TABLE notification_log (
 
 -- Stores the growing units.
 CREATE TABLE cmus (
-	id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	id int AUTO_INCREMENT PRIMARY KEY,
 	cmu_name varchar(10) NOT NULL,
 	created datetime DEFAULT NOW()
 );
 
 -- Stores the closure probabilities for each growing unit.
 CREATE TABLE cmu_probabilities (
-  id int(5) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id int AUTO_INCREMENT PRIMARY KEY,
   cmu_name varchar(10) NOT NULL,
-  prob_1d_perc tinyint(3) NULL,
-  prob_2d_perc tinyint(3) NULL,
-  prob_3d_perc tinyint(3) NULL,
+  prob_1d_perc tinyint NULL,
+  prob_2d_perc tinyint NULL,
+  prob_3d_perc tinyint NULL,
   created datetime DEFAULT NOW()
 );
 
