@@ -13,7 +13,7 @@ const GROWING_UNIT_TABLE_ID = "growing-unit-table";
 /** The ID of the lease table element. */
 const LEASE_TABLE_ID = "lease-table";
 /** The path to the growing unit boundaries file. */
-const GROWING_UNIT_BOUNDS_PATH = "static/fl_cmu_boundary.geojson";
+const GROWING_UNIT_BOUNDS_PATH = "static/fl_cmus_boundary.geojson";
 /** The color used to fill in growing units without a closure probability. */
 const COLOR_NULL = "transparent";
 // /** The color used to fill in growing units with a Very Low risk. */
@@ -200,8 +200,7 @@ function createLegend() {
  * @returns {Promise<any>}
  */
 async function getGeoJsonAddProbs(growingUnitData) {
-//  let data = fetch(GROWING_UNIT_BOUNDS_PATH)
-    let data = fetch("/cmusGeoJson")
+  let data = fetch(GROWING_UNIT_BOUNDS_PATH)
     .then((response) => response.json())
     .then((response) => {
       response.features.forEach((feature) => {
