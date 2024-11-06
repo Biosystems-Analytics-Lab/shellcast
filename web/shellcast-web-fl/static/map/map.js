@@ -76,6 +76,7 @@ function handleUndef(value) {
   if (value === 3) flag = "Moderate";
   if (value === 4) flag = "High";
   if (value === 5) flag = "Very High";
+  if (value === 100) flag = "Out of Season"
   return value || value === 0 ? flag : "-";
 }
 
@@ -122,11 +123,13 @@ async function getLeaseData() {
  */
 function initGrowingUnitTable(growingUnitData) {
   const rows = [];
-  for (let [cmuName, data] of Object.entries(growingUnitData)) {
+  for (let [cmu_id, data] of Object.entries(growingUnitData)) {
+    console.log(data);
     const rowData = {
-      cmu_name: cmuName,
+      cmu_name: data.sh_id,
       sh_name: data.sh_name,
       rainfall_desc: data.rainfall_desc,
+      season: data.season,
       prob_1d_perc: `${handleUndef(data.prob_1d_perc)}`,
       // prob_2d_perc: `${handleUndef(data.prob_2d_perc)}`,
       // prob_3d_perc: `${handleUndef(data.prob_3d_perc)}`
@@ -203,7 +206,6 @@ async function getGeoJsonAddProbs(growingUnitData) {
     .then((response) => {
       response.features.forEach((feature) => {
         for (let [cmuId, data] of Object.entries(growingUnitData)) {
-          console.log(cmuId, data);
           if (feature.properties.uid == cmuId) {
             feature.properties.prob_1d_perc = data.prob_1d_perc;
           }
@@ -347,7 +349,7 @@ async function initMap(growingUnitData) {
     });
     if (feature && feature.get("type") != "Point") {
       let coordinate = evt.coordinate; //default projection is EPSG:3857 you may want to use ol.proj.transform
-      const desc = `<div>CMU Name: ${feature.get("cmu_name")}
+      const desc = `<div>CMU Name: ${feature.get("sh_name")}
                 <br>Today: ${handleUndef(feature.get("prob_1d_perc"))}
                 </div>`;
       content.innerHTML = desc;
