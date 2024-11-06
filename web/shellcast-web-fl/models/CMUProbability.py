@@ -1,27 +1,29 @@
+# noinspection PyUnresolvedReferences
+from models import CMU
+from models import db
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
 from sqlalchemy.sql import functions
-from sqlalchemy.orm import relationship
-from models import db
-from models.CMU import CMU  # DO NOT REMOVE THIS IMPORT
 
 
 class CMUProbability(db.Model):
-  __tablename__ = 'cmu_probabilities'
+    __tablename__ = 'cmu_probabilities'
 
-  id = Column(Integer, primary_key=True)
-  cmu_id = Column(String(10), ForeignKey('cmus.id'), nullable=False)
-  prob_1d_perc = Column(Integer)
-  created = Column(DateTime, server_default=functions.now())
+    id = Column(Integer, primary_key=True)
+    cmu_id = Column(String(10), ForeignKey('cmus.id'), nullable=False)
+    prob_1d_perc = Column(Integer)
+    created = Column(DateTime, server_default=functions.now())
 
-  cmus = db.relationship('CMU', back_populates='cmu_probabilities')
+    cmus = db.relationship('CMU', back_populates='cmu_probabilities')
 
-  def asDict(self):
-    return {
-      'cmu_id': self.cmu_id,
-      'sh_name': self.cmus.sh_name,
-      'rainfall_desc': self.cmus.rainfall_desc,
-      'prob_1d_perc': self.prob_1d_perc,
-    }
+    def asDict(self):
+        return {
+            'cmu_id': self.cmu_id,
+            'sh_id': self.cmus.sh_id,
+            'sh_name': self.cmus.sh_name,
+            'rainfall_desc': self.cmus.rainfall_desc,
+            'season': self.cmus.season,
+            'prob_1d_perc': self.prob_1d_perc,
+        }
 
-  def __repr__(self):
-    return '<CMUProbability: {}, {}>'.format(self.cmu_name, self.prob_1d_perc)
+    def __repr__(self):
+        return '<CMUProbability: {}, {}>'.format(self.cmu_id, self.cmus.sh_name, self.prob_1d_perc)
