@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -6,7 +5,6 @@ import firebase_admin
 import requests
 from firebase_admin import auth
 from flask import Flask, request, Response
-from gcloud import storage
 
 from config import Config, DevConfig
 from models import db
@@ -85,13 +83,18 @@ def createApp(configObj):
             response = Response(resp.content, resp.status_code, headers)
             return response
 
-    @app.route('/cmusGeoJson', methods=['GET'])
-    def get_cmus_geosjson():
-        storage_client = storage.Client()
-        blob = storage_client.bucket(app.config['GCLOUD_STORAGE_BUCKET']).get_blob('fl_cmus.geojson')
-        cmus_geojson_str = blob.download_as_string()
-        cmus_geojson = json.loads(cmus_geojson_str)
-        return cmus_geojson
+    # @app.route('/cmusGeoJson', methods=['GET'])
+    # def get_cmus_geosjson():
+    #
+    #     storage_client = storage.Client()
+    #     bucket = storage_client.get_bucket(app.config['GCLOUD_STORAGE_BUCKET'])
+    #
+    #     blob = bucket.blob('fl_cmus.geojson')
+    #     # blob = storage_client.bucket(app.config['GCLOUD_STORAGE_BUCKET']).get_blob('fl_cmus.geojson')
+    #     blob = blob.download_as_string()
+    #     blob = blob.decode('utf-8')
+    #     cmus_geojson = json.loads(blob)
+    #     return cmus_geojson
 
     return app
 
