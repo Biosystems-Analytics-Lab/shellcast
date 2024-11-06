@@ -261,22 +261,22 @@ async function getGeoJsonLeases() {
     .then((response) => response.json())
     .then((data) => {
       data.features.forEach((feature) => {
-        if (feature.properties.src_merge == "AUZ") {
-          if (auz_leases.indexOf(feature.properties.PARCEL_NAM) === -1) {
-            auz_leases.push(feature.properties.PARCEL_NAM);
+        if (feature.properties.src == "AUZ") {
+          if (auz_leases.indexOf(feature.properties.parcel_nam) === -1) {
+            auz_leases.push(feature.properties.parcel_nam);
           }
-        } else if (feature.properties.src_merge == "individual lease") {
-          if (individual_leases.indexOf(feature.properties.WATERBODY) === -1) {
-            individual_leases.push(feature.properties.WATERBODY);
+        } else if (feature.properties.src == "Individual") {
+          if (individual_leases.indexOf(feature.properties.waterbody) === -1) {
+            individual_leases.push(feature.properties.waterbody);
           }
         }
       });
     });
-  const auzDiv = document.querySelector("#auz-menu");
-  for (let i = 0; auz_leases.length; i++) {
-    // console.log(auz_leases[i]);
-    // auzDiv.innerHTML += `<a class="dropdown-item" href="#">auz_leases[i]</a>`;
-  }
+//  const auzDiv = document.querySelector("#auz-menu");
+//  for (let i = 0; auz_leases.length; i++) {
+//    // console.log(auz_leases[i]);
+//    // auzDiv.innerHTML += `<a class="dropdown-item" href="#">auz_leases[i]</a>`;
+//  }
 }
 
 // function createDropdowns(leases) {
@@ -318,7 +318,7 @@ function createLeaseInfoEl(lease) {
             </div>
             <div class="mb-3">
               <label for="lease-${lease.lease_id}-grow-area">Shellfish Growing Unit ID</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area" value="${lease.cmu_id}" readonly>
+              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area" value="${lease.sh_id}" readonly>
             </div>
             <div class="mb-3">
               <label for="lease-${lease.lease_id}-grow-area">Shellfish Growing Area Type</label>
@@ -330,7 +330,7 @@ function createLeaseInfoEl(lease) {
             </div>
             <div class="mb-3">
               <label for="lease-${lease.lease_id}-rainfall-threshold">Lease Closure Rainfall Threshold (inches)</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-rainfall-threshold" value="${threshold}" readonly>
+              <input type="text" class="form-control" id="lease-${lease.lease_id}-rainfall-threshold" value="${lease.rainfall_desc}" readonly>
             </div>
             
             <small class="form-text text-muted">
@@ -354,8 +354,8 @@ function buildLeaseInfoEls() {
   const leasesAccordion = document.getElementById("leases-accordion");
   leasesAccordion.innerHTML = "";
   for (let lease of leases) {
-    // console.log("building lease form", lease);
-    lease.rainfall_desc = lease.rainfall_desc.replace(/\"/g, "&quot;");
+    console.log("building lease form", lease);
+    lease.rainfall = lease.rainfall_desc.replace(/\"/g, "&quot;");
     leasesAccordion.innerHTML += createLeaseInfoEl(lease);
   }
 
