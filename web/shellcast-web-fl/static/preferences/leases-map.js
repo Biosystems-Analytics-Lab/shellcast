@@ -27,13 +27,13 @@ function getLeases(data) {
 
   for (let i = 0; i < data.features.length; i++) {
     let feature = data.features[i];
-    if (feature.properties.src_merge == "AUZ") {
-      if (!auzLeases.includes(feature.properties.PARCEL_NAM)) {
-        auzLeases.push(feature.properties.PARCEL_NAM);
+    if (feature.properties.src == "AUZ") {
+      if (!auzLeases.includes(feature.properties.parcel_nam)) {
+        auzLeases.push(feature.properties.parcel_nam);
       }
-    } else if (feature.properties.src_merge == "individual lease") {
-      if (!indivLeases.includes(feature.properties.WATERBODY)) {
-        indivLeases.push(feature.properties.WATERBODY);
+    } else if (feature.properties.src == "Individual") {
+      if (!indivLeases.includes(feature.properties.waterbody)) {
+        indivLeases.push(feature.properties.waterbody);
       }
     }
   }
@@ -66,15 +66,15 @@ function zoomToAuzLease(map, clickedItem, leaseType) {
   let extent = ol.extent.createEmpty();
   let field = "";
   if (leaseType === "AUZ") {
-    field = "PARCEL_NAM";
-  } else if (leaseType === "individual lease") {
-    field = "WATERBODY";
+    field = "parcel_nam";
+  } else if (leaseType === "Individual") {
+    field = "waterbody";
   }
 
   for (let i = 0; i < leasesFeatures.length; i++) {
     let curExtent = leasesFeatures[i].getGeometry().getExtent();
     // console.log(curExtent);
-    if (leasesFeatures[i].get("src_merge") === leaseType) {
+    if (leasesFeatures[i].get("src") === leaseType) {
       if (leasesFeatures[i].get(field) === clickedItem) {
         console.log(leasesFeatures[i].get(field));
         ol.extent.extend(extent, curExtent);
@@ -88,12 +88,12 @@ function zoomToAuzLease(map, clickedItem, leaseType) {
 function setLeasesFeatureStyle(feature) {
   let fillColor;
   let strokeColor;
-  if (feature.get("src_merge") === "AUZ") {
+  if (feature.get("src") === "AUZ") {
     // fillColor = "rgba(255, 0, 0, 0.1)";
     // strokeColor = "red";
     fillColor = LEASE_MAP_STYLE[0].fill;
     strokeColor = LEASE_MAP_STYLE[0].stroke;
-  } else if (feature.get("src_merge") === "individual lease") {
+  } else if (feature.get("src") === "Individual") {
     // fillColor = "rgba(0, 0, 255, 0.1)";
     // strokeColor = "blue";
     fillColor = LEASE_MAP_STYLE[1].fill;
@@ -108,7 +108,7 @@ function setLeasesFeatureStyle(feature) {
       width: 1,
     }),
     text: new ol.style.Text({
-      text: feature.get("lease_id"),
+      text: feature.get("parcel_num"),
       font: "12px Calibri,sans-serif",
       fill: new ol.style.Fill({
         color: "#000",
@@ -186,7 +186,7 @@ function addEvents(map) {
     indivDropdownMenu.addEventListener("click", function (event) {
       const clickedItem = event.target.textContent;
       console.log(clickedItem);
-      zoomToAuzLease(map, clickedItem, "individual lease");
+      zoomToAuzLease(map, clickedItem, "Individual");
     });
   } else {
     console.log("indivDropdownMenu is null");
