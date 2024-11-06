@@ -140,6 +140,9 @@ def userLeases(user):
             "parcel_name": lease.leases.parcel_name,
             "waterbody": lease.leases.waterbody,
             "grow_area_type": lease.leases.grow_area_type,
+            "rainfall_desc": lease.leases.cmus.rainfall_desc,
+            "sh_id": lease.leases.cmus.sh_id,
+            "sh_name": lease.leases.cmus.sh_name,
             "latitude": lease.leases.latitude,
             "longitude": lease.leases.longitude,
         }
