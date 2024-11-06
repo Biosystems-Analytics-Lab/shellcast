@@ -253,16 +253,16 @@ class FLPQPF:
 
     def main(self):
         start = datetime.now()
-        # has_data = self.check_tp_outputs()
-        # if not has_data:
-        #     logger.error('No TP outputs found')
-        #     sys.exit(1)
-        # utils.db_connection_test(self.connect_str)
-        # utils.delete_outdated_grbs(self.grb_raw_dir)
-        # files = self.procs.get_files_to_download()
-        # utils.download_grbs(self.grb_raw_dir, files, ct.PQPF_FTP_URL, ct.PQPF_FTP_CWD)
-        # to_db_bool = self.procs.check_grb_files()
-        to_db_bool = True
+        has_data = self.check_tp_outputs()
+        if not has_data:
+            logger.error('No TP outputs found')
+            sys.exit(1)
+        utils.db_connection_test(self.connect_str)
+        utils.delete_outdated_grbs(self.grb_raw_dir)
+        files = self.procs.get_files_to_download()
+        utils.download_grbs(self.grb_raw_dir, files, ct.PQPF_FTP_URL, ct.PQPF_FTP_CWD)
+        to_db_bool = self.procs.check_grb_files()
+
         if to_db_bool:
             date_str = self.date_today.strftime('%Y-%m-%d')
             csv_lease_fpath = os.path.join(self.outputs_dir, f'pqpf_lease_probs_season{date_str}.csv')

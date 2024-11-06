@@ -1,14 +1,15 @@
 #!/bin/sh
 
-echo "Starting xmrg_proc.sh"
+# Add this for "cdo command not found" problem via cron
+PATH="/usr/local/bin:/usr/bin:/bin"
 
-ROOT_DIR=${PWD%/*/*}
-RAW_DATA_DIR=$ROOT_DIR'/data/tp/raw'
-INTERMEDIATE_DIR=$ROOT_DIR'/data/tp/fl/intermediate'
-TP_OUTPUTS_DIR=$ROOT_DIR'/data/tp/fl/outputs'
+echo "Starting xmrg_proc.sh"
+RAW_DATA_DIR=$PWD'/data/tp/raw'
+INTERMEDIATE_DIR=$PWD'/data/tp/fl/intermediate'
+TP_OUTPUTS_DIR=$PWD'/data/tp/fl/outputs'
 INTERMEDIATE_PROC_DIR=$INTERMEDIATE_DIR'/procs'
 CNV_GRIB2_DIR=$INTERMEDIATE_DIR'/cnvgrib2'
-NCEPLIB=$ROOT_DIR'/ncep-lib-utils/nceplibs/bin'
+NCEPLIB=$PWD'/ncep-lib-utils/nceplibs/bin'
 
 rm -rf $CNV_GRIB2_DIR
 mkdir $CNV_GRIB2_DIR
