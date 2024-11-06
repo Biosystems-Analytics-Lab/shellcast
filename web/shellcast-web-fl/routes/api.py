@@ -120,8 +120,7 @@ def getGrowingUnitProbabilities():
     )
     growingUnitProbsAsDicts = {}
     for unit in growingUnitProbs:
-        cmuName = unit.cmu_id
-        growingUnitProbsAsDicts[cmuName] = unit.asDict()
+        growingUnitProbsAsDicts[unit.cmu_id] = unit.asDict()
 
     return jsonify(growingUnitProbsAsDicts)
 
