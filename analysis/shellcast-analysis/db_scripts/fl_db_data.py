@@ -1,3 +1,5 @@
+import configparser
+import os
 from pathlib import Path
 
 import geopandas as gpd
@@ -5,13 +7,15 @@ from sqlalchemy import Table, MetaData
 from sqlalchemy import create_engine
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
+CONFIG_INI = os.path.join(ROOT_DIR, 'config.ini')
 
-# DB_USER =
-# DB_PASS =
-# HOST =
-# PORT =
+config = configparser.ConfigParser()
+config.read(CONFIG_INI)
+fl_config = config['gcp.mysql']
+fl_db_name = config['FL']['DB_NAME']
 
-connect_str = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASS, HOST, PORT, 'shellcast_fl')
+connect_str = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(
+    fl_config['DB_USER'], fl_config['DB_PASS'], fl_config['HOST'], fl_config['PORT'], fl_db_name)
 cmu_shp_path = Path(ROOT_DIR, 'data/pqpf/fl/inputs/fl_cmus.shp')
 lease_shp_path = Path(ROOT_DIR, 'data/pqpf/fl/inputs/fl_leases.shp')
 metadata = MetaData()
