@@ -55,7 +55,8 @@ CREATE TABLE cmus (
 -- Stores information about all potential leases retrieved from the API.
 -- DROP TABLE IF EXISTS leases;
 CREATE TABLE leases (
-	lease_id varchar(20) NOT NULL PRIMARY KEY,
+    id int AUTO_INCREMENT PRIMARY KEY,
+	lease_id varchar(20) NOT NULL,
 	cmu_id varchar(10) NOT NULL,
     parcel_name varchar(50) NULL,
 	waterbody varchar(50) NULL,
@@ -77,7 +78,6 @@ CREATE TABLE user_leases (
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
     CONSTRAINT unique_leases_per_user UNIQUE (user_id, lease_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (lease_id) REFERENCES leases(lease_id)
 );
 
 -- Stores a log of all notifications that are sent to users.
