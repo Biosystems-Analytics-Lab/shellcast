@@ -83,11 +83,15 @@ class FLPQPF:
         # ----- Total precipitation 1 hour accumulation directories -----
         self.tp_data_dir = os.path.join(ct.TP_DATA_DIR, self.state.lower())
         self.tp_raw_dir = os.path.join(self.tp_data_dir, 'raw')
-        self.tp_intermediate_dir = utils.create_directory(os.path.join(self.tp_data_dir, 'intermediate'), delete=True)
-        self.convert_to_grib2_dir = utils.create_directory(os.path.join(self.tp_intermediate_dir, 'cnvgrib2'),
-                                                           delete=True)
-        self.tp_procs_dir = utils.create_directory(os.path.join(self.tp_intermediate_dir, 'procs'), delete=True)
-        self.tp_outputs_dir = utils.create_directory(os.path.join(self.tp_data_dir, 'outputs'))
+        self.tp_intermediate_dir = utils.create_directory(
+            os.path.join(self.tp_data_dir, 'intermediate'), delete=True)
+        self.convert_to_grib2_dir = utils.create_directory(
+            os.path.join(self.tp_intermediate_dir, 'cnvgrib2'),
+            delete=True)
+        self.tp_procs_dir = utils.create_directory(
+            os.path.join(self.tp_intermediate_dir, 'procs'), delete=True)
+        self.tp_outputs_dir = utils.create_directory(
+            os.path.join(self.tp_data_dir, 'outputs'))
 
         self.procs = PQPFProcs(self.state, db)
         self.save = save
@@ -107,7 +111,8 @@ class FLPQPF:
         gdf['rain_in'] = gdf['rain_in'].astype('float')  # Convert to float
         # df = pd.read_csv(os.path.join(os.path.dirname(self.lease_shp), 'fl_individual_leases_and_auz_pts.csv'))
         uni_days = sorted(gdf['days'].unique())  # List[int]
-        tp_tiffs = utils.list_files(self.tp_outputs_dir, 'tif')  # [path to tp_24h.tif, path to tp_48h.tif, ...]
+        tp_tiffs = utils.list_files(self.tp_outputs_dir,
+                                    'tif')  # [path to tp_24h.tif, path to tp_48h.tif, ...]
 
         result_gdf = gpd.GeoDataFrame()
         for day in uni_days:
@@ -130,8 +135,10 @@ class FLPQPF:
             result_gdf = pd.concat([result_gdf, gdf_q])
         # result_gdf[TP_CALC] = round(result_gdf[self.fl_config['LEASE_SHP_COL_RAIN_IN']].astype('float') - result_gdf[
         #     TP_ACCUM], 1)
-        result_gdf[TP_CALC] = result_gdf[self.fl_config['LEASE_SHP_COL_RAIN_IN']].astype('float') - result_gdf[
-            TP_ACCUM]
+        result_gdf[TP_CALC] = result_gdf[
+                                  self.fl_config['LEASE_SHP_COL_RAIN_IN']].astype(
+            'float') - result_gdf[
+                                  TP_ACCUM]
         logger.info(f'[rain_in - raster value at point] --- calculated')
         result_gdf[PQPF_TH] = result_gdf[TP_CALC].apply(fl_qppf_threshold_generator)
         logger.info(f'PQPF threshold --- assigned')
@@ -145,7 +152,7 @@ class FLPQPF:
         1. Set PQPF value to 1 where Process A's TP_CALC is negative.
         2. Get rest of PQPF values of Process A's PQPF_TH
         Args:
-            df:
+            df (DataFrame): DataFrame from Process A
 
         Returns:
             DataFrame:
@@ -178,7 +185,8 @@ class FLPQPF:
                         gdf_q[PQPF_PROC] = [x[0] for x in src.sample(coords)]
                         if len(gdf_q.index) > 0:
                             df_to_concat.append(gdf_q)
-                            logger.info(f'{len(gdf_q.index)} rows from {os.path.basename(pqpf_tiff)}({threshold})')
+                            logger.info(
+                                f'{len(gdf_q.index)} rows from {os.path.basename(pqpf_tiff)}({threshold})')
                         # result_gdf = pd.concat([result_gdf, gdf_q])
         if len(df_to_concat) > 0:
             result_gdf = gpd.GeoDataFrame(pd.concat(df_to_concat, ignore_index=True))
@@ -232,6 +240,15 @@ class FLPQPF:
         return True
 
     def get_season_now(self, in_csv_fpath, out_csv_fpath):
+        """
+        Create CSV file that contains cmu_id and prob_1d_perc columns based on the
+        season.
+        Args:
+            in_csv_fpath (str): Input CSV file path (all)
+            out_csv_fpath (str): Output CSV file path (only in season)-this is the
+                final output file and this data will be saved to the database.
+
+        """
         columns = ["cmu_id", "prob_1d_perc"]
         with open(in_csv_fpath, 'r') as rf:
             reader = csv.reader(rf)
@@ -241,15 +258,17 @@ class FLPQPF:
                 writer.writerow(columns)
                 for row in reader:
                     flag = False
+                    # e.g [1/1-12/31] or multiple like [4/1-6/30, 9/1-11/30]
                     dt_str_lst = row[2].split(", ")
                     if dt_str_lst and len(dt_str_lst) > 0:
                         for dt_str in dt_str_lst:
                             dt_dict = utils.convert_date_string(self.date_today, dt_str)
-                            if utils.is_season(self.date_today, dt_dict["start"], dt_dict["end"]):
+                            if utils.is_season(self.date_today, dt_dict["start"],
+                                               dt_dict["end"]):
                                 flag = True
                                 break
-                    # If not in season, assign 100
-                    writer.writerow([row[0], row[1]] if flag else [row[0], 100])  # cmu_id, prob_1d_perc
+                    # cmu_id, prob_1d_perc, if not in season, assign 100
+                    writer.writerow([row[0], row[1]] if flag else [row[0], 100])
 
     def main(self):
         start = datetime.now()
@@ -265,9 +284,12 @@ class FLPQPF:
 
         if to_db_bool:
             date_str = self.date_today.strftime('%Y-%m-%d')
-            csv_lease_fpath = os.path.join(self.outputs_dir, f'pqpf_lease_probs_season{date_str}.csv')
-            csv_cmu_tmp_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_tmp_{date_str}.csv')
-            csv_cmu_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_{date_str}.csv')
+            csv_lease_fpath = os.path.join(self.outputs_dir,
+                                           f'pqpf_lease_probs_season{date_str}.csv')
+            csv_cmu_tmp_fpath = os.path.join(self.outputs_dir,
+                                             f'pqpf_cmu_probs_tmp_{date_str}.csv')
+            csv_cmu_fpath = os.path.join(self.outputs_dir,
+                                         f'pqpf_cmu_probs_{date_str}.csv')
 
             # Process data
             self.procs.small_grb()

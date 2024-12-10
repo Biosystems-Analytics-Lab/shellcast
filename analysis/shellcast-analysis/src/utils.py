@@ -224,7 +224,8 @@ def send_email(message, state=None):
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
             smtp.login(notif['EMAIL_SENDER'], notif['GMAIL_API_CREDENTIAL'])
-            smtp.sendmail(notif['EMAIL_SENDER'], notif['EMAIL_RECEIVER'], em.as_string())
+            smtp.sendmail(notif['EMAIL_SENDER'], notif['EMAIL_RECEIVER'],
+                          em.as_string())
     except Exception as e:
         error_log(e)
         exit(1)
@@ -259,7 +260,8 @@ def run_gdal_resample(in_fpath, out_fpath, xres, yres, nodata):
         in_fname = os.path.basename(in_fpath)
         out_fname = os.path.basename(out_fpath)
         input = gdal.Open(in_fpath)
-        warp_options = gdal.WarpOptions(xRes=xres, yRes=yres, resampleAlg='bilinear', dstNodata=nodata)
+        warp_options = gdal.WarpOptions(xRes=xres, yRes=yres, resampleAlg='bilinear',
+                                        dstNodata=nodata)
         warp = gdal.Warp(out_fpath, input, options=warp_options)
         logger.info(f'{in_fname} to {out_fname} ---> completed')
         warp = None
@@ -328,7 +330,8 @@ def get_thresholds(lease_shp, thresholds_col_name) -> List[float]:
     logger.info('[Get unique rainfall thresholds]')
     try:
         gdf = gpd.read_file(lease_shp)
-        thresholds = sorted(gdf[thresholds_col_name].unique())  # Returns list of class numpy.float64
+        thresholds = sorted(
+            gdf[thresholds_col_name].unique())  # Returns list of class numpy.float64
         if len(thresholds) > 0:
             thresholds_num = [float(threshold) for threshold in thresholds]
             thresholds_str = ', '.join([str(threshold) for threshold in thresholds])
@@ -376,7 +379,8 @@ def save_to_db(connect_str, csv_path) -> None:
             if len(df.index) > 0:
                 with engine.begin() as conn:
                     conn.execute(text('CALL DeleteCmuProbsToday()'))
-                    df.to_sql('cmu_probabilities', con=conn, if_exists='append', index=False)
+                    df.to_sql('cmu_probabilities', con=conn, if_exists='append',
+                              index=False)
                     queryset = conn.execute(text('CALL SelectCmuProbsToday()'))
                     if queryset.rowcount == len(df.index):
                         logger.info(f'{queryset.rowcount} rows added to DB.')
@@ -386,15 +390,29 @@ def save_to_db(connect_str, csv_path) -> None:
         error_process(msg, e)
 
 
-def convert_date_string(dt_today, date_str):
-    year = dt_today.year
-    date_lst = date_str.split("-")
+def find_years(day, start_month, start_day, end_month, end_day):
+    year = day.year
+    date1_start = datetime.strptime(f"{year}-{start_month}-{start_day}", "%Y-%m-%d")
+    date1_end = datetime.strptime(f"{year + 1}-{end_month}-{end_day}", "%Y-%m-%d")
+    date2_start = datetime.strptime(f"{year - 1}-{start_month}-{start_day}", "%Y-%m-%d")
+    date2_end = datetime.strptime(f"{year}-{end_month}-{end_day}", "%Y-%m-%d")
+    if start_month > end_month:
+        if date1_start <= day <= date1_end:
+            return date1_start, date1_end
+        elif date2_start <= day <= date2_end:
+            return date2_start, date2_end
+    else:
+        return date1_start, date1_end
+
+
+def convert_date_string(today, dates_str):
+    dates_lst = dates_str.split("-")
+    start_month, start_day = map(int, dates_lst[0].split("/"))
+    end_month, end_day = map(int, dates_lst[1].split("/"))
     dates = {"start": None, "end": None}
-    if len(date_lst) == 2:
-        start = date_lst[0].replace("/", "-")
-        end = date_lst[1].replace("/", "-")
-        dates["start"] = datetime.strptime(f"{year}-{start}", "%Y-%m-%d")
-        dates["end"] = datetime.strptime(f"{year}-{end}", "%Y-%m-%d")
+    if len(dates_lst) == 2:
+        dates["start"], dates["end"] = find_years(today, start_month, start_day,
+                                                  end_month, end_day)
     return dates
 
 
