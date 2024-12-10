@@ -392,16 +392,19 @@ def save_to_db(connect_str, csv_path) -> None:
 
 def find_years(day, start_month, start_day, end_month, end_day):
     year = day.year
-    date1_start = datetime.strptime(f"{year}-{start_month}-{start_day}", "%Y-%m-%d")
-    date1_end = datetime.strptime(f"{year + 1}-{end_month}-{end_day}", "%Y-%m-%d")
-    date2_start = datetime.strptime(f"{year - 1}-{start_month}-{start_day}", "%Y-%m-%d")
-    date2_end = datetime.strptime(f"{year}-{end_month}-{end_day}", "%Y-%m-%d")
+
     if start_month > end_month:
+        date1_start = datetime.strptime(f"{year}-{start_month}-{start_day}", "%Y-%m-%d").date()
+        date1_end = datetime.strptime(f"{year + 1}-{end_month}-{end_day}", "%Y-%m-%d").date()
+        date2_start = datetime.strptime(f"{year - 1}-{start_month}-{start_day}", "%Y-%m-%d").date()
+        date2_end = datetime.strptime(f"{year}-{end_month}-{end_day}", "%Y-%m-%d").date()
         if date1_start <= day <= date1_end:
             return date1_start, date1_end
         elif date2_start <= day <= date2_end:
             return date2_start, date2_end
     else:
+        date1_start = datetime.strptime(f"{year}-{start_month}-{start_day}", "%Y-%m-%d").date()
+        date1_end = datetime.strptime(f"{year}-{end_month}-{end_day}", "%Y-%m-%d").date()
         return date1_start, date1_end
 
 
@@ -409,11 +412,10 @@ def convert_date_string(today, dates_str):
     dates_lst = dates_str.split("-")
     start_month, start_day = map(int, dates_lst[0].split("/"))
     end_month, end_day = map(int, dates_lst[1].split("/"))
-    dates = {"start": None, "end": None}
     if len(dates_lst) == 2:
-        dates["start"], dates["end"] = find_years(today, start_month, start_day,
-                                                  end_month, end_day)
-    return dates
+        start, end = find_years(today, start_month, start_day,
+                                end_month, end_day)
+        return start, end
 
 
 def is_season(date_today, start, end):
