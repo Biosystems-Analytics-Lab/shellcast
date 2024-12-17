@@ -4,16 +4,20 @@
 
 {% block additional_head %}
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
-  <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
   <!-- Custom JS -->
   <script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
+  <script defer src="{{ url_for('static', filename='map/utils.js') }}" type="module"></script>
+  <script defer src="{{ url_for('static', filename='map/map_constants.js') }}" type="module"></script>
+
   <script defer src="{{ url_for('static', filename='preferences/preferences.js') }}" type="module"></script>
-  <script defer src="{{ url_for('static', filename='preferences/prefmap.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='preferences/prefmap.js') }}" type="module"></script>
 
   <!-- Custom CSS -->
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='preferences/preferences.css') }}">
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='map/map.css') }}">
+  <!-- OpenLayers -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/ol/ol.css') }}">
+  <script src="{{ url_for('static', filename='node_modules/ol/dist/ol.js') }}"></script>
 
 {% endblock %}
 
@@ -37,8 +41,9 @@
         <h4>My Notification Preferences</h4>
         {# Email #}
         <div class="mb-3">
-          <label for="email">Email address</label>
-          <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com"
+          <label for="email-address">Email address</label>
+          <input type="email" class="form-control" name="email address" id="email-address"
+                 placeholder="you@example.com"
                  aria-describedby="emailHelp">
           <div class="invalid-feedback">
             Please enter a valid email address.
@@ -61,7 +66,8 @@
               <div class="input-group-prepend">
                 <div class="input-group-text">+1</div>
               </div>
-              <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(***) ***-****"
+              <input type="tel" class="form-control" name="phone-number" id="phone-number"
+                     placeholder="(***) ***-****"
                      aria-describedby="phoneHelp">
               <div class="invalid-feedback" style="width: 100%;">
                 Please enter a valid phone number.
@@ -95,10 +101,11 @@
 
         {# Email, text, and probability preferences #}
         <div class="notification-options" id="notification-options">
-          <label>I want to receive the following notifications:</label>
+          <h6>I want to receive the following notifications:</h6>
           <div class="form-check">
             <input class="form-check-input" type="checkbox" name="no-notifications" id="no-notifications">
-            <label class="form-check-label" for="no-notifications">I do not want to receive notifications</label>
+            <label class="form-check-label" for="no-notifications">I do not want to receive
+              notifications</label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="checkbox" name="email-pref" id="email-pref">
@@ -115,13 +122,15 @@
             ShellCast webpage.
           </small>
 
-          <label>I want to receive notifications for my leases when the risk of temporary harvest closure is:</label>
+          <h6>I want to receive notifications for my leases when the risk of temporary harvest closure
+            is:</h6>
           {% for probOption in probOptions %}
             <div class="form-check">
               <input class="form-check-input" type="radio" name="notification-prob"
                      id="notification-prob-{{ probOption }}" value="{{ probOption }}">
               <label class="form-check-label"
-                     for="notification-prob-{{ probOption }}"> {{ probabilityToRisk(probOption) }} or higher</label>
+                     for="notification-prob-{{ probOption }}"> {{ probabilityToRisk(probOption) }} or
+                higher</label>
             </div>
           {% endfor %}
           <small class="form-text text-muted">
@@ -133,7 +142,7 @@
             and weather forecasts predict small storms less accurately than large storms.
           </small>
 
-          <label for="example-notification">Example notification:</label>
+          <h6>Example notification:</h6>
           <div class="text-bubble" id="example-notification"></div>
           <small class="form-text text-muted">
             This is an example of a notification you might receive for a lease.
@@ -156,13 +165,13 @@
         generate a forecast for these leases.
       </p>
 
-      <div id="closure-map" style="height: 50vh"></div>
+      <div id="pref-map" style="height: 50vh"></div>
 
-      <div id="popup" class="ol-popup">
-        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-        <div id="popup-content"></div>
-
+      <div id="pref-popup" class="ol-popup">
+        <a href="#" id="pref-popup-closer" class="ol-popup-closer"></a>
+        <div id="pref-popup-content"></div>
       </div>
+
       </br>
       <div class="mb-3 search-bar">
         <div class="input-group">
@@ -205,7 +214,8 @@
           </p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#account-deletion-modal').modal('hide');">Cancel
+          <button type="button" class="btn btn-secondary" onclick="$('#account-deletion-modal').modal('hide');">
+            Cancel
           </button>
           <button type="button" class="btn btn-danger" id="confirm-account-deletion-btn">Delete Account</button>
         </div>
