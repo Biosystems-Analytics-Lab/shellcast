@@ -71,6 +71,7 @@ async function prefInitMap(growingUnitData) {
   osmHumanitarianBaseLyr = createBaseLayer();
   prefPopupLyr = createSimplePopupLayer(PREF_POPUP_CONTAINER_ELE);
   prefCmuLyr = await createCmuLayer(cmuGeoJsonSource, "prefCmuLyr");
+  prefCmuLyr.getSource().changed();
 
   prefMap = addAllMapLayers(
     mapEl,
