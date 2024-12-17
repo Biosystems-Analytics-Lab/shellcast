@@ -1,6 +1,6 @@
 "use strict";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import {auth, authorizedFetch} from "../common/common.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { auth, authorizedFetch } from "../common/common.js";
 
 /* The number of milliseconds between when a user changes the lease search
    text and when an API request is sent for a lease search */
@@ -21,8 +21,7 @@ async function getProfileInfo() {
   if (res.ok) {
     return await res.json();
   }
-  console.log("Problem retrieving user profile information.");
-  // console.log(res);
+  window.console.error("Problem retrieving user profile information.");
   return null;
 }
 
@@ -81,10 +80,7 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
 
   // show example notification
   document.getElementById("example-notification").innerHTML =
-    generateExampleNotification(
-      noNotificationsCheckbox.checked,
-      profInfo.prob_pref,
-    );
+    generateExampleNotification(noNotificationsCheckbox.checked);
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
@@ -125,9 +121,8 @@ function maskPhoneNumber(phoneNumber = "") {
 /**
  *
  * @param {boolean} noNotifications whether or not the user enabled notifications
- * @param {number} selectedProb the user's selected probability preference
  */
-function generateExampleNotification(noNotifications, selectedProb) {
+function generateExampleNotification(noNotifications) {
   if (noNotifications) {
     return "<p>-- You will not receive any notifications. --</p>";
   }
@@ -187,7 +182,7 @@ function onProfileFormChange(e) {
   }
   // console.log(selectedProb);
   document.getElementById("example-notification").innerHTML =
-    generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
+    generateExampleNotification(noNotificationsCheckbox.checked);
 
   // enable save and cancel buttons
   profForm.elements["prof-form-cancel-btn"].disabled = false;
@@ -252,50 +247,31 @@ async function saveProfileFormChanges() {
   initProfileForm(profileInfo, true);
 }
 
-/**
- * Returns an HTML string describing a collapsible lease info form.
- * @param {object} lease the lease data to populate the form with
- */
-function createLeaseInfoEl(lease) {
-  const LEASE_INFO_EL = `
+function createLeaseInfoElFromData(leaseID, rainfallThreshold) {
+  return `
     <div class="card">
-      <div class="card-header" id="heading-${lease.lease_id}">
+      <div class="card-header" id="heading-${leaseID}">
         <h2 class="mb-0 d-flex">
-          <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-${lease.lease_id}" aria-expanded="false" aria-controls="collapse-${lease.lease_id}">
-            Lease: ${lease.lease_id}
+          <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-${leaseID}" aria-expanded="false" aria-controls="collapse-${leaseID}">
+            Lease: ${leaseID}
           </button>
           <div>
-            <button class="btn btn-danger" type="button" id="delete-btn-${lease.lease_id}">Delete</button>
+            <button class="btn btn-danger" type="button" id="delete-btn-${leaseID}">Delete</button>
           </div>
         </h2>
       </div>
 
-      <div id="collapse-${lease.lease_id}" class="collapse" aria-labelledby="heading-${lease.lease_id}" data-parent="#leases-accordion">
+      <div id="collapse-${leaseID}" class="collapse" aria-labelledby="heading-${leaseID}" data-parent="#leases-accordion">
         <div class="card-body">
-          <form class="needs-validation mb-4" id="form-${lease.lease_id}">
+          <form class="needs-validation mb-4" id="form-${leaseID}">
             <div class="mb-3 inline-text-input">
-              <label for="lease-${lease.lease_id}-lease-id">Lease ID</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-lease-id" value="${lease.lease_id}" name="lease-id" readonly>
+              <label for="lease-${leaseID}-lease-id">Lease ID</label>
+              <input type="text" class="form-control" id="lease-${leaseID}-lease-id" value="${leaseID}" name="lease-id" readonly>
             </div>
 
             <div class="mb-3">
-              <label for="lease-${lease.lease_id}-grow-area">SC Division of Marine Fisheries Shellfish Growing Area</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area" value="${lease.grow_area_name}" readonly>
-            </div>
-
-            <div class="mb-3">
-              <label for="lease-${lease.lease_d}-grow-area-desc">Growing Area Description</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-area-desc" value="${lease.grow_area_desc}" readonly>
-            </div>
-
-            <div class="mb-3">
-              <label for="lease-${lease.lease_id}-grow-unit">SC Division of Marine Fisheries Shellfish Growing Unit</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-grow-unit" value="${lease.cmu_name}" readonly>
-            </div>
-
-            <div class="mb-3">
-              <label for="lease-${lease.lease_id}-rainfall-threshold">Lease Closure Rainfall Threshold (inches)</label>
-              <input type="text" class="form-control" id="lease-${lease.lease_id}-rainfall-threshold" value="${lease.rainfall_thresh_in}" readonly>
+              <label for="lease-${leaseID}-rainfall-threshold">Lease Closure Rainfall Threshold (inches)</label>
+              <input type="text" class="form-control" id="lease-${leaseID}-rainfall-threshold" value="${rainfallThreshold}" readonly>
             </div>
             <small class="form-text text-muted">
               The rainfall threshold is the amount of rainfall in inches within a
@@ -307,11 +283,23 @@ function createLeaseInfoEl(lease) {
       </div>
     </div>
   `;
-  return LEASE_INFO_EL;
 }
 
 /**
- * Builds all of the lease forms based on the data in the global leases array.
+ * Returns an HTML string describing a collapsible lease info form.
+ * @param {object} lease the lease data to populate the form with
+ */
+function createLeaseInfoEl(lease) {
+  if (
+    lease.hasOwnProperty("lease_id") &&
+    lease.hasOwnProperty("rainfall_thresh_in")
+  ) {
+    return createLeaseInfoElFromData(lease.lease_id, lease.rainfall_thresh_in);
+  }
+}
+
+/**
+ * Builds all the lease forms based on the data in the global leases array.
  */
 function buildLeaseInfoEls() {
   // add lease forms to lease accordion
@@ -323,25 +311,24 @@ function buildLeaseInfoEls() {
 
   // init values and setup event listeners
   for (let lease of leases) {
-    initLeaseInfoEl(lease);
-    ("");
+    initLeaseInfoEl(lease, true);
   }
 }
 
 /**
  * Initializes the form that corresponds to the lease with the given id and data.
- * @param {object} lease the lease data to initialize the form with
- * @param {string} lease.id the id of the lease
+ * @param {JSON} lease the lease data to initialize the form with
  * @param {boolean} ignoreAddingEventListeners whether or not to ignore adding
  *    event listeners as part of the form initialization. This is useful if the
  *    form has already been created, but you are resetting the values.
  */
 function initLeaseInfoEl(lease, ignoreAddingEventListeners) {
-  const deleteBtn = document.getElementById(`delete-btn-${lease.lease_id}`);
-
-  // add event listeners
-  if (!ignoreAddingEventListeners) {
-    deleteBtn.addEventListener("click", () => deleteLease(lease.lease_id));
+  let deleteBtn;
+  if (lease.hasOwnProperty("lease_id")) {
+    deleteBtn = document.getElementById(`delete-btn-${lease.lease_id}`);
+    if (!ignoreAddingEventListeners) {
+      deleteBtn.addEventListener("click", () => deleteLease(lease.lease_id));
+    }
   }
 }
 
@@ -365,8 +352,8 @@ async function addLease(leaseId) {
     buildLeaseInfoEls();
   } else {
     const errors = (await res.json()).errors;
-    console.log("There was a problem while adding the lease.");
-    console.log(errors);
+    const error_msg = "There was a problem while adding the lease.\n";
+    window.console.error(error_msg + errors);
   }
 
   clearLeaseSearch();
@@ -385,9 +372,13 @@ async function deleteLease(leaseId) {
     buildLeaseInfoEls();
   } else {
     const errors = (await res.json()).errors;
-    console.log("There was a problem while deleting the lease.");
-    console.log(errors);
+    const error_msg = "There was a problem while deleting the lease.\n";
+    window.console.error(error_msg + errors);
   }
+}
+
+function addLeaseClickListener(button) {
+  button.addEventListener("click", () => addLease(button.textContent));
 }
 
 /**
@@ -413,7 +404,7 @@ async function searchLeases() {
         searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action">${lease}</button>`;
       }
       for (let button of searchResultsDiv.children) {
-        button.addEventListener("click", () => addLease(button.textContent));
+        addLeaseClickListener(button);
       }
     } else {
       // show message saying no results were found
@@ -422,7 +413,7 @@ async function searchLeases() {
     }
     searchResultsDiv.style.display = "flex";
   } else {
-    console.log("There was an error while searching for leases.");
+    window.console.error("There was an error while searching for leases.");
     // show an error message
     const searchResultsDiv = document.getElementById("lease-search-results");
     searchResultsDiv.innerHTML =
@@ -443,15 +434,15 @@ function clearLeaseSearch() {
   searchResultsDiv.style.display = "none";
 }
 
-function showSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById("lease-search-results");
-  searchResultsDiv.style.display = "flex";
-}
-
-function hideSearchResultsDiv() {
-  const searchResultsDiv = document.getElementById("lease-search-results");
-  searchResultsDiv.style.display = "none";
-}
+// function showSearchResultsDiv() {
+//   const searchResultsDiv = document.getElementById("lease-search-results");
+//   searchResultsDiv.style.display = "flex";
+// }
+//
+// function hideSearchResultsDiv() {
+//   const searchResultsDiv = document.getElementById("lease-search-results");
+//   searchResultsDiv.style.display = "none";
+// }
 
 function searchLeasesOnDelay() {
   if (leaseSearchTimer !== null) {
@@ -466,23 +457,22 @@ async function deleteAccount() {
     window.location.replace("/");
   } else {
     const errors = (await res.json()).errors;
-    console.log("There was a problem while deleting the account.");
-    console.log(errors);
+    const error_msg = "There was a problem while deleting the account.\n";
+    window.console.error(error_msg + errors);
   }
 }
 
 /**
  * Displays the UI for a signed-in user and initializes the lease forms.
- * @param {firebase.User} user
  */
-async function handleSignedInUser(user) {
+async function handleSignedInUser() {
   // hide signed-out view and show signed-in view
   document.getElementById("user-signed-in").style.display = "block";
   document.getElementById("user-signed-out").style.display = "none";
 
   // get user's profile information
   profileInfo = await getProfileInfo();
-  initProfileForm(profileInfo);
+  initProfileForm(profileInfo, true);
 
   // setup delete account button
   document
@@ -505,7 +495,9 @@ async function handleSignedInUser(user) {
   if (res.ok) {
     leases = await res.json();
   } else {
-    console.log("There was a problem while retrieving the user's leases");
+    window.console.error(
+      "There was a problem while retrieving the user's leases",
+    );
   }
 
   // setup lease forms
@@ -522,6 +514,6 @@ function handleSignedOutUser() {
 (async () => {
   // change UI based on auth state
   onAuthStateChanged(auth, (user) => {
-    user ? handleSignedInUser(user) : handleSignedOutUser();
+    (user ? handleSignedInUser : handleSignedOutUser)();
   });
 })();
