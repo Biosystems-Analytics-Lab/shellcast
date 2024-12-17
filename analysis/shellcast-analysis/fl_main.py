@@ -5,7 +5,6 @@ Date: November 2023 - 2024
 import sys
 from pathlib import Path
 
-
 shellcast_analysis_dir = str(Path(__file__).resolve().parent)
 script_dir = str(Path(Path(shellcast_analysis_dir), 'src'))
 sys.path.append(script_dir)
