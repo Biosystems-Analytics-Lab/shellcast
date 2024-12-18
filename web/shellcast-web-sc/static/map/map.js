@@ -141,7 +141,6 @@ function addDaySelector() {
 async function initMap(growingUnitData) {
   const mapEl = document.getElementById(MAP_ELE_ID);
   const cmuGeoJson = await getGeoJsonAddProbs(growingUnitData);
-  console.log(cmuGeoJson);
   const cmuGeoJsonSource = await createCmuGeoJsonSource(cmuGeoJson);
   const partnerSitesSource = await getPartnerSitesSourceData();
 
