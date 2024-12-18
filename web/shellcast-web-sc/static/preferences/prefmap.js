@@ -71,7 +71,6 @@ async function prefInitMap(growingUnitData) {
   osmHumanitarianBaseLyr = createBaseLayer();
   prefPopupLyr = createSimplePopupLayer(PREF_POPUP_CONTAINER_ELE);
   prefCmuLyr = await createCmuLayer(cmuGeoJsonSource, "prefCmuLyr");
-  prefCmuLyr.getSource().changed();
 
   prefMap = addAllMapLayers(
     mapEl,
@@ -94,6 +93,7 @@ async function prefInitMap(growingUnitData) {
   prefMap.addControl(daySelectorControl);
   // Set initial style to show
   setCmuPolyStyleByDay(1);
+  prefMap.renderSync();
 
   // Add popup
   prefMap.on("singleclick", function (evt) {
