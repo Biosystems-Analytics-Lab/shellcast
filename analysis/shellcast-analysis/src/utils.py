@@ -18,6 +18,7 @@ from typing import List
 import geopandas as gpd
 import pandas as pd
 from cryptography.fernet import Fernet
+from gcloud import storage
 from osgeo import gdal
 from sqlalchemy import create_engine, text
 
@@ -423,3 +424,13 @@ def is_season(date_today, start, end):
         return True
     else:
         return False
+
+
+def download_files_from_gcloud_bucket(bucket_name, local_dir):
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_name)
+    blobs = bucket.list_blobs()
+    for blob in blobs:
+        if not blob.name.endswith('/'):
+            local_path = os.path.join(local_dir, blob.name.split('/')[-1])
+            blob.download_to_filename(filename=str(local_path))

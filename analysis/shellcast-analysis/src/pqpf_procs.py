@@ -60,10 +60,10 @@ class ProcDirs:
         self.tiffs_dir = utils.create_directory(
             os.path.join(self.intermediate_dir, "tiffs"), delete=True
         )
-
         self.lease_shp = os.path.join(
             self.inputs_dir, self.config[self.state]["LEASE_SHP"]
         )
+        self.bucket_name = self.config["gcp.bucket"]["BUCKET_NAME"]
 
 
 class PQPFProcs:
@@ -75,7 +75,24 @@ class PQPFProcs:
         self.grb_raw_dir = pdirs.grb_raw_dir
         self.tiffs_dir = pdirs.tiffs_dir
         self.grb_subsets_dir = pdirs.grb_subsets_dir
+        self.inputs_dir = pdirs.inputs_dir
         self.outfile_date = None
+        self.bucket_name = pdirs.bucket_name
+
+    def get_input_files(self):
+        logger.info("[Download CMU and leases spatial data from GCP bucket]")
+        try:
+            utils.download_files_from_gcloud_bucket(self.bucket_name, self.inputs_dir)
+            if len(os.listdir(self.inputs_dir)) == 19:
+                logger.info(utils.done_str)
+            else:
+                msg = "Download failed."
+                logger.error(msg)
+                utils.send_email(msg, self.state)
+                sys.exit(1)
+        except Exception as e:
+            msg = "Files to download failed."
+            utils.error_process(msg, e)
 
     def get_files_to_download(self) -> List[str]:
         """

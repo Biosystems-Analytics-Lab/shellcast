@@ -276,6 +276,7 @@ class FLPQPF:
             logger.error('No TP outputs found')
             sys.exit(1)
         utils.db_connection_test(self.connect_str)
+        self.procs.get_input_files()
         utils.delete_outdated_grbs(self.grb_raw_dir)
         files = self.procs.get_files_to_download()
         utils.download_grbs(self.grb_raw_dir, files, ct.PQPF_FTP_URL, ct.PQPF_FTP_CWD)
