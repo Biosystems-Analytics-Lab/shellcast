@@ -16,6 +16,7 @@ tests/
 raw/
 intermediate/
 outputs/
+inputs/
 **/lease_db_data.py
 node_modules/
 venv/
