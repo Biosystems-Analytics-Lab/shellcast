@@ -37,7 +37,7 @@ class ProcDirs:
         """
         self.os_type = "Other" if platform.system() == "Darwin" else "Windows"
 
-        self.date_today = datetime.now(pytz.timezone("America/New_York")).today()
+        self.date_today = datetime.now(pytz.timezone("America/New_York")).date()
         self.config = configparser.ConfigParser()
         self.config.read(ct.CONFIG_INI)
         self.state = state.upper()
