@@ -29,7 +29,7 @@ class NCPQPF:
         self.tiffs_dir = pqpf_dirs.tiffs_dir
         self.lease_shp = pqpf_dirs.lease_shp
         self.outputs_dir = pqpf_dirs.outputs_dir
-        self.outfile_date = pqpf_dirs.outfile_date
+        self.date_today = pqpf_dirs.date_today
         self.intermediate_dir = pqpf_dirs.intermediate_dir
         self.cmu_shp = os.path.join(self.inputs_dir, self.config[self.state]['CMU_SHP'])
         self.use_cols = [
@@ -137,7 +137,7 @@ class NCPQPF:
             rename_cols = {'pqpf_24h': 'prob_1d_perc', 'pqpf_48h': 'prob_2d_perc', 'pqpf_72h': 'prob_3d_perc'}
             # Delete previous outputs
             utils.delete_files(self.outputs_dir)
-            out_csv_path = os.path.join(self.intermediate_dir, f'pqpf_{what_lyr}_{self.outfile_date}.csv')
+            out_csv_path = os.path.join(self.intermediate_dir, f'pqpf_{what_lyr}_{self.date_today}.csv')
             # group_col = [self.config[self.state]['LEASE_SHP_COL_CMU_NAME']]
             metric_cols = ['pqpf_24h', 'pqpf_48h', 'pqpf_72h']
             aggs = df.groupby(group_col)[metric_cols].mean()  # Aggregate by CMU
@@ -196,7 +196,7 @@ class NCPQPF:
 
         # Save data to DB
         if to_db_bool:
-            csv_out_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_{self.outfile_date}.csv')
+            csv_out_fpath = os.path.join(self.outputs_dir, f'pqpf_cmu_probs_{self.date_today}.csv')
             # Process data
             self.procs.small_grb()
             thresholds = self.nc_get_thresholds()
