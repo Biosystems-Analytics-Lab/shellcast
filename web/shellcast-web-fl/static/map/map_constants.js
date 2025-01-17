@@ -6,16 +6,15 @@ export const PARTNER_SITE_DOMAINS = {
   VB: "visitbeaches.org",
 };
 
-export const MAP_CENTER = [-79.806128, 33.168926];
-export const INITIAL_ZOOM = 8;
+export const MAP_CENTER = [-81.5158, 27.6648];
+export const INITIAL_ZOOM = 7;
 export const CMU_LYR_NAME = "cmuLyr";
 export const PARTNER_APP_LYR_NAME = "partnerAppLyr";
 export const LEASE_PNT_LYR_NAME = "leasePntLyr";
 
 // The path to the growing unit boundaries file.
-export const GROWING_UNIT_BOUNDS_PATH = "static/cmu_bounds_sc.geojson";
-export const PARTNER_APP_POINTS_PATH = "static/partner_sites_sc.geojson";
-
+export const GROWING_UNIT_BOUNDS_PATH = "static/fl_cmus_boundary.geojson";
+export const PARTNER_APP_POINTS_PATH = "static/partner_sites_fl.geojson";
 // Icons
 export const HOME_ICON = "./static/img/map/home.png";
 export const HOWS_THE_BEACH_ICON = "./static/img/map/hb.png";
