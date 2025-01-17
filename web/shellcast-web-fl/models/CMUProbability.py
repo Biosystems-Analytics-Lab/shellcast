@@ -23,6 +23,7 @@ class CMUProbability(db.Model):
             'rainfall_desc': self.cmus.rainfall_desc,
             'season': self.cmus.season,
             'prob_1d_perc': self.prob_1d_perc,
+            'created': self.created.strftime('%m/%d/%Y')
         }
 
     def __repr__(self):
