@@ -1,5 +1,5 @@
 "use strict";
-import {handleUndef} from "./utils.js";
+import { handleUndef } from "./utils.js"; //** The ID of the growing unit table element. */
 //** The ID of the growing unit table element. */
 const GROWING_UNIT_TABLE_ID = "growing-unit-table";
 /** The ID of the lease table element. */
@@ -22,12 +22,17 @@ export function setTableSearchBoxes() {
  */
 export function initGrowingUnitTable(growingUnitData) {
   const rows = [];
-  for (let [cmuName, data] of Object.entries(growingUnitData)) {
+  for (let [cmu, data] of Object.entries(growingUnitData)) {
+    let prob_1d_perc =
+      handleUndef(data.prob_1d_perc).length > 0
+        ? `${handleUndef(data.prob_1d_perc)}`
+        : "Out of Season";
     const rowData = {
-      cmu_name: cmuName,
-      prob_1d_perc: `${handleUndef(data.prob_1d_perc)}`,
-      prob_2d_perc: `${handleUndef(data.prob_2d_perc)}`,
-      prob_3d_perc: `${handleUndef(data.prob_3d_perc)}`,
+      cmu_name: cmu,
+      sh_name: `${data.sh_name}: ${data.sh_id}`,
+      rainfall_desc: data.rainfall_desc,
+      season: data.season,
+      prob_1d_perc: prob_1d_perc,
     };
     rows.push(rowData);
   }
@@ -37,14 +42,13 @@ export function initGrowingUnitTable(growingUnitData) {
 /**
  * Fills the lease table with lease records.
  */
-export function initLeaseTable(leaseData) {
+export function initLeaseTable(cmusData) {
   const rows = [];
-  for (let lease of leaseData) {
+  for (let cmu of cmusData) {
     const rowData = {
-      lease_id: lease.lease_id,
-      prob_1d_perc: `${handleUndef(lease.prob_1d_perc)}`,
-      prob_2d_perc: `${handleUndef(lease.prob_2d_perc)}`,
-      prob_3d_perc: `${handleUndef(lease.prob_3d_perc)}`,
+      lease_id: cmu.lease_id,
+      sh_name: `${cmu.sh_name}: ${cmu.sh_id}`,
+      prob_1d_perc: `${handleUndef(cmu.prob_1d_perc)}`,
     };
     rows.push(rowData);
   }
