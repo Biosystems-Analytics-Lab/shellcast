@@ -74,11 +74,9 @@ export async function getGeoJsonAddProbs(growingUnitData) {
     .then((response) => response.json())
     .then((response) => {
       response.features.forEach((feature) => {
-        for (let [lease_id, data] of Object.entries(growingUnitData)) {
-          if (feature.properties.lease_id === lease_id) {
+        for (let [cmu_id, data] of Object.entries(growingUnitData)) {
+          if (feature.properties.uid === cmu_id) {
             feature.properties.prob_1d_perc = data.prob_1d_perc;
-            feature.properties.prob_2d_perc = data.prob_2d_perc;
-            feature.properties.prob_3d_perc = data.prob_3d_perc;
           }
         }
       });
@@ -160,7 +158,7 @@ function fillBoundaryColor(colorValue, featureName) {
       color: getColor(colorValue),
     }),
     stroke: new ol.style.Stroke({
-      color: "rgba(255, 255, 255, 0.5)",
+      color: "rgba(0, 0, 0, 0.5)",
       width: 1,
     }),
     text: new ol.style.Text({
