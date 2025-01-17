@@ -47,8 +47,7 @@ export function addPartnerSitesLegendControl(partnerSitesLegendID) {
           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
               <h6>ShellCast</h6>
-              <small>The legend for ShellCast is shown to the left. The forecast date can be changed by clicking 
-              "Today", "Tomorrow" and "In 2 days".</small>
+              <small>The legend for ShellCast is shown to the left.</small>
               <div style="line-height: 20px; vertical-align: middle; padding-top: 16px;">
                 <input type="checkbox" id="partner-sites-legend-checkbox" role="button"
                   style="width: 20px;height: 20px; vertical-align: middle;" checked>
