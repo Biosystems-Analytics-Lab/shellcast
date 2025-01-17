@@ -1,122 +1,122 @@
 {% extends "base.html" %}
 
 {% block additional_head %}
-<!-- Bootstrap Table -->
-<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
-<script defer src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
-<script defer src="{{ url_for('static', filename='map/map.js') }}" type="module"></script>
-<!-- Custom CSS -->
-<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='map/map.css') }}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
-<script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
+  <!-- Bootstrap Table -->
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+  <script defer src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+  <script defer src="{{ url_for('static', filename='map/map.js') }}" type="module"></script>
+  <!-- Custom CSS -->
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='map/map.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
+  <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
 
 {% endblock %}
 
 {% block content %}
-<div class="text-justify">
+  <div class="text-justify">
     <div class="date-info">
-        <div>
-            <p><strong>Last updated:</strong> {{ lastUpdated }} ({{ hoursAgo }} hours ago)</p>
-        </div>
-        <a href="#closure-tables">Table View</a>
+      <div>
+        <p><strong>Last updated:</strong> {{ lastUpdated }} ({{ hoursAgo }} hours ago)</p>
+      </div>
+      <a href="#closure-tables">Table View</a>
     </div>
     <p>
-        Growing units shown below are colored by closure risk. You may need to zoom in to see individual growing
-        units. The colors are defined in a legend on the map. For more information on the forecast, find out <a
-            href="/how-it-works">how ShellCast works</a>.
+      Growing units shown below are colored by closure risk. You may need to zoom in to see individual growing
+      units. The colors are defined in a legend on the map. For more information on the forecast, find out <a
+      href="/how-it-works">how ShellCast works</a>.
     </p>
-</div>
+  </div>
 
-<div id="closure-map"></div>
+  <div id="closure-map"></div>
 
-<div id="popup" class="ol-popup">
-    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+  <div id="popup">
     <div id="popup-content"></div>
-</div>
+  </div>
 
-{#    <label class="sr-only" for="closure-map" id="Map alt text">#}
-    {# Satellite imagery-based map of the North Carolina coast overlaid with#}
-    {# shellfish growing unit polygons and shaded green, yellow, orange, and#}
-    {# red based on the forecasted percent chance of closure for today,#}
-    {# tomorrow, and in two days. When a user is logged into ShellCast they#}
-    {# can also see map pins for the locations of their shellfish leases.#}
-    {# Clicking on a map pin or shellfish growing unit polygon reveals the#}
-    {# forecasted percent chance of closure for today, tomorrow, and in two#}
-    {# days. These values can also be viewed in the “My Leases” and#}
-    {# “Shellfish Growing Units” tables below the map.#}
-    {# </label>#}
+  {#    <label class="sr-only" for="closure-map" id="Map alt text">#}
+  {# Satellite imagery-based map of the North Carolina coast overlaid with#}
+  {# shellfish growing unit polygons and shaded green, yellow, orange, and#}
+  {# red based on the forecasted percent chance of closure for today,#}
+  {# tomorrow, and in two days. When a user is logged into ShellCast they#}
+  {# can also see map pins for the locations of their shellfish leases.#}
+  {# Clicking on a map pin or shellfish growing unit polygon reveals the#}
+  {# forecasted percent chance of closure for today, tomorrow, and in two#}
+  {# days. These values can also be viewed in the “My Leases” and#}
+  {# “Shellfish Growing Units” tables below the map.#}
+  {# </label>#}
 
-<br>
+  <br>
 
 
-<div id="create-account-message">
+  <div id="create-account-message">
     <p>
-        To add your lease location pins to the map above and get notifications
-        for your lease sites, find out <a href="/how-it-works">how ShellCast works</a>
-        and <a href="/signin?mode=select&signInSuccessUrl=/">sign in or create an account</a>.
+      To add your lease location pins to the map above and get notifications
+      for your lease sites, find out <a href="/how-it-works">how ShellCast works</a>
+      and <a href="/signin?mode=select&signInSuccessUrl=/">sign in or create an account</a>.
     </p>
-</div>
+  </div>
 
-<div id="closure-tables">
+  <div id="closure-tables">
 
     <div id="lease-table-div">
-        <div id="lease-table-toolbar">
-            <h4>My Leases</h4>
-        </div>
-        <table
-                id="lease-table"
-                data-classes="table table-bordered table-hover table-sm"
-                data-toggle="table"
-                data-search="true"
-                data-height="200"
-                data-toolbar="#lease-table-toolbar">
-            <thead>
-            <tr>
-                <th data-sortable="true" data-field="lease_id">Lease ID</th>
-                <th data-sortable="true" data-field="prob_1d_perc">Today</th>
-            </tr>
-            </thead>
-        </table>
+      <div id="lease-table-toolbar">
+        <h4>My Leases</h4>
+      </div>
+      <table
+        id="lease-table"
+        data-classes="table table-bordered table-hover table-sm"
+        data-toggle="table"
+        data-search="true"
+        data-height="200"
+        data-toolbar="#lease-table-toolbar">
+        <thead>
+        <tr>
+          <th data-sortable="true" data-field="lease_id">Lease ID</th>
+          <th data-sortable="true" data-field="sh_name">Shellfish Harvesting Area Name</th>
+          <th data-sortable="true" data-field="prob_1d_perc">Today</th>
+        </tr>
+        </thead>
+      </table>
     </div>
 
     <div id="lease-table-explanation">
-        <p>
-            To add more lease location pins to the map above and get notifications
-            for those leases go to the <a href="/preferences">preferences page</a>.
-        </p>
+      <p>
+        To add more lease location pins to the map above and get notifications
+        for those leases go to the <a href="/preferences">preferences page</a>.
+      </p>
     </div>
 
     <div id="growing-unit-table-div">
-        <div id="growing-unit-table-toolbar">
-            <h4>Shellfish Growing Units</h4>
-        </div>
-        <table
-                id="growing-unit-table"
-                data-classes="table table-bordered table-hover table-sm"
-                data-toggle="table"
-                data-search="true"
-                data-height="200"
-                data-toolbar="#growing-unit-table-toolbar">
-            <thead>
-            <tr>
-                <th data-sortable="true" data-field="cmu_name">Growing Unit</th>
-                <th data-sortable="true" data-field="sh_name">Shellfish Harvesting Area Name</th>
-                <th data-sortable="true" data-field="rainfall_desc">Rainfall Threshold</th>
-                <th data-sortable="true" data-field="season">Season</th>
-                <th data-sortable="true" data-field="prob_1d_perc">Today</th>
-            </tr>
-            </thead>
-        </table>
+      <div id="growing-unit-table-toolbar">
+        <h4>Shellfish Growing Units</h4>
+      </div>
+      <table
+        id="growing-unit-table"
+        data-classes="table table-bordered table-hover table-sm"
+        data-toggle="table"
+        data-search="true"
+        data-height="200"
+        data-toolbar="#growing-unit-table-toolbar">
+        <thead>
+        <tr>
+          <th data-sortable="true" data-field="cmu_name">Growing Unit UID</th>
+          <th data-sortable="true" data-field="sh_name">Shellfish Harvesting Area Name</th>
+          <th data-sortable="true" data-field="rainfall_desc">Rainfall Threshold</th>
+          <th data-sortable="true" data-field="season">Season</th>
+          <th data-sortable="true" data-field="prob_1d_perc">Today</th>
+        </tr>
+        </thead>
+      </table>
     </div>
 
     <div id="growing-unit-table-explanation">
-        <p>
-            The forecasts shown provide the risk of temporary closure
-            for leases in each of the conditionally approved FDACS shellfish growing units.
-        </p>
+      <p>
+        The forecasts shown provide the risk of temporary closure
+        for leases in each of the conditionally approved FDACS shellfish growing units.
+      </p>
     </div>
 
-</div>
+  </div>
 
 
 {% endblock %}
