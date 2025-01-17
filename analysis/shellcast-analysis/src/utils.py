@@ -18,7 +18,7 @@ from typing import List
 import geopandas as gpd
 import pandas as pd
 from cryptography.fernet import Fernet
-from gcloud import storage
+from google.cloud import storage
 from osgeo import gdal
 from sqlalchemy import create_engine, text
 
