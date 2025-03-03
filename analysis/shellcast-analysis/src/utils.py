@@ -38,6 +38,11 @@ def read_file(file_path):
     return data
 
 
+def write_file(file_path, data):
+    with open(file_path, 'wb') as wf:
+        wf.write(data)
+
+
 def error_log(err):
     trace = []
     tb = err.__traceback__
@@ -79,6 +84,32 @@ def get_connection_string(config_db, db_name):
         config_db['PORT'],
         db_name)
     return connect_string
+
+
+def encrypt_json(input_json, output_json, key_file):
+    # Generate a new encryption key
+    key = Fernet.generate_key()
+
+    # Create a Fernet instance
+    fernet = Fernet(key)
+
+    # Convert data to JSON string and encode to bytes
+    json_str = json.dumps(input_json)
+    message_bytes = json_str.encode()
+
+    # Encrypt the data
+    encrypted_bytes = fernet.encrypt(message_bytes)
+
+    # Write encrypted data to file
+    with open(output_json, 'wb') as f:
+        f.write(encrypted_bytes)
+
+    # Save the key to a file
+    with open(key_file, 'wb') as f:
+        f.write(key)
+
+    print(f"Data encrypted and saved to {output_json}")
+    print(f"Encryption key saved to {key_file}")
 
 
 def decrypt_json(encrypted_data, key):
@@ -391,32 +422,40 @@ def save_to_db(connect_str, csv_path) -> None:
         error_process(msg, e)
 
 
-def find_years(day, start_month, start_day, end_month, end_day):
-    year = day.year
-
-    if start_month > end_month:
-        date1_start = datetime.strptime(f"{year}-{start_month}-{start_day}", "%Y-%m-%d").date()
-        date1_end = datetime.strptime(f"{year + 1}-{end_month}-{end_day}", "%Y-%m-%d").date()
-        date2_start = datetime.strptime(f"{year - 1}-{start_month}-{start_day}", "%Y-%m-%d").date()
-        date2_end = datetime.strptime(f"{year}-{end_month}-{end_day}", "%Y-%m-%d").date()
-        if date1_start <= day <= date1_end:
-            return date1_start, date1_end
-        elif date2_start <= day <= date2_end:
-            return date2_start, date2_end
+def parse_date_range(dates_str):
+    """
+    Convert a date range string (e.g., "11/1-2/28") to datetime objects with correct years based on date today.
+    
+    Args:
+        dates_str: String in format "MM/DD-MM/DD"
+    
+    Returns:
+        tuple: (start_datetime, end_datetime)
+    """
+    from datetime import datetime
+    today = datetime.today()
+    
+    # Split and parse the dates
+    start_str, end_str = dates_str.split("-")
+    start_month, start_day = map(int, start_str.split("/"))
+    end_month, end_day = map(int, end_str.split("/"))
+    
+    # Determine years based on month sequence
+    if end_month < start_month:  # Date range crosses year boundary
+        if today.month >= start_month:
+            years = (today.year, today.year + 1)
+        elif today.month <= end_month:
+            years = (today.year - 1, today.year)
+        else:
+            years = (today.year, today.year + 1)
     else:
-        date1_start = datetime.strptime(f"{year}-{start_month}-{start_day}", "%Y-%m-%d").date()
-        date1_end = datetime.strptime(f"{year}-{end_month}-{end_day}", "%Y-%m-%d").date()
-        return date1_start, date1_end
-
-
-def convert_date_string(today, dates_str):
-    dates_lst = dates_str.split("-")
-    start_month, start_day = map(int, dates_lst[0].split("/"))
-    end_month, end_day = map(int, dates_lst[1].split("/"))
-    if len(dates_lst) == 2:
-        start, end = find_years(today, start_month, start_day,
-                                end_month, end_day)
-        return start, end
+        years = (today.year, today.year)
+    
+    # Create datetime objects
+    start = datetime(years[0], start_month, start_day)
+    end = datetime(years[1], end_month, end_day)
+    
+    return start, end
 
 
 def is_season(date_today, start, end):
