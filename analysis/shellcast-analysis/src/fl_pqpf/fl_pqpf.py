@@ -262,7 +262,7 @@ class FLPQPF:
                     dt_str_lst = row[2].split(", ")
                     if dt_str_lst and len(dt_str_lst) > 0:
                         for dt_str in dt_str_lst:
-                            start, end = utils.convert_date_string(self.date_today, dt_str)
+                            start, end = utils.parse_date_range(dt_str)
                             if utils.is_season(self.date_today, start, end):
                                 flag = True
                                 break
