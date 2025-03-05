@@ -1,4 +1,1829 @@
 {
-  "type" : "FeatureCollection",
-  "features" : [{"type":"Feature","id":0,"geometry":{"type":"Point","coordinates":[-82.567390000000003,27.298183000000002]},"properties":{"FID":0,"descriptio":"South Lido Park","site_type":"Water Quality","site_name":"SOUTH LIDO BEACH","city":"Sarasota","state":"FL","county":"Sarasota County","url":"https://howsthebeach.org/sarasota/map/stationinfo/SOUTH%20LIDO%20BEACH"}},{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[-82.577179000000001,27.311001000000001]},"properties":{"FID":1,"descriptio":"Lido Beach (Casino)","site_type":"Water Quality","site_name":"LIDO CASINO BEACH","city":"Sarasota","state":"FL","county":"Sarasota County","url":"https://howsthebeach.org/sarasota/map/stationinfo/LIDO%20CASINO%20BEACH"}},{"type":"Feature","id":2,"geometry":{"type":"Point","coordinates":[-82.581710999999999,27.315608000000001]},"properties":{"FID":2,"descriptio":"North Lido Beach","site_type":"Water Quality","site_name":"NORTH LIDO BEACH","city":"Sarasota","state":"FL","county":"Sarasota County","url":"https://howsthebeach.org/sarasota/map/stationinfo/NORTH%20LIDO%20BEACH"}},{"type":"Feature","id":3,"geometry":{"type":"Point","coordinates":[-82.562441000000007,27.326820000000001]},"properties":{"FID":3,"descriptio":"Bird Key Park/Ringling Causeway","site_type":"Water Quality","site_name":"RINGLING CAUSEWAY","city":"Sarasota","state":"FL","county":"Sarasota County","url":"https://howsthebeach.org/sarasota/map/stationinfo/RINGLING%20CAUSEWAY"}},{"type":"Feature","id":4,"geometry":{"type":"Point","coordinates":[-82.632022000000006,27.373152000000001]},"properties":{"FID":4,"descriptio":"Longboat Key Beach Access","site_type":"Water Quality","site_name":"LONGBOAT KEY ACCESS","city":"Longboat Key","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/LONGBOAT%20KEY%20ACCESS"}},{"type":"Feature","id":5,"geometry":{"type":"Point","coordinates":[-82.690231999999995,27.435708999999999]},"properties":{"FID":5,"descriptio":"Broadway Beach Access","site_type":"Water Quality","site_name":"Broadway Beach Access (F.K.A. WHITNEY BEACH)","city":"Longboat Key","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/Broadway%20Beach%20Access%20(F.K.A.%20WHITNEY%20BEACH)"}},{"type":"Feature","id":6,"geometry":{"type":"Point","coordinates":[-82.691535000000002,27.446567999999999]},"properties":{"FID":6,"descriptio":"Coquina Beach South","site_type":"Water Quality","site_name":"COQUINA BEACH SOUTH","city":"Holmes Beach","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/Broadway%20Beach%20Access%20(F.K.A.%20WHITNEY%20BEACH)"}},{"type":"Feature","id":7,"geometry":{"type":"Point","coordinates":[-82.695521999999997,27.456053000000001]},"properties":{"FID":7,"descriptio":"Coquina Beach North","site_type":"Water Quality","site_name":"COQUINA BEACH NORTH","city":"Holmes Beach","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/COQUINA%20BEACH%20SOUTH"}},{"type":"Feature","id":8,"geometry":{"type":"Point","coordinates":[-82.713701999999998,27.498007000000001]},"properties":{"FID":8,"descriptio":"Manatee Public Beach North","site_type":"Water Quality","site_name":"MANATEE PUBLIC BEACH NORTH","city":"Holmes Beach","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/MANATEE%20PUBLIC%20BEACH%20NORTH"}},{"type":"Feature","id":9,"geometry":{"type":"Point","coordinates":[-82.647017000000005,27.495902999999998]},"properties":{"FID":9,"descriptio":"Palma Sola South","site_type":"Water Quality","site_name":"PALMA SOLA SOUTH","city":"Bradenton","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/PALMA%20SOLA%20SOUTH"}},{"type":"Feature","id":10,"geometry":{"type":"Point","coordinates":[-82.736784,27.535934000000001]},"properties":{"FID":10,"descriptio":"Bayfront Park North","site_type":"Water Quality","site_name":"BAYFRONT PARK NORTH","city":"Anna Maria","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/BAYFRONT%20PARK%20NORTH"}},{"type":"Feature","id":11,"geometry":{"type":"Point","coordinates":[-82.699526000000006,27.466018999999999]},"properties":{"FID":11,"descriptio":"Cortez Beach","site_type":"Water Quality","site_name":"Cortez Beach","city":"Bradenton Beach","state":"FL","county":"Manatee County","url":"https://howsthebeach.org/sarasota/map/stationinfo/Cortez%20Beach"}},{"type":"Feature","id":12,"geometry":{"type":"Point","coordinates":[-82.468999999999937,27.113600000000076]},"properties":{"FID":12,"descriptio":"Venice North Jetty Beach","site_type":"Water Quality","site_name":"Venice North Jetty Beach","city":"Nokomis","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/1"}},{"type":"Feature","id":13,"geometry":{"type":"Point","coordinates":[-82.551446999999939,27.264289000000076]},"properties":{"FID":13,"descriptio":"Siesta Key Beach","site_type":"Water Quality","site_name":"Siesta Key Beach","city":"Sarasota","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/2"}},{"type":"Feature","id":14,"geometry":{"type":"Point","coordinates":[-82.412543999999968,27.009965000000079]},"properties":{"FID":14,"descriptio":"Manasota Key Beach","site_type":"Water Quality","site_name":"Manasota Key Beach","city":"Englewood","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/3"}},{"type":"Feature","id":15,"geometry":{"type":"Point","coordinates":[-82.57785199999995,27.311997000000076]},"properties":{"FID":15,"descriptio":"Lido Key Beach","site_type":"Water Quality","site_name":"Lido Key Beach","city":"Sarasota","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/4"}},{"type":"Feature","id":16,"geometry":{"type":"Point","coordinates":[-82.470929999999953,27.124129000000039]},"properties":{"FID":16,"descriptio":"Nokomis Beach","site_type":"Water Quality","site_name":"Nokomis Beach","city":"Nokomis","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/5"}},{"type":"Feature","id":17,"geometry":{"type":"Point","coordinates":[-82.460238999999945,27.09990300000004]},"properties":{"FID":17,"descriptio":"Venice Beach","site_type":"Water Quality","site_name":"Venice Beach","city":"Venice","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/6"}},{"type":"Feature","id":18,"geometry":{"type":"Point","coordinates":[-82.829320999999936,27.975923000000023]},"properties":{"FID":18,"descriptio":"Clearwater Beach","site_type":"Water Quality","site_name":"Clearwater Beach","city":"Clearwater","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/7"}},{"type":"Feature","id":19,"geometry":{"type":"Point","coordinates":[-82.692873916999986,27.450425580000058]},"properties":{"FID":19,"descriptio":"Coquina Beach","site_type":"Water Quality","site_name":"Coquina Beach","city":"Bradenton Beach","state":"FL","county":"Manatee","url":"https://visitbeaches.org/beach/8"}},{"type":"Feature","id":20,"geometry":{"type":"Point","coordinates":[-81.923335999999949,26.437203000000068]},"properties":{"FID":20,"descriptio":"Gulfview Ave Beach Access #18","site_type":"Water Quality","site_name":"Gulfview Ave Beach Access #18","city":"Fort Myers","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/9"}},{"type":"Feature","id":21,"geometry":{"type":"Point","coordinates":[-81.957061499999952,26.453643800000066]},"properties":{"FID":21,"descriptio":"Lynn Hall Beach Park","site_type":"Water Quality","site_name":"Lynn Hall Beach Park","city":"Fort Myers Beach","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/11"}},{"type":"Feature","id":22,"geometry":{"type":"Point","coordinates":[-82.15704999999997,26.459426000000065]},"properties":{"FID":22,"descriptio":"Bowman's Beach","site_type":"Water Quality","site_name":"Bowman's Beach","city":"Sanibel","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/12"}},{"type":"Feature","id":23,"geometry":{"type":"Point","coordinates":[-81.855337999999961,26.351271000000054]},"properties":{"FID":23,"descriptio":"Bonita Beach","site_type":"Water Quality","site_name":"Bonita Beach","city":"Bonita Springs","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/14"}},{"type":"Feature","id":24,"geometry":{"type":"Point","coordinates":[-82.193345999999963,26.522131000000059]},"properties":{"FID":24,"descriptio":"Captiva","site_type":"Water Quality","site_name":"Captiva","city":"Captiva","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/15"}},{"type":"Feature","id":25,"geometry":{"type":"Point","coordinates":[-81.875036999999963,26.385853000000054]},"properties":{"FID":25,"descriptio":"Lovers Key State Park","site_type":"Water Quality","site_name":"Lovers Key State Park","city":"Fort Myers Beach","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/16"}},{"type":"Feature","id":26,"geometry":{"type":"Point","coordinates":[-82.822825999999964,28.030532000000051]},"properties":{"FID":26,"descriptio":"Caladesi Island State Park","site_type":"Water Quality","site_name":"Caladesi Island State Park","city":"Clearwater","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/17"}},{"type":"Feature","id":27,"geometry":{"type":"Point","coordinates":[-87.142205999999987,30.330943000000048]},"properties":{"FID":27,"descriptio":"Pensacola Beach","site_type":"Water Quality","site_name":"Pensacola Beach","city":"Pensacola","state":"FL","county":"Escambia","url":"https://visitbeaches.org/beach/18"}},{"type":"Feature","id":28,"geometry":{"type":"Point","coordinates":[-86.446625999999981,30.384998000000053]},"properties":{"FID":28,"descriptio":"Henderson Beach State Park","site_type":"Water Quality","site_name":"Henderson Beach State Park","city":"Destin","state":"FL","county":"Okaloosa","url":"https://visitbeaches.org/beach/19"}},{"type":"Feature","id":29,"geometry":{"type":"Point","coordinates":[-84.86146199999996,29.662236000000064]},"properties":{"FID":29,"descriptio":"St George Island","site_type":"Water Quality","site_name":"St George Island","city":"St. George Island","state":"FL","county":"Franklin","url":"https://visitbeaches.org/beach/24"}},{"type":"Feature","id":30,"geometry":{"type":"Point","coordinates":[-82.260708999999963,26.717077000000074]},"properties":{"FID":30,"descriptio":"Gasparilla Island State Park (South Lighthouse)","site_type":"Water Quality","site_name":"Gasparilla Island State Park (South Lighthouse)","city":"Boca Grande","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/25"}},{"type":"Feature","id":31,"geometry":{"type":"Point","coordinates":[-82.263935999999944,26.742257000000052]},"properties":{"FID":31,"descriptio":"Gasparilla Island Lighthouse","site_type":"Water Quality","site_name":"Gasparilla Island Lighthouse","city":"Boca Grande","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/26"}},{"type":"Feature","id":32,"geometry":{"type":"Point","coordinates":[-82.712599999999952,27.497300000000052]},"properties":{"FID":32,"descriptio":"Manatee Beach","site_type":"Water Quality","site_name":"Manatee Beach","city":"Holmes Beach","state":"FL","county":"Manatee","url":"https://visitbeaches.org/beach/27"}},{"type":"Feature","id":33,"geometry":{"type":"Point","coordinates":[-81.834757999999965,26.301713000000063]},"properties":{"FID":33,"descriptio":"Barefoot Beach","site_type":"Water Quality","site_name":"Barefoot Beach","city":"Bonita Springs","state":"FL","county":"Collier","url":"https://visitbeaches.org/beach/28"}},{"type":"Feature","id":34,"geometry":{"type":"Point","coordinates":[-81.823302999999953,26.253502000000026]},"properties":{"FID":34,"descriptio":"Vanderbilt Beach","site_type":"Water Quality","site_name":"Vanderbilt Beach","city":"North Naples","state":"FL","county":"Collier","url":"https://visitbeaches.org/beach/29"}},{"type":"Feature","id":35,"geometry":{"type":"Point","coordinates":[-81.816777999999942,26.20739100000003]},"properties":{"FID":35,"descriptio":"Seagate Beach","site_type":"Water Quality","site_name":"Seagate Beach","city":"Naples","state":"FL","county":"Collier","url":"https://visitbeaches.org/beach/30"}},{"type":"Feature","id":36,"geometry":{"type":"Point","coordinates":[-81.72876999999994,25.911738000000071]},"properties":{"FID":36,"descriptio":"South Marco Beach","site_type":"Water Quality","site_name":"South Marco Beach","city":"Marco Island","state":"FL","county":"Collier","url":"https://visitbeaches.org/beach/31"}},{"type":"Feature","id":37,"geometry":{"type":"Point","coordinates":[-82.771513999999968,27.766383000000076]},"properties":{"FID":37,"descriptio":"Treasure Island","site_type":"Water Quality","site_name":"Treasure Island","city":"Treasure Island","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/32"}},{"type":"Feature","id":38,"geometry":{"type":"Point","coordinates":[-82.84917999999999,27.862929000000065]},"properties":{"FID":38,"descriptio":"Indian Shores","site_type":"Water Quality","site_name":"Indian Shores","city":"Indian Shores","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/33"}},{"type":"Feature","id":39,"geometry":{"type":"Point","coordinates":[-82.740101999999979,27.716873000000078]},"properties":{"FID":39,"descriptio":"St Pete Beach","site_type":"Water Quality","site_name":"St Pete Beach","city":"St Pete Beach","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/35"}},{"type":"Feature","id":40,"geometry":{"type":"Point","coordinates":[-82.738283999999965,27.687693000000024]},"properties":{"FID":40,"descriptio":"Pass-a-Grille","site_type":"Water Quality","site_name":"Pass-a-Grille","city":"St Pete Beach","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/36"}},{"type":"Feature","id":41,"geometry":{"type":"Point","coordinates":[-80.036651999999947,26.61270600000006]},"properties":{"FID":41,"descriptio":"Lake Worth Beach","site_type":"Water Quality","site_name":"Lake Worth Beach","city":"Lake Worth","state":"FL","county":"Palm Beach","url":"https://visitbeaches.org/beach/37"}},{"type":"Feature","id":42,"geometry":{"type":"Point","coordinates":[-81.38688899999994,30.280014000000051]},"properties":{"FID":42,"descriptio":"Jacksonville Beach","site_type":"Water Quality","site_name":"Jacksonville Beach","city":"Jacksonville Beach","state":"FL","county":"Duval","url":"https://visitbeaches.org/beach/38"}},{"type":"Feature","id":43,"geometry":{"type":"Point","coordinates":[-82.442950999999937,27.056322000000023]},"properties":{"FID":43,"descriptio":"Caspersen Beach","site_type":"Water Quality","site_name":"Caspersen Beach","city":"Venice","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/40"}},{"type":"Feature","id":44,"geometry":{"type":"Point","coordinates":[-82.385245999999938,26.96302600000007]},"properties":{"FID":44,"descriptio":"Blind Pass Beach","site_type":"Water Quality","site_name":"Blind Pass Beach","city":"Englewood","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/41"}},{"type":"Feature","id":45,"geometry":{"type":"Point","coordinates":[-82.361838999999975,26.925196000000028]},"properties":{"FID":45,"descriptio":"Englewood Beach","site_type":"Water Quality","site_name":"Englewood Beach","city":"Englewood","state":"FL","county":"Charlotte","url":"https://visitbeaches.org/beach/42"}},{"type":"Feature","id":46,"geometry":{"type":"Point","coordinates":[-81.741668999999945,25.941214000000059]},"properties":{"FID":46,"descriptio":"Tigertail Beach Park","site_type":"Water Quality","site_name":"Tigertail Beach Park","city":"Marco Island","state":"FL","county":"Collier","url":"https://visitbeaches.org/beach/43"}},{"type":"Feature","id":47,"geometry":{"type":"Point","coordinates":[-81.806321999999966,26.131679000000076]},"properties":{"FID":47,"descriptio":"Naples Pier","site_type":"Water Quality","site_name":"Naples Pier","city":"Naples","state":"FL","county":"Collier","url":"https://visitbeaches.org/beach/49"}},{"type":"Feature","id":48,"geometry":{"type":"Point","coordinates":[-81.810857999999939,26.163184000000058]},"properties":{"FID":48,"descriptio":"Lowdermilk Park","site_type":"Water Quality","site_name":"Lowdermilk Park","city":"Naples","state":"FL","county":"Collier","url":"https://visitbeaches.org/beach/50"}},{"type":"Feature","id":49,"geometry":{"type":"Point","coordinates":[-81.967299999999966,26.475900000000024]},"properties":{"FID":49,"descriptio":"Bunche Beach","site_type":"Water Quality","site_name":"Bunche Beach","city":"Fort Myers","state":"FL","county":"Lee","url":"https://visitbeaches.org/beach/55"}},{"type":"Feature","id":50,"geometry":{"type":"Point","coordinates":[-82.621662999999955,27.360076000000049]},"properties":{"FID":50,"descriptio":"Longboat Key","site_type":"Water Quality","site_name":"Longboat Key","city":"Longboat Key","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/56"}},{"type":"Feature","id":51,"geometry":{"type":"Point","coordinates":[-82.803112999999939,27.80149700000004]},"properties":{"FID":51,"descriptio":"Archibald Park","site_type":"Water Quality","site_name":"Archibald Park","city":"Madeira Beach","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/58"}},{"type":"Feature","id":52,"geometry":{"type":"Point","coordinates":[-82.517230999999981,27.218478000000061]},"properties":{"FID":52,"descriptio":"Turtle Beach","site_type":"Water Quality","site_name":"Turtle Beach","city":"Sarasota","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/60"}},{"type":"Feature","id":53,"geometry":{"type":"Point","coordinates":[-82.806388999999967,28.154722000000049]},"properties":{"FID":53,"descriptio":"Fred Howard Park","site_type":"Water Quality","site_name":"Fred Howard Park","city":"Tarpon Springs","state":"FL","county":"Pinellas","url":"https://visitbeaches.org/beach/61"}},{"type":"Feature","id":54,"geometry":{"type":"Point","coordinates":[-82.732587999999964,27.52127500000006]},"properties":{"FID":54,"descriptio":"Anna Maria Island","site_type":"Water Quality","site_name":"Anna Maria Island","city":"Anna Maria","state":"FL","county":"Manatee","url":"https://visitbeaches.org/beach/62"}},{"type":"Feature","id":55,"geometry":{"type":"Point","coordinates":[-82.352694999999983,26.910059000000047]},"properties":{"FID":55,"descriptio":"Stump Pass Beach State Park","site_type":"Water Quality","site_name":"Stump Pass Beach State Park","city":"Englewood","state":"FL","county":"Charlotte","url":"https://visitbeaches.org/beach/67"}},{"type":"Feature","id":56,"geometry":{"type":"Point","coordinates":[-80.494387999999958,25.024490000000071]},"properties":{"FID":56,"descriptio":"Harry Harris Park","site_type":"Water Quality","site_name":"Harry Harris Park","city":"Tavernier","state":"FL","county":"Monroe","url":"https://visitbeaches.org/beach/68"}},{"type":"Feature","id":57,"geometry":{"type":"Point","coordinates":[-80.56988599999994,24.961950000000058]},"properties":{"FID":57,"descriptio":"Founders Park","site_type":"Water Quality","site_name":"Founders Park","city":"Islamorada","state":"FL","county":"Monroe","url":"https://visitbeaches.org/beach/72"}},{"type":"Feature","id":58,"geometry":{"type":"Point","coordinates":[-85.900615999999957,30.227076000000068]},"properties":{"FID":58,"descriptio":"Panama City Beach","site_type":"Water Quality","site_name":"Panama City Beach","city":"Panama City Beach","state":"FL","county":"Bay","url":"https://visitbeaches.org/beach/73"}},{"type":"Feature","id":59,"geometry":{"type":"Point","coordinates":[-80.087756999999954,26.237198000000035]},"properties":{"FID":59,"descriptio":"Pompano Beach","site_type":"Water Quality","site_name":"Pompano Beach","city":"Pompano Beach","state":"FL","county":"Broward","url":"https://visitbeaches.org/beach/74"}},{"type":"Feature","id":60,"geometry":{"type":"Point","coordinates":[-81.810610999999938,24.545483000000047]},"properties":{"FID":60,"descriptio":"Fort Zachary Taylor Historic State Park Beach","site_type":"Water Quality","site_name":"Fort Zachary Taylor Historic State Park Beach","city":"Key West","state":"FL","county":"Monroe","url":"https://visitbeaches.org/beach/80"}},{"type":"Feature","id":61,"geometry":{"type":"Point","coordinates":[-80.590027999999961,28.406806000000074]},"properties":{"FID":61,"descriptio":"Jetty Park","site_type":"Water Quality","site_name":"Jetty Park","city":"Cape Canaveral","state":"FL","county":"Brevard","url":"https://visitbeaches.org/beach/94"}},{"type":"Feature","id":62,"geometry":{"type":"Point","coordinates":[-86.86239999999998,30.382000000000062]},"properties":{"FID":62,"descriptio":"Navarre Beach","site_type":"Water Quality","site_name":"Navarre Beach","city":"Pensacola","state":"FL","county":"Santa Rosa","url":"https://visitbeaches.org/beach/95"}},{"type":"Feature","id":63,"geometry":{"type":"Point","coordinates":[-82.569019999999966,27.29876900000005]},"properties":{"FID":63,"descriptio":"Ted Sperling Park (South Lido Beach)","site_type":"Water Quality","site_name":"Ted Sperling Park (South Lido Beach)","city":"Sarasota","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/96"}},{"type":"Feature","id":64,"geometry":{"type":"Point","coordinates":[-82.730599999999981,27.534700000000043]},"properties":{"FID":64,"descriptio":"Anna Maria Island City Pier","site_type":"Water Quality","site_name":"Anna Maria Island City Pier","city":"Anna Maria","state":"FL","county":"Manatee","url":"https://visitbeaches.org/beach/97"}},{"type":"Feature","id":65,"geometry":{"type":"Point","coordinates":[-78.115849999999966,33.909424000000058]},"properties":{"FID":65,"descriptio":"Middleton Park","site_type":"Water Quality","site_name":"Middleton Park","city":"Oak Island","state":"FL","county":"Brunswick","url":"https://visitbeaches.org/beach/98"}},{"type":"Feature","id":66,"geometry":{"type":"Point","coordinates":[-77.887474999999938,34.043126000000029]},"properties":{"FID":66,"descriptio":"Carolina Beach","site_type":"Water Quality","site_name":"Carolina Beach","city":"Carolina Beach","state":"FL","county":"New Hanover","url":"https://visitbeaches.org/beach/99"}},{"type":"Feature","id":67,"geometry":{"type":"Point","coordinates":[-77.788536999999963,34.214313000000061]},"properties":{"FID":67,"descriptio":"Johnnie Mercers Fishing Pier","site_type":"Water Quality","site_name":"Johnnie Mercers Fishing Pier","city":"Wrightsville Beach","state":"FL","county":"New Hanover","url":"https://visitbeaches.org/beach/100"}},{"type":"Feature","id":68,"geometry":{"type":"Point","coordinates":[-86.962499999999977,30.364700000000028]},"properties":{"FID":68,"descriptio":"Opal Beach","site_type":"Water Quality","site_name":"Opal Beach","city":"Pensacola","state":"FL","county":"Escambia","url":"https://visitbeaches.org/beach/103"}},{"type":"Feature","id":69,"geometry":{"type":"Point","coordinates":[-82.59158999999994,27.329850000000079]},"properties":{"FID":69,"descriptio":"Longboat Key Club & Resort","site_type":"Water Quality","site_name":"Longboat Key Club & Resort","city":"Longboat Key","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/104"}},{"type":"Feature","id":70,"geometry":{"type":"Point","coordinates":[-77.544459999999958,34.42521000000005]},"properties":{"FID":70,"descriptio":"Surf City Beach","site_type":"Water Quality","site_name":"Surf City Beach","city":"Surf City","state":"FL","county":"Pender County","url":"https://visitbeaches.org/beach/112"}},{"type":"Feature","id":71,"geometry":{"type":"Point","coordinates":[-81.771867999999984,24.551249000000041]},"properties":{"FID":71,"descriptio":"Smathers Beach","site_type":"Water Quality","site_name":"Smathers Beach","city":"Key West","state":"FL","county":"Monroe","url":"https://visitbeaches.org/beach/113"}},{"type":"Feature","id":72,"geometry":{"type":"Point","coordinates":[-80.405529999999942,25.126666700000044]},"properties":{"FID":72,"descriptio":"Cannon Beach","site_type":"Water Quality","site_name":"Cannon Beach","city":"Key Largo","state":"FL","county":"Monroe","url":"https://visitbeaches.org/beach/114"}},{"type":"Feature","id":73,"geometry":{"type":"Point","coordinates":[-80.402539999999988,25.125397000000078]},"properties":{"FID":73,"descriptio":"Far Beach","site_type":"Water Quality","site_name":"Far Beach","city":"Key Largo","state":"FL","county":"Monroe","url":"https://visitbeaches.org/beach/115"}},{"type":"Feature","id":74,"geometry":{"type":"Point","coordinates":[-82.634987999999964,27.378071000000034]},"properties":{"FID":74,"descriptio":"Longboat Key (Public Beach Access Point)","site_type":"Water Quality","site_name":"Longboat Key (Public Beach Access Point)","city":"Longboat Key","state":"FL","county":"Sarasota","url":"https://visitbeaches.org/beach/121"}}]
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.567390000000003,
+          27.298183000000002
+        ]
+      },
+      "properties": {
+        "FID": 0,
+        "descriptio": "South Lido Park",
+        "site_type": "Water Quality",
+        "site_name": "SOUTH LIDO BEACH",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/SOUTH%20LIDO%20BEACH",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.577179000000001,
+          27.311001000000001
+        ]
+      },
+      "properties": {
+        "FID": 1,
+        "descriptio": "Lido Beach (Casino)",
+        "site_type": "Water Quality",
+        "site_name": "LIDO CASINO BEACH",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/LIDO%20CASINO%20BEACH",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.581710999999999,
+          27.315608000000001
+        ]
+      },
+      "properties": {
+        "FID": 2,
+        "descriptio": "North Lido Beach",
+        "site_type": "Water Quality",
+        "site_name": "NORTH LIDO BEACH",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/NORTH%20LIDO%20BEACH",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.562441000000007,
+          27.326820000000001
+        ]
+      },
+      "properties": {
+        "FID": 3,
+        "descriptio": "Bird Key Park/Ringling Causeway",
+        "site_type": "Water Quality",
+        "site_name": "RINGLING CAUSEWAY",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/RINGLING%20CAUSEWAY",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.632022000000006,
+          27.373152000000001
+        ]
+      },
+      "properties": {
+        "FID": 4,
+        "descriptio": "Longboat Key Beach Access",
+        "site_type": "Water Quality",
+        "site_name": "LONGBOAT KEY ACCESS",
+        "city": "Longboat Key",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/LONGBOAT%20KEY%20ACCESS",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.690231999999995,
+          27.435708999999999
+        ]
+      },
+      "properties": {
+        "FID": 5,
+        "descriptio": "Broadway Beach Access",
+        "site_type": "Water Quality",
+        "site_name": "Broadway Beach Access (F.K.A. WHITNEY BEACH)",
+        "city": "Longboat Key",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/Broadway%20Beach%20Access%20(F.K.A.%20WHITNEY%20BEACH)",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.691535000000002,
+          27.446567999999999
+        ]
+      },
+      "properties": {
+        "FID": 6,
+        "descriptio": "Coquina Beach South",
+        "site_type": "Water Quality",
+        "site_name": "COQUINA BEACH SOUTH",
+        "city": "Holmes Beach",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/Broadway%20Beach%20Access%20(F.K.A.%20WHITNEY%20BEACH)",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.695521999999997,
+          27.456053000000001
+        ]
+      },
+      "properties": {
+        "FID": 7,
+        "descriptio": "Coquina Beach North",
+        "site_type": "Water Quality",
+        "site_name": "COQUINA BEACH NORTH",
+        "city": "Holmes Beach",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/COQUINA%20BEACH%20SOUTH",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.713701999999998,
+          27.498007000000001
+        ]
+      },
+      "properties": {
+        "FID": 8,
+        "descriptio": "Manatee Public Beach North",
+        "site_type": "Water Quality",
+        "site_name": "MANATEE PUBLIC BEACH NORTH",
+        "city": "Holmes Beach",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/MANATEE%20PUBLIC%20BEACH%20NORTH",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.647017000000005,
+          27.495902999999998
+        ]
+      },
+      "properties": {
+        "FID": 9,
+        "descriptio": "Palma Sola South",
+        "site_type": "Water Quality",
+        "site_name": "PALMA SOLA SOUTH",
+        "city": "Bradenton",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/PALMA%20SOLA%20SOUTH",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.736784,
+          27.535934000000001
+        ]
+      },
+      "properties": {
+        "FID": 10,
+        "descriptio": "Bayfront Park North",
+        "site_type": "Water Quality",
+        "site_name": "BAYFRONT PARK NORTH",
+        "city": "Anna Maria",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/BAYFRONT%20PARK%20NORTH",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.699526000000006,
+          27.466018999999999
+        ]
+      },
+      "properties": {
+        "FID": 11,
+        "descriptio": "Cortez Beach",
+        "site_type": "Water Quality",
+        "site_name": "Cortez Beach",
+        "city": "Bradenton Beach",
+        "state": "FL",
+        "county": "Manatee County",
+        "url": "https://howsthebeach.org/sarasota/map/stationinfo/Cortez%20Beach",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.468999999999937,
+          27.113600000000076
+        ]
+      },
+      "properties": {
+        "FID": 12,
+        "descriptio": "Venice North Jetty Beach",
+        "site_type": "Water Quality",
+        "site_name": "Venice North Jetty Beach",
+        "city": "Nokomis",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/1",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.551446999999939,
+          27.264289000000076
+        ]
+      },
+      "properties": {
+        "FID": 13,
+        "descriptio": "Siesta Key Beach",
+        "site_type": "Water Quality",
+        "site_name": "Siesta Key Beach",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/2",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.412543999999968,
+          27.009965000000079
+        ]
+      },
+      "properties": {
+        "FID": 14,
+        "descriptio": "Manasota Key Beach",
+        "site_type": "Water Quality",
+        "site_name": "Manasota Key Beach",
+        "city": "Englewood",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/3",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 15,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.57785199999995,
+          27.311997000000076
+        ]
+      },
+      "properties": {
+        "FID": 15,
+        "descriptio": "Lido Key Beach",
+        "site_type": "Water Quality",
+        "site_name": "Lido Key Beach",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/4",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.470929999999953,
+          27.124129000000039
+        ]
+      },
+      "properties": {
+        "FID": 16,
+        "descriptio": "Nokomis Beach",
+        "site_type": "Water Quality",
+        "site_name": "Nokomis Beach",
+        "city": "Nokomis",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/5",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.460238999999945,
+          27.09990300000004
+        ]
+      },
+      "properties": {
+        "FID": 17,
+        "descriptio": "Venice Beach",
+        "site_type": "Water Quality",
+        "site_name": "Venice Beach",
+        "city": "Venice",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/6",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.829320999999936,
+          27.975923000000023
+        ]
+      },
+      "properties": {
+        "FID": 18,
+        "descriptio": "Clearwater Beach",
+        "site_type": "Water Quality",
+        "site_name": "Clearwater Beach",
+        "city": "Clearwater",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/7",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.692873916999986,
+          27.450425580000058
+        ]
+      },
+      "properties": {
+        "FID": 19,
+        "descriptio": "Coquina Beach",
+        "site_type": "Water Quality",
+        "site_name": "Coquina Beach",
+        "city": "Bradenton Beach",
+        "state": "FL",
+        "county": "Manatee",
+        "url": "https://visitbeaches.org/beach/8",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.923335999999949,
+          26.437203000000068
+        ]
+      },
+      "properties": {
+        "FID": 20,
+        "descriptio": "Gulfview Ave Beach Access #18",
+        "site_type": "Water Quality",
+        "site_name": "Gulfview Ave Beach Access #18",
+        "city": "Fort Myers",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/9",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 21,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.957061499999952,
+          26.453643800000066
+        ]
+      },
+      "properties": {
+        "FID": 21,
+        "descriptio": "Lynn Hall Beach Park",
+        "site_type": "Water Quality",
+        "site_name": "Lynn Hall Beach Park",
+        "city": "Fort Myers Beach",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/11",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 22,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.15704999999997,
+          26.459426000000065
+        ]
+      },
+      "properties": {
+        "FID": 22,
+        "descriptio": "Bowman's Beach",
+        "site_type": "Water Quality",
+        "site_name": "Bowman's Beach",
+        "city": "Sanibel",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/12",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 23,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.855337999999961,
+          26.351271000000054
+        ]
+      },
+      "properties": {
+        "FID": 23,
+        "descriptio": "Bonita Beach",
+        "site_type": "Water Quality",
+        "site_name": "Bonita Beach",
+        "city": "Bonita Springs",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/14",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 24,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.193345999999963,
+          26.522131000000059
+        ]
+      },
+      "properties": {
+        "FID": 24,
+        "descriptio": "Captiva",
+        "site_type": "Water Quality",
+        "site_name": "Captiva",
+        "city": "Captiva",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/15",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 25,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.875036999999963,
+          26.385853000000054
+        ]
+      },
+      "properties": {
+        "FID": 25,
+        "descriptio": "Lovers Key State Park",
+        "site_type": "Water Quality",
+        "site_name": "Lovers Key State Park",
+        "city": "Fort Myers Beach",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/16",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 26,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.822825999999964,
+          28.030532000000051
+        ]
+      },
+      "properties": {
+        "FID": 26,
+        "descriptio": "Caladesi Island State Park",
+        "site_type": "Water Quality",
+        "site_name": "Caladesi Island State Park",
+        "city": "Clearwater",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/17",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 27,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.142205999999987,
+          30.330943000000048
+        ]
+      },
+      "properties": {
+        "FID": 27,
+        "descriptio": "Pensacola Beach",
+        "site_type": "Water Quality",
+        "site_name": "Pensacola Beach",
+        "city": "Pensacola",
+        "state": "FL",
+        "county": "Escambia",
+        "url": "https://visitbeaches.org/beach/18",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 28,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.446625999999981,
+          30.384998000000053
+        ]
+      },
+      "properties": {
+        "FID": 28,
+        "descriptio": "Henderson Beach State Park",
+        "site_type": "Water Quality",
+        "site_name": "Henderson Beach State Park",
+        "city": "Destin",
+        "state": "FL",
+        "county": "Okaloosa",
+        "url": "https://visitbeaches.org/beach/19",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 29,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.86146199999996,
+          29.662236000000064
+        ]
+      },
+      "properties": {
+        "FID": 29,
+        "descriptio": "St George Island",
+        "site_type": "Water Quality",
+        "site_name": "St George Island",
+        "city": "St. George Island",
+        "state": "FL",
+        "county": "Franklin",
+        "url": "https://visitbeaches.org/beach/24",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 30,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.260708999999963,
+          26.717077000000074
+        ]
+      },
+      "properties": {
+        "FID": 30,
+        "descriptio": "Gasparilla Island State Park (South Lighthouse)",
+        "site_type": "Water Quality",
+        "site_name": "Gasparilla Island State Park (South Lighthouse)",
+        "city": "Boca Grande",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/25",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 31,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.263935999999944,
+          26.742257000000052
+        ]
+      },
+      "properties": {
+        "FID": 31,
+        "descriptio": "Gasparilla Island Lighthouse",
+        "site_type": "Water Quality",
+        "site_name": "Gasparilla Island Lighthouse",
+        "city": "Boca Grande",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/26",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 32,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.712599999999952,
+          27.497300000000052
+        ]
+      },
+      "properties": {
+        "FID": 32,
+        "descriptio": "Manatee Beach",
+        "site_type": "Water Quality",
+        "site_name": "Manatee Beach",
+        "city": "Holmes Beach",
+        "state": "FL",
+        "county": "Manatee",
+        "url": "https://visitbeaches.org/beach/27",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 33,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.834757999999965,
+          26.301713000000063
+        ]
+      },
+      "properties": {
+        "FID": 33,
+        "descriptio": "Barefoot Beach",
+        "site_type": "Water Quality",
+        "site_name": "Barefoot Beach",
+        "city": "Bonita Springs",
+        "state": "FL",
+        "county": "Collier",
+        "url": "https://visitbeaches.org/beach/28",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 34,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.823302999999953,
+          26.253502000000026
+        ]
+      },
+      "properties": {
+        "FID": 34,
+        "descriptio": "Vanderbilt Beach",
+        "site_type": "Water Quality",
+        "site_name": "Vanderbilt Beach",
+        "city": "North Naples",
+        "state": "FL",
+        "county": "Collier",
+        "url": "https://visitbeaches.org/beach/29",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 35,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.816777999999942,
+          26.20739100000003
+        ]
+      },
+      "properties": {
+        "FID": 35,
+        "descriptio": "Seagate Beach",
+        "site_type": "Water Quality",
+        "site_name": "Seagate Beach",
+        "city": "Naples",
+        "state": "FL",
+        "county": "Collier",
+        "url": "https://visitbeaches.org/beach/30",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 36,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.72876999999994,
+          25.911738000000071
+        ]
+      },
+      "properties": {
+        "FID": 36,
+        "descriptio": "South Marco Beach",
+        "site_type": "Water Quality",
+        "site_name": "South Marco Beach",
+        "city": "Marco Island",
+        "state": "FL",
+        "county": "Collier",
+        "url": "https://visitbeaches.org/beach/31",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 37,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.771513999999968,
+          27.766383000000076
+        ]
+      },
+      "properties": {
+        "FID": 37,
+        "descriptio": "Treasure Island",
+        "site_type": "Water Quality",
+        "site_name": "Treasure Island",
+        "city": "Treasure Island",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/32",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 38,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.84917999999999,
+          27.862929000000065
+        ]
+      },
+      "properties": {
+        "FID": 38,
+        "descriptio": "Indian Shores",
+        "site_type": "Water Quality",
+        "site_name": "Indian Shores",
+        "city": "Indian Shores",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/33",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 39,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.740101999999979,
+          27.716873000000078
+        ]
+      },
+      "properties": {
+        "FID": 39,
+        "descriptio": "St Pete Beach",
+        "site_type": "Water Quality",
+        "site_name": "St Pete Beach",
+        "city": "St Pete Beach",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/35",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 40,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.738283999999965,
+          27.687693000000024
+        ]
+      },
+      "properties": {
+        "FID": 40,
+        "descriptio": "Pass-a-Grille",
+        "site_type": "Water Quality",
+        "site_name": "Pass-a-Grille",
+        "city": "St Pete Beach",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/36",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 41,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.036651999999947,
+          26.61270600000006
+        ]
+      },
+      "properties": {
+        "FID": 41,
+        "descriptio": "Lake Worth Beach",
+        "site_type": "Water Quality",
+        "site_name": "Lake Worth Beach",
+        "city": "Lake Worth",
+        "state": "FL",
+        "county": "Palm Beach",
+        "url": "https://visitbeaches.org/beach/37",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 42,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.38688899999994,
+          30.280014000000051
+        ]
+      },
+      "properties": {
+        "FID": 42,
+        "descriptio": "Jacksonville Beach",
+        "site_type": "Water Quality",
+        "site_name": "Jacksonville Beach",
+        "city": "Jacksonville Beach",
+        "state": "FL",
+        "county": "Duval",
+        "url": "https://visitbeaches.org/beach/38",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 43,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.442950999999937,
+          27.056322000000023
+        ]
+      },
+      "properties": {
+        "FID": 43,
+        "descriptio": "Caspersen Beach",
+        "site_type": "Water Quality",
+        "site_name": "Caspersen Beach",
+        "city": "Venice",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/40",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 44,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.385245999999938,
+          26.96302600000007
+        ]
+      },
+      "properties": {
+        "FID": 44,
+        "descriptio": "Blind Pass Beach",
+        "site_type": "Water Quality",
+        "site_name": "Blind Pass Beach",
+        "city": "Englewood",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/41",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 45,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.361838999999975,
+          26.925196000000028
+        ]
+      },
+      "properties": {
+        "FID": 45,
+        "descriptio": "Englewood Beach",
+        "site_type": "Water Quality",
+        "site_name": "Englewood Beach",
+        "city": "Englewood",
+        "state": "FL",
+        "county": "Charlotte",
+        "url": "https://visitbeaches.org/beach/42",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 46,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.741668999999945,
+          25.941214000000059
+        ]
+      },
+      "properties": {
+        "FID": 46,
+        "descriptio": "Tigertail Beach Park",
+        "site_type": "Water Quality",
+        "site_name": "Tigertail Beach Park",
+        "city": "Marco Island",
+        "state": "FL",
+        "county": "Collier",
+        "url": "https://visitbeaches.org/beach/43",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 47,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.806321999999966,
+          26.131679000000076
+        ]
+      },
+      "properties": {
+        "FID": 47,
+        "descriptio": "Naples Pier",
+        "site_type": "Water Quality",
+        "site_name": "Naples Pier",
+        "city": "Naples",
+        "state": "FL",
+        "county": "Collier",
+        "url": "https://visitbeaches.org/beach/49",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 48,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.810857999999939,
+          26.163184000000058
+        ]
+      },
+      "properties": {
+        "FID": 48,
+        "descriptio": "Lowdermilk Park",
+        "site_type": "Water Quality",
+        "site_name": "Lowdermilk Park",
+        "city": "Naples",
+        "state": "FL",
+        "county": "Collier",
+        "url": "https://visitbeaches.org/beach/50",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 49,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.967299999999966,
+          26.475900000000024
+        ]
+      },
+      "properties": {
+        "FID": 49,
+        "descriptio": "Bunche Beach",
+        "site_type": "Water Quality",
+        "site_name": "Bunche Beach",
+        "city": "Fort Myers",
+        "state": "FL",
+        "county": "Lee",
+        "url": "https://visitbeaches.org/beach/55",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 50,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.621662999999955,
+          27.360076000000049
+        ]
+      },
+      "properties": {
+        "FID": 50,
+        "descriptio": "Longboat Key",
+        "site_type": "Water Quality",
+        "site_name": "Longboat Key",
+        "city": "Longboat Key",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/56",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 51,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.803112999999939,
+          27.80149700000004
+        ]
+      },
+      "properties": {
+        "FID": 51,
+        "descriptio": "Archibald Park",
+        "site_type": "Water Quality",
+        "site_name": "Archibald Park",
+        "city": "Madeira Beach",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/58",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 52,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.517230999999981,
+          27.218478000000061
+        ]
+      },
+      "properties": {
+        "FID": 52,
+        "descriptio": "Turtle Beach",
+        "site_type": "Water Quality",
+        "site_name": "Turtle Beach",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/60",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 53,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.806388999999967,
+          28.154722000000049
+        ]
+      },
+      "properties": {
+        "FID": 53,
+        "descriptio": "Fred Howard Park",
+        "site_type": "Water Quality",
+        "site_name": "Fred Howard Park",
+        "city": "Tarpon Springs",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://visitbeaches.org/beach/61",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 54,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.732587999999964,
+          27.52127500000006
+        ]
+      },
+      "properties": {
+        "FID": 54,
+        "descriptio": "Anna Maria Island",
+        "site_type": "Water Quality",
+        "site_name": "Anna Maria Island",
+        "city": "Anna Maria",
+        "state": "FL",
+        "county": "Manatee",
+        "url": "https://visitbeaches.org/beach/62",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 55,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.352694999999983,
+          26.910059000000047
+        ]
+      },
+      "properties": {
+        "FID": 55,
+        "descriptio": "Stump Pass Beach State Park",
+        "site_type": "Water Quality",
+        "site_name": "Stump Pass Beach State Park",
+        "city": "Englewood",
+        "state": "FL",
+        "county": "Charlotte",
+        "url": "https://visitbeaches.org/beach/67",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 56,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.494387999999958,
+          25.024490000000071
+        ]
+      },
+      "properties": {
+        "FID": 56,
+        "descriptio": "Harry Harris Park",
+        "site_type": "Water Quality",
+        "site_name": "Harry Harris Park",
+        "city": "Tavernier",
+        "state": "FL",
+        "county": "Monroe",
+        "url": "https://visitbeaches.org/beach/68",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 57,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.56988599999994,
+          24.961950000000058
+        ]
+      },
+      "properties": {
+        "FID": 57,
+        "descriptio": "Founders Park",
+        "site_type": "Water Quality",
+        "site_name": "Founders Park",
+        "city": "Islamorada",
+        "state": "FL",
+        "county": "Monroe",
+        "url": "https://visitbeaches.org/beach/72",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 58,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.900615999999957,
+          30.227076000000068
+        ]
+      },
+      "properties": {
+        "FID": 58,
+        "descriptio": "Panama City Beach",
+        "site_type": "Water Quality",
+        "site_name": "Panama City Beach",
+        "city": "Panama City Beach",
+        "state": "FL",
+        "county": "Bay",
+        "url": "https://visitbeaches.org/beach/73",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 59,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.087756999999954,
+          26.237198000000035
+        ]
+      },
+      "properties": {
+        "FID": 59,
+        "descriptio": "Pompano Beach",
+        "site_type": "Water Quality",
+        "site_name": "Pompano Beach",
+        "city": "Pompano Beach",
+        "state": "FL",
+        "county": "Broward",
+        "url": "https://visitbeaches.org/beach/74",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 60,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.810610999999938,
+          24.545483000000047
+        ]
+      },
+      "properties": {
+        "FID": 60,
+        "descriptio": "Fort Zachary Taylor Historic State Park Beach",
+        "site_type": "Water Quality",
+        "site_name": "Fort Zachary Taylor Historic State Park Beach",
+        "city": "Key West",
+        "state": "FL",
+        "county": "Monroe",
+        "url": "https://visitbeaches.org/beach/80",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 61,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.590027999999961,
+          28.406806000000074
+        ]
+      },
+      "properties": {
+        "FID": 61,
+        "descriptio": "Jetty Park",
+        "site_type": "Water Quality",
+        "site_name": "Jetty Park",
+        "city": "Cape Canaveral",
+        "state": "FL",
+        "county": "Brevard",
+        "url": "https://visitbeaches.org/beach/94",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 62,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.86239999999998,
+          30.382000000000062
+        ]
+      },
+      "properties": {
+        "FID": 62,
+        "descriptio": "Navarre Beach",
+        "site_type": "Water Quality",
+        "site_name": "Navarre Beach",
+        "city": "Pensacola",
+        "state": "FL",
+        "county": "Santa Rosa",
+        "url": "https://visitbeaches.org/beach/95",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 63,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.569019999999966,
+          27.29876900000005
+        ]
+      },
+      "properties": {
+        "FID": 63,
+        "descriptio": "Ted Sperling Park (South Lido Beach)",
+        "site_type": "Water Quality",
+        "site_name": "Ted Sperling Park (South Lido Beach)",
+        "city": "Sarasota",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/96",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 64,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.730599999999981,
+          27.534700000000043
+        ]
+      },
+      "properties": {
+        "FID": 64,
+        "descriptio": "Anna Maria Island City Pier",
+        "site_type": "Water Quality",
+        "site_name": "Anna Maria Island City Pier",
+        "city": "Anna Maria",
+        "state": "FL",
+        "county": "Manatee",
+        "url": "https://visitbeaches.org/beach/97",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 65,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.115849999999966,
+          33.909424000000058
+        ]
+      },
+      "properties": {
+        "FID": 65,
+        "descriptio": "Middleton Park",
+        "site_type": "Water Quality",
+        "site_name": "Middleton Park",
+        "city": "Oak Island",
+        "state": "FL",
+        "county": "Brunswick",
+        "url": "https://visitbeaches.org/beach/98",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 66,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.887474999999938,
+          34.043126000000029
+        ]
+      },
+      "properties": {
+        "FID": 66,
+        "descriptio": "Carolina Beach",
+        "site_type": "Water Quality",
+        "site_name": "Carolina Beach",
+        "city": "Carolina Beach",
+        "state": "FL",
+        "county": "New Hanover",
+        "url": "https://visitbeaches.org/beach/99",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 67,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.788536999999963,
+          34.214313000000061
+        ]
+      },
+      "properties": {
+        "FID": 67,
+        "descriptio": "Johnnie Mercers Fishing Pier",
+        "site_type": "Water Quality",
+        "site_name": "Johnnie Mercers Fishing Pier",
+        "city": "Wrightsville Beach",
+        "state": "FL",
+        "county": "New Hanover",
+        "url": "https://visitbeaches.org/beach/100",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 68,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.962499999999977,
+          30.364700000000028
+        ]
+      },
+      "properties": {
+        "FID": 68,
+        "descriptio": "Opal Beach",
+        "site_type": "Water Quality",
+        "site_name": "Opal Beach",
+        "city": "Pensacola",
+        "state": "FL",
+        "county": "Escambia",
+        "url": "https://visitbeaches.org/beach/103",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 69,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.59158999999994,
+          27.329850000000079
+        ]
+      },
+      "properties": {
+        "FID": 69,
+        "descriptio": "Longboat Key Club & Resort",
+        "site_type": "Water Quality",
+        "site_name": "Longboat Key Club & Resort",
+        "city": "Longboat Key",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/104",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 70,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.544459999999958,
+          34.42521000000005
+        ]
+      },
+      "properties": {
+        "FID": 70,
+        "descriptio": "Surf City Beach",
+        "site_type": "Water Quality",
+        "site_name": "Surf City Beach",
+        "city": "Surf City",
+        "state": "FL",
+        "county": "Pender County",
+        "url": "https://visitbeaches.org/beach/112",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 71,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.771867999999984,
+          24.551249000000041
+        ]
+      },
+      "properties": {
+        "FID": 71,
+        "descriptio": "Smathers Beach",
+        "site_type": "Water Quality",
+        "site_name": "Smathers Beach",
+        "city": "Key West",
+        "state": "FL",
+        "county": "Monroe",
+        "url": "https://visitbeaches.org/beach/113",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 72,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.405529999999942,
+          25.126666700000044
+        ]
+      },
+      "properties": {
+        "FID": 72,
+        "descriptio": "Cannon Beach",
+        "site_type": "Water Quality",
+        "site_name": "Cannon Beach",
+        "city": "Key Largo",
+        "state": "FL",
+        "county": "Monroe",
+        "url": "https://visitbeaches.org/beach/114",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 73,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.402539999999988,
+          25.125397000000078
+        ]
+      },
+      "properties": {
+        "FID": 73,
+        "descriptio": "Far Beach",
+        "site_type": "Water Quality",
+        "site_name": "Far Beach",
+        "city": "Key Largo",
+        "state": "FL",
+        "county": "Monroe",
+        "url": "https://visitbeaches.org/beach/115",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 74,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.634987999999964,
+          27.378071000000034
+        ]
+      },
+      "properties": {
+        "FID": 74,
+        "descriptio": "Longboat Key (Public Beach Access Point)",
+        "site_type": "Water Quality",
+        "site_name": "Longboat Key (Public Beach Access Point)",
+        "city": "Longboat Key",
+        "state": "FL",
+        "county": "Sarasota",
+        "url": "https://visitbeaches.org/beach/121",
+        "url_1": " ",
+        "site_name1": " ",
+        "multiple_loc": " "
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 75,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.796000000000006,
+          27.796000000000006
+        ]
+      },
+      "properties": {
+        "FID": 75,
+        "descriptio": "Madeira Beach",
+        "site_type": "Camera",
+        "site_name": "Madeira Beach, FL USGS CoastCam Camera 1",
+        "city": "Madeira Beach",
+        "state": "FL",
+        "county": "Pinellas",
+        "url": "https://webcoos.srv.axds.co/cameras/madeira_beach_camera_1/",
+        "url_1": "https://webcoos.srv.axds.co/cameras/madeira_beach_camera_2/",
+        "site_name1": " Madeira Beach, FL USGS CoastCam Camera 2",
+        "multiple_loc": "Yes"
+      }
+    }
+  ]
 }
