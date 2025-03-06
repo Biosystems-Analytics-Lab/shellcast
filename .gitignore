@@ -2,15 +2,14 @@
 .idea/
 .DS_Store
 .env
-**/cloud-sql-proxy
-**/cloud-sql-proxy-connect.sh
-**/sqlauthproxy*
-**/config.sh
-**/config.ini
-**/tpxmrg_inventory.json
-**/delete
-**/bin
-**/dependencies
+cloud-sql-proxy*
+config*
+sqlauth*
+
+tpxmrg_inventory.json
+delete/
+bin/
+dependencies/
 logs/
 tests/
 raw/
@@ -20,7 +19,10 @@ inputs/
 **/lease_db_data.py
 node_modules/
 venv/
-
+webenv/
+analysisenv/
+credential*
+token*
 # History files
 .Rhistory
 .Rapp.history
@@ -60,18 +62,6 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
-/web/requirements.txt
-
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-bacio/
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-bufr/
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-g2/
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-grib_util/
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-ip/
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-sp/
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-w3emc/
+ncep-lib-utils/
 .python-version
-analysis/shellcast-analysis/small.grb
 
-
-/data_prep/fl/data/
-/analysis/shellcast-analysis/ncep-lib-utils/NCEPLIBS-g2c/
