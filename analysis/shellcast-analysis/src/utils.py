@@ -18,7 +18,7 @@ from typing import List
 import geopandas as gpd
 import pandas as pd
 from cryptography.fernet import Fernet
-from gcloud import storage
+from google.cloud import storage
 from osgeo import gdal
 from sqlalchemy import create_engine, text
 
@@ -86,30 +86,20 @@ def get_connection_string(config_db, db_name):
     return connect_string
 
 
-def encrypt_json(input_json, output_json, key_file):
-    # Generate a new encryption key
-    key = Fernet.generate_key()
-
-    # Create a Fernet instance
-    fernet = Fernet(key)
-
-    # Convert data to JSON string and encode to bytes
+def encrypt_json(input_json, output_path, key):
+    # If input_json is bytes, decode it to string first
+    if isinstance(input_json, bytes):
+        input_json = input_json.decode('utf-8')
+    
+    # Now convert to JSON string
     json_str = json.dumps(input_json)
-    message_bytes = json_str.encode()
-
-    # Encrypt the data
-    encrypted_bytes = fernet.encrypt(message_bytes)
-
-    # Write encrypted data to file
-    with open(output_json, 'wb') as f:
-        f.write(encrypted_bytes)
-
-    # Save the key to a file
-    with open(key_file, 'wb') as f:
-        f.write(key)
-
-    print(f"Data encrypted and saved to {output_json}")
-    print(f"Encryption key saved to {key_file}")
+    
+    # Encrypt and save
+    fernet = Fernet(key)
+    encrypted_data = fernet.encrypt(json_str.encode())
+    
+    with open(output_path, 'wb') as f:
+        f.write(encrypted_data)
 
 
 def decrypt_json(encrypted_data, key):
