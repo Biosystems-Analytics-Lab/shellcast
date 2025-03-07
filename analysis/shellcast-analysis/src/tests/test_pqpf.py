@@ -95,6 +95,5 @@ class TestPqpf(unittest.TestCase):
         out_csv_path = os.path.join(self.pqpf_obj.outputs_dir, f'pqpf_cmu_{datetime.today().date()}.csv')
         self.pqpf_obj.save_to_db(out_csv_path)
 
-
 if __name__ == '__main__':
     unittest.main()
