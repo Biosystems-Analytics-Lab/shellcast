@@ -24,6 +24,8 @@ webenv/
 analysisenv/
 credential*
 token*
+encrypted*
+notifications_old/
 # History files
 .Rhistory
 .Rapp.history
