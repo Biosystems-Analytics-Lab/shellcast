@@ -184,16 +184,16 @@ class TPXMRG:
                                     file_size = os.path.getsize(grb_fpath)
                                     if file_size > 0:
                                         ele["exists"] = True
-                                        logger.info(f'{ele["tpxmrg_name"]} downloaded.')
+                                        logger.info(f"{ele['tpxmrg_name']} downloaded.")
                                     else:
                                         os.remove(ele["path"])
                                         logger.info(
-                                            f'{ele["tpxmrg_name"]} file size 0 -> file deleted.'
+                                            f"{ele['tpxmrg_name']} file size 0 -> file deleted."
                                         )
 
                                 except error_perm:
                                     logger.error(
-                                        f'Download failed -> {item["day"]}: {ele["tpxmrg_name"]}'
+                                        f"Download failed -> {item['day']}: {ele['tpxmrg_name']}"
                                     )
                                     os.unlink(ele["path"])
                 ftp.quit()
