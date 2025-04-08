@@ -1,4 +1,3 @@
-import codecs
 import configparser
 import json
 import logging
@@ -156,31 +155,29 @@ def cmd_subprocess(cmd: List[str]) -> None:
     try:
         proc = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = proc.communicate()
-        # logger.info(codecs.decode(out, 'UTF-8'))
         rc = proc.returncode
     except Exception as e:
         error_log(e)
     else:
         if rc:
-            msg = codecs.decode(err, "UTF-8")
-            # error_log(msg)
+            msg = err.decode('utf-8')
             logger.error(msg)
             logger.error("PROCESS INCOMPLETE")
             sys.exit(1)
 
 
-def regex_find(regex: str, text: str) -> List[str]:
+def regex_find(regex: str, string: str):
     """
     Perform regex pattern search "findall".
     Args:
         regex (str): Regex pattern
-        text (str): Text
+        string (str): Text
 
     Returns (List[str]): List of matched strings when there are matches, otherwise returns None.
 
     """
     pattern = re.compile(regex)
-    match = pattern.findall(text)
+    match = pattern.findall(string)
     if len(match) > 0:
         return match
 
@@ -261,7 +258,6 @@ def calculate_duration(start, stop):
 
 def run_gdal_to_tiff(in_fpath, out_fpath, band, tsrs=None):
     try:
-        input = gdal.Open(in_fpath)
         in_fname = os.path.basename(in_fpath).split(".")[0]
 
         if tsrs:
@@ -269,9 +265,9 @@ def run_gdal_to_tiff(in_fpath, out_fpath, band, tsrs=None):
         else:
             warp_options = gdal.WarpOptions(format="GTiff", srcBands=band)
 
-        warp = gdal.Warp(out_fpath, input, options=warp_options)
-        logger.info(f"{in_fname} --- converted")
-        warp = None  # Closes the files
+        with gdal.Open(in_fpath) as input_obj:
+            gdal.Warp(out_fpath, input_obj, options=warp_options)
+            logger.info(f"{in_fname} --- converted")
     except Exception as e:
         error_log(e)
 
@@ -280,13 +276,12 @@ def run_gdal_resample(in_fpath, out_fpath, xres, yres, nodata):
     try:
         in_fname = os.path.basename(in_fpath)
         out_fname = os.path.basename(out_fpath)
-        input = gdal.Open(in_fpath)
         warp_options = gdal.WarpOptions(
             xRes=xres, yRes=yres, resampleAlg="bilinear", dstNodata=nodata
         )
-        warp = gdal.Warp(out_fpath, input, options=warp_options)
-        logger.info(f"{in_fname} to {out_fname} ---> completed")
-        warp = None
+        with gdal.Open(in_fpath) as input_obj:
+            gdal.Warp(out_fpath, input_obj, options=warp_options)
+            logger.info(f"{in_fname} to {out_fname} ---> completed")
     except Exception as e:
         error_log(e)
 
@@ -340,7 +335,7 @@ def download_grbs(grb_raw_dir, files, ftp_url, ftp_cwd) -> None:
         error_process(msg, e)
 
 
-def get_thresholds(lease_shp, thresholds_col_name) -> List[float]:
+def get_thresholds(lease_shp, thresholds_col_name):
     """
     Get unique rain threshold (inches) values.
 
@@ -433,7 +428,7 @@ def parse_date_range(dates_str):
     start_month, start_day = map(int, start_str.split("/"))
     end_month, end_day = map(int, end_str.split("/"))
 
-    # Determine years based on month sequence
+    # Determine years based on a month sequence
     if end_month < start_month:  # Date range crosses year boundary
         if today.month >= start_month:
             years = (today.year, today.year + 1)
