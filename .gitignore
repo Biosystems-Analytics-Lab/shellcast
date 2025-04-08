@@ -25,6 +25,7 @@ analysisenv/
 *credential*
 *token*
 *encrypt*
+notifications_old/
 
 # History files
 .Rhistory
