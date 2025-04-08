@@ -166,6 +166,41 @@ def cmd_subprocess(cmd: List[str]) -> None:
             sys.exit(1)
 
 
+def execute_stored_procedure(connection_string, procedure_name, *args):
+    """
+    Execute a stored procedure using SQLAlchemy
+
+    Args:
+        connection_string: Database connection URL
+        procedure_name: Name of the stored procedure
+        *args: Variable arguments to pass to the stored procedure
+
+    Returns:
+        Result of the stored procedure
+    """
+    try:
+        engine = create_engine(connection_string)
+        with engine.connect() as conn:
+            # Create the CALL statement
+            if args:
+                params = ",".join(["%s" for _ in args])
+                query = text(f"CALL {procedure_name}({params})")
+                result = conn.execute(query, args)
+            else:
+                query = text(f"CALL {procedure_name}()")
+                result = conn.execute(query)
+
+            # Fetch all results if any
+            if result:
+                return result.fetchall()
+        engine.dispose()
+        return
+
+    except Exception as e:
+        error_log(e)
+        raise
+
+
 def regex_find(regex: str, string: str):
     """
     Perform regex pattern search "findall".

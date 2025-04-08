@@ -10,13 +10,64 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from sqlalchemy import create_engine, text
 
 from constants import PQPF_DATA_DIR
-from management import NotificationConfig, ConfigDirs
-from utils import error_log
+from management import NotificationConfig, DirectoryConfig
+from utils import execute_stored_procedure
 
 logger = logging.getLogger(__name__)
+
+
+def filter_users_by_preferences(users_data):
+    """
+    Filter users based on their email/text preferences and probability thresholds
+
+    Args:
+        users_data: List of tuples containing user data
+        (user_id, email, phone, prob_pref, email_pref, text_pref, threshold,
+         lease_id, area_id, user_code, prob_1d_perc, prob_2d_perc, prob_3d_perc)
+
+    Returns:
+        List of filtered user data tuples
+    """
+    filtered_users = []
+
+    for user in users_data:
+        # Unpack relevant fields
+        (
+            _,
+            email,
+            phone,
+            prob_pref,
+            email_pref,
+            text_pref,
+            threshold,
+            lease_id,
+            area_id,
+            user_code,
+            prob_1d_perc,
+            prob_2d_perc,
+            prob_3d_perc,
+        ) = user
+
+        # Check if user has either email or text notifications enabled
+        has_notification_enabled = email_pref == 1 or text_pref == 1
+
+        # Check if probability preference meets any of the threshold conditions
+        meets_probability_threshold = (
+                prob_pref is not None  # Ensure prob_pref is not None
+                and (
+                        prob_1d_perc >= prob_pref
+                        or prob_2d_perc >= prob_pref
+                        or prob_3d_perc >= prob_pref
+                )
+        )
+
+        # Include user if they have notifications enabled and meet probability thresholds
+        if has_notification_enabled and meets_probability_threshold:
+            filtered_users.append(user)
+
+    return filtered_users
 
 
 class Cipher:
@@ -61,114 +112,6 @@ class Cipher:
         key = self.get_or_create_encryption_key()
         f = Fernet(key)
         return f.decrypt(encrypted_data).decode()
-
-
-class NotificationDataFilter:
-    """ 
-    Filter users based on their email/text preferences and probability thresholds.
-    """
-
-    def __init__(self, db_connection_string):
-        self.connection_string = db_connection_string
-
-    def execute_stored_procedure(self, procedure_name, *args):
-        """
-        Execute a stored procedure using SQLAlchemy
-
-        Args:
-            procedure_name: Name of the stored procedure
-            *args: Variable arguments to pass to the stored procedure
-
-        Returns:
-            Result of the stored procedure
-        """
-        try:
-            engine = create_engine(self.connection_string)
-            with engine.connect() as conn:
-                # Create the CALL statement
-                if args:
-                    params = ",".join(["%s" for _ in args])
-                    query = text(f"CALL {procedure_name}({params})")
-                    result = conn.execute(query, args)
-                else:
-                    query = text(f"CALL {procedure_name}()")
-                    result = conn.execute(query)
-
-                # Fetch all results if any
-                if result:
-                    return result.fetchall()
-            engine.dispose()
-            return
-
-        except Exception as e:
-            error_log(e)
-            raise
-
-    # def probabilityToRisk(closureValue):
-    #     flag = ""
-    #     if closureValue == 1:
-    #         flag = "Very Low"
-    #     elif closureValue == 2:
-    #         flag = "Low"
-    #     elif closureValue == 3:
-    #         flag = "Moderate"
-    #     elif closureValue == 4:
-    #         flag = "High"
-    #     elif closureValue == 5:
-    #         flag = "Very High"
-    #     return flag
-
-    @staticmethod
-    def filter_users_by_preferences(users_data):
-        """
-        Filter users based on their email/text preferences and probability thresholds
-
-        Args:
-            users_data: List of tuples containing user data
-            (user_id, email, phone, prob_pref, email_pref, text_pref, threshold,
-             lease_id, area_id, user_code, prob_1d_perc, prob_2d_perc, prob_3d_perc)
-
-        Returns:
-            List of filtered user data tuples
-        """
-        filtered_users = []
-
-        for user in users_data:
-            # Unpack relevant fields
-            (
-                _,
-                email,
-                phone,
-                prob_pref,
-                email_pref,
-                text_pref,
-                threshold,
-                lease_id,
-                area_id,
-                user_code,
-                prob_1d_perc,
-                prob_2d_perc,
-                prob_3d_perc,
-            ) = user
-
-            # Check if user has either email or text notifications enabled
-            has_notification_enabled = email_pref == 1 or text_pref == 1
-
-            # Check if probability preference meets any of the threshold conditions
-            meets_probability_threshold = (
-                    prob_pref is not None  # Ensure prob_pref is not None
-                    and (
-                            prob_1d_perc >= prob_pref
-                            or prob_2d_perc >= prob_pref
-                            or prob_3d_perc >= prob_pref
-                    )
-            )
-
-            # Include user if they have notifications enabled and meet probability thresholds
-            if has_notification_enabled and meets_probability_threshold:
-                filtered_users.append(user)
-
-        return filtered_users
 
 
 class NotificationEmailContentGenerator:
@@ -247,9 +190,6 @@ class NotificationEmailContentGenerator:
             logger.error(f"An error occurred in main: {e}")
             raise
 
-    def email_notification_content_generator(self):
-        """Main function to handle Gmail operations"""
-        pass
         # 0. user id
         # 1. u.email,
         # 2. u.phone_number,
@@ -395,16 +335,20 @@ class GmailServices:
 class EmailNotification:
     """Email notification configuration"""
 
-    def __init__(self, config_dirs: ConfigDirs, config_notification: NotificationConfig, state):
-        self.config_dirs = config_dirs
-        self.config_notification = config_notification
+    def __init__(self, dir_config: DirectoryConfig, notification_config: NotificationConfig, state: str):
+        self.dir_config = dir_config
+        self.notification_config = notification_config
         self.state = state
 
     def send(self):
-        queryset = NotificationDataFilter(self.config_dirs.connect_str)
-        content_generator = NotificationEmailContentGenerator(self.config, self.state, queryset)
-        contents = content_generator()
-        g_services = GmailServices(self.config)
+        user_data = execute_stored_procedure(
+            self.dir_config.connect_str,
+            self.notification_config.stored_procedure
+        )
+        filtered_data = filter_users_by_preferences(user_data)
+        content_generator_inst = NotificationEmailContentGenerator(self.notification_config, self.state, filtered_data)
+        contents = content_generator_inst()
+        g_services = GmailServices(self.notification_config)
         service = g_services.get_authenticated_gmail_service()
         for content in contents:
             g_services.gmail_send_message(service, content["email"], content["subject"], content["content"])
