@@ -4,7 +4,7 @@ import unittest
 import os
 from tempfile import TemporaryDirectory
 import pqpf
-from ..constants import TODAY, REG_PATTERN_TODAY, REG_PATTERN_GRB_HOURS
+from src.constants import TODAY, REG_PATTERN_TODAY, REG_PATTERN_GRB_HOURS
 from datetime import datetime
 
 class TestPqpf(unittest.TestCase):
