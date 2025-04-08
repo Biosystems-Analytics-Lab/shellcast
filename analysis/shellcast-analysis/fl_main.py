@@ -19,7 +19,7 @@ setup_logging.setup_logger(STATE)
 
 from fl_pqpf.tp_xmrg import TPXMRG  # noqa: E402
 from fl_pqpf.fl_pqpf import FLPQPF  # noqa: E402
-from configurations import ConfigDirs, NotificationConfig  # noqa: E402
+from management import ConfigDirs, NotificationConfig  # noqa: E402
 from notifications import EmailNotification, DevEmailNotificationFL
 import logging  # noqa: E402
 
