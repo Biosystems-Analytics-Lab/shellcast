@@ -12,7 +12,7 @@ class User(db.Model):
 
     DEFAULT_email_pref = False
     DEFAULT_text_pref = False
-    DEFAULT_prob_pref = 75
+    DEFAULT_prob_pref = 3
 
     id = Column(Integer, primary_key=True)
     service_provider_id = Column(Integer, ForeignKey("phone_service_providers.id"))

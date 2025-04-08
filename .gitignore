@@ -22,10 +22,10 @@ node_modules/
 venv/
 webenv/
 analysisenv/
-credential*
-token*
-encrypted*
-notifications_old/
+*credential*
+*token*
+*encrypt*
+
 # History files
 .Rhistory
 .Rapp.history
