@@ -126,6 +126,10 @@ class NotificationConfig:
         return ROOT_DIR / self.config["Notification"]["GMAIL_API_TOKEN_FILE"]
 
     @property
+    def stored_procedure(self):
+        return self.config["Notification"]["STORED_PROCEDURE"]
+
+    @property
     def scopes(self):
         return ["https://www.googleapis.com/auth/gmail.send"]
 
