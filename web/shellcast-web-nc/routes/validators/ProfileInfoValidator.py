@@ -100,6 +100,6 @@ class ProfileInfoValidator:
             probPrefInt = int(self.prob_pref)
         except Exception:
             return self.addError("Probability preference must be an integer.")
-        if probPrefInt < 0 or probPrefInt > 100:
-            return self.addError("Probability preference must be between 0 and 100.")
+        if probPrefInt not in [3, 4, 5]:
+            return self.addError("Probability preference must be 3, 4, or 5.")
         return True
