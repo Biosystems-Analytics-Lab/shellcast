@@ -18,7 +18,7 @@ setup_logging.create_log_files(STATE)
 setup_logging.setup_logger(STATE)
 
 from nc_pqpf.nc_pqpf import NCPQPF  # noqa: E402
-from configurations import ConfigDirs, NotificationConfig  # noqa: E402
+from management import ConfigDirs, NotificationConfig  # noqa: E402
 from notifications import EmailNotification
 
 import logging  # noqa: E402

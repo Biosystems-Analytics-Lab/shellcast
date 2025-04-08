@@ -12,8 +12,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from sqlalchemy import create_engine, text
 
-from configurations import NotificationConfig
 from constants import PQPF_DATA_DIR
+from management import NotificationConfig
 from utils import error_log
 
 logger = logging.getLogger(__name__)
