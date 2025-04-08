@@ -137,3 +137,29 @@ BEGIN
     DELETE FROM cmu_probabilities WHERE DATE(created) = CURDATE();
     SET SQL_SAFE_UPDATES = 1;
 END //
+
+DELIMITER //
+CREATE PROCEDURE SelectUserLeaseProbsToday()
+BEGIN
+    SELECT
+        u.id AS user_id,
+        u.email,
+        u.phone_number,
+        u.service_provider_id,
+        u.email_pref,
+        u.text_pref,
+        u.prob_pref,
+        l.lease_id,
+        l.parcel_name,
+        l.waterbody,
+        l.grow_area_type,
+        l.cmu_id,
+        cp.prob_1d_perc
+    FROM users u
+    JOIN user_leases ul ON u.id = ul.user_id
+    JOIN leases l ON ul.lease_id = l.lease_id
+    JOIN cmu_probabilities cp ON l.cmu_id = cp.cmu_id
+    WHERE DATE(cp.created) = CURDATE()
+    AND u.deleted = false
+    AND ul.deleted = 0;
+END //
