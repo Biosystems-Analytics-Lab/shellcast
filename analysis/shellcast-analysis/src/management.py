@@ -7,13 +7,14 @@ import configparser
 import os
 import platform
 from datetime import datetime
+
 import pytz
 
-from constants import CONFIG_INI, ROOT_DIR, PQPF_DATA_DIR
 import utils
+from constants import CONFIG_INI, ROOT_DIR, PQPF_DATA_DIR
 
 
-class ConfigDirs:
+class DirectoryConfig:
     def __init__(self, state: str, db: str):
         """
         Initialize configuration and directory management.
@@ -108,8 +109,8 @@ class ConfigDirs:
     @property
     def bucket_name(self) -> str:
         """GCP bucket name."""
-        return self._config["gcp.bucket"]["BUCKET_NAME"] 
-    
+        return self._config["gcp.bucket"]["BUCKET_NAME"]
+
 
 class NotificationConfig:
     def __init__(self):
@@ -160,12 +161,12 @@ class NotificationConfig:
         return (
             "\nThese predictions are in no way indicative of whether or not a lease will actually be "
             "temporarily closed for harvest."
-        ) 
+        )
 
     @property
     def dev_email_receivers(self):
         return self.config["FL.Developer"]["EMAIL_RECEIVER"]
-    
+
     @property
     def dev_send_email(self):
         return self.config["FL.Developer"]["SEND_EMAIL_TO_DEVELOPER"]

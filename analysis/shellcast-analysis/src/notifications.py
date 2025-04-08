@@ -13,7 +13,7 @@ from googleapiclient.errors import HttpError
 from sqlalchemy import create_engine, text
 
 from constants import PQPF_DATA_DIR
-from management import NotificationConfig
+from management import NotificationConfig, ConfigDirs
 from utils import error_log
 
 logger = logging.getLogger(__name__)
@@ -70,10 +70,6 @@ class NotificationDataFilter:
 
     def __init__(self, db_connection_string):
         self.connection_string = db_connection_string
-
-    def get_users_data(self):
-        """Get users' data from the database."""
-        return self.execute_stored_procedure(self.connection_string, "get_users_data")
 
     def execute_stored_procedure(self, procedure_name, *args):
         """
@@ -399,12 +395,13 @@ class GmailServices:
 class EmailNotification:
     """Email notification configuration"""
 
-    def __init__(self, notification_config, state):
-        self.config = notification_config
+    def __init__(self, config_dirs: ConfigDirs, config_notification: NotificationConfig, state):
+        self.config_dirs = config_dirs
+        self.config_notification = config_notification
         self.state = state
 
     def send(self):
-        queryset = NotificationDataFilter(self.config)
+        queryset = NotificationDataFilter(self.config_dirs.connect_str)
         content_generator = NotificationEmailContentGenerator(self.config, self.state, queryset)
         contents = content_generator()
         g_services = GmailServices(self.config)
@@ -443,7 +440,7 @@ class DevEmailNotificationFL:
             attachment_paths: List of paths to attachment files
         """
         try:
-            # Send to each receiver individually
+            # Send it to each receiver individually
             for receiver in self.receivers:
                 message = EmailMessage()
                 message["From"] = self.sender

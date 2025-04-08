@@ -19,7 +19,7 @@ setup_logging.setup_logger(STATE)
 
 from fl_pqpf.tp_xmrg import TPXMRG  # noqa: E402
 from fl_pqpf.fl_pqpf import FLPQPF  # noqa: E402
-from management import ConfigDirs, NotificationConfig  # noqa: E402
+from management import DirectoryConfig, NotificationConfig  # noqa: E402
 from notifications import EmailNotification, DevEmailNotificationFL
 import logging  # noqa: E402
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     tpxmrg.main()
 
     # --- Directory configurations ---
-    config_dirs = ConfigDirs(STATE, db)
+    config_dirs = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
     pqpf = FLPQPF(config_dirs, save=True)

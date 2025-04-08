@@ -18,7 +18,7 @@ setup_logging.create_log_files(STATE)
 setup_logging.setup_logger(STATE)
 
 from nc_pqpf.nc_pqpf import NCPQPF  # noqa: E402
-from management import ConfigDirs, NotificationConfig  # noqa: E402
+from management import DirectoryConfig, NotificationConfig  # noqa: E402
 from notifications import EmailNotification
 
 import logging  # noqa: E402
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     db = "gcp.mysql"
 
     # --- Directory configurations ---
-    config_dirs = ConfigDirs(STATE, db)
+    config_dirs = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
     pqpf = NCPQPF(config_dirs, save=True)
