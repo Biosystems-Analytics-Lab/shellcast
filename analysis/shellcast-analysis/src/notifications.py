@@ -1,3 +1,4 @@
+import base64
 import glob
 import logging
 import os
@@ -11,14 +12,17 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+import utils
 from constants import PQPF_DATA_DIR
 from management import NotificationConfig, DirectoryConfig
 from utils import execute_stored_procedure
 
 logger = logging.getLogger(__name__)
 
+PROB_CATS = {3: "Moderate", 4: "High", 5: "Very High"}
 
-def filter_users_by_preferences(users_data):
+
+def filter_users_by_preferences(users_data, prob_1d_only=False):
     """
     Filter users based on their email/text preferences and probability thresholds
 
@@ -26,61 +30,71 @@ def filter_users_by_preferences(users_data):
         users_data: List of tuples containing user data
         (user_id, email, phone, prob_pref, email_pref, text_pref, threshold,
          lease_id, area_id, user_code, prob_1d_perc, prob_2d_perc, prob_3d_perc)
-
+        prob_1d_only: States where has only today's prediction (e.g. FL) to be true
     Returns:
         List of filtered user data tuples
     """
+    logger.info(f"Starting to filter {len(users_data)} users")
     filtered_users = []
 
     for user in users_data:
-        # Unpack relevant fields
-        (
-            _,
-            email,
-            phone,
-            prob_pref,
-            email_pref,
-            text_pref,
-            threshold,
-            lease_id,
-            area_id,
-            user_code,
-            prob_1d_perc,
-            prob_2d_perc,
-            prob_3d_perc,
-        ) = user
-
         # Check if user has either email or text notifications enabled
-        has_notification_enabled = email_pref == 1 or text_pref == 1
+        has_notification_enabled = user["email_pref"] == 1 or user["text_pref"] == 1
+        logger.debug(
+            f"User {user.get('user_id')} notification preferences - email: "
+            f"{user.get('email_pref')}, text: {user.get('text_pref')}"
+        )
 
         # Check if probability preference meets any of the threshold conditions
-        meets_probability_threshold = (
-                prob_pref is not None  # Ensure prob_pref is not None
+        if prob_1d_only:
+            meets_probability_threshold = (
+                user["prob_pref"] is not None  # Ensure prob_pref is not None
+                and user["prob_1d_perc"] >= user["prob_pref"]
+            )
+            logger.debug(
+                f"User {user.get('user_id')} 1D probability check - pref: "
+                f"{user.get('prob_pref')}, actual: {user.get('prob_1d_perc')}"
+            )
+        else:
+            meets_probability_threshold = (
+                user["prob_pref"] is not None  # Ensure prob_pref is not None
                 and (
-                        prob_1d_perc >= prob_pref
-                        or prob_2d_perc >= prob_pref
-                        or prob_3d_perc >= prob_pref
+                    user["prob_1d_perc"] >= user["prob_pref"]
+                    or user["prob_2d_perc"] >= user["prob_pref"]
+                    or user["prob_3d_perc"] >= user["prob_pref"]
                 )
-        )
+            )
+            logger.debug(
+                f"User {user.get('user_id')} "
+                f"3D probability check - pref: {user.get('prob_pref')}, "
+                f"1D: {user.get('prob_1d_perc')}, "
+                f"2D: {user.get('prob_2d_perc')}, "
+                f"3D: {user.get('prob_3d_perc')}"
+            )
 
         # Include user if they have notifications enabled and meet probability thresholds
         if has_notification_enabled and meets_probability_threshold:
             filtered_users.append(user)
+            logger.debug(f"User {user.get('user_id')} added to filtered list")
 
+    logger.info(f"Filtering complete. {len(filtered_users)} users meet the criteria")
     return filtered_users
 
 
 class Cipher:
     def __init__(self, config: NotificationConfig):
         self.config = config
-        self.key_file = os.path.join(os.path.dirname(config.token_file), 'encryption.key')
+        self.key_file = os.path.join(
+            os.path.dirname(config.token_file), "encryption.key"
+        )
+        logger.info(f"Initialized Cipher with key file")
 
     def get_or_create_encryption_key(self):
         """Get the encryption key from file or create a new one."""
         # Try to read from file first
         if os.path.exists(self.key_file):
             try:
-                with open(self.key_file, 'rb') as f:
+                with open(self.key_file, "rb") as f:
                     key = f.read()
                     logger.info("Encryption key loaded from file")
                     return key
@@ -89,10 +103,11 @@ class Cipher:
                 # If there's an error reading the file, we'll generate a new key
 
         # Generate a new key if not found in file
+        logger.info("Generating new encryption key")
         key = Fernet.generate_key()
         try:
             # Save the key to file
-            with open(self.key_file, 'wb') as f:
+            with open(self.key_file, "wb") as f:
                 f.write(key)
             logger.info(f"Generated and saved new encryption key to {self.key_file}")
         except Exception as e:
@@ -103,24 +118,31 @@ class Cipher:
 
     def encrypt_token_data(self, token_data):
         """Encrypt token data using Fernet encryption."""
+        logger.debug("Starting token encryption")
         key = self.get_or_create_encryption_key()
         f = Fernet(key)
-        return f.encrypt(token_data.encode())
+        encrypted_data = f.encrypt(token_data.encode())
+        logger.debug("Token encryption completed successfully")
+        utils.done_str()
+        return encrypted_data
 
     def decrypt_token_data(self, encrypted_data):
         """Decrypt token data using Fernet encryption."""
+        logger.debug("Starting token decryption")
         key = self.get_or_create_encryption_key()
         f = Fernet(key)
-        return f.decrypt(encrypted_data).decode()
+        decrypted_data = f.decrypt(encrypted_data).decode()
+        logger.debug("Token decryption completed successfully")
+        return decrypted_data
 
 
 class NotificationEmailContentGenerator:
     def __init__(self, notification_config: NotificationConfig, state, data):
         """
-            Args:
-                List of tuples containing user data
-            (user_id, email, phone, prob_pref, email_pref, text_pref, threshold,
-             lease_id, area_id, user_code, prob_1d_perc, prob_2d_perc, prob_3d_perc)
+        Args:
+            List of tuples containing user data
+        (user_id, email, phone, prob_pref, email_pref, text_pref, threshold,
+         lease_id, area_id, user_code, prob_1d_perc, prob_2d_perc, prob_3d_perc)
         """
         self.notification_config = notification_config
         self.state = state
@@ -132,36 +154,64 @@ class NotificationEmailContentGenerator:
         Returns:
             Dictionary of user data organized by user's email
             e.g. {
-                "example@example.com": {
-                    "CMU_U38": {
-                        "leases": ["1234567890", "1234567891"],
-                        "prob_1d_perc": 1 to 5,
-                        "prob_2d_perc": 1 to 5,
-                        "prob_3d_perc": 1 to 5
-                    }
-                }
+                "example@example.com": [
+                    {"lease": "234567", "prob_1d_perc": 1, "prob_2d_perc": 1,
+                    "prob_3d_perc": 3},
+                    {"lease": "234890", "prob_1d_perc": 1, "prob_2d_perc": 1,
+                    "prob_3d_perc": 3},
+                ]
             }
         """
         # Organize user data by user's email
         user_data_by_email = {}
         for data in self.data:
-            # Get user email
-            if data[4] == 1:
-                user_email = data[1]
-                if user_email not in user_data_by_email:
-                    # A user can have multiple CMUs
-                    user_data_by_email[user_email] = []
-                    # Each CMU can have a list of leases and each CMU has 3 probabilities
-                    cmu = {user_data_by_email[9]: {
-                        "leases": [],
-                        "prob_1d_perc": user_data_by_email[10],
-                        "prob_2d_perc": user_data_by_email[11],
-                        "prob_3d_perc": user_data_by_email[12]
+            # Check if email preference is enabled and email exists
+            if data.get("email_pref") == 1 and data.get("email"):
+                email = data["email"]
+                lease_id = data.get("lease_id")
+
+                # Use setdefault to initialize the list if email is new
+                user_leases = user_data_by_email.setdefault(email, [])
+
+                # Safely get probability values using .get()
+                prob_1d_perc = data.get("prob_1d_perc")
+                prob_2d_perc = data.get("prob_2d_perc")
+                prob_3d_perc = data.get("prob_3d_perc")
+
+                # Skip if no lease_id
+                if not lease_id:
+                    continue
+
+                lease_data = None
+                # Case 1: Only 1D probability exists (e.g. FL)
+                if (
+                    prob_1d_perc is not None
+                    and prob_2d_perc is None
+                    and prob_3d_perc is None
+                ):
+                    lease_data = {
+                        "lease": lease_id,
+                        "prob_1d_perc": prob_1d_perc,
+                        "prob_days": 1,
                     }
+                # Case 2: All three probabilities exist
+                elif (
+                    prob_1d_perc is not None
+                    and prob_2d_perc is not None
+                    and prob_3d_perc is not None
+                ):
+                    lease_data = {
+                        "lease": lease_id,
+                        "prob_1d_perc": prob_1d_perc,
+                        "prob_2d_perc": prob_2d_perc,
+                        "prob_3d_perc": prob_3d_perc,
+                        "prob_days": 3,
                     }
-                    user_data_by_email[user_email].append(cmu)
-                else:
-                    user_data_by_email[data[9]].append(data[7])
+
+                # Append if lease_data was created in one of the specific cases
+                if lease_data:
+                    user_leases.append(lease_data)
+
         return user_data_by_email
 
     def __call__(self):
@@ -169,134 +219,113 @@ class NotificationEmailContentGenerator:
             results = []
             organized_user_data = self.organize_data_by_email_preference()
             if organized_user_data:
-                for user_email, cmu_data in organized_user_data.items():
-                    template = ''
-                    if len(cmu_data) > 0:
-                        subject = self.notification_config.subject_template.format(self.state,
-                                                                                   cmu_data[0].get("leases")[
-                                                                                       0] + "or more")
-                        for cmu in cmu_data:
-                            template += "\n\nLease: {}-{}\n  Today: {}\n  Tomorrow: {}\n  In 2 days: {}\n".format(
-                                ", ".join(cmu.get("leases")),
-                                cmu,
-                                cmu.get("prob_1d_perc"),
-                                cmu.get("prob_2d_perc"),
-                                cmu.get("prob_3d_perc"))
-                        content = self.notification_config.lease_template + template + self.notification_config.notification_footer
+                for user_email, leases_data in organized_user_data.items():
+                    template = ""
+                    first = leases_data[0]
+                    subject = self.notification_config.subject_template.format(
+                        self.state, first.get("lease")
+                    )
+                    if len(leases_data) > 1:
+                        subject += " and more"
+                    if first.get("prob_days") == 1:
+                        template += ("\n\nLease: {}\n Today: {}\n").format(
+                            first.get("lease"),
+                            PROB_CATS.get(int(first.get("prob_1d_perc"))),
+                        )
+                    elif first.get("prob_days") == 3:
+                        template += (
+                            "\n\nLease: {}\n Today: {}\n Tomorrow: {}\n In 2 days: {}\n"
+                        ).format(
+                            PROB_CATS.get(first.get("lease")),
+                            PROB_CATS.get(first.get("prob_1d_perc")),
+                            PROB_CATS.get(first.get("prob_2d_perc")),
+                            PROB_CATS.get(first.get("prob_3d_perc")),
+                        )
+                    if len(template) > 0:
+                        content = (
+                            self.notification_config.lease_template
+                            + template
+                            + self.notification_config.notification_footer
+                        )
                         if len(subject) > 0 and len(content) > 0:
-                            results.append({"email": user_email, "subject": subject, "content": content})
-                return results
+                            results.append(
+                                {
+                                    "email": user_email,
+                                    "subject": subject,
+                                    "content": content,
+                                }
+                            )
+            return results
         except Exception as e:
             logger.error(f"An error occurred in main: {e}")
             raise
 
-        # 0. user id
-        # 1. u.email,
-        # 2. u.phone_number,
-        # 3. u.service_provider_id,
-        # 4. u.email_pref,
-        # 5. u.text_pref,
-        # 6. u.prob_pref == 3 or 4 or 5,
-        # 7. l.lease_id,
-        # 8. l.grow_area_name,
-        # 9. l.cmu_name,
-        # 10. cp.prob_1d_perc,
-        # 11. cp.prob_2d_perc,
-        # 12. cp.prob_3d_perc
 
-
-# For each state
-# Get SHA closure probabilities
-# Get UserLease
-# If NC >
-# Get user_id, lease_id, deleted from user_leases where deleted is false
-# Get unique lease_id from user_leases and join leases table to find cmu_name
-# Get cmu_probabilities for cmu
-# Check latest cmu_probabilities are today's
-# If it is true Get today's cmu_probabilities
-# Join all cmu_probablities, leases, user_leases
-#
-# [{user_id: [{"lease_id": "id", "cmu_name": "cmu_name", "prob1d": "low", "prob2d": "moderate", "high"}]}, ...]
-#
-# textAddress = '{}@{}'.format(user.phone_number, user.service_provider.sms_gateway)
-# def get_gmail_service():
-# """Get Gmail API service using service account credentials"""
-# try:
-#     if not os.path.exists(credential_json_path):
-#         raise FileNotFoundError(
-#             f"Service account credential file not found at {credential_json_path}"
-#         )
-
-#     # Load service account credentials from the credential file
-#     credentials = service_account.Credentials.from_service_account_file(
-#         credential_json_path,
-#         scopes=SCOPES,
-#         subject=SENDER  # Impersonate the sender email address
-#     )
-
-#     # Build and return the service
-#     return build("gmail", "v1", credentials=credentials)
-# except Exception as e:
-#     logger.error(f"Error creating Gmail service: {e}")
-#     logger.error(
-#         "Please ensure you have downloaded the correct service account key file and set up domain-wide delegation"
-#     )
-#     raise
 class GmailServices:
     def __init__(self, config: NotificationConfig):
         self.config = config
         self.cipher = Cipher(config)
+        logger.info("Initialized GmailServices")
 
     def get_authenticated_gmail_service(self):
         """Gets Gmail API service with proper authentication and token handling.
-        
+
         This function implements the OAuth2 flow for desktop applications:
         1. Checks for existing token
         2. Refreshes token if expired
         3. Create a new token through user authentication if needed
         4. Saves token for future use
-        
+
         Returns:
             Gmail API service object
         """
+        logger.info("Starting Gmail service authentication")
         creds = None
         # The file token_2.json stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first time.
+        # created automatically when the authorization flow completes for the first
+        # time.
         if os.path.exists(self.config.token_file):
             try:
-                with open(self.config.token_file, 'rb') as token:
+                with open(self.config.token_file, "rb") as token:
                     encrypted_data = token.read()
                     token_data = self.cipher.decrypt_token_data(encrypted_data)
-                    creds = Credentials.from_authorized_user_info(eval(token_data), self.config.scopes)
+                    creds = Credentials.from_authorized_user_info(
+                        eval(token_data), self.config.scopes
+                    )
+                logger.info("Successfully loaded credentials from token file")
             except Exception as e:
                 logger.error(f"Error reading encrypted token file: {e}")
-                # If there's an error reading the token, we'll proceed to create new credentials
 
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
+                logger.info("Refreshing expired credentials")
                 creds.refresh(Request())
             else:
+                logger.info("No valid credentials found, starting OAuth flow")
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    self.config.gmail_api_credential_file, self.config.scopes)
+                    self.config.gmail_api_credential_file, self.config.scopes
+                )
                 creds = flow.run_local_server(port=0)
 
             # Save the encrypted credentials for the next run
             try:
                 token_data = creds.to_json()
                 encrypted_data = self.cipher.encrypt_token_data(token_data)
-                with open(self.config.token_file, 'wb') as token:
+                with open(self.config.token_file, "wb") as token:
                     token.write(encrypted_data)
+                logger.info("Successfully saved new credentials")
             except Exception as e:
                 logger.error(f"Error saving encrypted token file: {e}")
                 raise
 
         try:
             # Build and return the Gmail service
-            service = build('gmail', 'v1', credentials=creds)
+            service = build("gmail", "v1", credentials=creds)
+            logger.info("Successfully built Gmail service")
             return service
         except HttpError as error:
-            logging.error(f'An error occurred: {error}')
+            logger.error(f"An error occurred while building Gmail service: {error}")
             raise
 
     def gmail_send_message(self, service, to_addresses, subject, content):
@@ -308,6 +337,9 @@ class GmailServices:
             content: Email content
         Returns: Message object, including message id
         """
+        logger.info(
+            f"Preparing to send email to {to_addresses} with subject: {subject}"
+        )
         try:
             message = EmailMessage()
             message["To"] = to_addresses
@@ -316,14 +348,17 @@ class GmailServices:
             message.set_content(content)
 
             # Encode the message
-            encoded_message = message.as_bytes()
+            encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
             create_message = {"raw": encoded_message}
 
             # Send the message
             send_message = (
-                service.users().messages().send(userId="me", body=create_message).execute()
+                service.users()
+                .messages()
+                .send(userId="me", body=create_message)
+                .execute()
             )
-            logger.info(f"Message Id: {send_message['id']}")
+            logger.info(f"Message sent successfully. Message Id: {send_message['id']}")
             return send_message
 
         except HttpError as error:
@@ -331,31 +366,72 @@ class GmailServices:
             raise
 
 
-# if u.email_pref == true and prob_pref >= cp.prob_1d_perc or cp.prob_2d_perc or cp.prob_3d_perc
 class EmailNotification:
     """Email notification configuration"""
 
-    def __init__(self, dir_config: DirectoryConfig, notification_config: NotificationConfig, state: str):
+    def __init__(
+        self,
+        dir_config: DirectoryConfig,
+        notification_config: NotificationConfig,
+        state: str,
+        prob_only_today=False,
+    ):
         self.dir_config = dir_config
         self.notification_config = notification_config
         self.state = state
+        self.prob_only_today = prob_only_today
+        logger.info(f"Initialized EmailNotification for state: {state}")
 
     def send(self):
-        user_data = execute_stored_procedure(
-            self.dir_config.connect_str,
-            self.notification_config.stored_procedure
-        )
-        filtered_data = filter_users_by_preferences(user_data)
-        content_generator_inst = NotificationEmailContentGenerator(self.notification_config, self.state, filtered_data)
-        contents = content_generator_inst()
-        g_services = GmailServices(self.notification_config)
-        service = g_services.get_authenticated_gmail_service()
-        for content in contents:
-            g_services.gmail_send_message(service, content["email"], content["subject"], content["content"])
+        logger.info("[Send Notifications]")
+        try:
+            user_data = execute_stored_procedure(
+                self.dir_config.connect_str, self.notification_config.stored_procedure
+            )
+            logger.info(f"Retrieved {len(user_data)} users from database")
+
+            logger.info("Filtering users based on preferences")
+            filtered_data = filter_users_by_preferences(user_data, self.prob_only_today)
+
+            if len(filtered_data) > 0:
+                logger.info("Generating email content")
+                content_generator_inst = NotificationEmailContentGenerator(
+                    self.notification_config, self.state, filtered_data
+                )
+                contents = content_generator_inst()
+                logger.info(f"Generated {len(contents)} email contents")
+
+                logger.info("Setting up Gmail service")
+                g_services = GmailServices(self.notification_config)
+                service = g_services.get_authenticated_gmail_service()
+
+                logger.info("Starting to send emails")
+                for content in contents:
+                    logger.debug(f"Sending email to {content['email']}")
+                    g_services.gmail_send_message(
+                        service,
+                        content["email"],
+                        content["subject"],
+                        content["content"],
+                    )
+                logger.info("Email notification process completed successfully")
+            else:
+                logger.info("No notifications today")
+            logger.info(utils.done_str)
+
+        except Exception as e:
+            logger.error(f"An error occurred during email notification process: {e}")
+            raise
 
 
 class DevEmailNotificationFL:
-    """Email notification configuration"""
+    """Sending emails to developers with attachments for FL ShellCast
+    This email is to assess the accuracy of the FL ShellCast model.
+
+    Args:
+        config_dirs: DirectoryConfig instance
+        config_notification: NotificationConfig instance
+    """
 
     def __init__(self, config_dirs, config_notification):
         self.config_dirs = config_dirs
@@ -390,7 +466,9 @@ class DevEmailNotificationFL:
                 message["From"] = self.sender
                 message["To"] = receiver
                 message["Subject"] = "FL ShellCast PQPF Analysis Results"
-                message.set_content("Please find attached the latest PQPF analysis results.")
+                message.set_content(
+                    "Please find attached the latest PQPF analysis results."
+                )
 
                 # Add attachments
                 for attachment_path in attachment_paths:
@@ -405,15 +483,21 @@ class DevEmailNotificationFL:
                         )
 
                 # Encode and send the message
-                encoded_message = message.as_bytes()
+                encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+
                 create_message = {"raw": encoded_message}
                 send_message = (
-                    service.users().messages().send(userId="me", body=create_message).execute()
+                    service.users()
+                    .messages()
+                    .send(userId="me", body=create_message)
+                    .execute()
                 )
-                logger.info(f"Message Id: {send_message['id']} sent to {receiver}")
+                logger.debug(f"Message Id: {send_message['id']} sent to {receiver}")
 
         except HttpError as error:
-            logger.error(f"An error occurred while sending email with attachments: {error}")
+            logger.error(
+                f"An error occurred while sending email with attachments: {error}"
+            )
             raise
 
     def send(self):
@@ -425,21 +509,12 @@ class DevEmailNotificationFL:
             attachment_paths = self.get_fl_pqpf_csv_files()
             if len(attachment_paths) > 0:
                 self.dev_send_email_with_attachments(g_services, attachment_paths)
+                logger.info("Email sent to developers successfully")
             else:
                 logger.info("No FL PQPF CSV files found")
 
         except Exception as e:
-            logger.error(f"An error occurred in email_notification_content_generator: {e}")
+            logger.error(
+                f"An error occurred in email_notification_content_generator: {e}"
+            )
             raise
-
-        # if config["FL.Developer"]["SEND_EMAIL_TO_DEVELOPER"].lower() == "true":
-        #     attachment_paths = _get_fl_pqpf_csv_files()
-        #     email_list = [email.strip() for email in config["FL.Developer"]["EMAIL_RECEIVER"].split(",")]
-        #     for email in email_list:
-        #         self.dev_send_email_with_attachments(
-        #             service,
-        #             email,
-        #             "FL ShellCast PQPF Analysis Results",
-        #             "Please find attached the latest PQPF analysis results.",
-        #             attachment_paths
-        #         )
