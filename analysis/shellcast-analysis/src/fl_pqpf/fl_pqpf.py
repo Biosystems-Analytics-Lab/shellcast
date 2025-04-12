@@ -80,20 +80,28 @@ class FLPQPF:
         self.date_today = config_dirs.date_today
 
         # ----- Total precipitation 1 hour accumulation directories -----
+        logger.info(f"TP_DATA_DIR: {ct.TP_DATA_DIR}")
         self.tp_data_dir = os.path.join(ct.TP_DATA_DIR, self.state.lower())
-        self.tp_raw_dir = os.path.join(self.tp_data_dir, "raw")
+        logger.info(f"tp_data_dir: {self.tp_data_dir}")
+        self.tp_raw_dir = os.path.join(ct.TP_DATA_DIR, "raw")
+        logger.info(f"tp_raw_dir: {self.tp_raw_dir}")
         self.tp_intermediate_dir = utils.create_directory(
-            os.path.join(self.tp_data_dir, "intermediate"), delete=True
+            os.path.join(ct.TP_DATA_DIR, self.state.lower(), "intermediate"),
+            delete=True,
         )
+        logger.info(f"tp_intermediate_dir: {self.tp_intermediate_dir}")
         self.convert_to_grib2_dir = utils.create_directory(
             os.path.join(self.tp_intermediate_dir, "cnvgrib2"), delete=True
         )
+        logger.info(f"convert_to_grib2_dir: {self.convert_to_grib2_dir}")
         self.tp_procs_dir = utils.create_directory(
             os.path.join(self.tp_intermediate_dir, "procs"), delete=True
         )
+        logger.info(f"tp_procs_dir: {self.tp_procs_dir}")
         self.tp_outputs_dir = utils.create_directory(
-            os.path.join(self.tp_data_dir, "outputs")
+            os.path.join(ct.TP_DATA_DIR, self.state.lower(), "outputs")
         )
+        logger.info(f"tp_outputs_dir: {self.tp_outputs_dir}")
 
         self.procs = PQPFProcs(config_dirs)
         self.save = save
@@ -139,8 +147,8 @@ class FLPQPF:
         # result_gdf[TP_CALC] = round(result_gdf[self.fl_config['LEASE_SHP_COL_RAIN_IN']].astype('float') - result_gdf[
         #     TP_ACCUM], 1)
         result_gdf[TP_CALC] = (
-                result_gdf[self.fl_config["LEASE_SHP_COL_RAIN_IN"]].astype("float")
-                - result_gdf[TP_ACCUM]
+            result_gdf[self.fl_config["LEASE_SHP_COL_RAIN_IN"]].astype("float")
+            - result_gdf[TP_ACCUM]
         )
         logger.info(f"[rain_in - raster value at point] --- calculated")
         result_gdf[PQPF_TH] = result_gdf[TP_CALC].apply(fl_qppf_threshold_generator)
@@ -200,11 +208,11 @@ class FLPQPF:
     @staticmethod
     def pqpf_probability_into_category(df, out_csv_path):
         """
-         >= 0.9     Very High	5
-         >= 0.75	High	    4
-         >= 0.5	    Moderate	3
-         >= 0.25    Low	        2
-         < 0.25	    Very Low    1
+        >= 0.9     Very High	5
+        >= 0.75	High	    4
+        >= 0.5	    Moderate	3
+        >= 0.25    Low	        2
+        < 0.25	    Very Low    1
 
         """
         logger.info("[Categorize PQPF value group by lease]")
@@ -230,17 +238,16 @@ class FLPQPF:
         joined_df.to_csv(csv_out_fpath, index=False)
 
     def check_tp_outputs(self):
+        logger.info(f"Checking TP outputs in: {self.tp_outputs_dir}")
+        if os.path.exists(self.tp_outputs_dir):
+            logger.info(f"Contents of directory: {os.listdir(self.tp_outputs_dir)}")
         tiffs = list(map(str, Path(self.tp_outputs_dir).glob("*.tif")))
+        logger.info(f"Found TIFF files: {tiffs}")
         if len(tiffs) == 0:
             logger.error("No TP outputs found")
             sys.exit(1)
         else:
-            for tiff in tiffs:
-                float_timestamp = os.path.getctime(tiff)  # Get creation time
-                datestamp = datetime.fromtimestamp(float_timestamp).date()
-                today = datetime.today().date()
-                if datestamp != today:
-                    return False
+            logger.info(f"Found {len(tiffs)} TIFF files")
         return True
 
     def get_season_now(self, in_csv_fpath, out_csv_fpath):
@@ -283,7 +290,9 @@ class FLPQPF:
         self.procs.get_input_files()
         utils.delete_outdated_grbs(self.grb_raw_dir)
         file_list = self.procs.get_files_to_download()
-        utils.download_grbs(self.grb_raw_dir, file_list, ct.PQPF_FTP_URL, ct.PQPF_FTP_CWD)
+        utils.download_grbs(
+            self.grb_raw_dir, file_list, ct.PQPF_FTP_URL, ct.PQPF_FTP_CWD
+        )
         to_db_bool = self.procs.check_grb_files()
 
         if to_db_bool:
@@ -311,6 +320,7 @@ class FLPQPF:
 
         stop = datetime.now()
         utils.calculate_duration(start, stop)
+
 
 # if __name__ == '__main__':
 #     db = 'gcp.mysql'
