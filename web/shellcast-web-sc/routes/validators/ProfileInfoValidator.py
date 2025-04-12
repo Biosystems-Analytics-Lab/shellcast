@@ -77,8 +77,8 @@ class ProfileInfoValidator:
             map(lambda x: x[0], db.session.query(PhoneServiceProvider.id).all())
         )
         if (
-                not self.service_provider_id
-                or not int(self.service_provider_id) in possibleServiceProviders
+            not self.service_provider_id
+            or not int(self.service_provider_id) in possibleServiceProviders
         ):
             return self.addError(
                 "The given service provider does not exist in the database."
