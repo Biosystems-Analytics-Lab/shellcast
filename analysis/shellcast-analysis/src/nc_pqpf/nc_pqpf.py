@@ -29,7 +29,7 @@ class NCPQPF:
         self.tiffs_dir = config_dirs.tiffs_dir
         self.lease_shp = config_dirs.lease_shp
         self.outputs_dir = config_dirs.outputs_dir
-        self.outfile_date = config_dirs.outfile_date
+        self.outfile_date = config_dirs.date_today.strftime("%Y-%m-%d")
         self.intermediate_dir = config_dirs.intermediate_dir
         self.cmu_shp = os.path.join(self.inputs_dir, self.config[self.state]["CMU_SHP"])
         self.use_cols = [
