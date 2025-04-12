@@ -33,15 +33,15 @@ if __name__ == "__main__":
     db = "gcp.mysql"
 
     # --- Directory configurations ---
-    config_dirs = DirectoryConfig(STATE, db)
+    dir_config = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
-    pqpf = NCPQPF(config_dirs, save=True)
+    pqpf = NCPQPF(dir_config, save=True)
     pqpf.main()
 
     # --- Email notification ---
-    config_notification = NotificationConfig()
-    email_notify_inst = EmailNotification(config_notification, STATE)
+    notification_config = NotificationConfig()
+    email_notify_inst = EmailNotification(dir_config, notification_config, STATE)
     email_notify_inst.send()
 
     # ---------------------

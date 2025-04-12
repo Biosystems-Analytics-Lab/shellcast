@@ -17,10 +17,10 @@ STATE = "FL"
 setup_logging.create_log_files(STATE)
 setup_logging.setup_logger(STATE)
 
-from fl_pqpf.tp_xmrg import TPXMRG  # noqa: E402
 from fl_pqpf.fl_pqpf import FLPQPF  # noqa: E402
+from fl_pqpf.tp_xmrg import TPXMRG  # noqa: E402
 from management import DirectoryConfig, NotificationConfig  # noqa: E402
-from notifications import EmailNotification, DevEmailNotificationFL
+from notifications import EmailNotification, DevEmailNotificationFL  # noqa: E402
 import logging  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -37,19 +37,21 @@ if __name__ == "__main__":
     tpxmrg.main()
 
     # --- Directory configurations ---
-    config_dirs = DirectoryConfig(STATE, db)
+    dir_config = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
-    pqpf = FLPQPF(config_dirs, save=True)
+    pqpf = FLPQPF(dir_config, save=True)
     pqpf.main()
 
     # --- Email notification ---
-    config_notification = NotificationConfig()
-    email_notify_inst = EmailNotification(config_notification, STATE)
+    notification_config = NotificationConfig()
+    email_notify_inst = EmailNotification(
+        dir_config, notification_config, STATE, prob_only_today=True
+    )
     email_notify_inst.send()
 
     # --- Developer Email ---
-    dev_email_notify_inst = DevEmailNotificationFL(config_dirs, config_notification)
+    dev_email_notify_inst = DevEmailNotificationFL(dir_config, notification_config)
     dev_email_notify_inst.send()
 
     # ---------------------

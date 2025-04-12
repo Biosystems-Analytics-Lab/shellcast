@@ -32,15 +32,15 @@ if __name__ == "__main__":
     db = "gcp.mysql"
 
     # --- Directory configurations ---
-    config_dirs = DirectoryConfig(STATE, db)
+    dir_config = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
-    pqpf = SCPQPF(config_dirs, save=True)
+    pqpf = SCPQPF(dir_config, save=False)
     pqpf.main()
 
     # --- Email notification ---
-    config_notification = NotificationConfig()
-    email_notify_inst = EmailNotification(config_notification, STATE)
+    notification_config = NotificationConfig()
+    email_notify_inst = EmailNotification(dir_config, notification_config, STATE)
     email_notify_inst.send()
     # ---------------------
     logger.info(f"{'=' * 50}")
