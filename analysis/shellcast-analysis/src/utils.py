@@ -56,7 +56,10 @@ def error_log(err):
         )
         tb = tb.tb_next
     last_trace = trace[-1]
-    msg = f"{type(err).__name__}\t{last_trace['filename']}:{last_trace['line']}\n\t{str(err)}"
+    msg = (
+        f"{type(err).__name__}\t{last_trace['filename']}: "
+        f"{last_trace['line']}\n\t{str(err)}"
+    )
     logger.error(msg)
 
 
@@ -119,9 +122,8 @@ def decrypt_json(encrypted_data, key):
 
 def create_directory(directory: str, delete=False) -> str:
     exists = os.path.exists(directory)
-    if exists:
-        if delete:
-            delete_files(directory)
+    if exists and delete:
+        delete_files(directory)
     elif not exists:
         os.makedirs(directory)
     return directory
@@ -160,7 +162,7 @@ def cmd_subprocess(cmd: List[str]) -> None:
         error_log(e)
     else:
         if rc:
-            msg = err.decode('utf-8')
+            msg = err.decode("utf-8")
             logger.error(msg)
             logger.error("PROCESS INCOMPLETE")
             sys.exit(1)
@@ -181,7 +183,6 @@ def execute_stored_procedure(connection_string, procedure_name, *args):
     try:
         engine = create_engine(connection_string)
         with engine.connect() as conn:
-            # Create the CALL statement
             if args:
                 params = ",".join(["%s" for _ in args])
                 query = text(f"CALL {procedure_name}({params})")
@@ -192,7 +193,11 @@ def execute_stored_procedure(connection_string, procedure_name, *args):
 
             # Fetch all results if any
             if result:
-                return result.fetchall()
+                column_names = result.keys()
+                fetched_data = [
+                    dict(zip(column_names, row)) for row in result.fetchall()
+                ]
+                return fetched_data
         engine.dispose()
         return
 
@@ -208,7 +213,8 @@ def regex_find(regex: str, string: str):
         regex (str): Regex pattern
         string (str): Text
 
-    Returns (List[str]): List of matched strings when there are matches, otherwise returns None.
+    Returns (List[str]): List of matched strings when there are matches, otherwise
+    returns None.
 
     """
     pattern = re.compile(regex)
@@ -446,7 +452,8 @@ def save_to_db(connect_str, csv_path) -> None:
 
 def parse_date_range(dates_str):
     """
-    Convert a date range string (e.g., "11/1-2/28") to datetime objects with correct years based on date today.
+    Convert a date range string (e.g., "11/1-2/28") to datetime objects with correct
+    years based on date today.
 
     Args:
         dates_str: String in format "MM/DD-MM/DD"
@@ -482,6 +489,14 @@ def parse_date_range(dates_str):
 
 
 def is_season(date_today, start, end):
+    # Convert datetime objects to date objects for comparison
+    if hasattr(date_today, "date"):
+        date_today = date_today.date()
+    if hasattr(start, "date"):
+        start = start.date()
+    if hasattr(end, "date"):
+        end = end.date()
+
     if start <= date_today <= end:
         return True
     else:
