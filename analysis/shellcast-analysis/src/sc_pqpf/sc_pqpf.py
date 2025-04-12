@@ -30,7 +30,7 @@ class SCPQPF:
         self.tiffs_dir = config_dirs.tiffs_dir
         self.lease_shp = config_dirs.lease_shp
         self.outputs_dir = config_dirs.outputs_dir
-        self.outfile_date = config_dirs.outfile_date
+        self.outfile_date = config_dirs.date_today.strftime("%Y-%m-%d")
         self.use_cols = [self.config[self.state]["LEASE_SHP_COL_LEASE_ID"], "geometry"]
         self.procs = PQPFProcs(config_dirs)
         self.save = save
