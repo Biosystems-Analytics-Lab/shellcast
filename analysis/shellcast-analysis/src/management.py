@@ -7,18 +7,17 @@ import configparser
 import os
 import platform
 from datetime import datetime
-
 import pytz
 
 import utils
-from constants import CONFIG_INI, ROOT_DIR, PQPF_DATA_DIR
+from constants import CONFIG_INI, ROOT_DIR, PQPF_DATA_DIR, TP_DATA_DIR
 
 
 class DirectoryConfig:
     def __init__(self, state: str, db: str):
         """
         Initialize configuration and directory management.
-        
+
         Args:
             state (str): State abbreviation
             db (str): Database configuration section name
@@ -28,6 +27,7 @@ class DirectoryConfig:
         self._config = configparser.ConfigParser()
         self._config.read(CONFIG_INI)
         self._date_today = datetime.now(pytz.timezone("America/New_York")).date()
+        self._data_root = os.path.join(PQPF_DATA_DIR, self._state.lower())
 
     @property
     def os_type(self) -> str:
@@ -52,7 +52,7 @@ class DirectoryConfig:
     @property
     def data_root(self) -> str:
         """Root directory for state-specific data."""
-        return os.path.join(PQPF_DATA_DIR, self._state.lower())
+        return self._data_root
 
     @property
     def connect_str(self) -> str:
@@ -64,13 +64,13 @@ class DirectoryConfig:
     @property
     def inputs_dir(self) -> str:
         """Directory for input files."""
-        return os.path.join(self.data_root, "inputs")
+        return os.path.join(self._data_root, "inputs")
 
     @property
     def outputs_dir(self) -> str:
         """Directory for output files."""
         return utils.create_directory(
-            os.path.join(self.data_root, "outputs"), delete=True
+            os.path.join(self._data_root, "outputs"), delete=True
         )
 
     @property
@@ -82,34 +82,41 @@ class DirectoryConfig:
     def intermediate_dir(self) -> str:
         """Directory for intermediate processing files."""
         return utils.create_directory(
-            os.path.join(self.data_root, "intermediate"), delete=True
+            os.path.join(self._data_root, "intermediate"), delete=True
         )
 
     @property
     def grb_subsets_dir(self) -> str:
         """Directory for subset GRIB files."""
         return utils.create_directory(
-            os.path.join(self.intermediate_dir, "subsets"), delete=True
+            os.path.join(self._data_root, "intermediate", "subsets"), delete=True
         )
 
     @property
     def tiffs_dir(self) -> str:
         """Directory for TIFF files."""
         return utils.create_directory(
-            os.path.join(self.intermediate_dir, "tiffs"), delete=True
+            os.path.join(self._data_root, "intermediate", "tiffs"), delete=True
         )
 
     @property
     def lease_shp(self) -> str:
         """Path to lease shapefile."""
         return os.path.join(
-            self.inputs_dir, self._config[self._state]["LEASE_SHP"]
+            self._data_root, "inputs", self._config[self._state]["LEASE_SHP"]
         )
 
     @property
     def bucket_name(self) -> str:
         """GCP bucket name."""
         return self._config["gcp.bucket"]["BUCKET_NAME"]
+
+    @property
+    def tp_intermediate_dir(self) -> str:
+        """Directory for total precipitation intermediate processing files."""
+        return utils.create_directory(
+            os.path.join(TP_DATA_DIR, "intermediate"), delete=True
+        )
 
 
 class NotificationConfig:
@@ -127,7 +134,7 @@ class NotificationConfig:
 
     @property
     def stored_procedure(self):
-        return self.config["Notification"]["STORED_PROCEDURE"]
+        return self.config["Notification"]["DB_STORED_PROCEDURE"]
 
     @property
     def scopes(self):
