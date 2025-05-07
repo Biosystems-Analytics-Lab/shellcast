@@ -2,35 +2,52 @@
 Project: ShellCast South Carolina
 Date: November 2022 - 2023
 """
+
 import sys
 from pathlib import Path
 
-
 shellcast_analysis_dir = str(Path().absolute().parents[1])
-script_dir = str(Path(Path().absolute(), 'src'))
+script_dir = str(Path(Path().absolute(), "src"))
 sys.path.append(script_dir)
 
-import setup_logging # noqa: E402
+import setup_logging  # noqa: E402
 
-STATE = 'SC'
+STATE = "SC"
 
 setup_logging.create_log_files(STATE)
 setup_logging.setup_logger(STATE)
 
 from sc_pqpf.sc_pqpf import SCPQPF  # noqa: E402
+from management import DirectoryConfig, NotificationConfig  # noqa: E402
+from notifications import EmailNotification
 import logging  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-if __name__ == '__main__':
-    logger.info(f'{"="*50}')
-    logger.info('\tStart SC ShellCast Analysis')
-    logger.info(f'{"="*50}')
+if __name__ == "__main__":
+    logger.info(f"{'=' * 50}")
+    logger.info("\tStart SC ShellCast Analysis")
+    logger.info(f"{'=' * 50}")
     # DB connection information in config.ini
-    db = 'gcp.mysql'
+    db = "gcp.mysql"
+
+    # --- Directory configurations ---
+    dir_config = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
-    pqpf = SCPQPF(db, save=True)
+    pqpf = SCPQPF(dir_config, save=False)
     pqpf.main()
+
+    # --- Email notification ---
+    notification_config = NotificationConfig(STATE)
+    if notification_config.notifications_enabled:
+        try:
+            email_notify_inst = EmailNotification(dir_config, notification_config, STATE)
+            email_notify_inst.send()
+        except Exception as e:
+            logger.error(f"Failed to send email notification: {str(e)}")
+    else:
+        logger.info(f"Notifications are disabled for {STATE} in configuration")
+
     # ---------------------
-    logger.info(f'{"=" * 50}')
+    logger.info(f"{'=' * 50}")

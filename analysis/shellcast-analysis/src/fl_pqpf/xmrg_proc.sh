@@ -40,6 +40,8 @@ mkdir $TP_OUTPUTS_DIR
 chmod -R 777 $TP_OUTPUTS_DIR
 rm -f -R $INTERMEDIATE_PROC_DIR
 mkdir $INTERMEDIATE_PROC_DIR
+
+# ----- Change to intermediate proc directory -----
 cd $INTERMEDIATE_PROC_DIR
 
 # ----- Process data -----

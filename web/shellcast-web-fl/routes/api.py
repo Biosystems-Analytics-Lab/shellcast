@@ -1,6 +1,7 @@
 from firebase_admin import auth
 from flask import Blueprint, jsonify, request
 from models import db
+
 # from models.CMU import CMU
 from models.CMUProbability import CMUProbability
 from models.Lease import Lease
@@ -114,14 +115,20 @@ def getGrowingUnitProbabilities():
     Returns the most recent closure probabilities for each growing unit.
     """
     # TODO make sure this returns one (and only one) closure probability for each growing unit
-    latestDate = (db.session.query(CMUProbability)
-                  .order_by(CMUProbability.created.desc()).first().created)
-    count = db.session.query(CMUProbability).filter(CMUProbability.created == latestDate).count()
+    latestDate = (
+        db.session.query(CMUProbability)
+        .order_by(CMUProbability.created.desc())
+        .first()
+        .created
+    )
+    count = (
+        db.session.query(CMUProbability)
+        .filter(CMUProbability.created == latestDate)
+        .count()
+    )
     print(count)
     growingUnitProbs = (
-        db.session.query(CMUProbability)
-        .order_by(CMUProbability.id.desc())
-        .limit(count)
+        db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).limit(count)
     )
     growingUnitProbsAsDicts = {}
     for unit in growingUnitProbs:
