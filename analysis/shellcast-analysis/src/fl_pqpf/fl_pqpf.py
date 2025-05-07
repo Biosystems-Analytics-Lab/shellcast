@@ -273,8 +273,8 @@ class FLPQPF:
                     dt_str_lst = row[2].strip('[]').split(", ")
                     if dt_str_lst and len(dt_str_lst) > 0:
                         for dt_str in dt_str_lst:
-                            start, end = utils.parse_date_range(dt_str)
-                            if utils.is_season(self.date_today, start, end):
+                            dates = utils.convert_date_string(dt_str)
+                            if utils.is_season(self.date_today, dates["start"], dates["end"]):
                                 flag = True
                                 break
                     # cmu_id, prob_1d_perc, if not in season, assign 100
