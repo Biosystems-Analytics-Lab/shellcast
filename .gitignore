@@ -6,7 +6,7 @@
 cloud-sql-proxy*
 config*
 sqlauth*
-
+*.grb
 tpxmrg_inventory.json
 delete/
 bin/
