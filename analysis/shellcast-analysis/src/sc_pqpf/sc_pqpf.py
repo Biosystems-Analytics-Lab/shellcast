@@ -24,7 +24,6 @@ class SCPQPF:
         self.state = "SC"
         self.config = config_dirs.config
         self.connect_str = config_dirs.connect_str
-        self.outfile_date = config_dirs.outfile_date
         self.data_root = config_dirs.data_root
         self.grb_raw_dir = config_dirs.grb_raw_dir
         self.tiffs_dir = config_dirs.tiffs_dir

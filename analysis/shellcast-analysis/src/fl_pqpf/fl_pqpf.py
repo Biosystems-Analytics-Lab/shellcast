@@ -147,8 +147,8 @@ class FLPQPF:
         # result_gdf[TP_CALC] = round(result_gdf[self.fl_config['LEASE_SHP_COL_RAIN_IN']].astype('float') - result_gdf[
         #     TP_ACCUM], 1)
         result_gdf[TP_CALC] = (
-            result_gdf[self.fl_config["LEASE_SHP_COL_RAIN_IN"]].astype("float")
-            - result_gdf[TP_ACCUM]
+                result_gdf[self.fl_config["LEASE_SHP_COL_RAIN_IN"]].astype("float")
+                - result_gdf[TP_ACCUM]
         )
         logger.info(f"[rain_in - raster value at point] --- calculated")
         result_gdf[PQPF_TH] = result_gdf[TP_CALC].apply(fl_qppf_threshold_generator)
@@ -242,7 +242,7 @@ class FLPQPF:
         if os.path.exists(self.tp_outputs_dir):
             logger.info(f"Contents of directory: {os.listdir(self.tp_outputs_dir)}")
         tiffs = list(map(str, Path(self.tp_outputs_dir).glob("*.tif")))
-        logger.info(f"Found TIFF files: {tiffs}")
+        logger.info(f"Found TIFF files: {len(tiffs)}")
         if len(tiffs) == 0:
             logger.error("No TP outputs found")
             sys.exit(1)
@@ -320,7 +320,6 @@ class FLPQPF:
 
         stop = datetime.now()
         utils.calculate_duration(start, stop)
-
 
 # if __name__ == '__main__':
 #     db = 'gcp.mysql'
