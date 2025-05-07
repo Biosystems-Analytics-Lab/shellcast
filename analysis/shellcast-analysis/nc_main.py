@@ -36,13 +36,16 @@ if __name__ == "__main__":
     dir_config = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
-    pqpf = NCPQPF(dir_config, save=True)
+    pqpf = NCPQPF(dir_config, save=False)
     pqpf.main()
 
     # --- Email notification ---
-    notification_config = NotificationConfig()
-    email_notify_inst = EmailNotification(dir_config, notification_config, STATE)
-    email_notify_inst.send()
+    try:
+        notification_config = NotificationConfig()
+        email_notify_inst = EmailNotification(dir_config, notification_config, STATE)
+        email_notify_inst.send()
+    except Exception as e:
+        logger.error(f"Failed to send email notification: {str(e)}")
 
     # ---------------------
     logger.info(f"{'=' * 50}")

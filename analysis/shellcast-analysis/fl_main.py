@@ -44,15 +44,21 @@ if __name__ == "__main__":
     pqpf.main()
 
     # --- Email notification ---
-    notification_config = NotificationConfig()
-    email_notify_inst = EmailNotification(
-        dir_config, notification_config, STATE, prob_only_today=True
-    )
-    email_notify_inst.send()
+    try:
+        notification_config = NotificationConfig()
+        email_notify_inst = EmailNotification(
+            dir_config, notification_config, STATE, prob_only_today=True
+        )
+        email_notify_inst.send()
+    except Exception as e:
+        logger.error(f"Failed to send email notification: {str(e)}")
 
     # --- Developer Email ---
-    dev_email_notify_inst = DevEmailNotificationFL(dir_config, notification_config)
-    dev_email_notify_inst.send()
+    try:
+        dev_email_notify_inst = DevEmailNotificationFL(dir_config, notification_config)
+        dev_email_notify_inst.send()
+    except Exception as e:
+        logger.error(f"Failed to send developer email notification: {str(e)}")
 
     # ---------------------
     logger.info(f"{'=' * 50}")
