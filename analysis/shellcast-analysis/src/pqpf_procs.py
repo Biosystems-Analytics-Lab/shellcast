@@ -5,17 +5,13 @@ Steps:
 
 """
 
-import configparser
 import logging.config
 import os
-import platform
 import sys
 import warnings
 from datetime import datetime
-from typing import List
 
 import pygrib
-import pytz
 from shapely.errors import ShapelyDeprecationWarning
 
 import constants as ct
@@ -26,58 +22,23 @@ warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 logger = logging.getLogger(__name__)
 
 
-# Prerequisites
-# Lease point layer having lease_id and rainfall threshold
-class ProcDirs:
-    def __init__(self, state, db):
-        """
-        Args:
-            state (str): State abbreviation
-            db (str):
-        """
-        self.os_type = "Other" if platform.system() == "Darwin" else "Windows"
-
-        self.date_today = datetime.now(pytz.timezone("America/New_York")).date()
-        self.config = configparser.ConfigParser()
-        self.config.read(ct.CONFIG_INI)
-        self.state = state.upper()
-        self.data_root = os.path.join(ct.PQPF_DATA_DIR, state.lower())
-        self.connect_str = utils.get_connection_string(
-            self.config[db], self.config[self.state]["DB_NAME"]
-        )
-        # Data directories
-        self.inputs_dir = os.path.join(self.data_root, "inputs")
-        self.outputs_dir = utils.create_directory(
-            os.path.join(self.data_root, "outputs"), delete=True
-        )
-        self.grb_raw_dir = utils.create_directory(os.path.join(ct.PQPF_DATA_DIR, "raw"))
-        self.intermediate_dir = utils.create_directory(
-            os.path.join(self.data_root, "intermediate"), delete=True
-        )
-        self.grb_subsets_dir = utils.create_directory(
-            os.path.join(self.intermediate_dir, "subsets"), delete=True
-        )
-        self.tiffs_dir = utils.create_directory(
-            os.path.join(self.intermediate_dir, "tiffs"), delete=True
-        )
-        self.lease_shp = os.path.join(
-            self.inputs_dir, self.config[self.state]["LEASE_SHP"]
-        )
-        self.bucket_name = self.config["gcp.bucket"]["BUCKET_NAME"]
-
-
 class PQPFProcs:
-    def __init__(self, state, db):
-        self.state = state.upper()
-        pdirs = ProcDirs(self.state, db)
-        self.os_type = pdirs.os_type
-        self.config = pdirs.config
-        self.grb_raw_dir = pdirs.grb_raw_dir
-        self.tiffs_dir = pdirs.tiffs_dir
-        self.grb_subsets_dir = pdirs.grb_subsets_dir
-        self.inputs_dir = pdirs.inputs_dir
+    def __init__(self, configs):
+        """
+        Initialize PQPF processing class.
+
+        Args:
+            configs (ConfigDirs): Configuration and directory management instance
+        """
+        self.os_type = configs.os_type
+        self.config = configs.config
+        self.state = configs.state
+        self.grb_raw_dir = configs.grb_raw_dir
+        self.tiffs_dir = configs.tiffs_dir
+        self.grb_subsets_dir = configs.grb_subsets_dir
+        self.inputs_dir = configs.inputs_dir
         self.outfile_date = None
-        self.bucket_name = pdirs.bucket_name
+        self.bucket_name = configs.bucket_name
 
     def get_input_files(self):
         logger.info("[Download CMU and leases spatial data from GCP bucket]")
@@ -94,11 +55,11 @@ class PQPFProcs:
             msg = "Files to download failed."
             utils.error_process(msg, e)
 
-    def get_files_to_download(self) -> List[str]:
+    def get_files_to_download(self):
         """
         List today's PQPF GRB files.
         Returns:
-            object: list of today's PQPF GRB files
+            list[str]: list of today's PQPF GRB files
         """
         logger.info("[PQPF GRB files to download]")
         try:
@@ -109,7 +70,7 @@ class PQPFProcs:
             for hour in ct.VALID_HOURS:
                 fname = f"{ct.GRB_PREFIX}_{today}{ct.Z_RUN}{hour}.grb"
                 files.append(fname)
-            # Check today's GRB files are already in directory
+            # Check today's GRB files are already in the directory
             if len(files) > 0:
                 for f in files:
                     if f not in os.listdir(self.grb_raw_dir):
@@ -132,8 +93,7 @@ class PQPFProcs:
 
     def check_grb_files(self):
         """
-        Check downloaded PQPF data is current. Sometimes
-        TODO - Make analysis done with downloaded files. For instance, one day, there is no f030 PQPF data then run analysis with rest of PQPF files.
+        Check downloaded PQPF data is current.
 
         """
         logger.info("[Check GRB files dates]")
@@ -226,8 +186,6 @@ class PQPFProcs:
 
                 for idx, grb in enumerate(grbs):
                     if "upperLimit" in grb.keys():
-                        # upper_limit = grb.upperLimit
-                        # inches = round((upper_limit / 1000) / 25.4, 1)
                         inches = round(grb.upperLimit / 25.4, 1)
                         for threshold in thresholds:
                             if float(threshold) == inches:
@@ -239,8 +197,6 @@ class PQPFProcs:
                                 utils.run_gdal_to_tiff(
                                     grb_fpath, tiff_path, {idx + 1}, dst_srs
                                 )
-                                # cmd = [gdal_translate, '-b', f'{idx + 1}', '-of', 'GTiff', grb_fpath, tiff_path]
-                                # utils.cmd_subprocess(cmd)
             logger.info(utils.done_str)
         except Exception as e:
             msg = "GRB to TIFF transformation failed."
@@ -249,8 +205,6 @@ class PQPFProcs:
     def grb_to_tiff_all(self) -> None:
         """
         Transform GRB thresholds to TIFF.
-        Args:
-            thresholds (List[float]): List of unique rainfall thresholds
         """
         logger.info("[Transform all GRB thresholds to TIFF]")
         try:
@@ -266,8 +220,6 @@ class PQPFProcs:
 
                 for idx, grb in enumerate(grbs):
                     if "upperLimit" in grb.keys():
-                        # upper_limit = grb.upperLimit
-                        # inches = round((upper_limit / 1000) / 25.4, 1)
                         inches = float(round(grb.upperLimit / 25.4, 1))
                         rainfall_str = str(inches).replace(".", "p")
                         tiff_path = os.path.join(

@@ -4,7 +4,7 @@ import unittest
 import os
 from tempfile import TemporaryDirectory
 import pqpf
-from ..constants import TODAY, REG_PATTERN_TODAY, REG_PATTERN_GRB_HOURS
+from src.constants import TODAY, REG_PATTERN_TODAY, REG_PATTERN_GRB_HOURS
 from datetime import datetime
 
 class TestPqpf(unittest.TestCase):
@@ -94,7 +94,6 @@ class TestPqpf(unittest.TestCase):
     def test_save_to_db(self):
         out_csv_path = os.path.join(self.pqpf_obj.outputs_dir, f'pqpf_cmu_{datetime.today().date()}.csv')
         self.pqpf_obj.save_to_db(out_csv_path)
-
 
 if __name__ == '__main__':
     unittest.main()
