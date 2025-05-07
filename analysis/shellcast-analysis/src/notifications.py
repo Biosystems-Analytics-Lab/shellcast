@@ -50,8 +50,8 @@ def filter_users_by_preferences(users_data, prob_1d_only=False):
         # Check if probability preference meets any of the threshold conditions
         if prob_1d_only:
             meets_probability_threshold = (
-                    user["prob_pref"] is not None  # Ensure prob_pref is not None
-                    and user["prob_1d_perc"] >= user["prob_pref"]
+                user["prob_pref"] is not None  # Ensure prob_pref is not None
+                and user["prob_1d_perc"] >= user["prob_pref"]
             )
             logger.debug(
                 f"User {user.get('user_id')} 1D probability check - pref: "
@@ -59,12 +59,12 @@ def filter_users_by_preferences(users_data, prob_1d_only=False):
             )
         else:
             meets_probability_threshold = (
-                    user["prob_pref"] is not None  # Ensure prob_pref is not None
-                    and (
-                            user["prob_1d_perc"] >= user["prob_pref"]
-                            or user["prob_2d_perc"] >= user["prob_pref"]
-                            or user["prob_3d_perc"] >= user["prob_pref"]
-                    )
+                user["prob_pref"] is not None  # Ensure prob_pref is not None
+                and (
+                    user["prob_1d_perc"] >= user["prob_pref"]
+                    or user["prob_2d_perc"] >= user["prob_pref"]
+                    or user["prob_3d_perc"] >= user["prob_pref"]
+                )
             )
             logger.debug(
                 f"User {user.get('user_id')} "
@@ -187,9 +187,9 @@ class NotificationEmailContentGenerator:
                 lease_data = None
                 # Case 1: Only 1D probability exists (e.g. FL)
                 if (
-                        prob_1d_perc is not None
-                        and prob_2d_perc is None
-                        and prob_3d_perc is None
+                    prob_1d_perc is not None
+                    and prob_2d_perc is None
+                    and prob_3d_perc is None
                 ):
                     lease_data = {
                         "lease": lease_id,
@@ -199,9 +199,9 @@ class NotificationEmailContentGenerator:
                     }
                 # Case 2: All three probabilities exist
                 elif (
-                        prob_1d_perc is not None
-                        and prob_2d_perc is not None
-                        and prob_3d_perc is not None
+                    prob_1d_perc is not None
+                    and prob_2d_perc is not None
+                    and prob_3d_perc is not None
                 ):
                     lease_data = {
                         "lease": lease_id,
@@ -222,37 +222,39 @@ class NotificationEmailContentGenerator:
         try:
             results = []
             organized_user_data = self.organize_data_by_email_preference()
-            
+
             if not organized_user_data:
                 return results
 
             for user_email, leases_data in organized_user_data.items():
                 first = leases_data[0]
-                
+
                 # Generate subject
                 subject = self.notification_config.subject_template.format(
                     self.state, first.get("lease")
                 )
                 if len(leases_data) > 1:
                     subject += " and more"
-                
+
                 # Generate message based on probability days
                 message = self._generate_message(first)
                 if not message:
                     continue
-                
+
                 # Create final content
                 content = message + self.notification_config.notification_footer
-                
+
                 # Add to results if both subject and content are valid
                 if subject and content:
-                    results.append({
-                        "email": user_email,
-                        "subject": subject,
-                        "content": content,
-                        "user_id": first.get("user_id"),
-                    })
-            
+                    results.append(
+                        {
+                            "email": user_email,
+                            "subject": subject,
+                            "content": content,
+                            "user_id": first.get("user_id"),
+                        }
+                    )
+
             return results
         except Exception as e:
             logger.error(f"An error occurred in main: {e}")
@@ -386,8 +388,16 @@ class NotificationLogManager:
     def __init__(self, connection_string):
         self.logs = []
         self.connection_string = connection_string
-        
-    def add_log(self, user_id, address, notification_text, notification_type, send_success, response_text=""):
+
+    def add_log(
+        self,
+        user_id,
+        address,
+        notification_text,
+        notification_type,
+        send_success,
+        response_text="",
+    ):
         """Add a notification log to memory"""
         log = {
             "user_id": user_id,
@@ -395,15 +405,15 @@ class NotificationLogManager:
             "notification_text": notification_text,
             "notification_type": notification_type,
             "send_success": send_success,
-            "response_text": response_text
+            "response_text": response_text,
         }
         self.logs.append(log)
-        
+
     def save_to_db(self):
         """Save all logs to database in batch"""
         if not self.logs:
             return
-            
+
         try:
             engine = create_engine(self.connection_string)
             with engine.begin() as conn:
@@ -422,11 +432,11 @@ class EmailNotification:
     """Email notification configuration"""
 
     def __init__(
-            self,
-            dir_config: DirectoryConfig,
-            notification_config: NotificationConfig,
-            state: str,
-            prob_only_today=False,
+        self,
+        dir_config: DirectoryConfig,
+        notification_config: NotificationConfig,
+        state: str,
+        prob_only_today=False,
     ):
         self.dir_config = dir_config
         self.notification_config = notification_config
@@ -475,7 +485,7 @@ class EmailNotification:
                             notification_text=content["content"],
                             notification_type="Email",
                             send_success=1,
-                            response_text=str(response)
+                            response_text=str(response),
                         )
                     except Exception as e:
                         # Log failed send
@@ -485,10 +495,10 @@ class EmailNotification:
                             notification_text=content["content"],
                             notification_type="Email",
                             send_success=0,
-                            response_text=str(e)
+                            response_text=str(e),
                         )
                         logger.error(f"Failed to send email to {content['email']}: {e}")
-                
+
                 # Save all logs to database
                 self.log_manager.save_to_db()
                 logger.info("Email notification process completed successfully")
