@@ -269,8 +269,8 @@ class FLPQPF:
                 writer.writerow(columns)
                 for row in reader:
                     flag = False
-                    # e.g [1/1-12/31] or multiple like [4/1-6/30, 9/1-11/30]
-                    dt_str_lst = row[2].split(", ")
+                    # e.g 1/1-12/31 or multiple like 4/1-6/30, 9/1-11/30
+                    dt_str_lst = row[2].strip('[]').split(", ")
                     if dt_str_lst and len(dt_str_lst) > 0:
                         for dt_str in dt_str_lst:
                             start, end = utils.parse_date_range(dt_str)
