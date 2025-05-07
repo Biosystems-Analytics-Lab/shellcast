@@ -450,43 +450,6 @@ def save_to_db(connect_str, csv_path) -> None:
         error_process(msg, e)
 
 
-def parse_date_range(dates_str):
-    """
-    Convert a date range string (e.g., "11/1-2/28") to datetime objects with correct
-    years based on date today.
-
-    Args:
-        dates_str: String in format "MM/DD-MM/DD"
-
-    Returns:
-        tuple: (start_datetime, end_datetime)
-    """
-    from datetime import datetime
-
-    today = datetime.today()
-
-    # Split and parse the dates
-    start_str, end_str = dates_str.split("-")
-    start_month, start_day = map(int, start_str.split("/"))
-    end_month, end_day = map(int, end_str.split("/"))
-
-    # Determine years based on a month sequence
-    if end_month < start_month:  # Date range crosses year boundary
-        if today.month >= start_month:
-            years = (today.year, today.year + 1)
-        elif today.month <= end_month:
-            years = (today.year - 1, today.year)
-        else:
-            years = (today.year, today.year + 1)
-    else:
-        years = (today.year, today.year)
-
-    # Create datetime objects
-    start = datetime(years[0], start_month, start_day)
-    end = datetime(years[1], end_month, end_day)
-
-    return start, end
-
 def convert_date_string(date_str):
     """
     Convert a date range string (e.g., "11/1-2/28") to datetime objects with correct
@@ -525,6 +488,7 @@ def convert_date_string(date_str):
         dates["end"] = datetime(years[1], end_month, end_day)
     
     return dates
+
 
 def is_season(date_today, start, end):
     # Convert datetime objects to date objects for comparison
