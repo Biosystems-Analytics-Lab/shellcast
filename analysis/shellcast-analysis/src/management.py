@@ -166,6 +166,13 @@ class NotificationConfig:
             "One or more of your leases is at risk of closing today, tomorrow or in 2 days.\n"
             "Visit https://go.ncsu.edu/shellcast for details."
         )
+    
+    @property
+    def lease_template_today_only(self):
+        return (
+            "One or more of your leases is at risk of closing today\n"
+            "Visit https://go.ncsu.edu/shellcast for details."
+        )
 
     @property
     def notification_footer(self):
