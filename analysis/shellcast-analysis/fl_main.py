@@ -44,21 +44,24 @@ if __name__ == "__main__":
     pqpf.main()
 
     # --- Email notification ---
-    try:
-        notification_config = NotificationConfig()
-        email_notify_inst = EmailNotification(
-            dir_config, notification_config, STATE, prob_only_today=True
-        )
-        email_notify_inst.send()
-    except Exception as e:
-        logger.error(f"Failed to send email notification: {str(e)}")
+    notification_config = NotificationConfig(STATE)
+    if notification_config.notifications_enabled:
+        try:
+            email_notify_inst = EmailNotification(
+                dir_config, notification_config, STATE, prob_only_today=True
+            )
+            email_notify_inst.send()
+        except Exception as e:
+            logger.error(f"Failed to send email notification: {str(e)}")
 
-    # --- Developer Email ---
-    try:
-        dev_email_notify_inst = DevEmailNotificationFL(dir_config, notification_config)
-        dev_email_notify_inst.send()
-    except Exception as e:
-        logger.error(f"Failed to send developer email notification: {str(e)}")
+        # --- Developer Email ---
+        try:
+            dev_email_notify_inst = DevEmailNotificationFL(dir_config, notification_config)
+            dev_email_notify_inst.send()
+        except Exception as e:
+            logger.error(f"Failed to send developer email notification: {str(e)}")
+    else:
+        logger.info(f"Notifications are disabled for {STATE} in configuration")
 
     # ---------------------
     logger.info(f"{'=' * 50}")

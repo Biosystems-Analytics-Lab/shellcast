@@ -8,9 +8,12 @@ import os
 import platform
 from datetime import datetime
 import pytz
+import logging
 
 import utils
 from constants import CONFIG_INI, ROOT_DIR, PQPF_DATA_DIR, TP_DATA_DIR
+
+logger = logging.getLogger(__name__)
 
 
 class DirectoryConfig:
@@ -120,9 +123,24 @@ class DirectoryConfig:
 
 
 class NotificationConfig:
-    def __init__(self):
+    def __init__(self, state: str = None):
         self.config = configparser.ConfigParser()
         self.config.read(CONFIG_INI)
+        self._state = state
+
+    @property
+    def notifications_enabled(self):
+        if not self._state:
+            logger.warning("No state specified for notification settings")
+            return False
+            
+        # Check state-specific setting
+        state_key = f"{self._state}.Notification"
+        if state_key in self.config and "ENABLE_NOTIFICATIONS" in self.config[state_key]:
+            return self.config[state_key].getboolean("ENABLE_NOTIFICATIONS")
+        
+        logger.warning(f"No notification setting found for {self._state}")
+        return False
 
     @property
     def gmail_api_credential_file(self):
