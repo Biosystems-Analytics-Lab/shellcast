@@ -192,11 +192,14 @@ Please read the [An Overview of App Engine](https://cloud.google.com/appengine/d
 For easier monitoring of deployed versions, you should sign in to Google Cloud Console before deploying applications. Go to __App Engine__ in __Google Cloud Console__ and look under __Services__ for __Versions__. Delete unused versions of each app service.
 
 #### 5.4.2 Delete container images
+If you require to perform rollback, don't delete staging files.
 
 1. Sign in __Google Cloud Console__ and go to __Cloud Storage__
-2. Click `us.artifact.[project name].appspot.com` in Bucket list
-3. Browse `us.artifact.{project name}.appspot.com/containers/images`
+2. Click `staging.[project name].appspot.com` in Bucket list
+3. Browse `staging.{project name}.appspot.com/containers/images`
 4. Delete all hashed name files </br>
+or 
+```bash gsutil -m rm "gs://staging.ncsu-shellcast.appspot.com/**"```
 
 See [Clean up images in Container Registry](https://cloud.google.com/artifact-registry/docs/transition/clean-up-images-gcr).
 
