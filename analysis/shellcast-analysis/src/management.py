@@ -206,3 +206,18 @@ class NotificationConfig:
     @property
     def dev_send_email(self):
         return self.config["FL.Developer"]["SEND_EMAIL_TO_DEVELOPER"]
+
+    @property
+    def cmu_stored_procedure(self):
+        """Get the stored procedure name for CMU probabilities"""
+        return self.config["CMU.Developer"]["STORED_PROCEDURE"]
+
+    @property
+    def cmu_dev_email_receivers(self):
+        """Get the list of developer email receivers for CMU notifications"""
+        return self.config["CMU.Developer"]["EMAIL_RECEIVER"]
+
+    @property
+    def cmu_dev_send_email(self):
+        """Get whether to send CMU developer notifications"""
+        return self.config["CMU.Developer"]["SEND_EMAIL_TO_DEVELOPER"]
