@@ -36,7 +36,7 @@ if __name__ == "__main__":
     dir_config = DirectoryConfig(STATE, db)
 
     # --- PQPF analysis ---
-    pqpf = NCPQPF(dir_config, save=False)
+    pqpf = NCPQPF(dir_config)
     pqpf.main()
 
     # --- Email notification ---
