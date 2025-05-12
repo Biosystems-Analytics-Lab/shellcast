@@ -237,18 +237,14 @@ export function addHomeExtentButton(map, extent, popupLyr) {
   map.addControl(homeExtent);
 }
 
-// This sets the initial map extent as a maximum extent.
-// User can't pan outside of this extent.
+
 export function mapBoundingBox(map) {
-  map.setView(
-    new ol.View({
-      center: map.getView().getCenter(),
-      extent: map.getView().calculateExtent(map.getSize()),
-      zoom: map.getView().getZoom(),
-      padding: [50, 50, 50, 50],
-    })
-  );
-  return map.getView().calculateExtent(map.getSize());
+  const extent = map.getView().calculateExtent(map.getSize());
+  // Set the initial view to show all points of interest
+  map.getView().fit(extent, {
+    padding: [50, 50, 50, 50]
+  });
+  return extent;
 }
 
 export function addAllMapLayers(
