@@ -67,7 +67,7 @@ def pqpf_threshold_stringify(num):
 
 
 class FLPQPF:
-    def __init__(self, config_dirs, save=True):
+    def __init__(self, config_dirs):
         self.state = "FL"
         self.config = config_dirs.config
         self.fl_config = self.config[self.state]
@@ -104,7 +104,8 @@ class FLPQPF:
         logger.info(f"tp_outputs_dir: {self.tp_outputs_dir}")
 
         self.procs = PQPFProcs(config_dirs)
-        self.save = save
+        # Use config value if save parameter is None, otherwise use the provided value
+        self.save = self.config[f"{self.state}.SaveToDB"].getboolean("SAVE_TO_DB")
 
     def tp_accum_ras_values_to_pts(self):
         """

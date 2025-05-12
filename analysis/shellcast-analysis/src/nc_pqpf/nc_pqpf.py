@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class NCPQPF:
-    def __init__(self, config_dirs, save=True):
+    def __init__(self, config_dirs):
         self.state = "NC"
         self.config = config_dirs.config
         self.connect_str = config_dirs.connect_str
@@ -45,7 +45,8 @@ class NCPQPF:
         ]
 
         self.procs = PQPFProcs(config_dirs)
-        self.save = save
+        # Use config value if save parameter is None, otherwise use the provided value
+        self.save = self.config[f"{self.state}.SaveToDB"].getboolean("SAVE_TO_DB")
 
     def nc_get_thresholds(self):
         """

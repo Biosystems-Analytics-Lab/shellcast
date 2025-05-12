@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class SCPQPF:
-    def __init__(self, config_dirs, save=True):
+    def __init__(self, config_dirs):
         self.state = "SC"
         self.config = config_dirs.config
         self.connect_str = config_dirs.connect_str
@@ -32,7 +32,7 @@ class SCPQPF:
         self.outfile_date = config_dirs.date_today.strftime("%Y-%m-%d")
         self.use_cols = [self.config[self.state]["LEASE_SHP_COL_LEASE_ID"], "geometry"]
         self.procs = PQPFProcs(config_dirs)
-        self.save = save
+        self.save = self.config[f"{self.state}.SaveToDB"].getboolean("SAVE_TO_DB")
 
     def tiff_resample(self) -> None:
         """
@@ -94,7 +94,7 @@ class SCPQPF:
             tiffs = utils.list_files(resample_dir, ".tif")
             columns = {"24": "prob_1d_perc", "48": "prob_2d_perc", "72": "prob_3d_perc"}
             out_csv_path = os.path.join(
-                self.outputs_dir, f"pqpf_cmu_{self.outfile_date}.csv"
+                self.outputs_dir, f"pqpf_cmu_probs_{self.outfile_date}.csv"
             )
             lease_id_field = self.config[self.state]["LEASE_SHP_COL_LEASE_ID"]
             rename_field = self.config[self.state]["LEASE_SHP_COL_CMU_NAME"]
