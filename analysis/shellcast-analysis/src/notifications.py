@@ -21,7 +21,7 @@ from sqlalchemy import create_engine
 
 logger = logging.getLogger(__name__)
 
-PROB_CATS = {3: "Moderate", 4: "High", 5: "Very High"}
+PROB_CATS = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High", 5: "Very High"}
 
 
 def filter_users_by_preferences(users_data, prob_1d_only=False):
@@ -535,6 +535,7 @@ class DevEmailNotificationFL:
             List of file paths for CSV files matching the criteria
         """
         matching_files = []
+        
         for file in glob.glob(os.path.join(PQPF_DATA_DIR, "fl/outputs", "*.csv")):
             if any(keyword in file.lower() for keyword in ["lease", "tmp"]):
                 matching_files.append(file)
