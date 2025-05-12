@@ -64,7 +64,7 @@ function createCmuLayer(cmuGeoJsonSource) {
     name: CMU_LYR_NAME,
     opacity: 0.7,
     source: cmuGeoJsonSource,
-    extent: cmuGeoJsonSource.getExtent(),
+    // extent: cmuGeoJsonSource.getExtent(),
     style: function (feature) {
       return getBoundaryStyle(feature, 1);
     },
@@ -159,18 +159,15 @@ function addAllMapLayers(mapEl) {
   });
 }
 
-// This sets the initial map extent as a maximum extent.
-// User can't pan outside of this extent.
+
 function mapBoundingBox() {
-  map.setView(
-    new ol.View({
-      center: map.getView().getCenter(),
-      extent: map.getView().calculateExtent(map.getSize()),
-      zoom: map.getView().getZoom(),
-      padding: [50, 50, 50, 50],
-    }),
-  );
-  return map.getView().calculateExtent(map.getSize());
+  // Calculate the initial extent that shows all points of interest
+  const extent = map.getView().calculateExtent(map.getSize());
+  // Set the initial view to show all points of interest
+  map.getView().fit(extent, {
+    padding: [50, 50, 50, 50]
+  });
+  return extent;
 }
 
 function addHomeExtentButton(map, extent) {
