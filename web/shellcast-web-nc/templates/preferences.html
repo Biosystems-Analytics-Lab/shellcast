@@ -16,21 +16,23 @@
   <div id="user-signed-out" style="height: 100vh"></div>
 
   <div id="user-signed-in" style="display: none">
-
+    <br>
     <div id="delete-account-div">
       <button class="btn btn-danger" type="button" id="delete-account-btn"
               onclick="$('#account-deletion-modal').modal('show');">Delete Account
       </button>
     </div>
-
+    <br>
     <div id="forms">
 
       {# Notification Preferences Form #}
-      <form class="needs-validation mb-4" id="profile-information-form">
-        <h4>My Notification Preferences</h4>
-        {# Email #}
-        <div class="mb-3">
-          <label for="email">Email address</label>
+      <form class="needs-validation mb-5 notification-preferences-form" id="profile-information-form">
+        
+        <h2 class="form-section-title">My Notification Preferences</h2>
+        
+        {# Email Section #}
+        <div class="form-section contact-info">
+          <label for="email-address" class="form-label">Email address</label>
           <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com"
                  aria-describedby="emailHelp">
           <div class="invalid-feedback">
@@ -47,125 +49,174 @@
         </div>
 
         {# Phone number and service provider #}
-        <div class="form-row">
-          <div class="mb-3 col" style="min-width: 300px;">
-            <label for="phone-number">Mobile phone number</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <div class="input-group-text">+1</div>
-              </div>
-              <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(***) ***-****"
-                     aria-describedby="phoneHelp">
-              <div class="invalid-feedback" style="width: 100%;">
-                Please enter a valid phone number.
-              </div>
-              <small id="phoneHelp" class="form-text text-muted" style="width: 100%;">
-                This phone number must be able to receive text messages (MMS).
-                If you choose to receive text notifications with ShellCast
-                forecast information for your lease(s), the notifications will
-                be sent to this number. Messaging rates may apply.
-              </small>
+        <div class="form-section contact-info">
+          <label for="phone-number" class="form-label">Mobile phone number</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">+1</div>
             </div>
+            <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(***) ***-****"
+                   aria-describedby="phoneHelp">
           </div>
-          <div class="mb-3 col" style="min-width: 300px;">
-            <label for="service-provider">Mobile service provider</label>
-            <select class="form-control" id="service-provider" name="service-provider">
-              <option value="">-- Select one --</option>
-              {% for provider in serviceProviders %}
-                <option value="{{ provider.id }}">{{ provider.name }}</option>
-              {% endfor %}
-            </select>
-            <small id="serviceHelp" class="form-text text-muted" style="width: 100%;">
-              Providing your mobile phone service provider allows us to send you text messages through your
-              provider's MMS email gateway. This is much less expensive than sending you a message from a
-              texting service and helps us to reduce our cost of operation.<br>
-              <span style="color: red">* Text notifications to phones serviced by Verizon are currently not available.
-                Please use the email notification service instead.
-                We apologize for the inconvenience.</span>
+          <div class="invalid-feedback" style="width: 100%;">
+            Please enter a valid phone number.
+          </div>
+          <small id="phoneHelp" class="form-text text-muted">
+            This phone number must be able to receive text messages (MMS).
+            If you choose to receive text notifications with ShellCast
+            forecast information for your lease(s), the notifications will
+            be sent to this number. Messaging rates may apply.
+          </small>
+        </div>
+
+        {# Email, text, and probability preferences #}
+        <div class="form-section notification-preferences">
+          <h3>Notification Preferences</h3>
+          
+          <div class="preference-group">
+            <label class="form-label">I want to receive the following notifications:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="no-notifications" id="no-notifications">
+              <label class="form-check-label" for="no-notifications">I do not want to receive notifications</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="email-pref" id="email-pref">
+              <label class="form-check-label" for="email-pref">Email</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
+              <label class="form-check-label" for="text-pref">Text</label>
+            </div>
+            <small class="form-text text-muted muted">
+              If you would like to receive both email and text notifications,
+              check both "Email" and "Text". If you choose not to receive
+              notifications, you will still see your lease sites on the
+              ShellCast webpage.
+            </small>
+          </div>
+
+          <div class="preference-group">
+            <label class="form-label">I want to receive notifications for my leases when the risk of temporary harvest closure is:</label>
+            {% for probOption in probOptions %}
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="notification-prob"
+                       id="notification-prob-{{ probOption }}" value="{{ probOption }}">
+                <label class="form-check-label"
+                       for="notification-prob-{{ probOption }}"> {{ probabilityToRisk(probOption) }}{% if probabilityToRisk(probOption) != "Very High" %} or higher{% endif %}</label>
+              </div>
+            {% endfor %}
+            <small class="form-text text-muted muted">
+              Choose the risk category at which you would like to receive notifications for a lease.
+              For example, if you choose "Moderate or higher", you will receive a notification when
+              any one of your leases has at least a moderate risk of being temporarily closed today,
+              tomorrow, or in 2 days. We believe you are more likely to receive inaccurate closure warnings
+              if you select "Moderate or higher" since less rainfall would be needed to trigger a notification,
+              and weather forecasts predict small storms less accurately than large storms.
             </small>
           </div>
         </div>
 
-        {# Email, text, and probability preferences #}
-        <div class="notification-options" id="notification-options">
-          <label>I want to receive the following notifications:</label>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="no-notifications" id="no-notifications">
-            <label class="form-check-label" for="no-notifications">I do not want to receive notifications</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="email-pref" id="email-pref">
-            <label class="form-check-label" for="email-pref">Email</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
-            <label class="form-check-label" for="text-pref">Text</label>
-          </div>
-          <small class="form-text text-muted">
-            If you would like to receive both email and text notifications,
-            check both "Email" and "Text". If you choose not to receive
-            notifications, you will still see your lease sites on the
-            ShellCast webpage.
-          </small>
-
-          <label>I want to receive notifications for my leases when the risk of temporary harvest closure is:</label>
-          {% for probOption in probOptions %}
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="notification-prob"
-                     id="notification-prob-{{ probOption }}" value="{{ probOption }}">
-              <label class="form-check-label"
-                     for="notification-prob-{{ probOption }}"> {{ probabilityToRisk(probOption) }} or higher</label>
+        {# Example Notifications Section #}
+        <div class="form-section example-notifications">
+          <h3>Example Notifications</h3>
+          
+          <div class="example-group">
+            <label for="example-notification" class="form-label">Text Message Example Notification:</label>
+            <div class="text-bubble" id="example-notification">
+              <p>
+                One or more of your leases is at risk of closing today, tomorrow or in 2 days. Visit 
+                <u>go.ncsu.edu/shellcast</u> for details. 
+                Msg frequency varies. Msg & data rates may apply. Reply HELP for support. Reply STOP to cancel.
+              </p>
             </div>
-          {% endfor %}
-          <small class="form-text text-muted">
-            Choose the risk category at which you would like to receive notifications for a lease.
-            For example, if you choose “Moderate or higher”, you will receive a notification when
-            any one of your leases has at least a moderate risk of being temporarily closed today,
-            tomorrow, or in 2 days. We believe you are more likely to receive inaccurate closure warnings
-            if you select "Moderate or higher" since less rainfall would be needed to trigger a notification,
-            and weather forecasts predict small storms less accurately than large storms.
-          </small>
+            <small class="form-text text-muted">
+              This is an example of a text message notification you might receive for a lease.
+            </small>
+          </div>
 
-          <label for="example-notification">Example notification:</label>
-          <div class="text-bubble" id="example-notification"></div>
-          <small class="form-text text-muted">
-            This is an example of a notification you might receive for a lease.
-          </small>
+          <div class="example-group">
+            <label for="example-email-notification" class="form-label">Email Message Example Notification:</label>
+            <div class="text-bubble" id="example-email-notification">
+              <p>
+                One or more of your leases is at risk of closing today. Visit 
+                <u>go.ncsu.edu/shellcast</u> for details.<br><br>
+                
+                Lease: {your lease location ID}<br>
+                &emsp;Today: Very High<br>
+                &emsp;Tomorrow: High<br>
+                &emsp;In 2 days: Moderate<br><br>
+                
+                These predictions are in no way indicative of whether or not a lease will actually be temporarily 
+                closed for harvest.<br><br>
+                
+                <u style="text-align: center; display: block; margin-top: 0.5rem;">Unsubscribe</u>
+              </p>
+            </div>
+            <small class="form-text text-muted">
+              This is an example of an email notification you might receive for a lease.
+            </small>
+          </div>
         </div>
 
-        <div style="text-align: right;">
-          <div><small id="profile-form-help-text" role="alert"></small></div>
-          <button class="btn btn-primary" type="button" name="prof-form-cancel-btn" disabled>Cancel</button>
+        {# Opt-In Information Section #}
+        <div class="form-section opt-in-info">
+          <h3>Opt-In Information</h3>
+          <p class="opt-in-text">
+            By submitting this, you consent to receive notification messages from ShellCast at the number 
+            provided, including messages sent by autodialer. Consent is not a condition of purchase. Msg & data 
+            rates may apply. Msg frequency varies. Unsubscribe at any time by replying STOP. Reply HELP for help. 
+            Privacy Policy & Terms of Conditions can be viewed <a href="/notification-service">here</a>.
+          </p>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="consent" id="consent-agree" value="agree">
+            <label class="form-check-label" for="consent-agree">Agree</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="consent" id="consent-disagree" value="disagree">
+            <label class="form-check-label" for="consent-disagree">Disagree</label>
+          </div>
+        </div>
+
+        {# Form Actions #}
+        <div class="form-actions">
+          <div><small id="profile-form-help-text" role="alert" class="alert"></small></div>
+          <button class="btn btn-secondary" type="button" name="prof-form-cancel-btn" disabled>Cancel</button>
           <button class="btn btn-primary" type="button" name="prof-form-save-btn" disabled>Save</button>
         </div>
       </form>
 
       {# User leases #}
-      <h4>My Leases</h4>
-      <p>
-        You can search for your lease ID number on the
-        <a href="https://arcg.is/1ieXrX">NC DMF Shellfish Leasing Application</a>.
-        Use the number labeled as "Lease ID". Please note that leases outside of
-        conditionally approved areas will not be searchable because ShellCast cannot
-        generate a forecast for these leases.
-      </p>
-
-      <div class="mb-3 search-bar">
-        <div class="input-group">
-          <input id="lease-search-text-input" type="text" class="form-control search-input"
-                 placeholder="Search for a lease by its NCDMF ID..." aria-label="Search for a lease by its NCDMF ID...">
-          <div class="input-group-append">
-            <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
-            <button class="btn btn-primary" type="button" id="lease-clear-btn">Clear</button>
-          </div>
+      <div class="form-section leases-section">
+        <h2 class="form-section-title">My Leases</h2>
+        
+        <div class="lease-info">
+          <p class="lease-description">
+            You can search for your lease ID number on the
+            <a href="https://arcg.is/1ieXrX">NC DMF Shellfish Leasing Application</a>.
+            Use the number labeled as "Lease ID". Please note that leases outside of
+            conditionally approved areas will not be searchable because ShellCast cannot
+            generate a forecast for these leases.
+          </p>
         </div>
 
-        <div class="list-group search-results" id="lease-search-results"></div>
-      </div>
+        <div class="search-section">
+          <label for="lease-search-text-input" class="form-label">Search for Leases</label>
+          <div class="input-group">
+            <input id="lease-search-text-input" type="text" class="form-control search-input"
+                   placeholder="Search for a lease by its NCDMF ID..." aria-label="Search for a lease by its NCDMF ID...">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
+              <button class="btn btn-secondary" type="button" id="lease-clear-btn">Clear</button>
+            </div>
+          </div>
 
-      <div id="leases">
-        <div class="accordion" id="leases-accordion">
-          {# leases are programmatically added here with JS #}
+          <div class="list-group search-results" id="lease-search-results"></div>
+        </div>
+
+        <div id="leases" class="leases-container">
+          <div class="accordion" id="leases-accordion">
+            {# leases are programmatically added here with JS #}
+          </div>
         </div>
       </div>
 
