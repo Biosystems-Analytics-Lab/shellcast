@@ -41,7 +41,7 @@ class UserLease(db.Model):
     def getLatestProbability(self):
         leaseProb = (
             db.session.query(CMUProbability)
-            .filter_by(cmu_name=self.leases.cmu_id)
+            .filter_by(cmu_name=self.leases.cmu_name)
             .order_by(CMUProbability.id.desc())
             .first()
         )
