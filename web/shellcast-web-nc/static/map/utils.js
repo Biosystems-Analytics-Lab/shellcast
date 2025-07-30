@@ -28,13 +28,19 @@ export const colorPalette = {
  * @param {number} value the value with probability
  */
 export function handleUndef(value) {
+  if (value === undefined || value === null) {
+    return "-";
+  }
+  
   let flag = "";
   if (value === 1) flag = "Very Low";
   if (value === 2) flag = "Low";
   if (value === 3) flag = "Moderate";
   if (value === 4) flag = "High";
   if (value === 5) flag = "Very High";
-  return value || value === 0 ? flag : "-";
+  
+  // If flag is empty (meaning value wasn't 1-5), return "-" for no data
+  return flag || "-";
 }
 
 export function getDomainName(url) {
