@@ -33,7 +33,6 @@ def userInfo(user):
         }
         if user.phone_number != None:
             userInfo["phone_number"] = user.phone_number
-            userInfo["service_provider_id"] = user.service_provider_id
         return userInfo
 
     if request.method == "GET":
@@ -44,7 +43,6 @@ def userInfo(user):
         if validator.validate():
             user.email = validator.email
             user.phone_number = validator.phone_number
-            user.service_provider_id = validator.service_provider_id
             user.email_pref = validator.email_pref
             user.text_pref = validator.text_pref
             user.prob_pref = validator.prob_pref
@@ -68,7 +66,6 @@ def deleteAccount(user):
         user.firebase_uid = None
         user.email = None
         user.phone_number = None
-        user.service_provider_id = None
 
         # clear preferences
         user.email_pref = User.DEFAULT_email_pref
