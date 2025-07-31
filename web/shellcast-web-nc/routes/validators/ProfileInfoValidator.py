@@ -14,9 +14,10 @@ class ProfileInfoValidator:
     Validates form data submitted for profile information.
     
     This validator assumes that a complete set of data is given for each field.
-    If there are 6 fields (email, phone number, service provider, email preference, 
-    text preference, probability preference), the current values for each field 
-    must be given even if only one field is actually being updated.
+    If there are 6 fields (email, phone number, service provider, email 
+    preference, text preference, probability preference), the current values 
+    for each field must be given even if only one field is actually being 
+    updated.
     """
 
     # Valid probability preference values
@@ -83,7 +84,8 @@ class ProfileInfoValidator:
             
         try:
             validated_email = validate_email(self.email)
-            self.email = validated_email.email  # Update with normalized form
+            # Update with normalized form
+            self.email = validated_email.email
         except EmailNotValidError as e:
             print(f"Email validation error: {e}")
             return self.add_error("Email is not valid.")
@@ -102,7 +104,9 @@ class ProfileInfoValidator:
             return True
             
         if not re.search(r"^\d{10}$", self.phone_number):
-            return self.add_error("The phone number must be 10 digits long.")
+            return self.add_error(
+                "The phone number must be 10 digits long."
+            )
             
         return True
 
@@ -138,9 +142,14 @@ class ProfileInfoValidator:
         try:
             prob_pref_int = int(self.prob_pref)
         except (ValueError, TypeError):
-            return self.add_error("Probability preference must be an integer.")
+            return self.add_error(
+                "Probability preference must be an integer."
+            )
             
         if prob_pref_int not in self.VALID_PROB_VALUES:
-            return self.add_error(f"Probability preference must be one of: {', '.join(map(str, self.VALID_PROB_VALUES))}.")
+            valid_values = ', '.join(map(str, self.VALID_PROB_VALUES))
+            return self.add_error(
+                f"Probability preference must be one of: {valid_values}."
+            )
             
         return True
