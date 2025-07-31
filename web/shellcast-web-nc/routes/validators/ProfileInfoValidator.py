@@ -1,105 +1,146 @@
-from email_validator import validate_email, EmailNotValidError
-import re
+"""
+Profile Information Validator
 
-from models import db
-from models.PhoneServiceProvider import PhoneServiceProvider
+This module provides validation for user profile information including
+email, phone number, and notification preferences.
+"""
+
+import re
+from email_validator import validate_email, EmailNotValidError
 
 
 class ProfileInfoValidator:
     """
     Validates form data submitted for profile information.
-    NOTE: This validator assumes that a complete set of the data is given for
-    each field.  i.e. If there are 6 fields (email, phone number,
-    service provider, email preference, text preference, probability
-    preference), the current values for each field must be given even if only
-    one field is actually being updated.
+    
+    This validator assumes that a complete set of data is given for each field.
+    If there are 6 fields (email, phone number, service provider, email preference, 
+    text preference, probability preference), the current values for each field 
+    must be given even if only one field is actually being updated.
     """
 
-    def __init__(self, json):
-        self.email = json.get("email")
-        self.phone_number = json.get("phone_number")
-        self.service_provider_id = json.get("service_provider_id")
-        self.email_pref = json.get("email_pref")
-        self.text_pref = json.get("text_pref")
-        self.prob_pref = json.get("prob_pref")
+    # Valid probability preference values
+    VALID_PROB_VALUES = [3, 4, 5]
 
+    def __init__(self, json_data):
+        """
+        Initialize the validator with JSON data.
+        
+        Args:
+            json_data (dict): JSON data containing profile information
+        """
+        self.email = json_data.get("email")
+        self.phone_number = json_data.get("phone_number")
+        self.email_pref = json_data.get("email_pref")
+        self.text_pref = json_data.get("text_pref")
+        self.prob_pref = json_data.get("prob_pref")
         self.errors = []
 
-    def addError(self, message):
+    def add_error(self, message):
+        """
+        Add an error message to the errors list.
+        
+        Args:
+            message (str): Error message to add
+            
+        Returns:
+            bool: False to indicate validation failure
+        """
         self.errors.append(message)
         return False
 
     def validate(self):
+        """
+        Run all validation methods.
+        
+        Returns:
+            bool: True if all validations pass, False otherwise
+        """
         validators = [
-            self.validateEmail,
-            self.validatePhoneNumber,
-            self.validateServiceProviderId,
-            self.validateEmailPref,
-            self.validateTextPref,
-            self.validateProbPref,
+            self._validate_email,
+            self._validate_phone_number,
+            self._validate_email_pref,
+            self._validate_text_pref,
+            self._validate_prob_pref,
         ]
-        valid = True
+        
+        is_valid = True
         for validator in validators:
             if not validator():
-                valid = False
-        return valid
+                is_valid = False
+                
+        return is_valid
 
-    def validateEmail(self):
+    def _validate_email(self):
+        """
+        Validate email address format and normalization.
+        
+        Returns:
+            bool: True if email is valid, False otherwise
+        """
         if not self.email:
-            return self.addError("An email address is always required.")
+            return self.add_error("An email address is always required.")
+            
         try:
-            validatedEmail = validate_email(self.email)
-            self.email = validatedEmail.email  # Update with the normalized form.
+            validated_email = validate_email(self.email)
+            self.email = validated_email.email  # Update with normalized form
         except EmailNotValidError as e:
-            print(str(e))
-            return self.addError("Email is not valid.")
+            print(f"Email validation error: {e}")
+            return self.add_error("Email is not valid.")
+            
         return True
 
-    def validatePhoneNumber(self):
+    def _validate_phone_number(self):
+        """
+        Validate phone number format (10 digits).
+        
+        Returns:
+            bool: True if phone number is valid or empty, False otherwise
+        """
         if not self.phone_number:
             self.phone_number = None
-            self.service_provider_id = None
             return True
+            
         if not re.search(r"^\d{10}$", self.phone_number):
-            return self.addError("The phone number must be 10 digits long.")
-        if self.phone_number and not self.service_provider_id:
-            return self.addError(
-                "When providing a phone number, a service provider is required."
-            )
+            return self.add_error("The phone number must be 10 digits long.")
+            
         return True
 
-    def validateServiceProviderId(self):
-        if not self.service_provider_id and not self.phone_number:
-            self.phone_number = None
-            self.service_provider_id = None
-            return True
-        possibleServiceProviders = list(
-            map(lambda x: x[0], db.session.query(PhoneServiceProvider.id).all())
-        )
-        if (
-            not self.service_provider_id
-            or not int(self.service_provider_id) in possibleServiceProviders
-        ):
-            return self.addError(
-                "The given service provider does not exist in the database."
-            )
+    def _validate_email_pref(self):
+        """
+        Validate email preference is a boolean value.
+        
+        Returns:
+            bool: True if email preference is valid, False otherwise
+        """
+        if self.email_pref not in [True, False]:
+            return self.add_error("Email preference must be true or false.")
         return True
 
-    def validateEmailPref(self):
-        if self.email_pref != True and self.email_pref != False:
-            return self.addError("Email preference must be true or false.")
+    def _validate_text_pref(self):
+        """
+        Validate text preference is a boolean value.
+        
+        Returns:
+            bool: True if text preference is valid, False otherwise
+        """
+        if self.text_pref not in [True, False]:
+            return self.add_error("Text preference must be true or false.")
         return True
 
-    def validateTextPref(self):
-        if self.text_pref != True and self.text_pref != False:
-            return self.addError("Text preference must be true or false.")
-        return True
-
-    def validateProbPref(self):
+    def _validate_prob_pref(self):
+        """
+        Validate probability preference is a valid integer value.
+        
+        Returns:
+            bool: True if probability preference is valid, False otherwise
+        """
         try:
-            probPrefInt = int(self.prob_pref)
-        except Exception:
-            return self.addError("Probability preference must be an integer.")
-        if probPrefInt not in [3, 4, 5]:
-            return self.addError("Probability preference must be 3, 4, or 5.")
+            prob_pref_int = int(self.prob_pref)
+        except (ValueError, TypeError):
+            return self.add_error("Probability preference must be an integer.")
+            
+        if prob_pref_int not in self.VALID_PROB_VALUES:
+            return self.add_error(f"Probability preference must be one of: {', '.join(map(str, self.VALID_PROB_VALUES))}.")
+            
         return True
