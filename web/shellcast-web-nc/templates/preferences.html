@@ -30,46 +30,7 @@
         
         <h2 class="form-section-title">My Notification Preferences</h2>
         
-        {# Email Section #}
-        <div class="form-section contact-info">
-          <label for="email-address" class="form-label">Email address</label>
-          <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com"
-                 aria-describedby="emailHelp">
-          <div class="invalid-feedback">
-            Please enter a valid email address.
-          </div>
-          <small id="emailHelp" class="form-text text-muted">
-            This email address is initially pulled from the linked account you
-            used to create your ShellCast account (for example, Gmail,
-            Facebook), however, you can safely change this while not changing
-            your linked account. If you choose to receive email notifications
-            with ShellCast forecast information for your lease(s), the
-            notifications will be sent to this address.
-          </small>
-        </div>
-
-        {# Phone number and service provider #}
-        <div class="form-section contact-info">
-          <label for="phone-number" class="form-label">Mobile phone number</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <div class="input-group-text">+1</div>
-            </div>
-            <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(***) ***-****"
-                   aria-describedby="phoneHelp">
-          </div>
-          <div class="invalid-feedback" style="width: 100%;">
-            Please enter a valid phone number.
-          </div>
-          <small id="phoneHelp" class="form-text text-muted">
-            This phone number must be able to receive text messages (MMS).
-            If you choose to receive text notifications with ShellCast
-            forecast information for your lease(s), the notifications will
-            be sent to this number. Messaging rates may apply.
-          </small>
-        </div>
-
-        {# Email, text, and probability preferences #}
+        {# Notification Preferences with Accordions #}
         <div class="form-section notification-preferences">
           <h3>Notification Preferences</h3>
           
@@ -79,14 +40,147 @@
               <input class="form-check-input" type="checkbox" name="no-notifications" id="no-notifications">
               <label class="form-check-label" for="no-notifications">I do not want to receive notifications</label>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="email-pref" id="email-pref">
-              <label class="form-check-label" for="email-pref">Email</label>
+            
+            {# Email Accordion #}
+            <div class="notification-accordion">
+              <div class="accordion-header">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="email-pref" id="email-pref">
+                  <label class="form-check-label" for="email-pref">Email</label>
+                </div>
+              </div>
+              <div class="accordion-content" id="email-accordion">
+                <div class="accordion-body">
+                  <div class="accordion-tabs">
+                    <button type="button" class="accordion-tab active" data-tab="email-input">Email Address</button>
+                    <button type="button" class="accordion-tab" data-tab="email-example">Notification Example</button>
+                  </div>
+                  
+                  <div class="accordion-tab-content active" id="email-input">
+                    <label for="email-address" class="form-label">Email address</label>
+                    <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com"
+                           aria-describedby="emailHelp">
+                    <div class="invalid-feedback">
+                      Please enter a valid email address.
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted">
+                      This email address is initially pulled from the linked account you
+                      used to create your ShellCast account (for example, Gmail,
+                      Facebook), however, you can safely change this while not changing
+                      your linked account. If you choose to receive email notifications
+                      with ShellCast forecast information for your lease(s), the
+                      notifications will be sent to this address.
+                    </small>
+                    
+                    <div class="consent-section mt-4">
+                      <div class="form-check consent-checkbox">
+                        <input class="form-check-input" type="checkbox" name="email-consent" id="email-consent">
+                        <label class="form-check-label" for="email-consent">
+                          <strong>I consent to receive email notifications</strong> about lease closures and forecast 
+                          information from ShellCast. By checking this box, you agree to receive email notifications. 
+                          You can unsubscribe at any time.
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="accordion-tab-content" id="email-example">
+                    <div class="example-group">
+                      <label for="example-email-notification" class="form-label">Email Message Example:</label>
+                      <div class="text-bubble" id="example-email-notification">
+                        <p>
+                          One or more of your leases is at risk of closing today. Visit 
+                          <u>go.ncsu.edu/shellcast</u> for details.<br><br>
+                          
+                          Lease: {your lease location ID}<br>
+                          &emsp;Today: Very High<br>
+                          &emsp;Tomorrow: High<br>
+                          &emsp;In 2 days: Moderate<br><br>
+                          
+                          These predictions are in no way indicative of whether or not a lease will actually be temporarily 
+                          closed for harvest.<br><br>
+                          
+                          <u style="text-align: center; display: block; margin-top: 0.5rem;">Unsubscribe</u>
+                        </p>
+                      </div>
+                      <small class="form-text text-muted">
+                        This is an example of an email notification you might receive for a lease.
+                      </small>
+                    </div>
+                  </div>
+                  
+
+                </div>
+              </div>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
-              <label class="form-check-label" for="text-pref">Text</label>
+            
+            {# Text Accordion #}
+            <div class="notification-accordion">
+              <div class="accordion-header">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
+                  <label class="form-check-label" for="text-pref">Text</label>
+                </div>
+              </div>
+              <div class="accordion-content" id="text-accordion">
+                <div class="accordion-body">
+                  <div class="accordion-tabs">
+                    <button type="button" class="accordion-tab active" data-tab="text-input">Phone Number</button>
+                    <button type="button" class="accordion-tab" data-tab="text-example">Notification Example</button>
+                  </div>
+                  
+                  <div class="accordion-tab-content active" id="text-input">
+                    <label for="phone-number" class="form-label">Mobile phone number</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">+1</div>
+                      </div>
+                      <input type="tel" class="form-control" name="phone-number" id="phone-number" placeholder="(***) ***-****"
+                             aria-describedby="phoneHelp">
+                    </div>
+                    <div class="invalid-feedback" style="width: 100%;">
+                      Please enter a valid phone number.
+                    </div>
+                    <small id="phoneHelp" class="form-text text-muted">
+                      This phone number must be able to receive text messages (MMS).
+                      If you choose to receive text notifications with ShellCast
+                      forecast information for your lease(s), the notifications will
+                      be sent to this number. Message and data rates may apply.
+                    </small>
+                    
+                    <div class="consent-section mt-4">
+                      <div class="form-check consent-checkbox">
+                        <input class="form-check-input" type="checkbox" name="text-consent" id="text-consent">
+                        <label class="form-check-label" for="text-consent">
+                          <strong>I consent to receive text message notifications</strong> about lease closures 
+                          and forecast information from ShellCast. By checking this box, you agree to receive SMS 
+                          notifications. Reply STOP to unsubscribe. Message & data rates may apply.
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="accordion-tab-content" id="text-example">
+                    <div class="example-group">
+                      <label for="example-notification" class="form-label">Text Message Example:</label>
+                      <div class="text-bubble" id="example-notification">
+                        <p>
+                          One or more of your leases is at risk of closing today, tomorrow or in 2 days. Visit 
+                          <u>go.ncsu.edu/shellcast</u> for details. 
+                          Msg frequency varies. Msg & data rates may apply. Reply HELP for support. Reply STOP to cancel.
+                        </p>
+                      </div>
+                      <small class="form-text text-muted">
+                        This is an example of a text message notification you might receive for a lease.
+                      </small>
+                    </div>
+                  </div>
+                  
+
+                </div>
+              </div>
             </div>
+            
             <small class="form-text text-muted muted">
               If you would like to receive both email and text notifications,
               check both "Email" and "Text". If you choose not to receive
@@ -116,66 +210,6 @@
           </div>
         </div>
 
-        {# Example Notifications Section #}
-        <div class="form-section example-notifications">
-          <h3>Example Notifications</h3>
-          
-          <div class="example-group">
-            <label for="example-notification" class="form-label">Text Message Example Notification:</label>
-            <div class="text-bubble" id="example-notification">
-              <p>
-                One or more of your leases is at risk of closing today, tomorrow or in 2 days. Visit 
-                <u>go.ncsu.edu/shellcast</u> for details. 
-                Msg frequency varies. Msg & data rates may apply. Reply HELP for support. Reply STOP to cancel.
-              </p>
-            </div>
-            <small class="form-text text-muted">
-              This is an example of a text message notification you might receive for a lease.
-            </small>
-          </div>
-
-          <div class="example-group">
-            <label for="example-email-notification" class="form-label">Email Message Example Notification:</label>
-            <div class="text-bubble" id="example-email-notification">
-              <p>
-                One or more of your leases is at risk of closing today. Visit 
-                <u>go.ncsu.edu/shellcast</u> for details.<br><br>
-                
-                Lease: {your lease location ID}<br>
-                &emsp;Today: Very High<br>
-                &emsp;Tomorrow: High<br>
-                &emsp;In 2 days: Moderate<br><br>
-                
-                These predictions are in no way indicative of whether or not a lease will actually be temporarily 
-                closed for harvest.<br><br>
-                
-                <u style="text-align: center; display: block; margin-top: 0.5rem;">Unsubscribe</u>
-              </p>
-            </div>
-            <small class="form-text text-muted">
-              This is an example of an email notification you might receive for a lease.
-            </small>
-          </div>
-        </div>
-
-        {# Opt-In Information Section #}
-        <div class="form-section opt-in-info">
-          <h3>Opt-In Information</h3>
-          <p class="opt-in-text">
-            By submitting this, you consent to receive notification messages from ShellCast at the number 
-            provided, including messages sent by autodialer. Consent is not a condition of purchase. Msg & data 
-            rates may apply. Msg frequency varies. Unsubscribe at any time by replying STOP. Reply HELP for help. 
-            Privacy Policy & Terms of Conditions can be viewed <a href="/notification-service">here</a>.
-          </p>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="consent" id="consent-agree" value="agree">
-            <label class="form-check-label" for="consent-agree">Agree</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="consent" id="consent-disagree" value="disagree">
-            <label class="form-check-label" for="consent-disagree">Disagree</label>
-          </div>
-        </div>
 
         {# Form Actions #}
         <div class="form-actions">
@@ -186,7 +220,7 @@
       </form>
 
       {# User leases #}
-      <div class="form-section leases-section">
+      <div class="needs-validation mb-5 notification-preferences-form">
         <h2 class="form-section-title">My Leases</h2>
         
         <div class="lease-info">
