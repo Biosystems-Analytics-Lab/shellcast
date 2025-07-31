@@ -1,3 +1,11 @@
+/* ============================================================================
+   PREFERENCES PAGE STYLES
+   ============================================================================ */
+
+/* ============================================================================
+   LAYOUT & CONTAINERS
+   ============================================================================ */
+
 #delete-account-div {
   display: flex;
   justify-content: center;
@@ -9,39 +17,9 @@
   max-width: 900px;
 }
 
-.search-bar {
-  position: relative;
-}
-
-.search-results {
-  display: none;
-  position: absolute;
-  z-index: 1000;
-  width: 100%;
-  max-height: 175px;
-  overflow: hidden;
-  overflow-y: scroll;
-  border: 1px solid #999;
-  border-top: 0 solid #fff;
-}
-
-.notification-options > label {
-  display: block;
-  margin-top: 8px;
-  margin-bottom: 0;
-}
-
-.lease-form-buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-/* Notification Preferences Form Styling */
-.notification-preferences-form {
-  max-width: 800px;
-  margin: 0 auto;
-}
+/* ============================================================================
+   FORM SECTIONS
+   ============================================================================ */
 
 .form-section-title {
   font-size: 1.75rem;
@@ -64,6 +42,7 @@
 
 .form-section.notification-preferences {
   border-left: 4px solid #28a745;
+
 }
 
 .form-section.example-notifications {
@@ -85,6 +64,10 @@
   margin-bottom: 0.75rem;
 }
 
+/* ============================================================================
+   FORM ELEMENTS
+   ============================================================================ */
+
 .form-label {
   font-weight: 600;
   color: #2c2c2c;
@@ -97,21 +80,9 @@
   margin-bottom: 0.5rem;
 }
 
-.form-control::placeholder {
-  font-size: 0.875rem;
-  color: #6c757d;
-}
-
-.form-control::-webkit-input-placeholder {
-  font-size: 0.875rem;
-  color: #6c757d;
-}
-
-.form-control::-moz-placeholder {
-  font-size: 0.875rem;
-  color: #6c757d;
-}
-
+.form-control::placeholder,
+.form-control::-webkit-input-placeholder,
+.form-control::-moz-placeholder,
 .form-control:-ms-input-placeholder {
   font-size: 0.875rem;
   color: #6c757d;
@@ -127,6 +98,10 @@
   margin-top: 0.375rem;
   display: block;
 }
+
+/* ============================================================================
+   FORM GROUPS & PREFERENCES
+   ============================================================================ */
 
 .preference-group {
   margin-bottom: 1.25rem;
@@ -154,6 +129,184 @@
   user-select: none;
 }
 
+/* ============================================================================
+   NOTIFICATION OPTIONS
+   ============================================================================ */
+
+.notification-options > label {
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.notification-preferences-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ============================================================================
+   ACCORDION STYLES
+   ============================================================================ */
+
+.notification-accordion {
+  margin-bottom: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.accordion-header {
+  background-color: #f8f9fa;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  border-bottom: 1px solid #dee2e6;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.accordion-header:hover {
+  background-color: #e9ecef;
+}
+
+.accordion-header .form-check {
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.accordion-header .form-check-input {
+  margin-right: 0.5rem;
+  margin-top: 0;
+}
+
+.accordion-header .form-check-label {
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  margin-left: 0;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  scroll-behavior: smooth;
+}
+
+.accordion-content.expanded {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.accordion-body {
+  padding: 1rem;
+  background-color: #fff;
+  border-top: 1px solid #dee2e6;
+}
+
+/* ============================================================================
+   ACCORDION TABS
+   ============================================================================ */
+
+.accordion-tabs {
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px 4px 0 0;
+}
+
+.accordion-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6c757d;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.accordion-tab:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.accordion-tab.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+  background-color: #fff;
+}
+
+.accordion-tab-content {
+  display: none;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.accordion-tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================================
+   CONSENT SECTIONS
+   ============================================================================ */
+
+.consent-section {
+  border: 2px solid #007bff !important;
+  border-radius: 8px !important;
+  padding: 1rem !important;
+  background-color: #f8f9fa !important;
+  margin-top: 1rem !important;
+  display: block !important;
+}
+
+.consent-checkbox {
+  margin-bottom: 0.5rem !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0.5rem !important;
+}
+
+.consent-checkbox .form-check-input {
+  margin-top: 0.25rem !important;
+  flex-shrink: 0 !important;
+}
+
+.consent-checkbox .form-check-label {
+  font-weight: 500 !important;
+  color: #2c2c2c !important;
+  line-height: 1.4 !important;
+  margin-left: 0 !important;
+}
+
+/* Invalid consent section styling - matches form input validation */
+.consent-section.is-invalid {
+  border: 1px solid #dc3545 !important;
+  border-radius: 0.375rem !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+  background-color: #fff !important;
+}
+
+.accordion-content.expanded .consent-section {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* ============================================================================
+   EXAMPLE NOTIFICATIONS
+   ============================================================================ */
+
 .example-group {
   margin-bottom: 1.25rem;
 }
@@ -176,27 +329,14 @@
   color: #007bff;
 }
 
-.opt-in-text {
-  line-height: 1.5;
-  color: #495057;
-  margin-bottom: 0.75rem;
-  font-size: 0.875rem;
-}
-
-.opt-in-text a {
-  color: #007bff;
-}
+/* ============================================================================
+   FORM ACTIONS
+   ============================================================================ */
 
 .form-actions {
   text-align: right;
   padding: 1.25rem 0;
   border-top: 1px solid #dee2e6;
-}
-
-.form-actions .alert {
-  margin-bottom: 0.375rem;
-  color: #dc3545;
-  font-size: 0.875rem;
 }
 
 .form-actions .btn {
@@ -210,45 +350,38 @@
   margin-right: 0;
 }
 
-/* User Leases Section Styling */
-.leases-section {
-  margin-top: 2rem;
-}
-
-.lease-info {
-  margin-bottom: 1.5rem;
-}
-
-.lease-description {
-  line-height: 1.5;
-  color: #495057;
+.form-actions .alert {
+  margin-bottom: 0.375rem;
+  color: #dc3545;
   font-size: 0.875rem;
-  margin-bottom: 0;
 }
 
-.lease-description a {
-  color: #007bff;
-  text-decoration: none;
+#profile-form-help-text {
+  text-align: right !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  display: block;
+  width: 100%;
 }
 
-.lease-description a:hover {
-  text-decoration: underline;
-}
+/* ============================================================================
+   LEASE SEARCH & MANAGEMENT
+   ============================================================================ */
 
-.search-section {
-  margin-bottom: 1.5rem;
-}
-
-.search-section .input-group {
-  margin-bottom: 0.5rem;
-}
-
-.search-section .btn {
-  font-size: 0.875rem;
-  padding: 0.375rem 0.75rem;
+.search-bar {
+  position: relative;
 }
 
 .search-results {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  max-height: 175px;
+  overflow: hidden;
+  overflow-y: scroll;
+  border: 1px solid #999;
+  border-top: 0 solid #fff;
   background: #fff;
   border: 1px solid #dee2e6;
   border-radius: 0.375rem;
@@ -270,6 +403,27 @@
 
 .search-results .list-group-item:last-child {
   border-bottom: none;
+}
+
+.search-section {
+  margin-bottom: 1.5rem;
+}
+
+.search-section .input-group {
+  margin-bottom: 0.5rem;
+}
+
+.search-section .btn {
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+}
+
+/* ============================================================================
+   LEASE CONTAINERS
+   ============================================================================ */
+
+.leases-section {
+  margin-top: 2rem;
 }
 
 .leases-container {
@@ -316,4 +470,45 @@
   background-color: #f8f9fa;
   font-size: 0.875rem;
   line-height: 1.4;
+}
+
+.lease-info {
+  margin-bottom: 1.5rem;
+}
+
+.lease-description {
+  line-height: 1.5;
+  color: #495057;
+  font-size: 0.875rem;
+  margin-bottom: 0;
+}
+
+.lease-description a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.lease-description a:hover {
+  text-decoration: underline;
+}
+
+.lease-form-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.opt-in-text {
+  line-height: 1.5;
+  color: #495057;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.opt-in-text a {
+  color: #007bff;
 }
