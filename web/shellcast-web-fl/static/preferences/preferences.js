@@ -19,13 +19,17 @@ let leaseSearchTimer = null;
  * @return {object} the user's profile information (email and phone number)
  */
 async function getProfileInfo() {
-  const res = await authorizedFetch("/userInfo");
-  if (res.ok) {
-    return await res.json();
+  try {
+    const res = await authorizedFetch("/userInfo");
+    if (res.ok) {
+      return await res.json();
+    }
+    console.log("Problem retrieving user profile information.");
+    return null;
+  } catch (error) {
+    console.error("Error retrieving user profile information:", error);
+    return null;
   }
-  console.log("Problem retrieving user profile information.");
-  // console.log(res);
-  return null;
 }
 
 /**
@@ -40,7 +44,6 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   const profForm = document.forms["profile-information-form"];
   const emailInput = profForm.elements["email-address"];
   const phoneNumberInput = profForm.elements["phone-number"];
-  const serviceProviderInput = profForm.elements["service-provider"];
   const noNotificationsCheckbox = profForm.elements["no-notifications"];
   const emailCheckbox = profForm.elements["email-pref"];
   const textCheckbox = profForm.elements["text-pref"];
@@ -52,22 +55,22 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   // set values for inputs
   emailInput.value = profInfo.email;
   phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
-  serviceProviderInput.value = profInfo.service_provider_id;
-  noNotificationsCheckbox.checked = !profInfo.email_pref && !profInfo.text_pref;
-  emailCheckbox.checked = profInfo.email_pref;
-  // don't allow text notifications to be enabled unless user entered a phone number and service provider
-  if (
-    profInfo.phone_number === undefined ||
-    profInfo.service_provider_id === undefined
-  ) {
-    textCheckboxLabel.innerHTML =
-      "Text (You must enter a phone number and service provider to enable text notitifications.)";
-    textCheckbox.disabled = true;
-    textCheckbox.checked = false;
-  } else {
-    textCheckboxLabel.innerHTML = "Text";
-    textCheckbox.disabled = false;
-    textCheckbox.checked = profInfo.text_pref;
+  
+  // Set default state: if no preferences are set, default to "no notifications"
+  const hasEmailPref = profInfo.email_pref === true;
+  const hasTextPref = profInfo.text_pref === true;
+  
+  // Default to "no notifications" if neither email nor text preferences are explicitly set
+  noNotificationsCheckbox.checked = !hasEmailPref && !hasTextPref;
+  emailCheckbox.checked = hasEmailPref;
+  // Text notifications are temporarily disabled
+  textCheckboxLabel.innerHTML = "Text (Temporarily unavailable for system update)";
+  textCheckbox.disabled = true;
+  textCheckbox.checked = false;
+  
+  // If text is disabled and email is also not preferred, ensure "no notifications" is checked
+  if (!hasEmailPref) {
+    noNotificationsCheckbox.checked = true;
   }
   // set values for radio buttons
   for (let radio of probRadios) {
@@ -97,6 +100,10 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
       "input",
       (e) => (phoneNumberInput.value = maskPhoneNumber(e.target.value)),
     );
+    
+    // Setup accordion functionality
+    setupAccordionButtons();
+    setupAccordionTabs();
   }
 }
 
@@ -124,6 +131,171 @@ function maskPhoneNumber(phoneNumber = "") {
   return "";
 }
 
+// ============================================================================
+// ACCORDION FUNCTIONS
+// ============================================================================
+
+/**
+ * Sets up accordion buttons for expand/collapse functionality
+ */
+function setupAccordionButtons() {
+  setupExpandCollapseButtons();
+}
+
+/**
+ * Sets up expand/collapse buttons for accordions
+ */
+function setupExpandCollapseButtons() {
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
+  
+  if (emailExpandBtn) {
+    emailExpandBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      expandEmailAccordion();
+    });
+  }
+  
+  if (emailCollapseBtn) {
+    emailCollapseBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      collapseEmailAccordion();
+    });
+  }
+  
+  if (textExpandBtn) {
+    textExpandBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      expandTextAccordion();
+    });
+  }
+  
+  if (textCollapseBtn) {
+    textCollapseBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      collapseTextAccordion();
+    });
+  }
+}
+
+/**
+ * Expands the email accordion
+ */
+function expandEmailAccordion() {
+  const emailAccordion = document.getElementById("email-accordion");
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  
+  if (emailAccordion) {
+    emailAccordion.classList.add("expanded");
+  }
+  
+  if (emailExpandBtn) emailExpandBtn.style.display = "none";
+  if (emailCollapseBtn) emailCollapseBtn.style.display = "inline-flex";
+}
+
+/**
+ * Collapses the email accordion
+ */
+function collapseEmailAccordion() {
+  const emailAccordion = document.getElementById("email-accordion");
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  
+  if (emailAccordion) {
+    emailAccordion.classList.remove("expanded");
+  }
+  
+  if (emailExpandBtn) emailExpandBtn.style.display = "inline-flex";
+  if (emailCollapseBtn) emailCollapseBtn.style.display = "none";
+}
+
+/**
+ * Expands the text accordion
+ */
+function expandTextAccordion() {
+  const textAccordion = document.getElementById("text-accordion");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
+  
+  if (textAccordion) {
+    textAccordion.classList.add("expanded");
+  }
+  
+  if (textExpandBtn) textExpandBtn.style.display = "none";
+  if (textCollapseBtn) textCollapseBtn.style.display = "inline-flex";
+}
+
+/**
+ * Collapses the text accordion
+ */
+function collapseTextAccordion() {
+  const textAccordion = document.getElementById("text-accordion");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
+  
+  if (textAccordion) {
+    textAccordion.classList.remove("expanded");
+  }
+  
+  if (textExpandBtn) textExpandBtn.style.display = "inline-flex";
+  if (textCollapseBtn) textCollapseBtn.style.display = "none";
+}
+
+/**
+ * Sets up accordion tabs for switching between input and example views
+ */
+function setupAccordionTabs() {
+  const tabs = document.querySelectorAll('.accordion-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabId = this.getAttribute('data-tab');
+      const accordionBody = this.closest('.accordion-body');
+      
+      // Remove active class from all tabs in this accordion
+      accordionBody.querySelectorAll('.accordion-tab').forEach(t => t.classList.remove('active'));
+      accordionBody.querySelectorAll('.accordion-tab-content').forEach(c => c.classList.remove('active'));
+      
+      // Add active class to clicked tab and content
+      this.classList.add('active');
+      const content = accordionBody.querySelector(`#${tabId}`);
+      if (content) {
+        content.classList.add('active');
+      }
+    });
+  });
+}
+
+/**
+ * Updates the accordion visibility based on consent states
+ * @param {boolean} emailConsentChecked whether email consent is checked
+ * @param {boolean} textConsentChecked whether text consent is checked
+ */
+function updateAccordionVisibility(emailConsentChecked, textConsentChecked) {
+  const emailAccordion = document.getElementById("email-accordion");
+  const textAccordion = document.getElementById("text-accordion");
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
+  
+  if (emailAccordion) {
+    emailAccordion.classList.toggle("expanded", emailConsentChecked);
+    // Update button states
+    if (emailExpandBtn) emailExpandBtn.style.display = emailConsentChecked ? "none" : "inline-flex";
+    if (emailCollapseBtn) emailCollapseBtn.style.display = emailConsentChecked ? "inline-flex" : "none";
+  }
+  
+  if (textAccordion) {
+    textAccordion.classList.toggle("expanded", textConsentChecked);
+    // Update button states
+    if (textExpandBtn) textExpandBtn.style.display = textConsentChecked ? "none" : "inline-flex";
+    if (textCollapseBtn) textCollapseBtn.style.display = textConsentChecked ? "inline-flex" : "none";
+  }
+}
+
 /**
  *
  * @param {boolean} noNotifications whether or not the user enabled notifications
@@ -143,7 +315,6 @@ function generateExampleNotification(noNotifications, selectedProb) {
 function onProfileFormChange(e) {
   const profForm = e.target.form;
   const phoneNumberInput = profForm.elements["phone-number"];
-  const serviceProviderInput = profForm.elements["service-provider"];
   const noNotificationsCheckbox = profForm.elements["no-notifications"];
   const emailCheckbox = profForm.elements["email-pref"];
   const textCheckbox = profForm.elements["text-pref"];
@@ -152,27 +323,39 @@ function onProfileFormChange(e) {
 
   // noNotifications/email/text logic
   if (e.target === noNotificationsCheckbox) {
-    noNotificationsCheckbox.checked = true;
-    emailCheckbox.checked = textCheckbox.checked = false;
+    // If "no notifications" is checked, uncheck email and text
+    if (noNotificationsCheckbox.checked) {
+      emailCheckbox.checked = false;
+      textCheckbox.checked = false;
+      // Collapse email accordion when "no notifications" is checked
+      collapseEmailAccordion();
+    }
   } else if (e.target === emailCheckbox || e.target === textCheckbox) {
-    noNotificationsCheckbox.checked =
-      !emailCheckbox.checked && !textCheckbox.checked;
+    // If email or text is checked, uncheck "no notifications"
+    if (emailCheckbox.checked || textCheckbox.checked) {
+      noNotificationsCheckbox.checked = false;
+      
+      // Expand accordion based on which checkbox was clicked
+      if (e.target === emailCheckbox && emailCheckbox.checked) {
+        expandEmailAccordion();
+      }
+      // Note: Text accordion remains disabled, so we don't expand it
+    } else {
+      // If neither email nor text is checked, check "no notifications"
+      noNotificationsCheckbox.checked = true;
+      // Collapse email accordion when no notifications is selected
+      collapseEmailAccordion();
+    }
   }
 
-  // don't allow text notifications to be enabled unless user entered a phone number and service provider
-  const noPhoneNumber =
-    phoneNumberInput.value === undefined || phoneNumberInput.value === "";
-  const noServiceProvider =
-    serviceProviderInput.value === undefined ||
-    serviceProviderInput.value === "";
-  if (noPhoneNumber || noServiceProvider) {
-    textCheckboxLabel.innerHTML =
-      "Text (You must enter a phone number and service provider to enable text notifications.)";
-    textCheckbox.disabled = true;
-    textCheckbox.checked = false;
-  } else {
-    textCheckboxLabel.innerHTML = "Text";
-    textCheckbox.disabled = false;
+  // Text notifications are temporarily disabled
+  textCheckboxLabel.innerHTML = "Text (Temporarily unavailable for system update)";
+  textCheckbox.disabled = true;
+  textCheckbox.checked = false;
+  
+  // If text is disabled and unchecked, and email is also unchecked, ensure "no notifications" is checked
+  if (!emailCheckbox.checked) {
+    noNotificationsCheckbox.checked = true;
   }
 
   // enable/disable prob inputs as appropriate
@@ -215,7 +398,6 @@ async function saveProfileFormChanges() {
   const phoneNumber = profForm.elements["phone-number"].value
     .replace(/\D/g, "")
     .match(/(\d{0,3})(\d{0,3})(\d{0,4})/)[0];
-  const serviceProviderId = profForm.elements["service-provider"].value;
   const emailPref = profForm.elements["email-pref"].checked;
   const textPref = profForm.elements["text-pref"].checked;
   const probRadios = profForm.elements["notification-prob"];
@@ -229,27 +411,37 @@ async function saveProfileFormChanges() {
   const newProfileInfo = {
     email: email,
     phone_number: phoneNumber,
-    service_provider_id: serviceProviderId,
     email_pref: emailPref,
     text_pref: textPref,
     prob_pref: selectedProb,
   };
 
   // upload data to server and re-init form
-  const res = await authorizedFetch("/userInfo", {
-    method: "POST",
-    headers: { "Content-Type": "application/json;charset=utf-8" },
-    body: JSON.stringify(newProfileInfo),
-  });
-  if (res.ok) {
-    // overwrite the client copy of the profile info
-    profileInfo = await res.json();
-    helpText.style.color = "green";
-    helpText.innerHTML = "Changes saved successfully!";
-  } else {
-    const json = await res.json();
+  try {
+    const res = await authorizedFetch("/userInfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json;charset=utf-8" },
+      body: JSON.stringify(newProfileInfo),
+    });
+    if (res.ok) {
+      // overwrite the client copy of the profile info
+      profileInfo = await res.json();
+      helpText.style.color = "green";
+      helpText.innerHTML = "Changes saved successfully!";
+    } else {
+      try {
+        const json = await res.json();
+        helpText.style.color = "red";
+        helpText.innerHTML = json.errors[0];
+      } catch (parseError) {
+        helpText.style.color = "red";
+        helpText.innerHTML = "Error saving changes. Please try again.";
+      }
+    }
+  } catch (error) {
+    console.error("Error saving profile changes:", error);
     helpText.style.color = "red";
-    helpText.innerHTML = json.errors[0];
+    helpText.innerHTML = "Error saving changes. Please try again.";
   }
   initProfileForm(profileInfo, true);
 }
@@ -388,23 +580,31 @@ function initLeaseInfoEl(lease, ignoreAddingEventListeners) {
  */
 async function addLease(leaseId) {
   console.log("adding lease", leaseId);
-  const res = await authorizedFetch("/leases", {
-    method: "POST",
-    headers: { "Content-Type": "application/json;charset=utf-8" },
-    body: JSON.stringify({ lease_id: leaseId }),
-  });
-  if (res.ok) {
-    const lease = await res.json();
-    // check if the lease is already added
-    const idxOfLease = leases.findIndex((x) => x.lease_id === lease.lease_id);
-    if (idxOfLease === -1) {
-      leases.push(lease);
+  try {
+    const res = await authorizedFetch("/leases", {
+      method: "POST",
+      headers: { "Content-Type": "application/json;charset=utf-8" },
+      body: JSON.stringify({ lease_id: leaseId }),
+    });
+    if (res.ok) {
+      const lease = await res.json();
+      // check if the lease is already added
+      const idxOfLease = leases.findIndex((x) => x.lease_id === lease.lease_id);
+      if (idxOfLease === -1) {
+        leases.push(lease);
+      }
+      buildLeaseInfoEls();
+    } else {
+      try {
+        const errors = (await res.json()).errors;
+        console.log("There was a problem while adding the lease.");
+        console.log(errors);
+      } catch (parseError) {
+        console.log("There was a problem while adding the lease.");
+      }
     }
-    buildLeaseInfoEls();
-  } else {
-    const errors = (await res.json()).errors;
-    console.log("There was a problem while adding the lease.");
-    console.log(errors);
+  } catch (error) {
+    console.error("Error adding lease:", error);
   }
 
   clearLeaseSearch();
@@ -412,20 +612,28 @@ async function addLease(leaseId) {
 
 async function deleteLease(leaseId) {
   // console.log(leaseId);
-  const res = await authorizedFetch("/leases", {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json;charset=utf-8" },
-    body: JSON.stringify({ lease_id: leaseId }),
-  });
-  if (res.ok) {
-    // find where the lease is in the local array of leases
-    const idxOfLease = leases.findIndex((x) => x.lease_id === leaseId);
-    leases.splice(idxOfLease, 1); // and delete it
-    buildLeaseInfoEls();
-  } else {
-    const errors = (await res.json()).errors;
-    console.log("There was a problem while deleting the lease.");
-    console.log(errors);
+  try {
+    const res = await authorizedFetch("/leases", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json;charset=utf-8" },
+      body: JSON.stringify({ lease_id: leaseId }),
+    });
+    if (res.ok) {
+      // find where the lease is in the local array of leases
+      const idxOfLease = leases.findIndex((x) => x.lease_id === leaseId);
+      leases.splice(idxOfLease, 1); // and delete it
+      buildLeaseInfoEls();
+    } else {
+      try {
+        const errors = (await res.json()).errors;
+        console.log("There was a problem while deleting the lease.");
+        console.log(errors);
+      } catch (parseError) {
+        console.log("There was a problem while deleting the lease.");
+      }
+    }
+  } catch (error) {
+    console.error("Error deleting lease:", error);
   }
 }
 
@@ -439,31 +647,37 @@ async function searchLeases() {
     clearLeaseSearch();
     return;
   }
-  const res = await authorizedFetch("/searchLeases", {
-    method: "POST",
-    headers: { "Content-Type": "application/json;charset=utf-8" },
-    body: JSON.stringify({ search: userInput }),
-  });
-  if (res.ok) {
-    const returnedLeases = await res.json();
-    searchResultsDiv.innerHTML = "";
-    if (returnedLeases.length > 0) {
-      for (let lease of returnedLeases) {
-        searchResultsDiv.innerHTML += `<button class="list-group-item list-group-item-action">${lease}</button>`;
+  try {
+    const res = await authorizedFetch("/searchLeases", {
+      method: "POST",
+      headers: { "Content-Type": "application/json;charset=utf-8" },
+      body: JSON.stringify({ search: userInput }),
+    });
+    if (res.ok) {
+      const returnedLeases = await res.json();
+      searchResultsDiv.innerHTML = "";
+      if (returnedLeases.length > 0) {
+        for (let lease of returnedLeases) {
+          searchResultsDiv.innerHTML += `<button class="list-group-item list-group-item-action">${lease}</button>`;
+        }
+        for (let button of searchResultsDiv.children) {
+          button.addEventListener("click", () => addLease(button.textContent));
+        }
+      } else {
+        // show message saying no results were found
+        searchResultsDiv.innerHTML =
+          '<button type="button" class="list-group-item list-group-item-action">No leases with a similar ID were found.</button>';
       }
-      for (let button of searchResultsDiv.children) {
-        button.addEventListener("click", () => addLease(button.textContent));
-      }
+      searchResultsDiv.style.display = "flex";
     } else {
-      // show message saying no results were found
+      console.log("There was an error while searching for leases.");
+      // show an error message
       searchResultsDiv.innerHTML =
-        '<button type="button" class="list-group-item list-group-item-action">No leases with a similar ID were found.</button>';
+        '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
+      searchResultsDiv.style.display = "flex";
     }
-    searchResultsDiv.style.display = "flex";
-  } else {
-    console.log("There was an error while searching for leases.");
-    // show an error message
-    const searchResultsDiv = document.getElementById("lease-search-results");
+  } catch (error) {
+    console.error("Error searching leases:", error);
     searchResultsDiv.innerHTML =
       '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
     searchResultsDiv.style.display = "flex";
@@ -500,13 +714,21 @@ function searchLeasesOnDelay() {
 }
 
 async function deleteAccount() {
-  const res = await authorizedFetch("/deleteAccount");
-  if (res.ok) {
-    window.location.replace("/");
-  } else {
-    const errors = (await res.json()).errors;
-    console.log("There was a problem while deleting the account.");
-    console.log(errors);
+  try {
+    const res = await authorizedFetch("/deleteAccount");
+    if (res.ok) {
+      window.location.replace("/");
+    } else {
+      try {
+        const errors = (await res.json()).errors;
+        console.log("There was a problem while deleting the account.");
+        console.log(errors);
+      } catch (parseError) {
+        console.log("There was a problem while deleting the account.");
+      }
+    }
+  } catch (error) {
+    console.error("Error deleting account:", error);
   }
 }
 
@@ -540,11 +762,15 @@ async function handleSignedInUser(user) {
     .addEventListener("click", clearLeaseSearch);
 
   // get user's leases
-  const res = await authorizedFetch("/leases");
-  if (res.ok) {
-    leases = await res.json();
-  } else {
-    console.log("There was a problem while retrieving the user's leases");
+  try {
+    const res = await authorizedFetch("/leases");
+    if (res.ok) {
+      leases = await res.json();
+    } else {
+      console.log("There was a problem while retrieving the user's leases");
+    }
+  } catch (error) {
+    console.error("Error retrieving user's leases:", error);
   }
 
   // setup lease forms
