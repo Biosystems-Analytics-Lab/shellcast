@@ -18,6 +18,8 @@ CREATE TABLE users (
     text_opt_in_date datetime NULL,
     email_opt_out_date datetime NULL,
     text_opt_out_date datetime NULL,
+    email_verification_sent boolean NOT NULL DEFAULT false,
+    text_verification_sent boolean NOT NULL DEFAULT false,
 	deleted boolean DEFAULT false,
 	created datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
