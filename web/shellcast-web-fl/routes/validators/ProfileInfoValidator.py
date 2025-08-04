@@ -2,7 +2,6 @@ import re
 
 from email_validator import validate_email, EmailNotValidError
 from models import db
-from models.PhoneServiceProvider import PhoneServiceProvider
 
 
 class ProfileInfoValidator:
@@ -18,7 +17,6 @@ class ProfileInfoValidator:
     def __init__(self, json):
         self.email = json.get("email")
         self.phone_number = json.get("phone_number")
-        self.service_provider_id = json.get("service_provider_id")
         self.email_pref = json.get("email_pref")
         self.text_pref = json.get("text_pref")
         self.prob_pref = json.get("prob_pref")
@@ -33,7 +31,6 @@ class ProfileInfoValidator:
         validators = [
             self.validateEmail,
             self.validatePhoneNumber,
-            self.validateServiceProviderId,
             self.validateEmailPref,
             self.validateTextPref,
             self.validateProbPref,
@@ -58,31 +55,9 @@ class ProfileInfoValidator:
     def validatePhoneNumber(self):
         if not self.phone_number:
             self.phone_number = None
-            self.service_provider_id = None
             return True
         if not re.search(r"^\d{10}$", self.phone_number):
             return self.addError("The phone number must be 10 digits long.")
-        if self.phone_number and not self.service_provider_id:
-            return self.addError(
-                "When providing a phone number, a service provider is required."
-            )
-        return True
-
-    def validateServiceProviderId(self):
-        if not self.service_provider_id and not self.phone_number:
-            self.phone_number = None
-            self.service_provider_id = None
-            return True
-        possibleServiceProviders = list(
-            map(lambda x: x[0], db.session.query(PhoneServiceProvider.id).all())
-        )
-        if (
-            not self.service_provider_id
-            or not int(self.service_provider_id) in possibleServiceProviders
-        ):
-            return self.addError(
-                "The given service provider does not exist in the database."
-            )
         return True
 
     def validateEmailPref(self):
