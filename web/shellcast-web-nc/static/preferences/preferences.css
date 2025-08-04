@@ -165,6 +165,9 @@
   top: 0;
   z-index: 10;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .accordion-header:hover {
@@ -186,6 +189,54 @@
   color: #495057;
   cursor: pointer;
   margin-left: 0;
+}
+
+.accordion-controls {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.accordion-controls .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Consistent button sizing for form action buttons only */
+.form-actions .btn,
+.accordion-actions .btn {
+  width: 80px;
+  height: 35px;
+  font-size: 14px;
+}
+
+.notification-status {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.unsaved-changes-alert {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.unsaved-changes-alert .alert {
+  margin-bottom: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.unsaved-changes-alert .alert i {
+  margin-right: 0.5rem;
 }
 
 .accordion-content {
