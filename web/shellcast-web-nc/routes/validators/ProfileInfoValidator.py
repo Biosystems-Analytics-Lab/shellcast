@@ -83,9 +83,16 @@ class ProfileInfoValidator:
         Returns:
             bool: True if email is valid, False otherwise
         """
-        if not self.email:
-            return self.add_error("An email address is always required.")
+        # Only require email if email preference is checked
+        if self.email_pref and not self.email:
+            return self.add_error("An email address is required when email notifications are enabled.")
             
+        # If email preference is not checked, email is optional
+        if not self.email_pref:
+            self.email = None
+            return True
+            
+        # Validate email format if provided
         try:
             validated_email = validate_email(self.email)
             # Update with normalized form
@@ -103,10 +110,16 @@ class ProfileInfoValidator:
         Returns:
             bool: True if phone number is valid or empty, False otherwise
         """
-        if not self.phone_number:
+        # Only require phone number if text preference is checked
+        if self.text_pref and not self.phone_number:
+            return self.add_error("A phone number is required when text notifications are enabled.")
+            
+        # If text preference is not checked, phone number is optional
+        if not self.text_pref:
             self.phone_number = None
             return True
             
+        # Validate phone number format if provided
         if not re.search(r"^\d{10}$", self.phone_number):
             return self.add_error(
                 "The phone number must be 10 digits long."
