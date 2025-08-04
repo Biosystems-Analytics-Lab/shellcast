@@ -82,7 +82,7 @@
                     
                     <div class="consent-section mt-4">
                       <div class="form-check consent-checkbox">
-                        <input class="form-check-input" type="checkbox" name="email-consent" id="email-consent">
+                        <input class="form-check-input" type="checkbox" name="email-consent" id="email-consent" disabled>
                         <label class="form-check-label" for="email-consent">
                           By providing my email address, I authorize ShellCast to send me email notifications 
                           regarding lease closures, forecast information, maintenance updates, and other 
@@ -91,24 +91,11 @@
                           the ShellCast website.
                         </label>
                       </div>
+                      <small class="text-danger mt-2 d-block">
+                        <i class="fas fa-exclamation-triangle"></i> Future system updates will require explicit consent
+                      </small>
                     </div>
-                    <!-- Add "Cancel" and "Save" buttons here -->
-                    <div class="accordion-actions mt-3">
-                      <div class="notification-status" id="email-notification-status">
-                        <small class="text-muted">
-                          <span id="email-status-icon">✉️</span> <span id="email-status-text">Disabled - check "Email" to enable</span>
-                        </small>
-                      </div>
-                      <div class="unsaved-changes-alert" id="email-unsaved-alert" style="display: none;">
-                        <div class="alert alert-warning">
-                          <strong>⚠️ You have unsaved changes!</strong> Click Save to keep your changes.
-                        </div>
-                      </div>
-                      <div class="text-right">
-                        <button type="button" class="btn btn-secondary" id="email-cancel-btn">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="email-save-btn">Save</button>
-                      </div>
-                    </div>
+
                   </div>
                   
                   <div class="accordion-tab-content" id="email-example">
@@ -143,8 +130,11 @@
             <div class="notification-accordion">
               <div class="accordion-header">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
+                  <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref" disabled>
                   <label class="form-check-label" for="text-pref">Text</label>
+                  <small class="text-danger ml-2">
+                    <i class="fas fa-exclamation-triangle"></i> Temporarily unavailable for system update
+                  </small>
                 </div>
                 <div class="accordion-controls">
                   <button type="button" class="btn btn-sm btn-outline-secondary" id="text-expand-btn" title="Expand">
@@ -193,22 +183,7 @@
                       </div>
                     </div>
                     
-                    <div class="accordion-actions mt-3">
-                      <div class="notification-status" id="text-notification-status">
-                        <small class="text-muted">
-                          <span id="text-status-icon">📱</span> <span id="text-status-text">Disabled - check "Text" to enable</span>
-                        </small>
-                      </div>
-                      <div class="unsaved-changes-alert" id="text-unsaved-alert" style="display: none;">
-                        <div class="alert alert-warning">
-                          <strong>⚠️ You have unsaved changes!</strong> Click Save to keep your changes.
-                        </div>
-                      </div>
-                      <div class="text-right">
-                        <button type="button" class="btn btn-secondary" id="text-cancel-btn">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="text-save-btn">Save</button>
-                      </div>
-                    </div>
+
                   </div>
                   
                   <div class="accordion-tab-content" id="text-example">
