@@ -51,12 +51,45 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   // Set form values
   emailInput.value = profInfo.email;
   phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
-  noNotificationsCheckbox.checked = !profInfo.email_pref && !profInfo.text_pref;
   emailCheckbox.checked = profInfo.email_pref;
   textCheckbox.checked = profInfo.text_pref;
   
-  // Update accordion visibility
-  updateAccordionVisibility(emailCheckbox.checked, textCheckbox.checked);
+  // Set "no notifications" based on email and text preferences
+  // If neither email nor text is enabled, check "no notifications"
+  noNotificationsCheckbox.checked = !profInfo.email_pref && !profInfo.text_pref;
+  
+  // Set consent checkboxes based on preferences (for initial load)
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  if (emailConsentCheckbox) {
+    emailConsentCheckbox.checked = profInfo.email_pref;
+  }
+  if (textConsentCheckbox) {
+    textConsentCheckbox.checked = profInfo.text_pref;
+  }
+  
+  // Initially expand accordions if user has preferences enabled
+  // (but don't auto-collapse them later - let user control with OK button)
+  if (profInfo.email_pref || profInfo.text_pref) {
+    updateAccordionVisibility(profInfo.email_pref, profInfo.text_pref);
+  }
+  
+  // Initialize original states for accordion revert functionality
+  // Try to load from localStorage first, fallback to server data
+  const cachedEmailState = localStorage.getItem('shellcast_email_preferences');
+  const cachedTextState = localStorage.getItem('shellcast_text_preferences');
+  
+  originalEmailState = cachedEmailState ? JSON.parse(cachedEmailState) : {
+    email: profInfo.email,
+    email_pref: profInfo.email_pref,
+    email_consent: profInfo.email_pref
+  };
+  
+  originalTextState = cachedTextState ? JSON.parse(cachedTextState) : {
+    phone_number: profInfo.phone_number,
+    text_pref: profInfo.text_pref,
+    text_consent: profInfo.text_pref
+  };
   
   // Set probability preference
   for (let radio of probRadios) {
@@ -90,6 +123,11 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
     }
     
     setupAccordionTabs();
+    setupAccordionButtons();
+    
+    // Initialize notification status messages
+    updateEmailNotificationStatus();
+    updateTextNotificationStatus();
   }
 }
 
@@ -102,18 +140,64 @@ function onProfileFormChange(e) {
   const noNotificationsCheckbox = profForm.elements["no-notifications"];
   const emailCheckbox = profForm.elements["email-pref"];
   const textCheckbox = profForm.elements["text-pref"];
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
   const probRadios = profForm.elements["notification-prob"];
 
-  // Handle notification preference logic
+  // Handle consent withdrawal logic (highest priority)
+  if (e.target === emailConsentCheckbox) {
+    // If email consent is unchecked, uncheck email preference and clear email
+    if (!emailConsentCheckbox.checked) {
+      emailCheckbox.checked = false;
+      profForm.elements["email-address"].value = "";
+    }
+  } else if (e.target === textConsentCheckbox) {
+    // If text consent is unchecked, uncheck text preference and clear phone
+    if (!textConsentCheckbox.checked) {
+      textCheckbox.checked = false;
+      profForm.elements["phone-number"].value = "";
+    }
+  }
+
+  // Handle preference checkbox logic (lower priority)
+  // Note: We don't auto-check consent - user must do this deliberately
+
+  // Handle "no notifications" logic
   if (e.target === noNotificationsCheckbox) {
-    noNotificationsCheckbox.checked = true;
-    emailCheckbox.checked = textCheckbox.checked = false;
+    // If "no notifications" is checked, uncheck email and text
+    if (noNotificationsCheckbox.checked) {
+      emailCheckbox.checked = textCheckbox.checked = false;
+      // Also uncheck consent boxes and clear data when no notifications
+      if (emailConsentCheckbox) {
+        emailConsentCheckbox.checked = false;
+        profForm.elements["email-address"].value = "";
+      }
+      if (textConsentCheckbox) {
+        textConsentCheckbox.checked = false;
+        profForm.elements["phone-number"].value = "";
+      }
+    }
   } else if (e.target === emailCheckbox || e.target === textCheckbox) {
-    noNotificationsCheckbox.checked = !emailCheckbox.checked && !textCheckbox.checked;
+    // If email or text is checked, uncheck "no notifications"
+    if (emailCheckbox.checked || textCheckbox.checked) {
+      noNotificationsCheckbox.checked = false;
+    } else {
+      // If neither email nor text is checked, check "no notifications"
+      noNotificationsCheckbox.checked = true;
+    }
   }
   
   // Update accordion visibility
-  updateAccordionVisibility(emailCheckbox.checked, textCheckbox.checked);
+  if (e.target === noNotificationsCheckbox && noNotificationsCheckbox.checked) {
+    // Auto-collapse when "no notifications" is checked
+    updateAccordionVisibility(false, false);
+  } else if (e.target === emailCheckbox && emailCheckbox.checked) {
+    // Open email accordion when email preference is checked
+    updateAccordionVisibility(true, textCheckbox.checked);
+  } else if (e.target === textCheckbox && textCheckbox.checked) {
+    // Open text accordion when text preference is checked
+    updateAccordionVisibility(emailCheckbox.checked, true);
+  }
 
   // Update probability radio button states
   for (let radio of probRadios) {
@@ -123,6 +207,491 @@ function onProfileFormChange(e) {
   // Validate form and update button states
   validateForm();
   profForm.elements["prof-form-cancel-btn"].disabled = false;
+  
+  // Check for changes and show alerts
+  if (checkEmailChanges() && !emailChangesMade) {
+    showEmailUnsavedAlert();
+    emailChangesMade = true;
+  } else if (!checkEmailChanges() && emailChangesMade) {
+    hideEmailUnsavedAlert();
+    emailChangesMade = false;
+  }
+  
+  if (checkTextChanges() && !textChangesMade) {
+    showTextUnsavedAlert();
+    textChangesMade = true;
+  } else if (!checkTextChanges() && textChangesMade) {
+    hideTextUnsavedAlert();
+    textChangesMade = false;
+  }
+  
+  // Update notification status messages
+  updateEmailNotificationStatus();
+  updateTextNotificationStatus();
+}
+
+// Add event listeners for accordion Save and Cancel buttons
+function setupAccordionButtons() {
+  const emailCancelBtn = document.getElementById("email-cancel-btn");
+  const emailSaveBtn = document.getElementById("email-save-btn");
+  const textCancelBtn = document.getElementById("text-cancel-btn");
+  const textSaveBtn = document.getElementById("text-save-btn");
+  
+  // Setup expand/collapse buttons
+  setupExpandCollapseButtons();
+  
+  if (emailCancelBtn) {
+    emailCancelBtn.addEventListener("click", function() {
+      // Revert email accordion changes to original state
+      revertEmailAccordionChanges();
+      // Keep accordion open so user can see the reverted state
+    });
+  }
+  
+  if (emailSaveBtn) {
+    emailSaveBtn.addEventListener("click", function() {
+      // Save email accordion changes
+      saveEmailAccordionChanges();
+      // Close accordion
+      const emailAccordion = document.getElementById("email-accordion");
+      if (emailAccordion) {
+        emailAccordion.classList.remove("expanded");
+      }
+    });
+  }
+  
+  if (textCancelBtn) {
+    textCancelBtn.addEventListener("click", function() {
+      // Revert text accordion changes to original state
+      revertTextAccordionChanges();
+      // Keep accordion open so user can see the reverted state
+    });
+  }
+  
+  if (textSaveBtn) {
+    textSaveBtn.addEventListener("click", function() {
+      // Save text accordion changes
+      saveTextAccordionChanges();
+      // Close accordion
+      const textAccordion = document.getElementById("text-accordion");
+      if (textAccordion) {
+        textAccordion.classList.remove("expanded");
+      }
+    });
+  }
+}
+
+/**
+ * Sets up expand/collapse buttons for accordions
+ */
+function setupExpandCollapseButtons() {
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
+  
+  if (emailExpandBtn) {
+    emailExpandBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      expandEmailAccordion();
+    });
+  }
+  
+  if (emailCollapseBtn) {
+    emailCollapseBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      collapseEmailAccordion();
+    });
+  }
+  
+  if (textExpandBtn) {
+    textExpandBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      expandTextAccordion();
+    });
+  }
+  
+  if (textCollapseBtn) {
+    textCollapseBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent accordion header click
+      collapseTextAccordion();
+    });
+  }
+}
+
+/**
+ * Expands the email accordion
+ */
+function expandEmailAccordion() {
+  const emailAccordion = document.getElementById("email-accordion");
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  
+  if (emailAccordion) {
+    emailAccordion.classList.add("expanded");
+  }
+  
+  if (emailExpandBtn) emailExpandBtn.style.display = "none";
+  if (emailCollapseBtn) emailCollapseBtn.style.display = "inline-flex";
+}
+
+/**
+ * Collapses the email accordion
+ */
+function collapseEmailAccordion() {
+  const emailAccordion = document.getElementById("email-accordion");
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  
+  if (emailAccordion) {
+    emailAccordion.classList.remove("expanded");
+  }
+  
+  if (emailExpandBtn) emailExpandBtn.style.display = "inline-flex";
+  if (emailCollapseBtn) emailCollapseBtn.style.display = "none";
+}
+
+/**
+ * Expands the text accordion
+ */
+function expandTextAccordion() {
+  const textAccordion = document.getElementById("text-accordion");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
+  
+  if (textAccordion) {
+    textAccordion.classList.add("expanded");
+  }
+  
+  if (textExpandBtn) textExpandBtn.style.display = "none";
+  if (textCollapseBtn) textCollapseBtn.style.display = "inline-flex";
+}
+
+/**
+ * Collapses the text accordion
+ */
+function collapseTextAccordion() {
+  const textAccordion = document.getElementById("text-accordion");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
+  
+  if (textAccordion) {
+    textAccordion.classList.remove("expanded");
+  }
+  
+  if (textExpandBtn) textExpandBtn.style.display = "inline-flex";
+  if (textCollapseBtn) textCollapseBtn.style.display = "none";
+}
+
+// Store original accordion states for reverting changes
+let originalEmailState = null;
+let originalTextState = null;
+
+// Track if changes have been made
+let emailChangesMade = false;
+let textChangesMade = false;
+
+/**
+ * Saves email accordion changes to the main form state and browser cache
+ */
+function saveEmailAccordionChanges() {
+  const profForm = document.forms["profile-information-form"];
+  const emailInput = profForm.elements["email-address"];
+  const emailCheckbox = profForm.elements["email-pref"];
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  
+  // Update the original state with current values
+  originalEmailState = {
+    email: emailInput.value,
+    email_pref: emailCheckbox.checked,
+    email_consent: emailConsentCheckbox ? emailConsentCheckbox.checked : false
+  };
+  
+  // Save to browser localStorage
+  localStorage.setItem('shellcast_email_preferences', JSON.stringify(originalEmailState));
+  
+  // Update main form save/cancel button states
+  profForm.elements["prof-form-cancel-btn"].disabled = false;
+  profForm.elements["prof-form-save-btn"].disabled = false;
+  
+  // Hide unsaved changes alert
+  hideEmailUnsavedAlert();
+  emailChangesMade = false;
+  
+  console.log("Email accordion changes saved to form state and browser cache");
+}
+
+/**
+ * Reverts email accordion changes to original state
+ */
+function revertEmailAccordionChanges() {
+  const profForm = document.forms["profile-information-form"];
+  const emailInput = profForm.elements["email-address"];
+  const emailCheckbox = profForm.elements["email-pref"];
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  
+  if (originalEmailState) {
+    emailInput.value = originalEmailState.email;
+    emailCheckbox.checked = originalEmailState.email_pref;
+    if (emailConsentCheckbox) {
+      emailConsentCheckbox.checked = originalEmailState.email_consent;
+    }
+  }
+  
+  // Clear validation errors
+  emailInput.classList.remove("is-invalid");
+  if (emailConsentCheckbox) {
+    emailConsentCheckbox.closest('.consent-section').classList.remove("is-invalid");
+  }
+  
+  // Hide unsaved changes alert
+  hideEmailUnsavedAlert();
+  emailChangesMade = false;
+  
+  // Update status and validation
+  updateEmailNotificationStatus();
+  validateForm();
+  
+  console.log("Email accordion changes reverted");
+}
+
+/**
+ * Saves text accordion changes to the main form state and browser cache
+ */
+function saveTextAccordionChanges() {
+  const profForm = document.forms["profile-information-form"];
+  const phoneInput = profForm.elements["phone-number"];
+  const textCheckbox = profForm.elements["text-pref"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  
+  // Update the original state with current values
+  originalTextState = {
+    phone_number: phoneInput.value,
+    text_pref: textCheckbox.checked,
+    text_consent: textConsentCheckbox ? textConsentCheckbox.checked : false
+  };
+  
+  // Save to browser localStorage
+  localStorage.setItem('shellcast_text_preferences', JSON.stringify(originalTextState));
+  
+  // Update main form save/cancel button states
+  profForm.elements["prof-form-cancel-btn"].disabled = false;
+  profForm.elements["prof-form-save-btn"].disabled = false;
+  
+  // Hide unsaved changes alert
+  hideTextUnsavedAlert();
+  textChangesMade = false;
+  
+  console.log("Text accordion changes saved to form state and browser cache");
+}
+
+/**
+ * Reverts text accordion changes to original state
+ */
+function revertTextAccordionChanges() {
+  const profForm = document.forms["profile-information-form"];
+  const phoneInput = profForm.elements["phone-number"];
+  const textCheckbox = profForm.elements["text-pref"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  
+  if (originalTextState) {
+    // Apply phone number mask when reverting
+    phoneInput.value = maskPhoneNumber(originalTextState.phone_number);
+    textCheckbox.checked = originalTextState.text_pref;
+    if (textConsentCheckbox) {
+      textConsentCheckbox.checked = originalTextState.text_consent;
+    }
+  }
+  
+  // Clear validation errors
+  phoneInput.classList.remove("is-invalid");
+  if (textConsentCheckbox) {
+    textConsentCheckbox.closest('.consent-section').classList.remove("is-invalid");
+  }
+  
+  // Hide unsaved changes alert
+  hideTextUnsavedAlert();
+  textChangesMade = false;
+  
+  // Update status and validation
+  updateTextNotificationStatus();
+  validateForm();
+  
+  console.log("Text accordion changes reverted");
+}
+
+/**
+ * Shows email unsaved changes alert
+ */
+function showEmailUnsavedAlert() {
+  const alert = document.getElementById("email-unsaved-alert");
+  if (alert) {
+    alert.style.display = "block";
+  }
+}
+
+/**
+ * Hides email unsaved changes alert
+ */
+function hideEmailUnsavedAlert() {
+  const alert = document.getElementById("email-unsaved-alert");
+  if (alert) {
+    alert.style.display = "none";
+  }
+}
+
+/**
+ * Shows text unsaved changes alert
+ */
+function showTextUnsavedAlert() {
+  const alert = document.getElementById("text-unsaved-alert");
+  if (alert) {
+    alert.style.display = "block";
+  }
+}
+
+/**
+ * Hides text unsaved changes alert
+ */
+function hideTextUnsavedAlert() {
+  const alert = document.getElementById("text-unsaved-alert");
+  if (alert) {
+    alert.style.display = "none";
+  }
+}
+
+/**
+ * Checks if email accordion has changes
+ */
+function checkEmailChanges() {
+  const profForm = document.forms["profile-information-form"];
+  const emailInput = profForm.elements["email-address"];
+  const emailCheckbox = profForm.elements["email-pref"];
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  
+  if (!originalEmailState) return false;
+  
+  const currentState = {
+    email: emailInput.value,
+    email_pref: emailCheckbox.checked,
+    email_consent: emailConsentCheckbox ? emailConsentCheckbox.checked : false
+  };
+  
+  return JSON.stringify(currentState) !== JSON.stringify(originalEmailState);
+}
+
+/**
+ * Checks if text accordion has changes
+ */
+function checkTextChanges() {
+  const profForm = document.forms["profile-information-form"];
+  const phoneInput = profForm.elements["phone-number"];
+  const textCheckbox = profForm.elements["text-pref"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  
+  if (!originalTextState) return false;
+  
+  const currentState = {
+    phone_number: phoneInput.value,
+    text_pref: textCheckbox.checked,
+    text_consent: textConsentCheckbox ? textConsentCheckbox.checked : false
+  };
+  
+  return JSON.stringify(currentState) !== JSON.stringify(originalTextState);
+}
+
+/**
+ * Updates the email notification status message
+ */
+function updateEmailNotificationStatus() {
+  const statusText = document.getElementById("email-status-text");
+  const statusIcon = document.getElementById("email-status-icon");
+  const statusContainer = document.getElementById("email-notification-status");
+  const profForm = document.forms["profile-information-form"];
+  
+  if (!statusText || !statusIcon || !statusContainer) return;
+  
+  const emailCheckbox = profForm.elements["email-pref"];
+  const emailInput = profForm.elements["email-address"];
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  
+  const isChecked = emailCheckbox.checked;
+  const emailValue = emailInput.value.trim();
+  const hasEmail = emailValue && validateEmail(emailValue);
+  const hasConsent = emailConsentCheckbox ? emailConsentCheckbox.checked : false;
+  
+  let message = "";
+  let icon = "📧";
+  let textClass = "text-muted";
+  
+  if (!isChecked) {
+    message = "You will not receive notifications - 'Email' is unchecked";
+    icon = "✉️";
+    textClass = "text-muted";
+  } else if (!hasEmail) {
+    message = "You will not receive notifications - missing email address";
+    icon = "⚠️";
+    textClass = "text-warning";
+  } else if (!hasConsent) {
+    message = "You will not receive notifications - missing consent";
+    icon = "⚠️";
+    textClass = "text-warning";
+  } else {
+    message = "You will receive email notifications";
+    icon = "✅";
+    textClass = "text-success";
+  }
+  
+  statusText.textContent = message;
+  statusIcon.textContent = icon;
+  statusContainer.className = `notification-status ${textClass}`;
+}
+
+/**
+ * Updates the text notification status message
+ */
+function updateTextNotificationStatus() {
+  const statusText = document.getElementById("text-status-text");
+  const statusIcon = document.getElementById("text-status-icon");
+  const statusContainer = document.getElementById("text-notification-status");
+  const profForm = document.forms["profile-information-form"];
+  
+  if (!statusText || !statusIcon || !statusContainer) return;
+  
+  const textCheckbox = profForm.elements["text-pref"];
+  const phoneInput = profForm.elements["phone-number"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  
+  const isChecked = textCheckbox.checked;
+  const phoneValue = phoneInput.value.replace(/\D/g, "");
+  const hasPhone = phoneValue && validatePhoneNumber(phoneValue);
+  const hasConsent = textConsentCheckbox ? textConsentCheckbox.checked : false;
+  
+  let message = "";
+  let icon = "📱";
+  let textClass = "text-muted";
+  
+  if (!isChecked) {
+    message = "You will not receive notifications - 'Text' is unchecked";
+    icon = "📱";
+    textClass = "text-muted";
+  } else if (!hasPhone) {
+    message = "You will not receive notifications - missing phone number";
+    icon = "⚠️";
+    textClass = "text-warning";
+  } else if (!hasConsent) {
+    message = "You will not receive notifications - missing consent";
+    icon = "⚠️";
+    textClass = "text-warning";
+  } else {
+    message = "You will receive text notifications";
+    icon = "✅";
+    textClass = "text-success";
+  }
+  
+  statusText.textContent = message;
+  statusIcon.textContent = icon;
+  statusContainer.className = `notification-status ${textClass}`;
 }
 
 /**
@@ -157,6 +726,8 @@ async function saveProfileFormChanges() {
   const phoneNumber = phoneNumberMatch ? phoneNumberMatch[0] : "";
   const emailPref = profForm.elements["email-pref"].checked;
   const textPref = profForm.elements["text-pref"].checked;
+  const emailConsentChecked = profForm.elements["email-consent"] ? profForm.elements["email-consent"].checked : false;
+  const textConsentChecked = profForm.elements["text-consent"] ? profForm.elements["text-consent"].checked : false;
   const probRadios = profForm.elements["notification-prob"];
   
   let selectedProb;
@@ -166,13 +737,16 @@ async function saveProfileFormChanges() {
     }
   }
   
+  // Privacy-first approach: Remove email/phone if consent is withdrawn
   const newProfileInfo = {
-    email: email,
-    phone_number: phoneNumber,
+    email: emailConsentChecked ? email : null,
+    phone_number: textConsentChecked ? phoneNumber : null,
     service_provider_id: null, // NC doesn't have service provider field
     email_pref: emailPref,
     text_pref: textPref,
     prob_pref: selectedProb,
+    email_consent: emailConsentChecked,
+    text_consent: textConsentChecked,
   };
 
   // Send data to server
@@ -186,7 +760,17 @@ async function saveProfileFormChanges() {
     if (res.ok) {
       profileInfo = await res.json();
       helpText.style.color = "green";
-      helpText.innerHTML = "Changes saved successfully!";
+      
+      // Inform user about data removal if consent was withdrawn
+      let message = "Changes saved successfully!";
+      if (!emailConsentChecked && profileInfo.email) {
+        message += " Your email address has been removed from our system.";
+      }
+      if (!textConsentChecked && profileInfo.phone_number) {
+        message += " Your phone number has been removed from our system.";
+      }
+      
+      helpText.innerHTML = message;
     } else {
       const contentType = res.headers.get("content-type");
       
@@ -252,8 +836,8 @@ function validateForm() {
   
   let isValid = true;
   
-  // Validate email if email preference is checked
-  if (emailCheckbox.checked) {
+  // Validate email if email consent is checked (consent-driven validation)
+  if (emailConsentCheckbox && emailConsentCheckbox.checked) {
     const email = emailInput.value.trim();
     if (!email || !validateEmail(email)) {
       emailInput.classList.add("is-invalid");
@@ -262,13 +846,8 @@ function validateForm() {
       emailInput.classList.remove("is-invalid");
     }
     
-    // Validate email consent
-    if (!emailConsentCheckbox.checked) {
-      emailConsentCheckbox.closest('.consent-section').classList.add("is-invalid");
-      isValid = false;
-    } else {
-      emailConsentCheckbox.closest('.consent-section').classList.remove("is-invalid");
-    }
+    // Email consent is checked, so no validation error
+    emailConsentCheckbox.closest('.consent-section').classList.remove("is-invalid");
   } else {
     emailInput.classList.remove("is-invalid");
     if (emailConsentCheckbox) {
@@ -276,8 +855,8 @@ function validateForm() {
     }
   }
   
-  // Validate phone number and consent if text preference is checked
-  if (textCheckbox.checked) {
+  // Validate phone number if text consent is checked (consent-driven validation)
+  if (textConsentCheckbox && textConsentCheckbox.checked) {
     const phoneNumber = phoneInput.value.replace(/\D/g, "");
     if (!phoneNumber || !validatePhoneNumber(phoneNumber)) {
       phoneInput.classList.add("is-invalid");
@@ -286,13 +865,8 @@ function validateForm() {
       phoneInput.classList.remove("is-invalid");
     }
     
-    // Validate text consent
-    if (!textConsentCheckbox.checked) {
-      textConsentCheckbox.closest('.consent-section').classList.add("is-invalid");
-      isValid = false;
-    } else {
-      textConsentCheckbox.closest('.consent-section').classList.remove("is-invalid");
-    }
+    // Text consent is checked, so no validation error
+    textConsentCheckbox.closest('.consent-section').classList.remove("is-invalid");
   } else {
     phoneInput.classList.remove("is-invalid");
     if (textConsentCheckbox) {
@@ -360,20 +934,30 @@ function setupAccordionTabs() {
 }
 
 /**
- * Updates the accordion visibility based on checkbox states
- * @param {boolean} emailChecked whether email checkbox is checked
- * @param {boolean} textChecked whether text checkbox is checked
+ * Updates the accordion visibility based on consent states
+ * @param {boolean} emailConsentChecked whether email consent is checked
+ * @param {boolean} textConsentChecked whether text consent is checked
  */
-function updateAccordionVisibility(emailChecked, textChecked) {
+function updateAccordionVisibility(emailConsentChecked, textConsentChecked) {
   const emailAccordion = document.getElementById("email-accordion");
   const textAccordion = document.getElementById("text-accordion");
+  const emailExpandBtn = document.getElementById("email-expand-btn");
+  const emailCollapseBtn = document.getElementById("email-collapse-btn");
+  const textExpandBtn = document.getElementById("text-expand-btn");
+  const textCollapseBtn = document.getElementById("text-collapse-btn");
   
   if (emailAccordion) {
-    emailAccordion.classList.toggle("expanded", emailChecked);
+    emailAccordion.classList.toggle("expanded", emailConsentChecked);
+    // Update button states
+    if (emailExpandBtn) emailExpandBtn.style.display = emailConsentChecked ? "none" : "inline-flex";
+    if (emailCollapseBtn) emailCollapseBtn.style.display = emailConsentChecked ? "inline-flex" : "none";
   }
   
   if (textAccordion) {
-    textAccordion.classList.toggle("expanded", textChecked);
+    textAccordion.classList.toggle("expanded", textConsentChecked);
+    // Update button states
+    if (textExpandBtn) textExpandBtn.style.display = textConsentChecked ? "none" : "inline-flex";
+    if (textCollapseBtn) textCollapseBtn.style.display = textConsentChecked ? "inline-flex" : "none";
   }
 }
 
