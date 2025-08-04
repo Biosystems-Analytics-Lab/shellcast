@@ -125,12 +125,8 @@ def sendNotifications():
     for user in users:
         # get email address
         emailAddress = user.email
-        # get phone number and service provider gateway (phonenumber@smsgateway)
+        # Text notifications are temporarily disabled
         textAddress = None
-        if user.phone_number != None and user.service_provider_id != None:
-            textAddress = "{}@{}".format(
-                user.phone_number, user.service_provider.sms_gateway
-            )
         # construct notification text
         notificationText = [NOTIFICATION_HEADER]
         needToSendNotification = False
