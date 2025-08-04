@@ -48,6 +48,14 @@
                   <input class="form-check-input" type="checkbox" name="email-pref" id="email-pref">
                   <label class="form-check-label" for="email-pref">Email</label>
                 </div>
+                <div class="accordion-controls">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="email-expand-btn" title="Expand">
+                    +
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="email-collapse-btn" title="Collapse" style="display: none;">
+                    −
+                  </button>
+                </div>
               </div>
               <div class="accordion-content" id="email-accordion">
                 <div class="accordion-body">
@@ -76,10 +84,29 @@
                       <div class="form-check consent-checkbox">
                         <input class="form-check-input" type="checkbox" name="email-consent" id="email-consent">
                         <label class="form-check-label" for="email-consent">
-                          <strong>I consent to receive email notifications</strong> about lease closures and forecast 
-                          information from ShellCast. By checking this box, you agree to receive email notifications. 
-                          You can unsubscribe at any time.
+                          By providing my email address, I authorize ShellCast to send me email notifications 
+                          regarding lease closures, forecast information, maintenance updates, and other 
+                          ShellCast-related notifications. I understand that I may revoke this consent or 
+                          opt out at any time by clicking Unsubscribe in any email or by unchecking consent on 
+                          the ShellCast website.
                         </label>
+                      </div>
+                    </div>
+                    <!-- Add "Cancel" and "Save" buttons here -->
+                    <div class="accordion-actions mt-3">
+                      <div class="notification-status" id="email-notification-status">
+                        <small class="text-muted">
+                          <span id="email-status-icon">✉️</span> <span id="email-status-text">Disabled - check "Email" to enable</span>
+                        </small>
+                      </div>
+                      <div class="unsaved-changes-alert" id="email-unsaved-alert" style="display: none;">
+                        <div class="alert alert-warning">
+                          <strong>⚠️ You have unsaved changes!</strong> Click Save to keep your changes.
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <button type="button" class="btn btn-secondary" id="email-cancel-btn">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="email-save-btn">Save</button>
                       </div>
                     </div>
                   </div>
@@ -108,8 +135,6 @@
                       </small>
                     </div>
                   </div>
-                  
-
                 </div>
               </div>
             </div>
@@ -120,6 +145,14 @@
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
                   <label class="form-check-label" for="text-pref">Text</label>
+                </div>
+                <div class="accordion-controls">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="text-expand-btn" title="Expand">
+                    +
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="text-collapse-btn" title="Collapse" style="display: none;">
+                    −
+                  </button>
                 </div>
               </div>
               <div class="accordion-content" id="text-accordion">
@@ -152,10 +185,28 @@
                       <div class="form-check consent-checkbox">
                         <input class="form-check-input" type="checkbox" name="text-consent" id="text-consent">
                         <label class="form-check-label" for="text-consent">
-                          <strong>I consent to receive text message notifications</strong> about lease closures 
-                          and forecast information from ShellCast. By checking this box, you agree to receive SMS 
-                          notifications. Reply STOP to unsubscribe. Message & data rates may apply.
+                          By providing my mobile number, I authorize ShellCast to send me text message notifications 
+                          regarding lease closures and forecast information. Message and data rates may apply. 
+                          I understand that I may revoke this consent or opt out at any time by replying STOP or 
+                          by unchecking consent on the ShellCast website.
                         </label>
+                      </div>
+                    </div>
+                    
+                    <div class="accordion-actions mt-3">
+                      <div class="notification-status" id="text-notification-status">
+                        <small class="text-muted">
+                          <span id="text-status-icon">📱</span> <span id="text-status-text">Disabled - check "Text" to enable</span>
+                        </small>
+                      </div>
+                      <div class="unsaved-changes-alert" id="text-unsaved-alert" style="display: none;">
+                        <div class="alert alert-warning">
+                          <strong>⚠️ You have unsaved changes!</strong> Click Save to keep your changes.
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <button type="button" class="btn btn-secondary" id="text-cancel-btn">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="text-save-btn">Save</button>
                       </div>
                     </div>
                   </div>
@@ -175,8 +226,6 @@
                       </small>
                     </div>
                   </div>
-                  
-
                 </div>
               </div>
             </div>
@@ -215,7 +264,7 @@
         <div class="form-actions">
           <div><small id="profile-form-help-text" role="alert" class="alert"></small></div>
           <button class="btn btn-secondary" type="button" name="prof-form-cancel-btn" disabled>Cancel</button>
-          <button class="btn btn-primary" type="button" name="prof-form-save-btn" disabled>Save</button>
+          <button class="btn btn-primary" type="button" name="prof-form-save-btn" disabled>Submit</button>
         </div>
       </form>
 
