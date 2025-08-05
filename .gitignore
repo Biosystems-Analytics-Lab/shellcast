@@ -5,6 +5,7 @@
 .env
 cloud-sql-proxy*
 config*
+my-cloud-sql-proxy.sh
 sqlauth*
 *.grb
 tpxmrg_inventory.json
@@ -26,6 +27,7 @@ analysisenv/
 *token*
 *encrypt*
 notifications_old/
+webvenv/
 
 # History files
 .Rhistory
