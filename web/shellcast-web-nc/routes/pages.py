@@ -4,7 +4,6 @@ import pytz
 from flask import Blueprint, render_template
 from models import db
 from models.CMUProbability import CMUProbability
-from models.PhoneServiceProvider import PhoneServiceProvider
 
 # the number of seconds in one hour
 SECONDS_IN_HOURS = 3600
@@ -87,13 +86,9 @@ def temp_remove_verizon(serviceProviders):
 
 @pages.route("/preferences")
 def preferencesPage():
-    serviceProviders = db.session.query(
-        PhoneServiceProvider.id, PhoneServiceProvider.name
-    ).all()
     probOptions = [3, 4, 5]
     return render_template(
         "preferences.html",
-        serviceProviders=temp_remove_verizon(serviceProviders),
         probOptions=probOptions,
     )
 
