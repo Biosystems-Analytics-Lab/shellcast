@@ -3,28 +3,26 @@ CREATE DATABASE shellcast_sc;
 
 USE shellcast_sc;
 
--- Stores the mobile phone service providers that we can send MMS messages to.
-CREATE TABLE phone_service_providers (
-	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name varchar(30) NOT NULL DEFAULT '',
-	mms_gateway varchar(30) NOT NULL DEFAULT '',
-	sms_gateway varchar(30) NOT NULL DEFAULT ''
-);
-
 -- Stores user information.
 CREATE TABLE users (
 	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	firebase_uid varchar(28) NULL,
 	phone_number varchar(11) NULL,
-	service_provider_id int NULL,
 	email varchar(50) NOT NULL,
 	email_pref boolean NOT NULL DEFAULT false,
+    email_consent boolean NOT NULL DEFAULT false,
 	text_pref boolean NOT NULL DEFAULT false,
+    text_consent boolean NOT NULL DEFAULT false,
 	prob_pref tinyint NOT NULL DEFAULT 75,
+    email_opt_in_date datetime NULL,
+    text_opt_in_date datetime NULL,
+    email_opt_out_date datetime NULL,
+    text_opt_out_date datetime NULL,
+    email_verification_sent boolean NOT NULL DEFAULT false,
+    text_verification_sent boolean NOT NULL DEFAULT false,
 	deleted boolean DEFAULT false,
 	created datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
-    FOREIGN KEY (service_provider_id) REFERENCES phone_service_providers(id)
 );
 
 -- Stores information about all potential leases retrieved from the NCDMF API.
@@ -84,22 +82,6 @@ CREATE TABLE cmu_probabilities (
   FOREIGN KEY (lease_id) REFERENCES leases(lease_id)
 );
 
--- Mobile phone service providers
-INSERT INTO phone_service_providers (`name`, `mms_gateway`, `sms_gateway`)
-VALUES
-  ('AT&T', 'mms.att.net', 'txt.att.net'),
-  ('T-Mobile', 'tmomail.net', 'tmomail.net'),
-  ('Verizon', 'vzwpix.com', 'vtext.com'),
-  ('Sprint (Pre-merger)', 'pm.sprint.com', 'messaging.sprintpcs.com'),
-  ('US Cellular', 'mms.uscc.net', 'email.uscc.net'),
-  ('Straight Talk', 'mypixmessages.com', 'vtext.com'),
-  ('Xfinity Mobile', 'mypixmessages.com', 'vtext.com'),
-  ('Virgin Mobile', 'vmpix.com', 'vmobl.com'),
-  ('Metro PCS', 'mymetropcs.com', 'mymetropcs.com'),
-  ('Boost Mobile', 'myboostmobile.com', 'sms.myboostmobile.com'),
-  ('Cricket Wireless', 'mms.cricketwireless.net', 'mms.cricketwireless.net'),
-  ('Google Fi', 'msg.fi.google.com', 'msg.fi.google.com')
-;
 
 USE shellcast_sc;
 DELIMITER //
