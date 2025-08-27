@@ -34,10 +34,11 @@ def userInfo(user):
             "email_pref": user.email_pref,
             "text_pref": user.text_pref,
             "prob_pref": user.prob_pref,
+            "email_consent": user.email_consent,
+            "text_consent": user.text_consent,
         }
         if user.phone_number != None:
             userInfo["phone_number"] = user.phone_number
-            userInfo["service_provider_id"] = user.service_provider_id
         return userInfo
 
     if request.method == "GET":
@@ -51,6 +52,8 @@ def userInfo(user):
             user.email_pref = validator.email_pref
             user.text_pref = validator.text_pref
             user.prob_pref = validator.prob_pref
+            user.email_consent = validator.email_consent
+            user.text_consent = validator.text_consent
             db.session.add(user)
             db.session.commit()
             return constructResponse(user)
@@ -71,12 +74,13 @@ def deleteAccount(user):
         user.firebase_uid = None
         user.email = None
         user.phone_number = None
-        user.service_provider_id = None
 
         # clear preferences
         user.email_pref = User.DEFAULT_email_pref
         user.text_pref = User.DEFAULT_text_pref
         user.prob_pref = User.DEFAULT_prob_pref
+        user.email_consent = User.DEFAULT_email_consent
+        user.text_consent = User.DEFAULT_text_consent
 
         # mark user record as deleted
         user.deleted = True
@@ -227,3 +231,51 @@ def searchLeases(user):
         .all()
     )
     return jsonify(list(map(lambda x: x[0], ncdmfLeaseIds)))
+
+
+@api.route("/unsubscribe", methods=["POST"])
+def unsubscribe():
+    """
+    Unsubscribes a user from email notifications based on email and token.
+    This endpoint doesn't require authentication as it's accessed via email links.
+    """
+    try:
+        data = request.json
+        email = data.get("email")
+        token = data.get("token")
+        
+        if not email or not token:
+            return {"errors": ["Email and token are required."]}, 400
+        
+        # Find the user by email
+        user = db.session.query(User).filter_by(email=email, deleted=False).first()
+        
+        if not user:
+            return {"errors": ["User not found."]}, 404
+        
+        # TODO: Validate the token here
+        # For now, we'll assume the token is valid if it exists
+        # You should implement proper token validation logic
+        
+        # Update the user's email consent and opt-out date
+        from datetime import datetime, timezone
+        
+        user.email_consent = False
+        user.email_opt_out_date = datetime.now(timezone.utc)
+        
+        # Also disable email preferences since user is unsubscribing
+        user.email_pref = False
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        return {
+            "message": "Successfully unsubscribed from email notifications",
+            "email": email,
+            "unsubscribed_at": user.email_opt_out_date.isoformat()
+        }, 200
+        
+    except Exception as e:
+        print(f"Error in unsubscribe endpoint: {e}")
+        db.session.rollback()
+        return {"errors": ["An error occurred while processing your request."]}, 500
