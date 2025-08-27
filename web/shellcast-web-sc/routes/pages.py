@@ -89,3 +89,8 @@ def signinPage():
 @pages.route("/feedback")
 def feedbackPage():
     return render_template("feedback.html")
+
+
+@pages.route("/unsubscribe")
+def unsubscribePage():
+    return render_template("unsubscribe.html")
