@@ -1,12 +1,19 @@
 import logging
 import os
+import sys
 
 import firebase_admin
 import requests
 from firebase_admin import auth
 from flask import Flask, request, Response
 
-from config import Config, DevConfig
+# Load environment variables from .env file for local development
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not available, continue without it
+
 from models import db
 from routes.api import api
 from routes.cron import cron
@@ -29,12 +36,81 @@ if "GAE_APPLICATION" in os.environ:
 firebase_admin.initialize_app()
 
 
-def createApp(configObj):
+def createApp():
     """
-    Returns a Flask app configured with the given configuration object.
+    Returns a Flask app configured with environment variables.
     """
     app = Flask(__name__)
-    app.config.from_object(configObj)
+    
+    # Validate required environment variables
+    required_vars = [
+        'HOST', 'PORT', 'SECRET_KEY', 'GMAIL_SENDER_EMAIL', 'BASE_URL',
+        'DB_USER', 'DB_PASS', 'DB_NAME', 'DB_UNIX_SOCKET_PATH_PREFIX', 'CLOUD_SQL_INSTANCE_NAME',
+        'DB_POOL_SIZE', 'DB_MAX_OVERFLOW', 'DB_POOL_TIMEOUT', 'DB_POOL_RECYCLE'
+    ]
+    
+    missing_vars = [var for var in required_vars if not os.environ.get(var)]
+    if missing_vars:
+        error_msg = f"Missing required environment variables: {', '.join(missing_vars)}\n"
+        error_msg += "Please set these variables in your .env file or environment."
+        print(f"ERROR: {error_msg}", file=sys.stderr)
+        raise ValueError(error_msg)
+    
+    # Configure Flask app directly from environment variables
+    app.config.update({
+        # Flask Configuration
+        'DEBUG': os.environ.get('DEBUG', 'false').lower() == 'true',
+        'TESTING': os.environ.get('TESTING', 'false').lower() == 'true',
+        'SECRET_KEY': os.environ.get('SECRET_KEY'),
+        
+        # Server Configuration
+        'HOST': os.environ.get('HOST'),
+        'PORT': int(os.environ.get('PORT')),
+        
+        # Gmail API Configuration
+        'GMAIL_SENDER_EMAIL': os.environ.get('GMAIL_SENDER_EMAIL'),
+        'BASE_URL': os.environ.get('BASE_URL'),
+        
+        # Service Account (App Engine)
+        'GMAIL_SERVICE_ACCOUNT_FILE': os.environ.get('GMAIL_SERVICE_ACCOUNT_FILE'),
+        'GMAIL_DELEGATE_USER': os.environ.get('GMAIL_DELEGATE_USER'),
+        
+        # OAuth 2.0 (Alternative)
+        'GMAIL_CLIENT_ID': os.environ.get('GMAIL_CLIENT_ID'),
+        'GMAIL_CLIENT_SECRET': os.environ.get('GMAIL_CLIENT_SECRET'),
+        
+        # Database Configuration
+        'DB_HOST': os.environ.get('DB_HOST'),
+        'DB_PORT': os.environ.get('DB_PORT'),
+        'DB_USER': os.environ.get('DB_USER'),
+        'DB_PASS': os.environ.get('DB_PASS'),
+        'DB_NAME': os.environ.get('DB_NAME'),
+        
+        # Cloud SQL Configuration
+        'DB_UNIX_SOCKET_PATH_PREFIX': os.environ.get('DB_UNIX_SOCKET_PATH_PREFIX'),
+        'CLOUD_SQL_INSTANCE_NAME': os.environ.get('CLOUD_SQL_INSTANCE_NAME'),
+        
+        # SQLAlchemy Configuration
+        'SQLALCHEMY_TRACK_MODIFICATIONS': os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS', 'false').lower() == 'true',
+        'SQLALCHEMY_ENGINE_OPTIONS': {
+            'pool_size': int(os.environ.get('DB_POOL_SIZE')),
+            'max_overflow': int(os.environ.get('DB_MAX_OVERFLOW')),
+            'pool_timeout': int(os.environ.get('DB_POOL_TIMEOUT')),
+            'pool_recycle': int(os.environ.get('DB_POOL_RECYCLE')),
+        }
+    })
+    
+    # Set Gmail redirect URI based on BASE_URL
+    app.config['GMAIL_REDIRECT_URI'] = os.environ.get('GMAIL_REDIRECT_URI')
+    
+    # Set database URI
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@/{}?unix_socket={}{}'.format(
+        app.config['DB_USER'],
+        app.config['DB_PASS'],
+        app.config['DB_NAME'],
+        app.config['DB_UNIX_SOCKET_PATH_PREFIX'],
+        app.config['CLOUD_SQL_INSTANCE_NAME']
+    )
 
     # register blueprints
     app.register_blueprint(pages)
@@ -103,11 +179,13 @@ app = None
 if __name__ == "__main__":
     logging.info("Starting app with development configuration")
     # setup for running locally (development configuration)
-    app = createApp(DevConfig())
-    # run the app locally
-    app.run(host=DevConfig.HOST, port=DevConfig.PORT, debug=True)
+    app = createApp()
+    # run the app locally using Flask config
+    app.run(host=app.config.get('HOST'), 
+            port=app.config.get('PORT'), 
+            debug=app.config.get('DEBUG'))
     print()
 else:  # else the app is being run from a WSGI application such as gunicorn
     logging.info("Starting app with production configuration")
     # setup for production configuration
-    app = createApp(Config())
+    app = createApp()
