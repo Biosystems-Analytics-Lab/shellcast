@@ -8,3 +8,4 @@ pytz>=2024.1
 boto3>=1.34.124
 cryptography>=43.0.3
 google-cloud-logging>=3.10.0
+python-dotenv>=1.0.0
