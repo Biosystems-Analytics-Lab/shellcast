@@ -82,7 +82,7 @@
                     
                     <div class="consent-section mt-4">
                       <div class="form-check consent-checkbox">
-                        <input class="form-check-input" type="checkbox" name="email-consent" id="email-consent" disabled>
+                        <input class="form-check-input" type="checkbox" name="email-consent" id="email-consent">
                         <label class="form-check-label" for="email-consent">
                           By providing my email address, I authorize ShellCast to send me email notifications 
                           regarding lease closures, forecast information, maintenance updates, and other 
@@ -91,11 +91,12 @@
                           the ShellCast website.
                         </label>
                       </div>
-                      <small class="text-danger mt-2 d-block">
-                        <i class="fas fa-exclamation-triangle"></i> Future system updates will require explicit consent
-                      </small>
                     </div>
-
+                  </div>
+                  
+                  {# Email Notification Status Message #}
+                  <div class="notification-status" style="padding-left: 0px;">
+                    <small id="email-notification-status" role="alert" class="alert"></small>
                   </div>
                   
                   <div class="accordion-tab-content" id="email-example">
@@ -182,7 +183,12 @@
                         </label>
                       </div>
                     </div>
-                    
+                  </div>
+                  
+                  {# Text Notification Status Message #}
+                  <div class="notification-status mt-3">
+                    <small id="text-notification-status" role="alert" class="alert"></small>
+                  </div>
 
                   </div>
                   
@@ -237,7 +243,6 @@
 
         {# Form Actions #}
         <div class="form-actions">
-          <div><small id="profile-form-help-text" role="alert" class="alert"></small></div>
           <button class="btn btn-secondary" type="button" name="prof-form-cancel-btn" disabled>Cancel</button>
           <button class="btn btn-primary" type="button" name="prof-form-save-btn" disabled>Submit</button>
         </div>
