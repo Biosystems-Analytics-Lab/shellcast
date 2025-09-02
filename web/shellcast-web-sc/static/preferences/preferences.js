@@ -62,7 +62,8 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   const emailConsentCheckbox = profForm.elements["email-consent"];
   const textConsentCheckbox = profForm.elements["text-consent"];
   if (emailConsentCheckbox) {
-    emailConsentCheckbox.checked = profInfo.email_pref;
+    // Enable email consent by default, or use existing preference if available
+    emailConsentCheckbox.checked = profInfo.email_pref !== undefined ? profInfo.email_pref : true;
   }
   if (textConsentCheckbox) {
     textConsentCheckbox.checked = profInfo.text_pref;
@@ -81,8 +82,8 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   
   originalEmailState = cachedEmailState ? JSON.parse(cachedEmailState) : {
     email: profInfo.email,
-    email_pref: profInfo.email_pref,
-    email_consent: profInfo.email_pref
+    email_pref: profInfo.email_pref !== undefined ? profInfo.email_pref : true,
+    email_consent: profInfo.email_pref !== undefined ? profInfo.email_pref : true
   };
   
   originalTextState = cachedTextState ? JSON.parse(cachedTextState) : {
@@ -124,6 +125,9 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
     
     setupAccordionTabs();
     setupAccordionButtons();
+    
+    // Show initial notification status
+    updateNotificationStatus();
   }
 }
 
@@ -153,11 +157,8 @@ function onProfileFormChange(e) {
     return;
   }
 
-  // Prevent email consent checkbox from being checked during system update
-  if (e.target === emailConsentCheckbox && emailConsentCheckbox.checked) {
-    emailConsentCheckbox.checked = false;
-    return;
-  }
+  // Allow email consent checkbox to work normally
+  // (removed the system update prevention logic)
 
   // Handle consent withdrawal logic (highest priority)
   if (e.target === emailConsentCheckbox) {
@@ -182,13 +183,8 @@ function onProfileFormChange(e) {
     // If "no notifications" is checked, uncheck email and text preferences
     if (noNotificationsCheckbox.checked) {
       emailCheckbox.checked = textCheckbox.checked = false;
-      // Also uncheck consent boxes but don't clear data
-      if (emailConsentCheckbox) {
-        emailConsentCheckbox.checked = false;
-      }
-      if (textConsentCheckbox) {
-        textConsentCheckbox.checked = false;
-      }
+      // Don't force consent boxes to false - let user control them
+      // (removed the forced unchecking of consent boxes)
     }
   } else if (e.target === emailCheckbox || e.target === textCheckbox) {
     // If email or text is checked, uncheck "no notifications"
@@ -241,6 +237,9 @@ function onProfileFormChange(e) {
   // Validate form and update button states
   validateForm();
   profForm.elements["prof-form-cancel-btn"].disabled = false;
+  
+  // Update notification status message
+  updateNotificationStatus();
   
 
 }
@@ -901,6 +900,123 @@ async function handleSignedInUser(user) {
  */
 function handleSignedOutUser() {
   window.location.replace("/map");
+}
+
+// ============================================================================
+// NOTIFICATION STATUS FUNCTIONS
+// ============================================================================
+
+/**
+ * Updates the notification status message to inform users whether they will receive notifications
+ * based on their current form selections.
+ */
+function updateNotificationStatus() {
+  const profForm = document.forms["profile-information-form"];
+  const emailStatusText = document.getElementById("email-notification-status");
+  const textStatusText = document.getElementById("text-notification-status");
+  
+  if (!profForm || !emailStatusText || !textStatusText) {
+    return;
+  }
+  
+  const emailCheckbox = profForm.elements["email-pref"];
+  const textCheckbox = profForm.elements["text-pref"];
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  const emailInput = profForm.elements["email-address"];
+  const phoneInput = profForm.elements["phone-number"];
+  const noNotificationsCheckbox = profForm.elements["no-notifications"];
+  
+  // Check if "no notifications" is selected
+  if (noNotificationsCheckbox && noNotificationsCheckbox.checked) {
+    emailStatusText.innerHTML = "🚫 Email notifications disabled";
+    emailStatusText.style.color = "orange";
+    emailStatusText.style.textAlign = "left";
+    textStatusText.innerHTML = "🚫 Text notifications disabled";
+    textStatusText.style.color = "orange";
+    textStatusText.style.textAlign = "left";
+    return;
+  }
+  
+  // Check email notification requirements
+  let emailReady = false;
+  if (emailCheckbox && emailCheckbox.checked) {
+    if (emailConsentCheckbox && emailConsentCheckbox.checked) {
+      const email = emailInput.value.trim();
+      if (email && email !== "you@example.com" && !email.includes("example.com")) {
+        emailReady = true;
+      }
+    }
+  }
+  
+  // Check text notification requirements
+  let textReady = false;
+  if (textCheckbox && textCheckbox.checked) {
+    if (textConsentCheckbox && textConsentCheckbox.checked) {
+      const phoneNumber = phoneInput.value.replace(/\D/g, "");
+      if (phoneNumber && phoneNumber.length === 10) {
+        textReady = true;
+      }
+    }
+  }
+  
+  // Update email status
+  if (emailReady) {
+    emailStatusText.innerHTML = "✅ Email notifications enabled";
+    emailStatusText.style.color = "green";
+    emailStatusText.style.textAlign = "left";
+  } else {
+    // Check what's missing for email
+    let emailMissingItems = [];
+    
+    if (emailCheckbox && emailCheckbox.checked) {
+      if (!emailConsentCheckbox || !emailConsentCheckbox.checked) {
+        emailMissingItems.push("check consent");
+      }
+      if (!emailInput.value.trim() || emailInput.value.includes("example.com")) {
+        emailMissingItems.push("enter valid email");
+      }
+    }
+    
+    if (emailMissingItems.length > 0) {
+      emailStatusText.innerHTML = `⚠️ To enable email: ${emailMissingItems.join(", ")}`;
+      emailStatusText.style.color = "orange";
+      emailStatusText.style.textAlign = "left";
+    } else {
+      emailStatusText.innerHTML = "📧 Select email preference to enable";
+      emailStatusText.style.color = "blue";
+      emailStatusText.style.textAlign = "left";
+    }
+  }
+  
+  // Update text status
+  if (textReady) {
+    textStatusText.innerHTML = "✅ Text notifications enabled";
+    textStatusText.style.color = "green";
+    textStatusText.style.textAlign = "left";
+  } else {
+    // Check what's missing for text
+    let textMissingItems = [];
+    
+    if (textCheckbox && textCheckbox.checked) {
+      if (!textConsentCheckbox || !textConsentCheckbox.checked) {
+        textMissingItems.push("check consent");
+      }
+      if (!phoneInput.value.replace(/\D/g, "") || phoneInput.value.replace(/\D/g, "").length !== 10) {
+        textMissingItems.push("enter valid phone");
+      }
+    }
+    
+    if (textMissingItems.length > 0) {
+      textStatusText.innerHTML = `⚠️ To enable text: ${textMissingItems.join(", ")}`;
+      textStatusText.style.color = "orange";
+      textStatusText.style.textAlign = "left";
+    } else {
+      textStatusText.innerHTML = "📱 Select text preference to enable";
+      textStatusText.style.color = "blue";
+      textStatusText.style.textAlign = "left";
+    }
+  }
 }
 
 // ============================================================================
