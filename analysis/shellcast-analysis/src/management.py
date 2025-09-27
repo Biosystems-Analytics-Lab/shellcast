@@ -221,3 +221,25 @@ class NotificationConfig:
     def cmu_dev_send_email(self):
         """Get whether to send CMU developer notifications"""
         return self.config["CMU.Developer"]["SEND_EMAIL_TO_DEVELOPER"]
+
+    @property
+    def web_base_url(self):
+        """Get the web base URL for the current state"""
+        if not self._state:
+            logger.warning("No state specified for web URL")
+            return "https://ncsu-shellcast.appspot.com"
+        
+        # State-specific URLs
+        state_urls = {
+            "NC": "https://ncsu-shellcast.appspot.com",
+            "SC": "https://shellcast-sc-dot-ncsu-shellcast.appspot.com", 
+            "FL": "https://shellcast-fl-dot-ncsu-shellcast.appspot.com"
+        }
+        
+        return state_urls.get(self._state.upper(), "https://ncsu-shellcast.appspot.com")
+
+    @property
+    def secret_key(self):
+        """Get the secret key for token generation"""
+        return self.config["Notification"]["EMAIL_SECRET_KEY"]
+
