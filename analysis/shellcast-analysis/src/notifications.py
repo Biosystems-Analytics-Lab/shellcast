@@ -3,6 +3,7 @@ import glob
 import logging
 import os
 import os.path
+from datetime import datetime
 from email.message import EmailMessage
 
 from cryptography.fernet import Fernet
@@ -11,6 +12,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from itsdangerous import URLSafeTimedSerializer
 
 import utils
 from constants import PQPF_DATA_DIR
@@ -22,6 +24,27 @@ from sqlalchemy import create_engine
 logger = logging.getLogger(__name__)
 
 PROB_CATS = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High", 5: "Very High"}
+
+
+def generate_unsubscribe_token(user_id, email, secret_key):
+    """
+    Generate a secure unsubscribe token for a user.
+    
+    Args:
+        user_id (int): The user's ID
+        email (str): The user's email address
+        secret_key (str): Secret key for token signing
+        
+    Returns:
+        str: A secure, time-limited unsubscribe token
+    """
+    serializer = URLSafeTimedSerializer(secret_key)
+    token_data = {
+        'uid': user_id,
+        'email': email,
+        'timestamp': datetime.now().isoformat()
+    }
+    return serializer.dumps(token_data, salt="email-unsubscribe")
 
 
 def filter_users_by_preferences(users_data, prob_1d_only=False):
@@ -241,8 +264,11 @@ class NotificationEmailContentGenerator:
                 if not message:
                     continue
 
+                # Generate unsubscribe link
+                unsubscribe_link = self._generate_unsubscribe_link(first.get("user_id"), user_email)
+                
                 # Create final content
-                content = message + self.notification_config.notification_footer
+                content = message + self.notification_config.notification_footer + "\n\n" + unsubscribe_link
 
                 # Add to results if both subject and content are valid
                 if subject and content:
@@ -277,6 +303,18 @@ class NotificationEmailContentGenerator:
                 f"\tIn 2 days: {PROB_CATS.get(int(lease_data.get('prob_3d_perc')))}\n"
             )
         return ""
+
+    def _generate_unsubscribe_link(self, user_id, email):
+        """Generate unsubscribe link for the user with state-specific URL."""
+        try:
+            token = generate_unsubscribe_token(user_id, email, self.notification_config.secret_key)
+            base_url = self.notification_config.web_base_url
+            return f"To unsubscribe from these notifications, click here: {base_url}/u/{token}"
+        except Exception as e:
+            logger.error(f"Error generating unsubscribe link for user {user_id}: {e}")
+            # Fallback to preferences page if token generation fails
+            base_url = self.notification_config.web_base_url
+            return f"To unsubscribe from these notifications, visit: {base_url}/preferences"
 
 
 class GmailServices:
