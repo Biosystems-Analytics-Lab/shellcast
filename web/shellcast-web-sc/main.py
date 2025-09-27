@@ -44,7 +44,7 @@ def createApp():
     
     # Validate required environment variables
     required_vars = [
-        'HOST', 'PORT', 'SECRET_KEY', 'GMAIL_SENDER_EMAIL', 'BASE_URL',
+        'HOST', 'PORT', 'SECRET_KEY', 'EMAIL_SECRET_KEY', 'GMAIL_SENDER_EMAIL', 'BASE_URL',
         'DB_USER', 'DB_PASS', 'DB_NAME', 'DB_UNIX_SOCKET_PATH_PREFIX', 'CLOUD_SQL_INSTANCE_NAME',
         'DB_POOL_SIZE', 'DB_MAX_OVERFLOW', 'DB_POOL_TIMEOUT', 'DB_POOL_RECYCLE'
     ]
@@ -62,6 +62,7 @@ def createApp():
         'DEBUG': os.environ.get('DEBUG', 'false').lower() == 'true',
         'TESTING': os.environ.get('TESTING', 'false').lower() == 'true',
         'SECRET_KEY': os.environ.get('SECRET_KEY'),
+        'EMAIL_SECRET_KEY': os.environ.get('EMAIL_SECRET_KEY'),
         
         # Server Configuration
         'HOST': os.environ.get('HOST'),
