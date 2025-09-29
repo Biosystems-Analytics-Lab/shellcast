@@ -267,7 +267,7 @@ class NotificationEmailContentGenerator:
                 # Generate unsubscribe link for SC only
                 if self.state.upper() == "SC":
                     unsubscribe_link = self._generate_unsubscribe_link(first.get("user_id"), user_email)
-                    content = message + self.notification_config.notification_footer + "\n\n" + unsubscribe_link
+                    content = message + self.notification_config.notification_footer + "<br><br>" + unsubscribe_link
                 else:
                     content = message + self.notification_config.notification_footer
                     
@@ -291,17 +291,17 @@ class NotificationEmailContentGenerator:
         """Generate message content based on probability days."""
         if lease_data.get("prob_days") == 1:  # FL
             return (
-                f"{self.notification_config.lease_template_today_only}\n\n"
-                f"Lease: {lease_data.get('lease')}\n"
-                f"\tToday: {PROB_CATS.get(int(lease_data.get('prob_1d_perc')))}\n"
+                f"{self.notification_config.lease_template_today_only}<br><br>"
+                f"<strong>Lease:</strong> {lease_data.get('lease')}<br>"
+                f"&nbsp;&nbsp;&nbsp;&nbsp;<strong>Today:</strong> {PROB_CATS.get(int(lease_data.get('prob_1d_perc')))}\n"
             )
         elif lease_data.get("prob_days") == 3:
             return (
-                f"{self.notification_config.lease_template}\n\n"
-                f"Lease: {lease_data.get('lease')}\n"
-                f"\tToday: {PROB_CATS.get(int(lease_data.get('prob_1d_perc')))}\n"
-                f"\tTomorrow: {PROB_CATS.get(int(lease_data.get('prob_2d_perc')))}\n"
-                f"\tIn 2 days: {PROB_CATS.get(int(lease_data.get('prob_3d_perc')))}\n"
+                f"{self.notification_config.lease_template}<br><br>"
+                f"<strong>Lease:</strong> {lease_data.get('lease')}<br>"
+                f"&nbsp;&nbsp;&nbsp;&nbsp;<strong>Today:</strong> {PROB_CATS.get(int(lease_data.get('prob_1d_perc')))}<br>"
+                f"&nbsp;&nbsp;&nbsp;&nbsp;<strong>Tomorrow:</strong> {PROB_CATS.get(int(lease_data.get('prob_2d_perc')))}<br>"
+                f"&nbsp;&nbsp;&nbsp;&nbsp;<strong>In 2 days:</strong> {PROB_CATS.get(int(lease_data.get('prob_3d_perc')))}\n"
             )
         return ""
 
@@ -310,12 +310,14 @@ class NotificationEmailContentGenerator:
         try:
             token = generate_unsubscribe_token(user_id, email, self.notification_config.secret_key)
             base_url = self.notification_config.web_base_url
-            return f"To unsubscribe from these notifications, click here: {base_url}/u/{token}"
+            unsubscribe_url = f"{base_url}/u/{token}"
+            return (f"To unsubscribe from these notifications, <a href='{unsubscribe_url}'>click here</a> or \n"
+                f"visit <a href='{base_url}'>ShellCast</a> Preferences page.")
         except Exception as e:
             logger.error(f"Error generating unsubscribe link for user {user_id}: {e}")
             # Fallback to preferences page if token generation fails
             base_url = self.notification_config.web_base_url
-            return f"To unsubscribe from these notifications, visit: {base_url}/preferences"
+            return f"To unsubscribe from these notifications, <a href='{base_url}/preferences'>visit here</a>"
 
 
 class GmailServices:
@@ -402,7 +404,15 @@ class GmailServices:
             message["To"] = to_addresses
             message["From"] = self.config.sender
             message["Subject"] = subject
-            message.set_content(content)
+            
+            # Set both plain text and HTML content
+            # Convert HTML to plain text for text version
+            import re
+            plain_text = re.sub(r'<[^>]+>', '', content)  # Remove HTML tags
+            plain_text = plain_text.replace('&nbsp;', ' ')  # Replace HTML entities
+            
+            message.set_content(plain_text)
+            message.add_alternative(content, subtype='html')
 
             # Encode the message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
