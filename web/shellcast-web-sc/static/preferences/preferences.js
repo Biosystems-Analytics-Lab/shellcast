@@ -444,6 +444,8 @@ async function saveProfileFormChanges() {
       }
       
       helpText.innerHTML = message;
+      // Reinitialize the form only on success so UI reflects saved state
+      initProfileForm(profileInfo, true);
     } else {
       const contentType = res.headers.get("content-type");
       
@@ -456,7 +458,6 @@ async function saveProfileFormChanges() {
         helpText.innerHTML = "Server error occurred. Please refresh the page and try again.";
       }
     }
-    initProfileForm(profileInfo, true);
   } catch (error) {
     console.error("Error during save:", error);
     helpText.style.color = "red";
