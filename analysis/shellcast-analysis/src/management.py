@@ -241,5 +241,7 @@ class NotificationConfig:
     @property
     def secret_key(self):
         """Get the secret key for token generation"""
-        return self.config["Notification"]["EMAIL_SECRET_KEY"]
+        import os
+        # Check environment variable first (for production), then config file
+        return os.environ.get('EMAIL_SECRET_KEY') or self.config["Notification"]["EMAIL_SECRET_KEY"]
 
