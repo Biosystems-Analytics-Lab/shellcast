@@ -22,7 +22,7 @@ CREATE TABLE users (
     text_verification_sent boolean NOT NULL DEFAULT false,
 	deleted boolean DEFAULT false,
 	created datetime DEFAULT NOW(),
-	updated datetime DEFAULT NOW() ON UPDATE NOW(),
+	updated datetime DEFAULT NOW() ON UPDATE NOW()
 );
 
 -- Stores information about all potential leases retrieved from the NCDMF API.
@@ -54,10 +54,10 @@ CREATE TABLE notification_log (
 	id int AUTO_INCREMENT PRIMARY KEY ,
 	user_id int NOT NULL,
 	address varchar(50) NOT NULL,
-	notification_text text(10000) NOT NULL,
+	notification_text text NOT NULL,
 	notification_type varchar(10) NOT NULL,
 	send_success boolean DEFAULT true,
-	response_text text(10000) NULL,
+	response_text text NULL,
 	created datetime DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
@@ -84,6 +84,29 @@ DELIMITER //
 CREATE PROCEDURE SelectCmuProbsToday()
 BEGIN
     SELECT * FROM cmu_probabilities WHERE DATE(`created`) = CURDATE();
+END //
+
+DELIMITER //
+CREATE PROCEDURE DeleteUserByEmail(IN p_email VARCHAR(50))
+BEGIN
+    START TRANSACTION;
+    SET SQL_SAFE_UPDATES = 0;
+
+    -- Remove any user_leases rows referencing users with the given email
+    DELETE ul FROM user_leases ul
+    JOIN users u ON u.id = ul.user_id
+    WHERE u.email = p_email;
+
+    -- Remove any notification_log rows referencing users with the given email
+    DELETE nl FROM notification_log nl
+    JOIN users u2 ON u2.id = nl.user_id
+    WHERE u2.email = p_email;
+
+    -- Finally remove the user rows
+    DELETE FROM users WHERE email = p_email;
+
+    SET SQL_SAFE_UPDATES = 1;
+    COMMIT;
 END //
 
 
