@@ -5,6 +5,7 @@ This document is intended to help a developer understand the ShellCast database 
 ## Table of Contents
 
 1. [Database Design](#1-database-design)
+2. [Create a Dedicated Database User for Google App Engine]()
 2. [Connecting to Google Cloud SQL](#2-connecting-to-google-cloud-sql)
 3. [Downloading Database Tables](#3-downloading-database-tables)
 4. [Editing User Information and Leases](#4-editing-user-information-and-leases)
@@ -59,7 +60,47 @@ __DB Name: shellcast_sc__
 __DB Name: shellcast_fl__
 ![`shellcast_fl`](images/shellcast_fl_db.png)
 
-## 2. Connecting to Google Cloud SQL with MySQL Workbench
+## 2. Create a Dedicated Database User for Google App Engine
+1. Generate password </br>
+_Example:_
+  ```
+  python -c "import secrets; print(secrets.token_urlsafe(16))"
+  ```
+2. Connect to your Cloud SQL instance
+```
+gcloud sql connect {SQL instance name} --user root"
+```
+3. Enter "root" user password after you see folowing.
+```
+Connecting to database with SQL user [root].Enter password:
+```
+4. Create user
+```sql
+-- Create a minimal privilege database user for shellcast-sc application
+-- This user will have ONLY the privileges needed for the application to function
+
+-- Create the user (replace 'your_secure_password' with a strong password)
+CREATE USER '<user name>'@'%' IDENTIFIED BY '<user password>';
+
+-- Grant only the essential privileges for application operation
+-- SELECT: Read data
+-- INSERT: Add new records
+-- UPDATE: Modify existing records  
+-- DELETE: Remove records
+GRANT SELECT, INSERT, UPDATE ON <database name>.* TO '<user name'@'%';
+
+-- Apply the changes
+FLUSH PRIVILEGES;
+
+-- Verify the user was created correctly
+SELECT User, Host FROM mysql.user WHERE User = '<user name>';
+
+-- Show the granted privileges
+SHOW GRANTS FOR '<user name>'@'%';
+```
+5. Update "DB_USER" and "DB_PASSWORD" for app.yaml and .env
+
+## 3. Connecting to Google Cloud SQL with MySQL Workbench
 
 1. Install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
 
@@ -78,7 +119,7 @@ __DB Name: shellcast_fl__
 7. You can close MySQL Workbench connection by closing DB connection tab.
 8. `Ctrl+C` to close the Cloud SQL Proxy connection.
 
-## 3. Downloading Database Tables
+## 4. Downloading Database Tables
 
 3.1 Using MySQL Workbench
 
@@ -96,7 +137,7 @@ __DB Name: shellcast_fl__
    SELECT * FROM shellcast_nc.cmu_probabilities INTO OUTFILE '/path/to/directory/nc_cmu_probabilities.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
 ```
 
-## 4. Editing User Information and Leases
+## 5. Editing User Information and Leases
 
 - User information such as phone number, email address, and email/text/probability preference can be found in the users table.  Simply double-click on the value you would like to change.
 - User lease information such as growing area name, CMU name, rainfall threshold, and location can be found in the user_leases table.  Simply double-click on the value you would like to change.
