@@ -42,6 +42,11 @@ def createApp():
     """
     app = Flask(__name__)
     
+    # Provide safe local defaults for development if not set
+    os.environ.setdefault('HOST', '127.0.0.1')
+    os.environ.setdefault('PORT', '8080')
+    os.environ.setdefault('SECRET_KEY', 'dev-secret-key')
+
     # Validate required environment variables
     required_vars = [
         'HOST', 'PORT', 'SECRET_KEY', 'EMAIL_SECRET_KEY', 'DB_USER', 'DB_PASS', 'DB_NAME', 'DB_UNIX_SOCKET_PATH_PREFIX', 
@@ -167,7 +172,7 @@ if __name__ == "__main__":
     app = createApp()
     # run the app locally using Flask config
     app.run(host=app.config.get('HOST'), 
-            port=app.config.get('PORT'), 
+            port=int(app.config.get('PORT') or 0), 
             debug=app.config.get('DEBUG'))
     print()
 else:  # else the app is being run from a WSGI application such as gunicorn
