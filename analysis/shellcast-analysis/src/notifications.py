@@ -264,12 +264,13 @@ class NotificationEmailContentGenerator:
                 if not message:
                     continue
 
-                # Generate unsubscribe link
-                unsubscribe_link = self._generate_unsubscribe_link(first.get("user_id"), user_email)
-                
-                # Create final content
-                content = message + self.notification_config.notification_footer + "\n\n" + unsubscribe_link
-
+                # Generate unsubscribe link for SC only
+                if self.state.upper() == "SC":
+                    unsubscribe_link = self._generate_unsubscribe_link(first.get("user_id"), user_email)
+                    content = message + self.notification_config.notification_footer + "\n\n" + unsubscribe_link
+                else:
+                    content = message + self.notification_config.notification_footer
+                    
                 # Add to results if both subject and content are valid
                 if subject and content:
                     results.append(
