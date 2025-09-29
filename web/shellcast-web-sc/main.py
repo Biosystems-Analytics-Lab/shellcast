@@ -44,9 +44,9 @@ def createApp():
     
     # Validate required environment variables
     required_vars = [
-        'HOST', 'PORT', 'SECRET_KEY', 'EMAIL_SECRET_KEY', 'GMAIL_SENDER_EMAIL', 'BASE_URL',
-        'DB_USER', 'DB_PASS', 'DB_NAME', 'DB_UNIX_SOCKET_PATH_PREFIX', 'CLOUD_SQL_INSTANCE_NAME',
-        'DB_POOL_SIZE', 'DB_MAX_OVERFLOW', 'DB_POOL_TIMEOUT', 'DB_POOL_RECYCLE'
+        'HOST', 'PORT', 'SECRET_KEY', 'EMAIL_SECRET_KEY', 'DB_USER', 'DB_PASS', 'DB_NAME', 'DB_UNIX_SOCKET_PATH_PREFIX', 
+        'CLOUD_SQL_INSTANCE_NAME', 'DB_POOL_SIZE', 'DB_MAX_OVERFLOW', 'DB_POOL_TIMEOUT', 
+        'DB_POOL_RECYCLE'
     ]
     
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
@@ -63,23 +63,7 @@ def createApp():
         'TESTING': os.environ.get('TESTING', 'false').lower() == 'true',
         'SECRET_KEY': os.environ.get('SECRET_KEY'),
         'EMAIL_SECRET_KEY': os.environ.get('EMAIL_SECRET_KEY'),
-        
-        # Server Configuration
-        'HOST': os.environ.get('HOST'),
-        'PORT': int(os.environ.get('PORT')),
-        
-        # Gmail API Configuration
-        'GMAIL_SENDER_EMAIL': os.environ.get('GMAIL_SENDER_EMAIL'),
-        'BASE_URL': os.environ.get('BASE_URL'),
-        
-        # Service Account (App Engine)
-        'GMAIL_SERVICE_ACCOUNT_FILE': os.environ.get('GMAIL_SERVICE_ACCOUNT_FILE'),
-        'GMAIL_DELEGATE_USER': os.environ.get('GMAIL_DELEGATE_USER'),
-        
-        # OAuth 2.0 (Alternative)
-        'GMAIL_CLIENT_ID': os.environ.get('GMAIL_CLIENT_ID'),
-        'GMAIL_CLIENT_SECRET': os.environ.get('GMAIL_CLIENT_SECRET'),
-        
+              
         # Database Configuration
         'DB_HOST': os.environ.get('DB_HOST'),
         'DB_PORT': os.environ.get('DB_PORT'),
@@ -104,8 +88,8 @@ def createApp():
     # Set Gmail redirect URI based on BASE_URL
     app.config['GMAIL_REDIRECT_URI'] = os.environ.get('GMAIL_REDIRECT_URI')
     
-    # Set database URI
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@/{}?unix_socket={}{}'.format(
+    # Set database URI with SSL disabled for caching_sha2_password compatibility
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@/{}?unix_socket={}{}&ssl_disabled=true'.format(
         app.config['DB_USER'],
         app.config['DB_PASS'],
         app.config['DB_NAME'],
