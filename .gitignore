@@ -29,6 +29,9 @@ analysisenv/
 notifications_old/
 webvenv/
 
+# App Engine configuration files with sensitive data
+**/app.yaml
+
 # History files
 .Rhistory
 .Rapp.history
