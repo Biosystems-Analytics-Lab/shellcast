@@ -33,15 +33,15 @@ if __name__ == "__main__":
     db = "gcp.mysql"
 
     # # --- Download and process total precipitation XMRG dataset ---
-    # tpxmrg = TPXMRG(STATE, 7)
-    # tpxmrg.main()
+    tpxmrg = TPXMRG(STATE, 7)
+    tpxmrg.main()
 
     # --- Directory configurations ---
     dir_config = DirectoryConfig(STATE, db)
 
     # # --- PQPF analysis ---
-    # pqpf = FLPQPF(dir_config)
-    # pqpf.main()
+    pqpf = FLPQPF(dir_config)
+    pqpf.main()
 
     # --- Email notification ---
     notification_config = NotificationConfig(STATE)
