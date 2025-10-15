@@ -980,11 +980,11 @@ function updateNotificationStatus() {
     }
     
     if (emailMissingItems.length > 0) {
-      emailStatusText.innerHTML = `⚠️ To enable email: ${emailMissingItems.join(", ")}`;
+      emailStatusText.innerHTML = `⚠️ To receive notifications: ${emailMissingItems.join(", ")}`;
       emailStatusText.style.color = "orange";
       emailStatusText.style.textAlign = "left";
     } else {
-      emailStatusText.innerHTML = "📧 Select email preference to enable";
+      emailStatusText.innerHTML = "📧 You will not receive notifications - `Email` unchecked";
       emailStatusText.style.color = "blue";
       emailStatusText.style.textAlign = "left";
     }
@@ -1009,11 +1009,11 @@ function updateNotificationStatus() {
     }
     
     if (textMissingItems.length > 0) {
-      textStatusText.innerHTML = `⚠️ To enable text: ${textMissingItems.join(", ")}`;
+      textStatusText.innerHTML = `⚠️ To receive notifications: ${textMissingItems.join(", ")}`;
       textStatusText.style.color = "orange";
       textStatusText.style.textAlign = "left";
     } else {
-      textStatusText.innerHTML = "📱 Select text preference to enable";
+      textStatusText.innerHTML = "📱 You will not receive notifications - `Text` unchecked";
       textStatusText.style.color = "blue";
       textStatusText.style.textAlign = "left";
     }
