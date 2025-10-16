@@ -84,12 +84,7 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   cancelBtn.disabled = true;
   saveBtn.disabled = true;
 
-  // show example notification
-  document.getElementById("example-notification").innerHTML =
-    generateExampleNotification(
-      noNotificationsCheckbox.checked,
-      profInfo.prob_pref,
-    );
+  // example notification text comes from the template; no dynamic override
 
   // add event listeners
   if (!ignoreAddingEventListeners) {
@@ -296,17 +291,7 @@ function updateAccordionVisibility(emailConsentChecked, textConsentChecked) {
   }
 }
 
-/**
- *
- * @param {boolean} noNotifications whether or not the user enabled notifications
- * @param {number} selectedProb the user's selected probability preference
- */
-function generateExampleNotification(noNotifications, selectedProb) {
-  if (noNotifications) {
-    return "<p>-- You will not receive any notifications. --</p>";
-  }
-  return `<pre>One or more of your leases is at risk of closing today.\nVisit <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details.</pre>`;
-}
+// Removed generateExampleNotification; example text is static in HTML
 
 /**
  * Enables the cancel and save buttons on the profile info form.
@@ -363,16 +348,7 @@ function onProfileFormChange(e) {
     radio.disabled = noNotificationsCheckbox.checked;
   }
 
-  // show example notification
-  let selectedProb;
-  for (let radio of probRadios) {
-    if (radio.checked) {
-      selectedProb = Number(radio.value);
-    }
-  }
-  // console.log(selectedProb);
-  document.getElementById("example-notification").innerHTML =
-    generateExampleNotification(noNotificationsCheckbox.checked, selectedProb);
+  // example notification remains static; no dynamic override
 
   // enable save and cancel buttons
   profForm.elements["prof-form-cancel-btn"].disabled = false;
