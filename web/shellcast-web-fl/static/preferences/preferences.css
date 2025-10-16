@@ -376,13 +376,7 @@
 
 /* ============================================================================
    EXAMPLE NOTIFICATIONS
-   ============================================================================ */
-
-.example-group {
-  margin-bottom: 1.25rem;
-}
-
-.text-bubble {
+   ============================================================================ */.text-bubble {
   background: #e9ecef;
   padding: 0.875rem;
   border-radius: 6px;
@@ -406,7 +400,6 @@
 
 .form-actions {
   text-align: right;
-  padding: 1.25rem 0;
   border-top: 1px solid #dee2e6;
 }
 
