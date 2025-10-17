@@ -78,3 +78,6 @@ vignettes/*.pdf
 .Renviron
 ncep-lib-utils/
 .python-version
+
+# App configuration files with sensitive information
+**/app.yaml
