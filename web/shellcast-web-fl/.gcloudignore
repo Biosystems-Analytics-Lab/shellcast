@@ -8,6 +8,7 @@
 
 # pyenv
 .python-version
+.env
 
 # ignore this file itself
 .gcloudignore
