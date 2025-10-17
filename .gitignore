@@ -81,3 +81,7 @@ ncep-lib-utils/
 
 # App configuration files with sensitive information
 **/app.yaml
+
+# Template files with potentially sensitive information
+**/*.template
+**/env.template
