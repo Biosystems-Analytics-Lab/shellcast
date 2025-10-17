@@ -66,7 +66,7 @@ python -c "import secrets; print(secrets.token_urlsafe(16))"
 2. Connect to your Cloud SQL instance
 
 ```
-gcloud sql connect {SQL instance name} --user root"
+gcloud sql connect {SQL instance name} --user root
 ```
 
 3. Enter "root" user password after you see folowing.
