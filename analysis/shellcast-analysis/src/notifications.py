@@ -46,7 +46,7 @@ def generate_unsubscribe_token(user_id, email, secret_key):
     return serializer.dumps(token_data, salt="email-unsubscribe")
 
 
-def filter_users_by_preferences(users_data, prob_1d_only=False):
+def filter_users_by_preferences(users_data, prob_1d_only=False, state=None):
     """
     Filter users based on their email/text preferences and probability thresholds
 
@@ -55,6 +55,7 @@ def filter_users_by_preferences(users_data, prob_1d_only=False):
         (user_id, email, phone, prob_pref, email_pref, text_pref, threshold,
          lease_id, area_id, user_code, prob_1d_perc, prob_2d_perc, prob_3d_perc)
         prob_1d_only: States where has only today's prediction (e.g. FL) to be true
+        state: State code (FL, SC, NC) to determine consent requirements
     Returns:
         List of filtered user data tuples
     """
@@ -62,11 +63,24 @@ def filter_users_by_preferences(users_data, prob_1d_only=False):
     filtered_users = []
 
     for user in users_data:
-        # Check if user has either email or text notifications enabled
-        has_notification_enabled = user["email_pref"] == 1 or user["text_pref"] == 1
+        # Check if user has email notifications enabled
+        # For SC and FL: both email_pref AND email_consent must be true
+        # For NC: only email_pref needs to be true (consent not implemented yet)
+        if state and state.upper() in ["SC", "FL"]:
+            email_enabled = (
+                user.get("email_pref") == 1 and user.get("email_consent") == 1
+            )
+        else:
+            # NC or unknown state - only check email_pref
+            email_enabled = user.get("email_pref") == 1
+
+        # Text notifications are not implemented yet, so skip text checks
+        has_notification_enabled = email_enabled
+
         logger.debug(
-            f"User {user.get('user_id')} notification preferences - email: "
-            f"{user.get('email_pref')}, text: {user.get('text_pref')}"
+            f"User {user.get('user_id')} notification preferences - email_pref: "
+            f"{user.get('email_pref')}, email_consent: {user.get('email_consent')}, "
+            f"state: {state}, email_enabled: {email_enabled}"
         )
 
         # Check if probability preference meets any of the threshold conditions
@@ -189,7 +203,19 @@ class NotificationEmailContentGenerator:
         user_data_by_email = {}
         for data in self.data:
             # Check if email preference is enabled and email exists
-            if data.get("email_pref") == 1 and data.get("email"):
+            # For SC and FL: both email_pref AND email_consent must be true
+            # For NC: only email_pref needs to be true (consent not implemented yet)
+            if self.state and self.state.upper() in ["SC", "FL"]:
+                email_ok = (
+                    data.get("email_pref") == 1
+                    and data.get("email_consent") == 1
+                    and data.get("email")
+                )
+            else:
+                # NC or unknown state - only check email_pref
+                email_ok = data.get("email_pref") == 1 and data.get("email")
+
+            if email_ok:
                 email = data["email"]
                 lease_id = data.get("lease_id")
 
@@ -513,7 +539,9 @@ class EmailNotification:
             logger.info(f"Retrieved {len(user_data)} users from database")
 
             logger.info("Filtering users based on preferences")
-            filtered_data = filter_users_by_preferences(user_data, self.prob_only_today)
+            filtered_data = filter_users_by_preferences(
+                user_data, self.prob_only_today, self.state
+            )
 
             if len(filtered_data) > 0:
                 logger.info("Generating email content")
