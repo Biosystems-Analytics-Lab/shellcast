@@ -111,20 +111,7 @@
                     <div class="example-group">
                       <label for="example-email-notification" class="form-label">Email Message Example:</label>
                       <div class="text-bubble" id="example-email-notification">
-                        <p>
-                          One or more of your leases is at risk of closing today. Visit 
-                          <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details.<br><br>
-                          
-                          Lease: {your lease location ID}<br>
-                          &emsp;Today: Very High<br>
-                          &emsp;Tomorrow: High<br>
-                          &emsp;In 2 days: Moderate<br><br>
-                          
-                          These predictions are in no way indicative of whether or not a lease will actually be temporarily 
-                          closed for harvest.<br><br>
-                          
-                          <u style="text-align: center; display: block; margin-top: 0.5rem;">Unsubscribe</u>
-                        </p>
+                        <img src="{{ url_for('static', filename='img/preference/notification_email_message_example.png') }}" alt="Email Message Example" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
                       </div>
                       <small class="form-text text-muted">
                         This is an example of an email notification you might receive for a lease.
