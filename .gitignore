@@ -3,9 +3,11 @@
 .idea/
 .DS_Store
 .env
+.eslintrc
 cloud-sql-proxy*
 config*
 my-cloud-sql-proxy.sh
+run-web.sh
 sqlauth*
 *.grb
 tpxmrg_inventory.json
