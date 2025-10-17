@@ -1,10 +1,8 @@
 from functools import wraps
 
-from flask import request
-
 from firebase_admin import auth
 from firebase_admin.auth import ExpiredIdTokenError, InvalidIdTokenError
-
+from flask import request
 from models import db
 from models.User import User
 
@@ -20,7 +18,7 @@ def ensureUserExists(fbUserInfo):
 
     # check if the user with this Firebase UID already exists
     user = User.query.filter_by(firebase_uid=fbUid).first()
-    if user != None:
+    if user is not None:
         return user
 
     # otherwise we need to create a new user

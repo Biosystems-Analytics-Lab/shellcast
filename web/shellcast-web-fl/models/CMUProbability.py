@@ -1,7 +1,6 @@
 # noinspection PyUnresolvedReferences
-from models import CMU
-from models import db
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from models import CMU, db
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.sql import functions
 
 

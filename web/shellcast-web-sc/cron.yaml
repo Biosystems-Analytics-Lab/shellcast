@@ -1,6 +1,6 @@
 cron:
-- description: "Send notifications daily for SC"
-  url: /sendNotifications
-  target: shellcast-sc
-  schedule: every day 07:00
-  timezone: America/New_York
+  - description: "Send notifications daily for SC"
+    url: /sendNotifications
+    target: shellcast-sc
+    schedule: every day 07:00
+    timezone: America/New_York

@@ -1,6 +1,11 @@
 "use strict";
-import {HB_POPUP, PARTNER_SITE_DOMAINS, VB_POPUP, WC_POPUP,} from "./map_constants.js";
-import {getDomainName} from "./utils.js";
+import {
+  HB_POPUP,
+  PARTNER_SITE_DOMAINS,
+  VB_POPUP,
+  WC_POPUP,
+} from "./map_constants.js";
+import { getDomainName } from "./utils.js";
 
 // Elements that make up the popup.
 const popupContainer = document.getElementById("popup");
@@ -27,7 +32,7 @@ export function popupContent(title, siteName, iconUrl, text) {
               <span aria-hidden="true"" ><h6>&times;</h6></span>
             </button>
           </div>
-        </div> 
+        </div>
       </div>
       <div class="card-body no-padding">
         <div class="row g-0 no-margin">
@@ -65,7 +70,7 @@ export function partnerAppLyrPopupContent(feature) {
       title = WC_POPUP.title;
       iconUrl = WC_POPUP.iconUrl;
       hpUrl = WC_POPUP.hpUrl;
-      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
+      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the
                       Web Camera at this location. This will open the WebCOOS camera site in a new tab.
                       <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                       </p>`;
@@ -73,8 +78,8 @@ export function partnerAppLyrPopupContent(feature) {
       title = VB_POPUP.title;
       iconUrl = VB_POPUP.iconUrl;
       hpUrl = VB_POPUP.hpUrl;
-      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
-                        Beach Condition Reporting System at this location. This will open the Mote Marine Laboratory 
+      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the
+                        Beach Condition Reporting System at this location. This will open the Mote Marine Laboratory
                         site in a new tab.
                         <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                         </p>`;

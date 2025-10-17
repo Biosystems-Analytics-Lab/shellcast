@@ -1,18 +1,8 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    Float,
-    String,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    UniqueConstraint,
-)
-from sqlalchemy.sql import functions, expression
-from sqlalchemy.orm import relationship
-
 from models import db
 from models.CMUProbability import CMUProbability
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import expression, functions
 
 
 class UserLease(db.Model):

@@ -1,8 +1,8 @@
 from models import db
 from models.CMUProbability import CMUProbability
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import functions, expression
+from sqlalchemy.sql import expression, functions
 
 
 class UserLease(db.Model):

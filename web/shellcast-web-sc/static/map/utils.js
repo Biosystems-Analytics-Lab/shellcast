@@ -237,12 +237,11 @@ export function addHomeExtentButton(map, extent, popupLyr) {
   map.addControl(homeExtent);
 }
 
-
 export function mapBoundingBox(map) {
   const extent = map.getView().calculateExtent(map.getSize());
   // Set the initial view to show all points of interest
   map.getView().fit(extent, {
-    padding: [50, 50, 50, 50]
+    padding: [50, 50, 50, 50],
   });
   return extent;
 }
@@ -252,7 +251,7 @@ export function addAllMapLayers(
   lyrList,
   popupLyr,
   mapCenter,
-  zoomLevel
+  zoomLevel,
 ) {
   return new ol.Map({
     target: mapEl,

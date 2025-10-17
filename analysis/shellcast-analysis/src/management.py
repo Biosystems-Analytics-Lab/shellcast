@@ -4,14 +4,14 @@ Uses properties for better encapsulation and control over directory paths.
 """
 
 import configparser
+import logging
 import os
 import platform
 from datetime import datetime
-import pytz
-import logging
 
+import pytz
 import utils
-from constants import CONFIG_INI, ROOT_DIR, PQPF_DATA_DIR, TP_DATA_DIR
+from constants import CONFIG_INI, PQPF_DATA_DIR, ROOT_DIR, TP_DATA_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -133,12 +133,15 @@ class NotificationConfig:
         if not self._state:
             logger.warning("No state specified for notification settings")
             return False
-            
+
         # Check state-specific setting
         state_key = f"{self._state}.Notification"
-        if state_key in self.config and "ENABLE_NOTIFICATIONS" in self.config[state_key]:
+        if (
+            state_key in self.config
+            and "ENABLE_NOTIFICATIONS" in self.config[state_key]
+        ):
             return self.config[state_key].getboolean("ENABLE_NOTIFICATIONS")
-        
+
         logger.warning(f"No notification setting found for {self._state}")
         return False
 
@@ -228,20 +231,23 @@ class NotificationConfig:
         if not self._state:
             logger.warning("No state specified for web URL")
             return "https://ncsu-shellcast.appspot.com"
-        
+
         # State-specific URLs
         state_urls = {
             "NC": "https://ncsu-shellcast.appspot.com",
-            "SC": "https://shellcast-sc-dot-ncsu-shellcast.appspot.com", 
-            "FL": "https://shellcast-fl-dot-ncsu-shellcast.appspot.com"
+            "SC": "https://shellcast-sc-dot-ncsu-shellcast.appspot.com",
+            "FL": "https://shellcast-fl-dot-ncsu-shellcast.appspot.com",
         }
-        
+
         return state_urls.get(self._state.upper(), "https://ncsu-shellcast.appspot.com")
 
     @property
     def secret_key(self):
         """Get the secret key for token generation"""
         import os
-        # Check environment variable first (for production), then config file
-        return os.environ.get('EMAIL_SECRET_KEY') or self.config["Notification"]["EMAIL_SECRET_KEY"]
 
+        # Check environment variable first (for production), then config file
+        return (
+            os.environ.get("EMAIL_SECRET_KEY")
+            or self.config["Notification"]["EMAIL_SECRET_KEY"]
+        )

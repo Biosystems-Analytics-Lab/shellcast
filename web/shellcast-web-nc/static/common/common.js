@@ -1,6 +1,10 @@
 "use strict";
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-import {getAuth, onAuthStateChanged, signOut,} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 // Firebase configuration
 const FIREBASE_CONFIG = {
@@ -22,13 +26,13 @@ const auth = getAuth(app);
  */
 function handleNavbarSignedIn(user) {
   // hide the "Sign In" link
-  document.getElementById('account-sign-in').style.display = 'none';
+  document.getElementById("account-sign-in").style.display = "none";
 
   // show the account dropdown menu
-  document.getElementById('account-dropdown-div').style.display = 'block';
+  document.getElementById("account-dropdown-div").style.display = "block";
 
   // change the dropdown menu's text
-  document.getElementById('account-dropdown').textContent = user.email;
+  document.getElementById("account-dropdown").textContent = user.email;
 }
 
 /**
@@ -36,13 +40,13 @@ function handleNavbarSignedIn(user) {
  */
 function handleNavbarSignedOut() {
   // show the "Sign In" link
-  document.getElementById('account-sign-in').style.display = 'block';
+  document.getElementById("account-sign-in").style.display = "block";
 
   // hide the account dropdown menu
-  document.getElementById('account-dropdown-div').style.display = 'none';
+  document.getElementById("account-dropdown-div").style.display = "none";
 
   // change the dropdown menu's text
-  document.getElementById('account-dropdown').textContent = 'Account';
+  document.getElementById("account-dropdown").textContent = "Account";
 }
 
 async function authorizedFetch(url, options = {}) {

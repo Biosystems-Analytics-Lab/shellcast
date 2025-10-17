@@ -1,7 +1,12 @@
 "use strict";
 
-import {strToEl} from "./utils.js";
-import {CAMERA_ICON, HOWS_THE_BEACH_ICON, LEGEND_SCALE, VISIT_BEACHES_ICON} from "./map_constants.js";
+import { strToEl } from "./utils.js";
+import {
+  CAMERA_ICON,
+  HOWS_THE_BEACH_ICON,
+  LEGEND_SCALE,
+  VISIT_BEACHES_ICON,
+} from "./map_constants.js";
 
 /**
  * Create CMU closure probability legend on map
@@ -54,7 +59,7 @@ export function addPartnerSitesLegendControl(partnerSitesLegendID) {
                 <label class="form-check-label" for="partner-sites-legend-checkbox"><span>
                     <h6>&emsp13;Partner Sites</h6>
                   </span></label>
-              </div>      
+              </div>
               <table id="partner-sites-legend-table" class="partner-legend">
                 <tr>
                   <td class="legend-icon"><img src=${HOWS_THE_BEACH_ICON} alt="How's the Beach"></td>
@@ -68,7 +73,7 @@ export function addPartnerSitesLegendControl(partnerSitesLegendID) {
                   <td class="legend-icon"><img src=${CAMERA_ICON} alt="WebCOOS"</td>
                   <td><small>WebCOOS Camera Sites</small></td>
                 </tr>
-            </table>      
+            </table>
             </div>
           </div>
         </div>
@@ -129,6 +134,3 @@ export function addPartnerSitesLegendControl(partnerSitesLegendID) {
 //     </div>
 //   </div>
 // </div>`;
-
-
-

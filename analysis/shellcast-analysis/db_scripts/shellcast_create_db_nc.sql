@@ -5,7 +5,7 @@ USE shellcast_nc;
 
 -- Stores user information.
 CREATE TABLE users (
-	id int AUTO_INCREMENT PRIMARY KEY,
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	firebase_uid varchar(28) NULL,
 	phone_number varchar(11) NULL,
 	email varchar(50) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE users (
     text_verification_sent boolean NOT NULL DEFAULT false,
 	deleted boolean DEFAULT false,
 	created datetime DEFAULT NOW(),
-	updated datetime DEFAULT NOW() ON UPDATE NOW()
+	updated datetime DEFAULT NOW() ON UPDATE NOW(),
 );
 
 -- Stores information about all potential leases retrieved from the NCDMF API.
@@ -122,7 +122,7 @@ END //
 DELIMITER //
 CREATE PROCEDURE SelectUserLeaseProbsToday()
 BEGIN
-    SELECT 
+    SELECT
         u.id AS user_id,
         u.email,
         u.phone_number,

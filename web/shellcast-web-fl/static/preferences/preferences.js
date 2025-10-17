@@ -1,6 +1,6 @@
 "use strict";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import {auth, authorizedFetch} from "../common/common.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { auth, authorizedFetch } from "../common/common.js";
 
 /* The number of milliseconds between when a user changes the lease search
    text and when an API request is sent for a lease search */
@@ -55,19 +55,20 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   // set values for inputs
   emailInput.value = profInfo.email;
   phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
-  
+
   // Set default state: if no preferences are set, default to "no notifications"
   const hasEmailPref = profInfo.email_pref === true;
   const hasTextPref = profInfo.text_pref === true;
-  
+
   // Default to "no notifications" if neither email nor text preferences are explicitly set
   noNotificationsCheckbox.checked = !hasEmailPref && !hasTextPref;
   emailCheckbox.checked = hasEmailPref;
   // Text notifications are temporarily disabled
-  textCheckboxLabel.innerHTML = "Text (Temporarily unavailable for system update)";
+  textCheckboxLabel.innerHTML =
+    "Text (Temporarily unavailable for system update)";
   textCheckbox.disabled = true;
   textCheckbox.checked = false;
-  
+
   // If text is disabled and email is also not preferred, ensure "no notifications" is checked
   if (!hasEmailPref) {
     noNotificationsCheckbox.checked = true;
@@ -95,7 +96,7 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
       "input",
       (e) => (phoneNumberInput.value = maskPhoneNumber(e.target.value)),
     );
-    
+
     // Setup accordion functionality
     setupAccordionButtons();
     setupAccordionTabs();
@@ -145,30 +146,30 @@ function setupExpandCollapseButtons() {
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (emailExpandBtn) {
-    emailExpandBtn.addEventListener("click", function(e) {
+    emailExpandBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       expandEmailAccordion();
     });
   }
-  
+
   if (emailCollapseBtn) {
-    emailCollapseBtn.addEventListener("click", function(e) {
+    emailCollapseBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       collapseEmailAccordion();
     });
   }
-  
+
   if (textExpandBtn) {
-    textExpandBtn.addEventListener("click", function(e) {
+    textExpandBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       expandTextAccordion();
     });
   }
-  
+
   if (textCollapseBtn) {
-    textCollapseBtn.addEventListener("click", function(e) {
+    textCollapseBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       collapseTextAccordion();
     });
@@ -182,11 +183,11 @@ function expandEmailAccordion() {
   const emailAccordion = document.getElementById("email-accordion");
   const emailExpandBtn = document.getElementById("email-expand-btn");
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
-  
+
   if (emailAccordion) {
     emailAccordion.classList.add("expanded");
   }
-  
+
   if (emailExpandBtn) emailExpandBtn.style.display = "none";
   if (emailCollapseBtn) emailCollapseBtn.style.display = "inline-flex";
 }
@@ -198,11 +199,11 @@ function collapseEmailAccordion() {
   const emailAccordion = document.getElementById("email-accordion");
   const emailExpandBtn = document.getElementById("email-expand-btn");
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
-  
+
   if (emailAccordion) {
     emailAccordion.classList.remove("expanded");
   }
-  
+
   if (emailExpandBtn) emailExpandBtn.style.display = "inline-flex";
   if (emailCollapseBtn) emailCollapseBtn.style.display = "none";
 }
@@ -214,11 +215,11 @@ function expandTextAccordion() {
   const textAccordion = document.getElementById("text-accordion");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (textAccordion) {
     textAccordion.classList.add("expanded");
   }
-  
+
   if (textExpandBtn) textExpandBtn.style.display = "none";
   if (textCollapseBtn) textCollapseBtn.style.display = "inline-flex";
 }
@@ -230,11 +231,11 @@ function collapseTextAccordion() {
   const textAccordion = document.getElementById("text-accordion");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (textAccordion) {
     textAccordion.classList.remove("expanded");
   }
-  
+
   if (textExpandBtn) textExpandBtn.style.display = "inline-flex";
   if (textCollapseBtn) textCollapseBtn.style.display = "none";
 }
@@ -243,21 +244,25 @@ function collapseTextAccordion() {
  * Sets up accordion tabs for switching between input and example views
  */
 function setupAccordionTabs() {
-  const tabs = document.querySelectorAll('.accordion-tab');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const tabId = this.getAttribute('data-tab');
-      const accordionBody = this.closest('.accordion-body');
-      
+  const tabs = document.querySelectorAll(".accordion-tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      const tabId = this.getAttribute("data-tab");
+      const accordionBody = this.closest(".accordion-body");
+
       // Remove active class from all tabs in this accordion
-      accordionBody.querySelectorAll('.accordion-tab').forEach(t => t.classList.remove('active'));
-      accordionBody.querySelectorAll('.accordion-tab-content').forEach(c => c.classList.remove('active'));
-      
+      accordionBody
+        .querySelectorAll(".accordion-tab")
+        .forEach((t) => t.classList.remove("active"));
+      accordionBody
+        .querySelectorAll(".accordion-tab-content")
+        .forEach((c) => c.classList.remove("active"));
+
       // Add active class to clicked tab and content
-      this.classList.add('active');
+      this.classList.add("active");
       const content = accordionBody.querySelector(`#${tabId}`);
       if (content) {
-        content.classList.add('active');
+        content.classList.add("active");
       }
     });
   });
@@ -275,19 +280,29 @@ function updateAccordionVisibility(emailConsentChecked, textConsentChecked) {
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (emailAccordion) {
     emailAccordion.classList.toggle("expanded", emailConsentChecked);
     // Update button states
-    if (emailExpandBtn) emailExpandBtn.style.display = emailConsentChecked ? "none" : "inline-flex";
-    if (emailCollapseBtn) emailCollapseBtn.style.display = emailConsentChecked ? "inline-flex" : "none";
+    if (emailExpandBtn)
+      emailExpandBtn.style.display = emailConsentChecked
+        ? "none"
+        : "inline-flex";
+    if (emailCollapseBtn)
+      emailCollapseBtn.style.display = emailConsentChecked
+        ? "inline-flex"
+        : "none";
   }
-  
+
   if (textAccordion) {
     textAccordion.classList.toggle("expanded", textConsentChecked);
     // Update button states
-    if (textExpandBtn) textExpandBtn.style.display = textConsentChecked ? "none" : "inline-flex";
-    if (textCollapseBtn) textCollapseBtn.style.display = textConsentChecked ? "inline-flex" : "none";
+    if (textExpandBtn)
+      textExpandBtn.style.display = textConsentChecked ? "none" : "inline-flex";
+    if (textCollapseBtn)
+      textCollapseBtn.style.display = textConsentChecked
+        ? "inline-flex"
+        : "none";
   }
 }
 
@@ -319,7 +334,7 @@ function onProfileFormChange(e) {
     // If email or text is checked, uncheck "no notifications"
     if (emailCheckbox.checked || textCheckbox.checked) {
       noNotificationsCheckbox.checked = false;
-      
+
       // Expand accordion based on which checkbox was clicked
       if (e.target === emailCheckbox && emailCheckbox.checked) {
         expandEmailAccordion();
@@ -334,10 +349,11 @@ function onProfileFormChange(e) {
   }
 
   // Text notifications are temporarily disabled
-  textCheckboxLabel.innerHTML = "Text (Temporarily unavailable for system update)";
+  textCheckboxLabel.innerHTML =
+    "Text (Temporarily unavailable for system update)";
   textCheckbox.disabled = true;
   textCheckbox.checked = false;
-  
+
   // If text is disabled and unchecked, and email is also unchecked, ensure "no notifications" is checked
   if (!emailCheckbox.checked) {
     noNotificationsCheckbox.checked = true;
@@ -440,11 +456,11 @@ async function getGeoJsonLeases() {
         }
       });
     });
-//  const auzDiv = document.querySelector("#auz-menu");
-//  for (let i = 0; auz_leases.length; i++) {
-//    // console.log(auz_leases[i]);
-//    // auzDiv.innerHTML += `<a class="dropdown-item" href="#">auz_leases[i]</a>`;
-//  }
+  //  const auzDiv = document.querySelector("#auz-menu");
+  //  for (let i = 0; auz_leases.length; i++) {
+  //    // console.log(auz_leases[i]);
+  //    // auzDiv.innerHTML += `<a class="dropdown-item" href="#">auz_leases[i]</a>`;
+  //  }
 }
 
 // function createDropdowns(leases) {
@@ -500,7 +516,7 @@ function createLeaseInfoEl(lease) {
               <label for="lease-${lease.lease_id}-rainfall-threshold">Lease Closure Rainfall Threshold (inches)</label>
               <input type="text" class="form-control" id="lease-${lease.lease_id}-rainfall-threshold" value="${lease.rainfall_desc}" readonly>
             </div>
-            
+
             <small class="form-text text-muted">
               The rainfall threshold is the amount of rainfall in inches within a
               24-hour period that results in a lease being temporarily closed for

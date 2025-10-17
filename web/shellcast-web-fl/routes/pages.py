@@ -53,9 +53,11 @@ def aboutPage():
 def howItWorksPage():
     return render_template("how-it-works.html")
 
+
 @pages.route("/notification-service")
 def notificationServicePage():
     return render_template("notification-service.html")
+
 
 @pages.route("/faqs")
 def faqsPage():

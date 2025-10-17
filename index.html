@@ -1,102 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shellfish Area Closure Map</title>
-    
+
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""/>
-    
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        #map {
-            height: 100vh;
-            width: 100%;
-        }
-        .info-panel {
-            padding: 6px 8px;
-            font: 14px/16px Arial, Helvetica, sans-serif;
-            background: white;
-            background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-radius: 5px;
-        }
-        .legend {
-            line-height: 18px;
-            color: #555;
-        }
-        .legend i {
-            width: 18px;
-            height: 18px;
-            float: left;
-            margin-right: 8px;
-            opacity: 0.7;
-        }
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+      .info-panel {
+        padding: 6px 8px;
+        font:
+          14px/16px Arial,
+          Helvetica,
+          sans-serif;
+        background: white;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+      }
+      .legend {
+        line-height: 18px;
+        color: #555;
+      }
+      .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="map"></div>
 
     <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
 
     <script>
-        // Initialize the map
-        const map = L.map('map').setView([43.6591, -70.2568], 11); // Centered on Portland, Maine area
+      // Initialize the map
+      const map = L.map("map").setView([43.6591, -70.2568], 11); // Centered on Portland, Maine area
 
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+      // Add OpenStreetMap tile layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
 
-        // Add a scale control
-        L.control.scale().addTo(map);
+      // Add a scale control
+      L.control.scale().addTo(map);
 
-        // Create a legend control
-        const legend = L.control({position: 'bottomright'});
-        legend.onAdd = function (map) {
-            const div = L.DomUtil.create('div', 'info-panel legend');
-            div.innerHTML = `
+      // Create a legend control
+      const legend = L.control({ position: "bottomright" });
+      legend.onAdd = function (map) {
+        const div = L.DomUtil.create("div", "info-panel legend");
+        div.innerHTML = `
                 <h4>Status</h4>
                 <i style="background: #ff3300"></i>Closed<br>
                 <i style="background: #ffcc00"></i>Warning<br>
                 <i style="background: #33cc33"></i>Open<br>
             `;
-            return div;
+        return div;
+      };
+      legend.addTo(map);
+
+      // Example function to add point data (you'll modify this with your actual data)
+      function addShellfishPoint(lat, lng, status) {
+        const colors = {
+          closed: "#ff3300",
+          warning: "#ffcc00",
+          open: "#33cc33",
         };
-        legend.addTo(map);
 
-        // Example function to add point data (you'll modify this with your actual data)
-        function addShellfishPoint(lat, lng, status) {
-            const colors = {
-                closed: '#ff3300',
-                warning: '#ffcc00',
-                open: '#33cc33'
-            };
-            
-            return L.circleMarker([lat, lng], {
-                radius: 8,
-                fillColor: colors[status],
-                color: '#000',
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0.7
-            }).addTo(map);
-        }
+        return L.circleMarker([lat, lng], {
+          radius: 8,
+          fillColor: colors[status],
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.7,
+        }).addTo(map);
+      }
 
-        // Example points (replace with your actual data)
-        addShellfishPoint(43.6591, -70.2568, 'open');
-        addShellfishPoint(43.6691, -70.2468, 'warning');
-        addShellfishPoint(43.6491, -70.2668, 'closed');
+      // Example points (replace with your actual data)
+      addShellfishPoint(43.6591, -70.2568, "open");
+      addShellfishPoint(43.6691, -70.2468, "warning");
+      addShellfishPoint(43.6491, -70.2668, "closed");
     </script>
-</body>
-</html> 
+  </body>
+</html>

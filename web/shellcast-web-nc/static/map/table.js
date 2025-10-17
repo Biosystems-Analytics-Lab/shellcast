@@ -1,5 +1,5 @@
 "use strict";
-import {handleUndef} from "./utils.js";
+import { handleUndef } from "./utils.js";
 //** The ID of the growing unit table element. */
 const GROWING_UNIT_TABLE_ID = "growing-unit-table";
 /** The ID of the lease table element. */

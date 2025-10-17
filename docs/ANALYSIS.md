@@ -10,19 +10,19 @@ ShellCast analysis and setup are described in this file. The analysis includes N
 3. [CRON Job Set Up](#4-cron-job-set-up)
 4. [Pushing Changes to GitHub](#7-pushing-changes-to-github)
 5. [Updating Leases](#8-updating-leases)
-9. [Contact Information](#9-contact-information)
+6. [Contact Information](#9-contact-information)
 
 ## 0. Background
-The main purpose of the scripts in the analysis folder is to: (1) pull Probabilistic Quantitative Precipitation 
-Forecasting (PQPF) data from a remote server at the NOAA, (2) do geospatial analysis based on given thresholds 
-determined by organizations, (3) classify step 2 values, and (4) update the ShellCast MySQL database. For a schematic 
+
+The main purpose of the scripts in the analysis folder is to: (1) pull Probabilistic Quantitative Precipitation
+Forecasting (PQPF) data from a remote server at the NOAA, (2) do geospatial analysis based on given thresholds
+determined by organizations, (3) classify step 2 values, and (4) update the ShellCast MySQL database. For a schematic
 representation of this workflow, including how they relate to other major components of the ShellCast web application,
-see the ShellCast [architecture overview flowchart](/../../#2-architecture-overview). The current ShellCast forecast is 
+see the ShellCast [architecture overview flowchart](/../../#2-architecture-overview). The current ShellCast forecast is
 for North Carolina, South Carolina, and Florida.
 
-The analysis daily CRON job ensures that the three steps described above will run every day at 6:40 am ET on the 
-temporary project computer (iMac).  
-
+The analysis daily CRON job ensures that the three steps described above will run every day at 6:40 am ET on the
+temporary project computer (iMac).
 
 ## 1. List of Acronyms
 
@@ -44,33 +44,35 @@ temporary project computer (iMac).
 
 ESRI ArcGIS Pro Modelbuilder was used to create the processing tools for each state. Assigning shellfish harvested area rainfall threshold to leases within the area, checking and fixing geometry, and assigning appropriate column names to attributes tables are among the tasks. The ArcGIS Pro project file is not included in the repository.
 
-*Note*: Input data needs to be updated periodically. Currently, NCSU is responsible for updating input data. We may be able to automate updates if organizations publish shapefiles online in the data format we require.
+_Note_: Input data needs to be updated periodically. Currently, NCSU is responsible for updating input data. We may be able to automate updates if organizations publish shapefiles online in the data format we require.
 
 ### Analysis
 
 **Requisites:**
-*The MySQL Google Cloud SQL database, tables, and data need to be set up. please refer to [DATABASE.md](DATABASE.md) for more information.* </br>
+_The MySQL Google Cloud SQL database, tables, and data need to be set up. please refer to [DATABASE.md](DATABASE.md) for more information._ </br>
 
-Each state has its own geospatial analysis, however, North Carolina and Florida analysis share the same analogy; 1) finding the probability of precipitation from PQPF data for each lease location, 2) finding the mean value within the SHA area, 3) classifying the values into very low, low, moderate, high, and very high, and 4) saving categorized values to a remote MySQL database. Analysis for Florida adds complexity due to duration-based rainfall thresholds (e.g. 5 days > 3.5"). In addition to PQPF, daily quality controlled rainfall estimates are used to calculate rainfall accumulation. 
+Each state has its own geospatial analysis, however, North Carolina and Florida analysis share the same analogy; 1) finding the probability of precipitation from PQPF data for each lease location, 2) finding the mean value within the SHA area, 3) classifying the values into very low, low, moderate, high, and very high, and 4) saving categorized values to a remote MySQL database. Analysis for Florida adds complexity due to duration-based rainfall thresholds (e.g. 5 days > 3.5"). In addition to PQPF, daily quality controlled rainfall estimates are used to calculate rainfall accumulation.
 
 In South Carolina analysis, SHA are considered lease areas. The mean PQPF for each SHA is calculated using geospatial statistics and follow step 3) and 4) as described above.
 
 ### Scripts
 
-* `src`-  all analysis code
-  * `{state}_pqpf` - code for geospatial analysis specific to a state
-  * `pqpf_proc.py` and `utils.py` - code for common processes
-* `shellcast-analysis/{state}_main.py` -  This script runs geospatial analysis and saves the output data to a remote MySQL server. 
-  * Prerequisites : create a virtual environment and connect to a remote MySQL server.
-* `setup_logging.py` and `{state}_logging.yaml` - Logs file settings
-* `config.ini` - A configuration file for analyzing data and setting up remote database servers.
-* `config.sh` -  This script specifies the script path and the remote server name. The `analysis_run.sh` file refers to this file.
-* `analysis_run.sh` -  This script is configured to run a cron job. The script activates the virtual environment, connects to the remote MySQL database, and runs `{state}_main.py`. Modifying this script file is recommended if you wish to run a state analysis only by commenting out the other states.
+- `src`- all analysis code
+  - `{state}_pqpf` - code for geospatial analysis specific to a state
+  - `pqpf_proc.py` and `utils.py` - code for common processes
+- `shellcast-analysis/{state}_main.py` - This script runs geospatial analysis and saves the output data to a remote MySQL server.
+  - Prerequisites : create a virtual environment and connect to a remote MySQL server.
+- `setup_logging.py` and `{state}_logging.yaml` - Logs file settings
+- `config.ini` - A configuration file for analyzing data and setting up remote database servers.
+- `config.sh` - This script specifies the script path and the remote server name. The `analysis_run.sh` file refers to this file.
+- `analysis_run.sh` - This script is configured to run a cron job. The script activates the virtual environment, connects to the remote MySQL database, and runs `{state}_main.py`. Modifying this script file is recommended if you wish to run a state analysis only by commenting out the other states.
 
 ## 3. Data
+
 ### 3.1 PQPF data
+
 **Source**: NOAA </br>
-**About PQPF**:  https://www.wpc.ncep.noaa.gov/pqpf/about_pqpf_products.shtml </br>
+**About PQPF**: https://www.wpc.ncep.noaa.gov/pqpf/about_pqpf_products.shtml </br>
 **Z run**: 06Z </br>
 **Interval**: 24 hours </br>
 **Data format**: Grib2 </br>
@@ -79,31 +81,33 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 **Data type**: Exceedance grids </br>
 **Data files**: </br>
 
-* pqpf_p24i_conus_{date}06f030.grb - 24 hour totals starting 12Z Monday and ending 12Z Tuesday (Day 1)
-* pqpf_p24i_conus_{date}06f054.grb - 24 hour totals starting 12Z Tuesday and ending 12Z Wednesday (Day 2)
-* pqpf_p24i_conus_{date}06f078.grb - 24 hour totals starting 12Z Wednesday and ending 12Z Thursday (Day 3)
+- pqpf*p24i_conus*{date}06f030.grb - 24 hour totals starting 12Z Monday and ending 12Z Tuesday (Day 1)
+- pqpf*p24i_conus*{date}06f054.grb - 24 hour totals starting 12Z Tuesday and ending 12Z Wednesday (Day 2)
+- pqpf*p24i_conus*{date}06f078.grb - 24 hour totals starting 12Z Wednesday and ending 12Z Thursday (Day 3)
 
 **GRIB file content**:
 
-- 0.25"   |Total_precipitation_surface_24_Hour_Accumulation_probability_above_6p35
-- 0.5"     |Total_precipitation_surface_24_Hour_Accumulation_probability_above_12p7
-- 1"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_25p4
-- 1.5"     |Total_precipitation_surface_24_Hour_Accumulation_probability_above_38p1
-- 2"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_50p8
-- 2.5"     |Total_precipitation_surface_24_Hour_Accumulation_probability_above_63p5
-- 3"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_76p2
-- 4"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_101p6
-- 5"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_127
-- 6"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_152p4
-- 8"        |Total_precipitation_surface_24_Hour_Accumulation_probability_above_203p2
-- 16"      |Total_precipitation_surface_24_Hour_Accumulation_probability_above_406p4
+- 0.25" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_6p35
+- 0.5" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_12p7
+- 1" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_25p4
+- 1.5" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_38p1
+- 2" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_50p8
+- 2.5" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_63p5
+- 3" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_76p2
+- 4" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_101p6
+- 5" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_127
+- 6" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_152p4
+- 8" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_203p2
+- 16" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_406p4
 
 **Notes**:
+
 - NC thresholds (as of April 2024): 1.0, 1.5, 2.0, 2.5, 3.0, 4.0
 - SC thresholds (as of April 2024): 4.0
-- FL thresholds (as of April 2024): 
+- FL thresholds (as of April 2024):
 
 ### 3.2 Daily quality controlled rainfall estimates (FL only)
+
 **Source**: NOAA </br>
 **Interval**: Hourly </br>
 **Format**: Grib1 </br>
@@ -118,13 +122,13 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 2. SC SHA shapefiles (SCDHEC)
 3. FL lease and SHA shapefiles (FDACS)
 
-
 ## 4. Development Environment Set Up
 
 ### 4.1 Clone the ShellCast GitHub repository
 
-Clone the GitHub repository to your machine by running 
-```bash 
+Clone the GitHub repository to your machine by running
+
+```bash
 git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`
 ```
 
@@ -134,59 +138,65 @@ The Google Cloud SDK is principally a command line tool that allows you to inter
 
 ### 4.3 Download Cloud SQL proxy
 
-__Prerequisite__: MySQL need to be installed on your machine. If you don't have MySQL installed, download MySQL from [here](https://dev.mysql.com/downloads/mysql/).
+**Prerequisite**: MySQL need to be installed on your machine. If you don't have MySQL installed, download MySQL from [here](https://dev.mysql.com/downloads/mysql/).
 
-Download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy). 
+Download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy).
+
 ```bash
 cd {path to}/shellcast
 curl -o cloud-sql-proxy {url to download the proxy}
 chmod +x ./cloud-sql-proxy
 ```
-TCP connection is used for connecting to the database. Run the following command to start the proxy. 
+
+TCP connection is used for connecting to the database. Run the following command to start the proxy.
+
 ```bash
 ./cloud-sql-proxy --port 3306 {instance name}
 ```
-You can quit proxy by `Control + c`. It is recommended creating a bash file in the same directory including code below since you will be using it frequently. 
+
+You can quit proxy by `Control + c`. It is recommended creating a bash file in the same directory including code below since you will be using it frequently.
+
 ```bash
 #!/bin/sh
 ./cloud-sql-proxy --port 3306 {instance name}
 ```
-To connect to Cloud SQL instance, `source ./{filename}.sh` in the terminal.
 
+To connect to Cloud SQL instance, `source ./{filename}.sh` in the terminal.
 
 ### 4.4 Setup Python virtual environment
 
-Use environment management tool of your choice, however,  Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
+Use environment management tool of your choice, however, Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
 
 ### 4.5 Create config.ini and config.sh files
-Create `config.ini` and `config.sh` files from `config_template.ini` and `config_template.sh`. 
+
+Create `config.ini` and `config.sh` files from `config_template.ini` and `config_template.sh`.
 
 `config.ini` file should be updated whenever a change occurs in the fields, data names, or areas of interest.
 
-
 ### 4.5 Download and Compile Wgrib2
 
-Wgrib2 is used to crop CONUS PQPF data according to the area of interest. 
+Wgrib2 is used to crop CONUS PQPF data according to the area of interest.
 
-Download the application on [here](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2) and follow [these instructions](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING). For Mac user, this website [theweatherguy blog](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) might help. It is necessary to install the gcc/gfortran compilers for Wgrib2 before the compilation. You can download `gcc` using Homebrew on Mac by running `brew install gcc`. It contains gcc, g++, gfortran, etc. 
+Download the application on [here](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2) and follow [these instructions](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING). For Mac user, this website [theweatherguy blog](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) might help. It is necessary to install the gcc/gfortran compilers for Wgrib2 before the compilation. You can download `gcc` using Homebrew on Mac by running `brew install gcc`. It contains gcc, g++, gfortran, etc.
 If you are new to compiling software, you might find the following resources helpful:
-  * https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/
-  * https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/compile_questions.html
-  * https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING
-  * https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/_README.cygwin
-  * https://theweatherguy.net/blog/weather-links-info/how-to-install-and-compile-wgrib2-on-mac-os-10-14-6-mojave/
+
+- https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/
+- https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/compile_questions.html
+- https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING
+- https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/_README.cygwin
+- https://theweatherguy.net/blog/weather-links-info/how-to-install-and-compile-wgrib2-on-mac-os-10-14-6-mojave/
 
 In case, you encounter a subprocess not running issue under cron on MacOS, you might want to try a few things.
 
-* Turn on Terminal in Full Disk Access - **System Settings** > **Privacy and Security** > **Full Disk Access** > turn on **Terminal**
+- Turn on Terminal in Full Disk Access - **System Settings** > **Privacy and Security** > **Full Disk Access** > turn on **Terminal**
 
-* In the event that the subprocess is unable to call third-party applications, such as Wgrib2, use the full path to the application
+- In the event that the subprocess is unable to call third-party applications, such as Wgrib2, use the full path to the application
 
-* Add Full Disk Access to the application if the subprocess fails to call third-party applications such as Wgrib2. 
+- Add Full Disk Access to the application if the subprocess fails to call third-party applications such as Wgrib2.
 
 ### 4.6 Download and Compile NCEPLIBS GRIB Utility and Dependencies (FL only)
 
-`cnvgrib` converts daily quality controlled rainfall estimates from Grib1 to Grib2 format. 
+`cnvgrib` converts daily quality controlled rainfall estimates from Grib1 to Grib2 format.
 
 Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util) website. The steps for compiling dependencies and utility can be found in `ncep-lib-utils/ncep_lib_utils.sh`. It is recommended that each dependency be compiled separately to ensure successful compilation. </br></br>
 In the script you see `make -j4` which means that the compilation will be done in parallel using 4 threads. You can change the number of threads.
@@ -198,48 +208,52 @@ If you encounter compilation problems with tools other than the cnvgrib tool, yo
 
 ### 4.7 Install CDO (FL only)
 
-Daily quality controlled rainfall estimates are processed using CDO. 
+Daily quality controlled rainfall estimates are processed using CDO.
 
-You can download CDO using Homebrew on Mac by running ```brew install cdo```
+You can download CDO using Homebrew on Mac by running `brew install cdo`
 
 ## 5. CRON Job Set Up
 
 ### 5.1 Executable Files
-The cron job environment differs from the development environment. It is important that system be able to access files and directories as well as executable files in order to execute them. Run the following command in the terminal. 
 
-```chmod +x {path to bash script}```  
-* shellcast-analysis/analysis_run.sh
-* analysis/shellcast-analysis/config.sh
-* shellcast-analysis/src/fl_pqpf/xmrg_proc.sh
-* shellcast-analysis/ncep-lib-utils/nceplibs/bin/cnvgrib
+The cron job environment differs from the development environment. It is important that system be able to access files and directories as well as executable files in order to execute them. Run the following command in the terminal.
+
+`chmod +x {path to bash script}`
+
+- shellcast-analysis/analysis_run.sh
+- analysis/shellcast-analysis/config.sh
+- shellcast-analysis/src/fl_pqpf/xmrg_proc.sh
+- shellcast-analysis/ncep-lib-utils/nceplibs/bin/cnvgrib
 
 ### 5.2 Terminal Permission
-You need to give the terminal permission to run the script. On the Mac; 
-1. Go to __Settings__ > __Security & Privacy__
-2. Click on __Full Disk Access__
-3. Search __Terminal__ in the list and turn it on
-   1. If you don't see __Terminal__ in the list, click __+__ sign at the bottom
-   2. In __Privacy & Security__ dialog, type in your __Password__ > click __Modify Settings__
-   3. In __Application__ window, __Utilities__ > __Terminal__ > __Open__
-   4. Search __Terminal__ in the list and turn it on
 
+You need to give the terminal permission to run the script. On the Mac;
+
+1. Go to **Settings** > **Security & Privacy**
+2. Click on **Full Disk Access**
+3. Search **Terminal** in the list and turn it on
+   1. If you don't see **Terminal** in the list, click **+** sign at the bottom
+   2. In **Privacy & Security** dialog, type in your **Password** > click **Modify Settings**
+   3. In **Application** window, **Utilities** > **Terminal** > **Open**
+   4. Search **Terminal** in the list and turn it on
 
 ### 5.2 Crontab Set Up
 
-Tools for CRON jobs can be chosen freely by developers. Currently, ShellCast analyses are run on iMac computer using the `crontab` command. 
+Tools for CRON jobs can be chosen freely by developers. Currently, ShellCast analyses are run on iMac computer using the `crontab` command.
 `crontab -l` will list all the current cron jobs. To edit the cron jobs, run `crontab -e`.
 It will open default text editor (e.g. nano, vi, vim, and etc) where you can add the following line to run the analysis every day at 6:40 am ET and save logs.
 For example, your default editor is vi, type `i` to insert text, and then type the following line. After that, press `esc` and type `:wq` to save and exit.</br>
 </br>
-```40 6 * * * source {path to }/analysis_run.sh >> ~Desktop/cron.log 2>&1```
+`40 6 * * * source {path to }/analysis_run.sh >> ~Desktop/cron.log 2>&1`
 
-_Note that In __pqpf_proc.py__, __subprocess__ is used to call __Wgrib2__ to crop PQPF data. __Wgrib2__ was unable to run when cron job was set. To work around this issue, the full path had to be included in the code._
+_Note that In **pqpf_proc.py**, **subprocess** is used to call **Wgrib2** to crop PQPF data. **Wgrib2** was unable to run when cron job was set. To work around this issue, the full path had to be included in the code._
 
 ### 5.3 File Permissions
+
 If a cron job encounters an file permission issue, run the following code. `shellcast-analysys/data` directory may be prone to the issue since it stores data outputs.</br><br>
-```chmod -R {permission numbers} {foldername or pathname}```
+`chmod -R {permission numbers} {foldername or pathname}`
 </br></br>
-In case you are not familiar with permission numbers, you can learn from [RedHat's explanation of Linux file permissions](https://www.redhat.com/sysadmin/linux-file-permissions-explained). It is important to note that 777 is full permission, which raises security concerns. Any security concerns should be addressed with appropriate permissions. 
+In case you are not familiar with permission numbers, you can learn from [RedHat's explanation of Linux file permissions](https://www.redhat.com/sysadmin/linux-file-permissions-explained). It is important to note that 777 is full permission, which raises security concerns. Any security concerns should be addressed with appropriate permissions.
 
 ## 6. Pushing Changes to GitHub
 

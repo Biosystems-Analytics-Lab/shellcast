@@ -4,19 +4,20 @@ This module helps ensure tests work in both SQLite and MySQL environments.
 """
 
 import os
+
 from config import TestConfig, TestConfigMySQL
 
 
 def get_test_config():
     """
     Get the appropriate test configuration based on environment.
-    
+
     Returns:
         TestConfig: Either SQLite (fast) or MySQL (production-like) config
     """
     # Check if we want to test against MySQL
-    use_mysql = os.environ.get('TEST_MYSQL', 'false').lower() == 'true'
-    
+    use_mysql = os.environ.get("TEST_MYSQL", "false").lower() == "true"
+
     if use_mysql:
         print("🧪 Using MySQL test configuration (production-like)")
         return TestConfigMySQL()
@@ -28,7 +29,7 @@ def get_test_config():
 def get_test_database_url():
     """
     Get the test database URL for database setup scripts.
-    
+
     Returns:
         str: Database URL for testing
     """
@@ -37,7 +38,7 @@ def get_test_database_url():
 
 
 # Test environment variables you can set:
-# 
+#
 # Fast testing (default):
 #   export TEST_MYSQL=false  # or don't set it
 #   python -m pytest tests/  # Uses SQLite

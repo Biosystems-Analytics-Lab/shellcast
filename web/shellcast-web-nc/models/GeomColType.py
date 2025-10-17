@@ -1,5 +1,5 @@
 from sqlalchemy import func
-from sqlalchemy.types import UserDefinedType, Float
+from sqlalchemy.types import Float, UserDefinedType
 
 
 class GeomColType(UserDefinedType):

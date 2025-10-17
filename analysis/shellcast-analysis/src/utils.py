@@ -8,19 +8,18 @@ import smtplib
 import ssl
 import subprocess
 import sys
-from decimal import localcontext, Decimal, ROUND_HALF_UP, ROUND_HALF_DOWN
+from decimal import ROUND_HALF_DOWN, ROUND_HALF_UP, Decimal, localcontext
 from email.message import EmailMessage
 from ftplib import FTP, error_perm
 from typing import List
 
+import constants as ct
 import geopandas as gpd
 import pandas as pd
 from cryptography.fernet import Fernet
 from google.cloud import storage
 from osgeo import gdal
 from sqlalchemy import create_engine, text
-
-import constants as ct
 
 gdal.UseExceptions()
 config = configparser.ConfigParser()
@@ -466,7 +465,7 @@ def convert_date_string(date_str):
     today = datetime.today()
     date_lst = date_str.split("-")
     dates = {"start": None, "end": None}
-    
+
     if len(date_lst) == 2:
         start_str, end_str = date_lst
         start_month, start_day = map(int, start_str.split("/"))
@@ -486,7 +485,7 @@ def convert_date_string(date_str):
         # Create datetime objects
         dates["start"] = datetime(years[0], start_month, start_day)
         dates["end"] = datetime(years[1], end_month, end_day)
-    
+
     return dates
 
 

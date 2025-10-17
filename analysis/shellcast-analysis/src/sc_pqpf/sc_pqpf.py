@@ -4,15 +4,14 @@ import os
 import warnings
 from datetime import datetime
 
+import constants as ct
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-from rasterstats import zonal_stats
-from shapely.errors import ShapelyDeprecationWarning
-
-import constants as ct
 import utils
 from pqpf_procs import PQPFProcs
+from rasterstats import zonal_stats
+from shapely.errors import ShapelyDeprecationWarning
 
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 

@@ -17,7 +17,7 @@ export function addShellCastLegendControl(legendID) {
   legend.id = legendID;
   for (let step of LEGEND_SCALE) {
     const textDiv = strToEl(
-      `<div id="shellcast-legend-txt">${step.text}</div>`
+      `<div id="shellcast-legend-txt">${step.text}</div>`,
     );
     legend.appendChild(textDiv);
     const colorDiv = document.createElement("div");
@@ -52,7 +52,7 @@ export function addPartnerSitesLegendControl(partnerSitesLegendID) {
           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
               <h6>ShellCast</h6>
-              <small>The legend for ShellCast is shown to the left. The forecast date can be changed by clicking 
+              <small>The legend for ShellCast is shown to the left. The forecast date can be changed by clicking
               "Today", "Tomorrow" and "In 2 days".</small>
               <div style="line-height: 20px; vertical-align: middle; padding-top: 16px;">
                 <input type="checkbox" id="partner-sites-legend-checkbox" role="button"
@@ -60,7 +60,7 @@ export function addPartnerSitesLegendControl(partnerSitesLegendID) {
                 <label class="form-check-label" for="partner-sites-legend-checkbox"><span>
                     <h6>&emsp13;Partner Sites</h6>
                   </span></label>
-              </div>      
+              </div>
               <table id="partner-sites-legend-table" class="partner-legend">
                 <tr>
                   <td class="legend-icon"><img src=${HOWS_THE_BEACH_ICON} alt="How's the Beach"></td>
@@ -74,7 +74,7 @@ export function addPartnerSitesLegendControl(partnerSitesLegendID) {
                   <td class="legend-icon"><img src=${CAMERA_ICON} alt="WebCOOS"</td>
                   <td><small>WebCOOS Camera Sites</small></td>
                 </tr>
-            </table>      
+            </table>
             </div>
           </div>
         </div>

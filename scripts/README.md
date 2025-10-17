@@ -9,6 +9,7 @@ This directory contains utility scripts for managing ShellCast deployments and G
 An enhanced version of the staging cleanup script with multiple options and better error handling.
 
 **Features:**
+
 - Support for multiple projects
 - Force cleanup option
 - List staging files without deleting
@@ -16,6 +17,7 @@ An enhanced version of the staging cleanup script with multiple options and bett
 - Comprehensive error handling and colored output
 
 **Usage:**
+
 ```bash
 # Basic usage (with confirmation)
 ./scripts/cleanup-staging-enhanced.sh
@@ -40,6 +42,7 @@ An enhanced version of the staging cleanup script with multiple options and bett
 ```
 
 **Options:**
+
 - `-p, --project PROJECT_NAME`: Specify project name (default: current gcloud project)
 - `-f, --force`: Force cleanup without confirmation
 - `-l, --list`: List staging files instead of deleting
@@ -52,6 +55,7 @@ An enhanced version of the staging cleanup script with multiple options and bett
 A comprehensive deployment script that combines App Engine deployment with automatic staging cleanup.
 
 **Features:**
+
 - Deploy to Google App Engine
 - Automatic staging cleanup after deployment
 - Support for all gcloud app deploy options
@@ -59,6 +63,7 @@ A comprehensive deployment script that combines App Engine deployment with autom
 - Option to skip cleanup or run cleanup only
 
 **Usage:**
+
 ```bash
 # Deploy FL app and cleanup staging
 ./scripts/deploy-and-cleanup.sh -d web/shellcast-web-fl
@@ -80,6 +85,7 @@ A comprehensive deployment script that combines App Engine deployment with autom
 ```
 
 **Options:**
+
 - `-d, --directory DIR`: Specify the web app directory to deploy
 - `-p, --project PROJECT_NAME`: Specify project name (default: current gcloud project)
 - `-f, --force`: Force cleanup without confirmation
@@ -88,6 +94,7 @@ A comprehensive deployment script that combines App Engine deployment with autom
 - `-h, --help`: Show help message
 
 **Deploy Options:**
+
 - `--no-promote`: Deploy without promoting traffic
 - `--no-cache`: Deploy without using cached files
 - `--version VERSION`: Deploy specific version
@@ -97,6 +104,7 @@ A comprehensive deployment script that combines App Engine deployment with autom
 The original staging cleanup script with basic functionality.
 
 **Usage:**
+
 ```bash
 ./scripts/cleanup-staging.sh
 ```
@@ -106,6 +114,7 @@ The original staging cleanup script with basic functionality.
 Before using these scripts, ensure you have:
 
 1. **Google Cloud SDK installed:**
+
    ```bash
    # Install gcloud CLI
    curl https://sdk.cloud.google.com | bash
@@ -113,6 +122,7 @@ Before using these scripts, ensure you have:
    ```
 
 2. **Authenticated with Google Cloud:**
+
    ```bash
    gcloud auth login
    ```
@@ -125,18 +135,21 @@ Before using these scripts, ensure you have:
 ## Common Workflows
 
 ### Standard Deployment with Cleanup
+
 ```bash
 # Deploy and cleanup staging files
 ./scripts/deploy-and-cleanup.sh -d web/shellcast-web-fl
 ```
 
 ### Force Cleanup After Manual Deployment
+
 ```bash
 # If you deployed manually and want to clean up staging
 ./scripts/cleanup-staging-enhanced.sh -f
 ```
 
 ### Deploy to Multiple Projects
+
 ```bash
 # Deploy FL app
 ./scripts/deploy-and-cleanup.sh -d web/shellcast-web-fl -p shellcast-fl
@@ -149,6 +162,7 @@ Before using these scripts, ensure you have:
 ```
 
 ### Clean All Projects at Once
+
 ```bash
 # Clean staging for all known ShellCast projects
 ./scripts/cleanup-staging-enhanced.sh -a -f
@@ -161,6 +175,7 @@ Before using these scripts, ensure you have:
 2. **No-Cache Deployment:** After cleaning staging files, you may need to use `--no-cache` for the next deployment to avoid issues with cached files.
 
 3. **Project Names:** The scripts support these project names:
+
    - `ncsu-shellcast` (main project)
    - `shellcast-fl` (Florida)
    - `shellcast-nc` (North Carolina)
@@ -171,6 +186,7 @@ Before using these scripts, ensure you have:
 ## Troubleshooting
 
 ### "No project configured" Error
+
 ```bash
 # Set your project
 gcloud config set project YOUR_PROJECT_NAME
@@ -180,19 +196,23 @@ gcloud config set project YOUR_PROJECT_NAME
 ```
 
 ### "Not authenticated" Error
+
 ```bash
 # Login to Google Cloud
 gcloud auth login
 ```
 
 ### "Permission denied" Error
+
 ```bash
 # Make scripts executable
 chmod +x scripts/*.sh
 ```
 
 ### Staging Files Not Found
+
 This is normal if:
+
 - The project hasn't been deployed yet
 - Staging files were already cleaned up
 - You don't have access to the staging bucket
@@ -206,4 +226,4 @@ For automated deployments, you can use the force flag:
 ./scripts/deploy-and-cleanup.sh -d web/shellcast-web-fl -f
 ```
 
-This will deploy and clean up staging files without requiring user interaction. 
+This will deploy and clean up staging files without requiring user interaction.

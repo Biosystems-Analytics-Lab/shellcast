@@ -1,5 +1,6 @@
 # ShellCast
-ShellCast is a Python Flask web application that helps North Carolina shellfish growers make harvesting decisions based on predicted rainfall.  The live production version of the app can be found at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast). A public version of this repository is also available at https://github.com/Biosystems-Analytics-Lab/shellcast.
+
+ShellCast is a Python Flask web application that helps North Carolina shellfish growers make harvesting decisions based on predicted rainfall. The live production version of the app can be found at [https://go.ncsu.edu/shellcast](https://go.ncsu.edu/shellcast). A public version of this repository is also available at https://github.com/Biosystems-Analytics-Lab/shellcast.
 
 Please note that this repository is participating in a study into sustainability of open source projects. Data will be gathered about this repository for approximately the next 12 months, starting from May 17, 2021.
 
@@ -16,29 +17,33 @@ For more information, please visit [our informational page](https://sustainable-
 5. [Contact Information](#5-contact-information)
 
 ## 1. Folders
-- __analysis__ - Contains all of the code related to calculating probabilities and uploading them to the database.  This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code.  For more information about the analysis code see the [ANALYSIS.md documentation](docs/ANALYSIS.md).
-- __db-scripts__ - Contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
-- __docs__ - Contains all of the documentation for the ShellCast application.
-- __web__ - Contains all of the code related to the web application.  This code is hosted on Google App Engine and is the main interface for users to interact with the application.
-  - __shellcast-web-fl__ - ShellCast web for FL
-  - __shellcast-web-nc__ - ShellCast web for NC
-  - __shellcast-web-sc__ - ShellCast web for SC
+
+- **analysis** - Contains all of the code related to calculating probabilities and uploading them to the database. This code is logically separate from the rest of the codebase and is hosted on a Linux VM due to its dependency on R code. For more information about the analysis code see the [ANALYSIS.md documentation](docs/ANALYSIS.md).
+- **db-scripts** - Contains helpful SQL scripts that can be used to setup a new database and populate it with initial records.
+- **docs** - Contains all of the documentation for the ShellCast application.
+- **web** - Contains all of the code related to the web application. This code is hosted on Google App Engine and is the main interface for users to interact with the application.
+  - **shellcast-web-fl** - ShellCast web for FL
+  - **shellcast-web-nc** - ShellCast web for NC
+  - **shellcast-web-sc** - ShellCast web for SC
 
 ## 2. Third-Party Services
 
 Various third-party services are used as part of the ShellCast web app.
 
 Google Cloud Platform
+
 - App Engine - The web app is deployed on Google App Engine in a standard Python 3 environment.
-- Cloud SQL - ShellCast uses a MySQL database for storing all persistent information.  The database is managed by Google Cloud SQL.
-- Logging - All logs related to the App Engine and Cloud SQL instances are recorded with Google Logging.  Additional custom logs from within the app itself are also recorded.
+- Cloud SQL - ShellCast uses a MySQL database for storing all persistent information. The database is managed by Google Cloud SQL.
+- Logging - All logs related to the App Engine and Cloud SQL instances are recorded with Google Logging. Additional custom logs from within the app itself are also recorded.
 - Firebase
   - Authentication - ShellCast uses Firebase authentication to manage user signup and login.
 
 Amazon Web Services
+
 - Simple Email Service - ShellCast uses AWS SES to send closure notifications to users through email and text.
 
 NCSU Enterprise GitHub
+
 - Available through https://github.ncsu.edu/login
 - The NCSU Enterprise GitHub repo is also mirrored to add and push to a remote GitHub (public) repo at https://github.com/Biosystems-Analytics-Lab/shellcast. See [docs/DEVELOPER.md](/docs/DEVELOPER.md) for more information.
 
@@ -73,4 +78,4 @@ Instructions explaining how to perform a variety of tasks can be found in the fo
 
 ## 5. Contact Information
 
-If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Makiko Shukunobe (mshukun at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu). 
+If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Makiko Shukunobe (mshukun at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.sql import functions
-
 from models import db
+from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.sql import functions
 
 
 class CMU(db.Model):

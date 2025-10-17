@@ -1,53 +1,65 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}About Us - ShellCast{% endblock %} {%
+block additional_head %}
+<!-- Custom CSS -->
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ url_for('static', filename='about/about.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="container">
+  <h1>ShellCast Team</h1>
+  <p>
+    ShellCast is run by a team of researchers in the Biological and Agricultural
+    Engineering Department at NC State University led by
+    <a href="https://www.bae.ncsu.edu/people/nnelson4" , target="_blank"
+      >Natalie Nelson</a
+    >
+    (Assistant Professor).
+    <a href="https://sheilasaia.rbind.io/" , target="_brank">Sheila Saia</a>
+    (Lead Data Scientist),
+    <a href="https://stparham.com/" , target="_blank">Stanton Parham</a> (Web
+    Developer), Laura Gomez Rodriguez (Undergraduate Research Assistant), Eshwar
+    Chandra Vidhyasagar Thedla (Web Developer and Data Scientist), and Carrie
+    Clower (Communications Researcher) were part of the original team that
+    created ShellCast for North Carolina. Makiko Shukunobe (Full Stack
+    Developer) is currently leading the expansion of ShellCast beyond North
+    Carolina, and improving our existing algorithms.
+  </p>
 
-{% block title %}About Us - ShellCast{% endblock %}
+  <h1 id="shellcast-support">ShellCast Support</h1>
+  <p>
+    ShellCast is funded by
+    <a href="https://ncseagrant.ncsu.edu/">North Carolina Sea Grant</a> and the
+    <a href="https://secoora.org/"
+      >Southeast Coastal Ocean Observing Regional Association.</a
+    >
+  </p>
+  <p>
+    We would also like to thank collaborators at the
+    <a href="http://portal.ncdenr.org/web/mf/"
+      >North Carolina Division of Marine Fisheries</a
+    >, <a href="https://www.weather.gov/">National Weather Service</a>,
+    <a href="https://climate.ncsu.edu/">North Carolina State Climate Office</a>,
+    North Carolina Shellfish Growers Association,
+    <a href="https://oit.ncsu.edu/about/units/occ/"
+      >Outreach, Communications, and Consulting (OCC) Unit of the NC State
+      Office of Information Technology Office</a
+    >,
+    <a href="https://projects.ncsu.edu/hpc/main.php"
+      >NC State High Performance Computing (HPC) Services</a
+    >, and
+    <a href="https://vcl.ncsu.edu/"
+      >NC State Virtual Computing Lab (VCL) Services</a
+    >. We are grateful for help from Everette Allen, Walt Turner, and Crystal
+    Tenan of OCC, Lisa Lowe of HPC, and Aaron Peeler, and Josh Thompson of VCL.
+  </p>
 
-{% block additional_head %}
-  <!-- Custom CSS -->
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='about/about.css') }}">
-{% endblock %}
-
-{% block content %}
-  <div class="container">
-
-    <h1>ShellCast Team</h1>
-      <p>
-          ShellCast is run by a team of researchers in the Biological and Agricultural
-          Engineering Department at NC State University led by
-          <a href="https://www.bae.ncsu.edu/people/nnelson4", target="_blank">Natalie Nelson</a>
-           (Assistant Professor).
-          <a href="https://sheilasaia.rbind.io/", target="_brank">Sheila Saia</a>
-          (Lead Data Scientist),
-          <a href="https://stparham.com/", target="_blank">Stanton Parham</a> (Web Developer),
-          Laura Gomez Rodriguez (Undergraduate Research Assistant), Eshwar Chandra Vidhyasagar Thedla
-          (Web Developer and Data Scientist), and Carrie Clower (Communications Researcher) were
-          part of the original team that created ShellCast for North Carolina. Makiko Shukunobe
-          (Full Stack Developer) is currently leading the expansion of ShellCast beyond
-          North Carolina, and improving our existing algorithms.
-      </p>
-
-    <h1 id="shellcast-support">ShellCast Support</h1>
-    <p>
-      ShellCast is funded by <a href="https://ncseagrant.ncsu.edu/">North Carolina Sea Grant</a>
-      and the <a href="https://secoora.org/">Southeast Coastal Ocean Observing Regional Association.</a>    </p>
-    <p>
-      We would also like to thank collaborators at the
-      <a href="http://portal.ncdenr.org/web/mf/">North Carolina Division of Marine Fisheries</a>,
-      <a href="https://www.weather.gov/">National Weather Service</a>, 
-      <a href="https://climate.ncsu.edu/">North Carolina State Climate Office</a>,
-      North Carolina Shellfish Growers Association,
-      <a href="https://oit.ncsu.edu/about/units/occ/">Outreach, Communications, and Consulting (OCC) Unit of the NC State Office of Information Technology Office</a>,
-      <a href="https://projects.ncsu.edu/hpc/main.php">NC State High Performance Computing (HPC) Services</a>, and
-      <a href="https://vcl.ncsu.edu/">NC State Virtual Computing Lab (VCL) Services</a>.
-      We are grateful for help from Everette Allen, Walt Turner, and Crystal Tenan of OCC,
-      Lisa Lowe of HPC, and Aaron Peeler, and Josh Thompson of VCL.
-    </p>
-
-    <h1>Contact Us</h1>
-    <p>
-      If you have any questions for us or feedback regarding the ShellCast web
-      application, please email us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.
-    </p>
-
-  </div>
+  <h1>Contact Us</h1>
+  <p>
+    If you have any questions for us or feedback regarding the ShellCast web
+    application, please email us at
+    <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.
+  </p>
+</div>
 {% endblock %}

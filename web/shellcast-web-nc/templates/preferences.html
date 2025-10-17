@@ -27,20 +27,20 @@
 
       {# Notification Preferences Form #}
       <form class="needs-validation mb-5 notification-preferences-form" id="profile-information-form">
-        
+
         <h2 class="form-section-title">My Notification Preferences</h2>
-        
+
         {# Notification Preferences with Accordions #}
         <div class="form-section notification-preferences">
           <h3>Notification Preferences</h3>
-          
+
           <div class="preference-group">
             <label class="form-label">I want to receive the following notifications:</label>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="no-notifications" id="no-notifications">
               <label class="form-check-label" for="no-notifications">I do not want to receive notifications</label>
             </div>
-            
+
             {# Email Accordion #}
             <div class="notification-accordion">
               <div class="accordion-header">
@@ -63,7 +63,7 @@
                     <button type="button" class="accordion-tab active" data-tab="email-input">Email Address</button>
                     <button type="button" class="accordion-tab" data-tab="email-example">Notification Example</button>
                   </div>
-                  
+
                   <div class="accordion-tab-content active" id="email-input">
                     <label for="email-address" class="form-label">Email address</label>
                     <input type="email" class="form-control" name="email-address" id="email-address" placeholder="you@example.com"
@@ -79,21 +79,21 @@
                       with ShellCast forecast information for your lease(s), the
                       notifications will be sent to this address.
                     </small>
-                    
+
                     <div class="consent-section mt-4">
                       <div class="form-check consent-checkbox">
                         <input class="form-check-input" type="checkbox" name="email-consent" id="email-consent" disabled>
                         <label class="form-check-label" for="email-consent">
-                          By submitting your email address, you consent to receiving email notifications 
-                          about lease closures and forecast information, maintenance updates, and other 
+                          By submitting your email address, you consent to receiving email notifications
+                          about lease closures and forecast information, maintenance updates, and other
                           ShellCast-related notifications from ShellCast.</br>
                           <ul class="mb-0">
                             <li>Message frequency may vary.</li>
-                            <li>You can opt out at any time by clicking <u>Unsubscribe</u> in any notification email or 
-                              update your preferences by visiting the <i>Preferences</i> page on the 
+                            <li>You can opt out at any time by clicking <u>Unsubscribe</u> in any notification email or
+                              update your preferences by visiting the <i>Preferences</i> page on the
                               <a href="https://ncsu-shellcast.appspot.com/">https://go.ncsu.edu/shellcast</a>.</li>
                             <li>For assistance, contact us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.</li>
-                            <li>The <a href="/notification-service">Terms of Conditions and Privacy Policy</a> 
+                            <li>The <a href="/notification-service">Terms of Conditions and Privacy Policy</a>
                               are available for review.</li>
                           </ul>
                         </label>
@@ -104,23 +104,23 @@
                     </div>
 
                   </div>
-                  
+
                   <div class="accordion-tab-content" id="email-example">
                     <div class="example-group">
                       <label for="example-email-notification" class="form-label">Email Message Example:</label>
                       <div class="text-bubble" id="example-email-notification">
                         <p>
-                          One or more of your leases is at risk of closing today. Visit 
+                          One or more of your leases is at risk of closing today. Visit
                           <u>go.ncsu.edu/shellcast</u> for details.<br><br>
-                          
+
                           Lease: {your lease location ID}<br>
                           &emsp;Today: Very High<br>
                           &emsp;Tomorrow: High<br>
                           &emsp;In 2 days: Moderate<br><br>
-                          
-                          These predictions are in no way indicative of whether or not a lease will actually be temporarily 
+
+                          These predictions are in no way indicative of whether or not a lease will actually be temporarily
                           closed for harvest.<br><br>
-                          
+
                           <u style="text-align: center; display: block; margin-top: 0.5rem;">Unsubscribe</u>
                         </p>
                       </div>
@@ -132,7 +132,7 @@
                 </div>
               </div>
             </div>
-            
+
             {# Text Accordion #}
             <div class="notification-accordion">
               <div class="accordion-header">
@@ -158,7 +158,7 @@
                     <button type="button" class="accordion-tab active" data-tab="text-input">Phone Number</button>
                     <button type="button" class="accordion-tab" data-tab="text-example">Notification Example</button>
                   </div>
-                  
+
                   <div class="accordion-tab-content active" id="text-input">
                     <label for="phone-number" class="form-label">Mobile phone number</label>
                     <div class="input-group">
@@ -177,38 +177,38 @@
                       forecast information for your lease(s), the notifications will
                       be sent to this number. Message and data rates may apply.
                     </small>
-                    
+
                     <div class="consent-section mt-4">
                       <div class="form-check consent-checkbox">
                         <input class="form-check-input" type="checkbox" name="text-consent" id="text-consent">
                         <label class="form-check-label" for="text-consent">
-                          By submitting your mobile phone number, you consent to receiving text 
+                          By submitting your mobile phone number, you consent to receiving text
                           message notifications about lease closures and forecast information from ShellCast.
-                          <ul class="mb-0"> 
+                          <ul class="mb-0">
                             <li>Consent is not a condition of purchase.</li>
                             <li>Message frequency varies.</li>
                             <li>Message and data rates may apply.</li>
                             <li>For support, reply <b>HELP</b> or email us at <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.</li>
-                            <li>You can opt out at any time by replying <b>STOP</b> or update your preferences by 
-                              visiting the <i>Preferences</i> page on the 
+                            <li>You can opt out at any time by replying <b>STOP</b> or update your preferences by
+                              visiting the <i>Preferences</i> page on the
                               <a href="https://ncsu-shellcast.appspot.com/">https://go.ncsu.edu/shellcast</a>.</li>
-                            <li>The <a href="/notification-service">Terms of Conditions and Privacy Policy</a> 
+                            <li>The <a href="/notification-service">Terms of Conditions and Privacy Policy</a>
                               are available for review.</li>
-                          </ul> 
+                          </ul>
                         </label>
                       </div>
                     </div>
-                    
+
 
                   </div>
-                  
+
                   <div class="accordion-tab-content" id="text-example">
                     <div class="example-group">
                       <label for="example-notification" class="form-label">Text Message Example:</label>
                       <div class="text-bubble" id="example-notification">
                         <p>
-                          ShellCast: One or more your leases is at risk of closing today, tomorrow, or in 2 days. 
-                          Visit <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details. 
+                          ShellCast: One or more your leases is at risk of closing today, tomorrow, or in 2 days.
+                          Visit <a href="https://ncsu-shellcast.appspot.com/">go.ncsu.edu/shellcast</a> for details.
                           Reply STOP to cancel.
                         </p>
                       </div>
@@ -220,7 +220,7 @@
                 </div>
               </div>
             </div>
-            
+
             <small class="form-text text-muted muted">
               If you would like to receive both email and text notifications,
               check both "Email" and "Text". If you choose not to receive
@@ -262,7 +262,7 @@
       {# User leases #}
       <div class="needs-validation mb-5 notification-preferences-form">
         <h2 class="form-section-title">My Leases</h2>
-        
+
         <div class="lease-info">
           <p class="lease-description">
             You can search for your lease ID number on the

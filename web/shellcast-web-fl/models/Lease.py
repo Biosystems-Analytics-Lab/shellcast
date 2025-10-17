@@ -1,5 +1,5 @@
 from models import db
-from sqlalchemy import Column, Float, String, DateTime, ForeignKey
+from sqlalchemy import Column, DateTime, Float, ForeignKey, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import functions
 

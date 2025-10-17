@@ -1,15 +1,14 @@
 import logging
 import time
-from flask import Blueprint, jsonify, request, current_app
-from datetime import datetime, timezone
-import pytz
+from datetime import datetime
+
 import boto3
+import pytz
 from botocore.exceptions import ClientError
-
+from flask import Blueprint, current_app
 from models import db
-from models.User import User
 from models.Notification import Notification
-
+from models.User import User
 from routes.authentication import cronOnly
 
 # The address that all emails are sent from.
@@ -127,7 +126,7 @@ def sendNotifications():
         emailAddress = user.email
         # get phone number and service provider gateway (phonenumber@smsgateway)
         textAddress = None
-        if user.phone_number != None and user.service_provider_id != None:
+        if user.phone_number is not None and user.service_provider_id is not None:
             textAddress = "{}@{}".format(
                 user.phone_number, user.service_provider.sms_gateway
             )
@@ -159,11 +158,11 @@ def sendNotifications():
 
         if needToSendNotification:
             # only send emails or texts depending on the user's preferences
-            if user.email_pref and emailAddress != None:
+            if user.email_pref and emailAddress is not None:
                 emailNotificationsToSend.append(
                     (emailAddress, notificationText, user.id)
                 )
-            if user.text_pref and textAddress != None:
+            if user.text_pref and textAddress is not None:
                 textNotificationsToSend.append(
                     (textAddress, TEXT_NOTIFICATION_TEXT, user.id)
                 )
