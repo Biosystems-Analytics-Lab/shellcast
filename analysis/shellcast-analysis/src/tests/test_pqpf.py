@@ -1,52 +1,56 @@
-
-
-import unittest
 import os
-from tempfile import TemporaryDirectory
-import pqpf
-from src.constants import TODAY, REG_PATTERN_TODAY, REG_PATTERN_GRB_HOURS
+import unittest
 from datetime import datetime
+from tempfile import TemporaryDirectory
+
+import pqpf
+from src.constants import REG_PATTERN_GRB_HOURS, REG_PATTERN_TODAY, TODAY
+
 
 class TestPqpf(unittest.TestCase):
     def setUp(self) -> None:
-        self.pqpf_obj = pqpf.PQPF('NC', 'docker.mysql')
+        self.pqpf_obj = pqpf.PQPF("NC", "docker.mysql")
 
     def test_regex_find(self):
-        fname = f'pqpf_p24i_conus_12f024.grb'
+        fname = f"pqpf_p24i_conus_12f024.grb"
         print(pqpf.regex_find(REG_PATTERN_TODAY, fname))
         match_today = pqpf.regex_find(REG_PATTERN_TODAY, fname)[0]
         match_hours = pqpf.regex_find(REG_PATTERN_GRB_HOURS, fname)[0]
 
         self.assertEqual(match_today, TODAY)
-        self.assertEqual(match_hours, 'f024')
+        self.assertEqual(match_hours, "f024")
 
     def test_list_grbs_today(self):
-        """Test all files are today's GRB files """
-        grbs = ['pqpf_p24i_conus_2022120112f024.grb', 'pqpf_p24i_conus_2022120112f048.grb', 'pqpf_p24i_conus_2022120112f072.grb']
+        """Test all files are today's GRB files"""
+        grbs = [
+            "pqpf_p24i_conus_2022120112f024.grb",
+            "pqpf_p24i_conus_2022120112f048.grb",
+            "pqpf_p24i_conus_2022120112f072.grb",
+        ]
         with TemporaryDirectory() as temp_dir:
             for grb in grbs:
-                open(os.path.join(temp_dir, grb), 'w').close()
+                open(os.path.join(temp_dir, grb), "w").close()
             # print(os.listdir(temp_dir))
             results = pqpf.list_grbs_not_today(temp_dir)
             # print(results)
             self.assertEqual(len(results), 0)
 
     def test_list_grbs_not_today_no_grb(self):
-        """Test old files and other extensions """
+        """Test old files and other extensions"""
         grbs = [
-            'pqpf_p24i_conus_2022113012f024.grb',
-            'pqpf_p24i_conus_2022113012f048.grb',
-            'pqpf_p24i_conus_2022113012f072.grb',
-            'pqpf_p24i_conus_2022113012f072.xml',
-            'pqpf_p24i_conus_2022113012f072.txt',
-            'pqpf_p24i_conus_2022120112f024.grb',
-            'pqpf_p24i_conus_2022120112f048.grb',
-            'pqpf_p24i_conus_2022120112f072.grb'
+            "pqpf_p24i_conus_2022113012f024.grb",
+            "pqpf_p24i_conus_2022113012f048.grb",
+            "pqpf_p24i_conus_2022113012f072.grb",
+            "pqpf_p24i_conus_2022113012f072.xml",
+            "pqpf_p24i_conus_2022113012f072.txt",
+            "pqpf_p24i_conus_2022120112f024.grb",
+            "pqpf_p24i_conus_2022120112f048.grb",
+            "pqpf_p24i_conus_2022120112f072.grb",
         ]
         with TemporaryDirectory() as temp_dir:
             # Create directory
             for grb in grbs:
-                open(os.path.join(temp_dir, grb), 'w').close()
+                open(os.path.join(temp_dir, grb), "w").close()
             # print(os.listdir(temp_dir))
             results = pqpf.list_grbs_not_today(temp_dir)
             # print(results)
@@ -62,7 +66,7 @@ class TestPqpf(unittest.TestCase):
         files = os.listdir(self.pqpf_obj.grb_raw_dir)
         downloaded = []
         for f in files:
-            if f.endswith('grb'):
+            if f.endswith("grb"):
                 downloaded.append(f)
         self.assertEqual(grbs_to_download, downloaded)
 
@@ -92,8 +96,11 @@ class TestPqpf(unittest.TestCase):
         self.assertTrue(os.path.exists(csv_path))
 
     def test_save_to_db(self):
-        out_csv_path = os.path.join(self.pqpf_obj.outputs_dir, f'pqpf_cmu_{datetime.today().date()}.csv')
+        out_csv_path = os.path.join(
+            self.pqpf_obj.outputs_dir, f"pqpf_cmu_{datetime.today().date()}.csv"
+        )
         self.pqpf_obj.save_to_db(out_csv_path)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

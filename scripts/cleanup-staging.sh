@@ -41,7 +41,7 @@ echo
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     print_status "Deleting staging files..."
-    
+
     if gsutil -m rm "gs://staging.$PROJECT_NAME.appspot.com/**"; then
         print_status "Staging files deleted successfully!"
         print_status "Remember to use 'gcloud app deploy --no-cache' for next deployment"
@@ -51,4 +51,4 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 else
     print_status "Operation cancelled"
-fi 
+fi

@@ -1,7 +1,7 @@
 "use strict";
 
-import {colorPalette, strToEl} from "./utils.js";
-import {setCmuPolyStyleByDay} from "./map.js";
+import { colorPalette, strToEl } from "./utils.js";
+import { setCmuPolyStyleByDay } from "./map.js";
 
 /** The text and colors used for the legend. */
 const LEGEND_SCALE = [

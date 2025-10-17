@@ -1,15 +1,14 @@
 import logging
 import time
-from flask import Blueprint, jsonify, request, current_app
 from datetime import datetime, timezone
-import pytz
+
 import boto3
+import pytz
 from botocore.exceptions import ClientError
-
+from flask import Blueprint, current_app, jsonify, request
 from models import db
-from models.User import User
 from models.Notification import Notification
-
+from models.User import User
 from routes.authentication import cronOnly
 
 # The address that all emails are sent from.

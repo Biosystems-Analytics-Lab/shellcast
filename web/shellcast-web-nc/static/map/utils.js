@@ -31,14 +31,14 @@ export function handleUndef(value) {
   if (value === undefined || value === null) {
     return "-";
   }
-  
+
   let flag = "";
   if (value === 1) flag = "Very Low";
   if (value === 2) flag = "Low";
   if (value === 3) flag = "Moderate";
   if (value === 4) flag = "High";
   if (value === 5) flag = "Very High";
-  
+
   // If flag is empty (meaning value wasn't 1-5), return "-" for no data
   return flag || "-";
 }
@@ -197,7 +197,7 @@ partnerAppLyrLegend.innerHTML = `
       <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
           <h6>ShellCast</h6>
-          <small>The legend for ShellCast is shown to the left. The forecast date can be changed by clicking 
+          <small>The legend for ShellCast is shown to the left. The forecast date can be changed by clicking
           "Today", "Tomorrow" and "In 2 days".</small>
           <div style="line-height: 20px; vertical-align: middle; padding-top: 16px;">
             <input type="checkbox" id="partner-legend" role="button"
@@ -205,7 +205,7 @@ partnerAppLyrLegend.innerHTML = `
             <label class="form-check-label" for="partner-legend"><span>
                 <h6>&emsp13;Partner Sites</h6>
               </span></label>
-          </div>      
+          </div>
           <table id="legend-table" class="partner-legend">
             <tr>
               <td class="legend-icon"><img src=${HOWS_THE_BEACH_ICON} alt="How's the Beach"></td>
@@ -219,7 +219,7 @@ partnerAppLyrLegend.innerHTML = `
               <td class="legend-icon"><img src=${CAMERA_ICON} alt="WebCOOS"</td>
               <td><small>WebCOOS Camera Sites</small></td>
             </tr>
-        </table>      
+        </table>
         </div>
       </div>
     </div>

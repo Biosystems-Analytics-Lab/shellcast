@@ -3,8 +3,7 @@ import os
 from pathlib import Path
 
 import geopandas as gpd
-from sqlalchemy import Table, MetaData
-from sqlalchemy import create_engine
+from sqlalchemy import MetaData, Table, create_engine
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 CONFIG_INI = os.path.join(ROOT_DIR, "config.ini")

@@ -1,6 +1,6 @@
 "use strict";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import {auth, authorizedFetch} from "../common/common.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { auth, authorizedFetch } from "../common/common.js";
 
 // ============================================================================
 // CONSTANTS
@@ -53,11 +53,11 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
   emailCheckbox.checked = profInfo.email_pref;
   textCheckbox.checked = profInfo.text_pref;
-  
+
   // Set "no notifications" based on email and text preferences
   // If neither email nor text is enabled, check "no notifications"
   noNotificationsCheckbox.checked = !profInfo.email_pref && !profInfo.text_pref;
-  
+
   // Set consent checkboxes based on preferences (for initial load)
   const emailConsentCheckbox = profForm.elements["email-consent"];
   const textConsentCheckbox = profForm.elements["text-consent"];
@@ -67,30 +67,34 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   if (textConsentCheckbox) {
     textConsentCheckbox.checked = profInfo.text_pref;
   }
-  
+
   // Initially expand accordions if user has preferences enabled
   // (but don't auto-collapse them later - let user control with OK button)
   if (profInfo.email_pref || profInfo.text_pref) {
     updateAccordionVisibility(profInfo.email_pref, profInfo.text_pref);
   }
-  
+
   // Initialize original states for accordion revert functionality
   // Try to load from localStorage first, fallback to server data
-  const cachedEmailState = localStorage.getItem('shellcast_email_preferences');
-  const cachedTextState = localStorage.getItem('shellcast_text_preferences');
-  
-  originalEmailState = cachedEmailState ? JSON.parse(cachedEmailState) : {
-    email: profInfo.email,
-    email_pref: profInfo.email_pref,
-    email_consent: profInfo.email_pref
-  };
-  
-  originalTextState = cachedTextState ? JSON.parse(cachedTextState) : {
-    phone_number: profInfo.phone_number,
-    text_pref: profInfo.text_pref,
-    text_consent: profInfo.text_pref
-  };
-  
+  const cachedEmailState = localStorage.getItem("shellcast_email_preferences");
+  const cachedTextState = localStorage.getItem("shellcast_text_preferences");
+
+  originalEmailState = cachedEmailState
+    ? JSON.parse(cachedEmailState)
+    : {
+        email: profInfo.email,
+        email_pref: profInfo.email_pref,
+        email_consent: profInfo.email_pref,
+      };
+
+  originalTextState = cachedTextState
+    ? JSON.parse(cachedTextState)
+    : {
+        phone_number: profInfo.phone_number,
+        text_pref: profInfo.text_pref,
+        text_consent: profInfo.text_pref,
+      };
+
   // Set probability preference
   for (let radio of probRadios) {
     const value = profInfo.prob_pref && profInfo.prob_pref.toString();
@@ -111,7 +115,7 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
       "input",
       (e) => (phoneNumberInput.value = maskPhoneNumber(e.target.value)),
     );
-    
+
     // Add consent checkbox validation
     const emailConsentCheckbox = profForm.elements["email-consent"];
     const textConsentCheckbox = profForm.elements["text-consent"];
@@ -121,7 +125,7 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
     if (textConsentCheckbox) {
       textConsentCheckbox.addEventListener("change", validateForm);
     }
-    
+
     setupAccordionTabs();
     setupAccordionButtons();
   }
@@ -139,7 +143,7 @@ function onProfileFormChange(e) {
   const emailConsentCheckbox = profForm.elements["email-consent"];
   const textConsentCheckbox = profForm.elements["text-consent"];
   const probRadios = profForm.elements["notification-prob"];
-  
+
   // Clear any existing status message when form changes
   const helpText = document.getElementById("profile-form-help-text");
   if (helpText) {
@@ -203,24 +207,32 @@ function onProfileFormChange(e) {
   // Handle email checkbox logic - set user's email when checked
   if (e.target === emailCheckbox && emailCheckbox.checked) {
     const emailInput = profForm.elements["email-address"];
-    console.log("Email checkbox checked, current email value:", emailInput.value);
+    console.log(
+      "Email checkbox checked, current email value:",
+      emailInput.value,
+    );
     console.log("User profile info:", window.userProfileInfo);
-    
+
     // Set email if we have user profile data and either:
     // 1. Email field is empty, OR
     // 2. Email field contains placeholder-like value
     const currentEmail = emailInput.value.trim();
-    const isPlaceholderOrEmpty = !currentEmail || 
-                                 currentEmail === "you@example.com" || 
-                                 currentEmail === "You@example.com" ||
-                                 currentEmail.includes("example.com");
-    
-    if (isPlaceholderOrEmpty && window.userProfileInfo && window.userProfileInfo.email) {
+    const isPlaceholderOrEmpty =
+      !currentEmail ||
+      currentEmail === "you@example.com" ||
+      currentEmail === "You@example.com" ||
+      currentEmail.includes("example.com");
+
+    if (
+      isPlaceholderOrEmpty &&
+      window.userProfileInfo &&
+      window.userProfileInfo.email
+    ) {
       console.log("Setting email to:", window.userProfileInfo.email);
       emailInput.value = window.userProfileInfo.email;
     }
   }
-  
+
   // Update accordion visibility
   if (e.target === noNotificationsCheckbox && noNotificationsCheckbox.checked) {
     // Auto-collapse when "no notifications" is checked
@@ -241,8 +253,6 @@ function onProfileFormChange(e) {
   // Validate form and update button states
   validateForm();
   profForm.elements["prof-form-cancel-btn"].disabled = false;
-  
-
 }
 
 // Setup expand/collapse buttons only
@@ -258,30 +268,30 @@ function setupExpandCollapseButtons() {
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (emailExpandBtn) {
-    emailExpandBtn.addEventListener("click", function(e) {
+    emailExpandBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       expandEmailAccordion();
     });
   }
-  
+
   if (emailCollapseBtn) {
-    emailCollapseBtn.addEventListener("click", function(e) {
+    emailCollapseBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       collapseEmailAccordion();
     });
   }
-  
+
   if (textExpandBtn) {
-    textExpandBtn.addEventListener("click", function(e) {
+    textExpandBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       expandTextAccordion();
     });
   }
-  
+
   if (textCollapseBtn) {
-    textCollapseBtn.addEventListener("click", function(e) {
+    textCollapseBtn.addEventListener("click", function (e) {
       e.stopPropagation(); // Prevent accordion header click
       collapseTextAccordion();
     });
@@ -295,11 +305,11 @@ function expandEmailAccordion() {
   const emailAccordion = document.getElementById("email-accordion");
   const emailExpandBtn = document.getElementById("email-expand-btn");
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
-  
+
   if (emailAccordion) {
     emailAccordion.classList.add("expanded");
   }
-  
+
   if (emailExpandBtn) emailExpandBtn.style.display = "none";
   if (emailCollapseBtn) emailCollapseBtn.style.display = "inline-flex";
 }
@@ -311,11 +321,11 @@ function collapseEmailAccordion() {
   const emailAccordion = document.getElementById("email-accordion");
   const emailExpandBtn = document.getElementById("email-expand-btn");
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
-  
+
   if (emailAccordion) {
     emailAccordion.classList.remove("expanded");
   }
-  
+
   if (emailExpandBtn) emailExpandBtn.style.display = "inline-flex";
   if (emailCollapseBtn) emailCollapseBtn.style.display = "none";
 }
@@ -327,11 +337,11 @@ function expandTextAccordion() {
   const textAccordion = document.getElementById("text-accordion");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (textAccordion) {
     textAccordion.classList.add("expanded");
   }
-  
+
   if (textExpandBtn) textExpandBtn.style.display = "none";
   if (textCollapseBtn) textCollapseBtn.style.display = "inline-flex";
 }
@@ -343,11 +353,11 @@ function collapseTextAccordion() {
   const textAccordion = document.getElementById("text-accordion");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (textAccordion) {
     textAccordion.classList.remove("expanded");
   }
-  
+
   if (textExpandBtn) textExpandBtn.style.display = "inline-flex";
   if (textCollapseBtn) textCollapseBtn.style.display = "none";
 }
@@ -359,14 +369,6 @@ let originalTextState = null;
 // Track if changes have been made
 let emailChangesMade = false;
 let textChangesMade = false;
-
-
-
-
-
-
-
-
 
 /**
  * Resets the profile form to its original state.
@@ -381,7 +383,7 @@ function cancelProfileFormChanges() {
 async function saveProfileFormChanges() {
   const profForm = document.forms["profile-information-form"];
   const helpText = document.getElementById("profile-form-help-text");
-  
+
   if (!profForm || !helpText) {
     console.error("Required form elements not found!");
     return;
@@ -395,22 +397,29 @@ async function saveProfileFormChanges() {
 
   // Gather form data
   const email = profForm.elements["email-address"].value;
-  const phoneNumberRaw = profForm.elements["phone-number"].value.replace(/\D/g, "");
+  const phoneNumberRaw = profForm.elements["phone-number"].value.replace(
+    /\D/g,
+    "",
+  );
   const phoneNumberMatch = phoneNumberRaw.match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
   const phoneNumber = phoneNumberMatch ? phoneNumberMatch[0] : "";
   const emailPref = profForm.elements["email-pref"].checked;
   const textPref = profForm.elements["text-pref"].checked;
-  const emailConsentChecked = profForm.elements["email-consent"] ? profForm.elements["email-consent"].checked : false;
-  const textConsentChecked = profForm.elements["text-consent"] ? profForm.elements["text-consent"].checked : false;
+  const emailConsentChecked = profForm.elements["email-consent"]
+    ? profForm.elements["email-consent"].checked
+    : false;
+  const textConsentChecked = profForm.elements["text-consent"]
+    ? profForm.elements["text-consent"].checked
+    : false;
   const probRadios = profForm.elements["notification-prob"];
-  
+
   let selectedProb;
   for (let radio of probRadios) {
     if (radio.checked) {
       selectedProb = Number(radio.value);
     }
   }
-  
+
   // Privacy-first approach: Remove email/phone if preference is unchecked
   const newProfileInfo = {
     email: emailPref ? email : null,
@@ -430,11 +439,11 @@ async function saveProfileFormChanges() {
       headers: { "Content-Type": "application/json;charset=utf-8" },
       body: JSON.stringify(newProfileInfo),
     });
-    
+
     if (res.ok) {
       profileInfo = await res.json();
       helpText.style.color = "green";
-      
+
       // Inform user about data removal if preference was unchecked
       let message = "Changes saved successfully!";
       if (!emailPref && profileInfo.email) {
@@ -443,18 +452,19 @@ async function saveProfileFormChanges() {
       if (!textPref && profileInfo.phone_number) {
         message += " Your phone number has been removed from our system.";
       }
-      
+
       helpText.innerHTML = message;
     } else {
       const contentType = res.headers.get("content-type");
-      
+
       if (contentType && contentType.includes("application/json")) {
         const json = await res.json();
         helpText.style.color = "red";
         helpText.innerHTML = json.errors[0];
       } else {
         helpText.style.color = "red";
-        helpText.innerHTML = "Server error occurred. Please refresh the page and try again.";
+        helpText.innerHTML =
+          "Server error occurred. Please refresh the page and try again.";
       }
     }
     initProfileForm(profileInfo, true);
@@ -485,7 +495,9 @@ function validateEmail(email) {
  * @return {boolean} whether the phone number is valid
  */
 function validatePhoneNumber(phoneNumber) {
-  return phoneNumber && phoneNumber.length === 10 && /^\d{10}$/.test(phoneNumber);
+  return (
+    phoneNumber && phoneNumber.length === 10 && /^\d{10}$/.test(phoneNumber)
+  );
 }
 
 /**
@@ -501,15 +513,21 @@ function validateForm() {
   const emailConsentCheckbox = profForm.elements["email-consent"];
   const textConsentCheckbox = profForm.elements["text-consent"];
   const saveBtn = profForm.elements["prof-form-save-btn"];
-  
+
   console.log("Validating form...");
   console.log("Email checkbox checked:", emailCheckbox.checked);
-  console.log("Email consent checked:", emailConsentCheckbox ? emailConsentCheckbox.checked : "N/A");
+  console.log(
+    "Email consent checked:",
+    emailConsentCheckbox ? emailConsentCheckbox.checked : "N/A",
+  );
   console.log("Text checkbox checked:", textCheckbox.checked);
-  console.log("Text consent checked:", textConsentCheckbox ? textConsentCheckbox.checked : "N/A");
-  
+  console.log(
+    "Text consent checked:",
+    textConsentCheckbox ? textConsentCheckbox.checked : "N/A",
+  );
+
   let isValid = true;
-  
+
   // Validate email if email preference is checked (preference-driven validation)
   if (emailCheckbox.checked) {
     const email = emailInput.value.trim();
@@ -522,7 +540,7 @@ function validateForm() {
   } else {
     emailInput.classList.remove("is-invalid");
   }
-  
+
   // Validate phone number if text preference is checked (preference-driven validation)
   if (textCheckbox.checked) {
     const phoneNumber = phoneInput.value.replace(/\D/g, "");
@@ -535,7 +553,7 @@ function validateForm() {
   } else {
     phoneInput.classList.remove("is-invalid");
   }
-  
+
   saveBtn.disabled = !isValid;
   return isValid;
 }
@@ -575,21 +593,25 @@ function maskPhoneNumber(phoneNumber = "") {
  * Sets up tab switching functionality for accordion content
  */
 function setupAccordionTabs() {
-  const tabs = document.querySelectorAll('.accordion-tab');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const tabId = this.getAttribute('data-tab');
-      const accordionBody = this.closest('.accordion-body');
-      
+  const tabs = document.querySelectorAll(".accordion-tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      const tabId = this.getAttribute("data-tab");
+      const accordionBody = this.closest(".accordion-body");
+
       // Remove active class from all tabs in this accordion
-      accordionBody.querySelectorAll('.accordion-tab').forEach(t => t.classList.remove('active'));
-      accordionBody.querySelectorAll('.accordion-tab-content').forEach(c => c.classList.remove('active'));
-      
+      accordionBody
+        .querySelectorAll(".accordion-tab")
+        .forEach((t) => t.classList.remove("active"));
+      accordionBody
+        .querySelectorAll(".accordion-tab-content")
+        .forEach((c) => c.classList.remove("active"));
+
       // Add active class to clicked tab and content
-      this.classList.add('active');
+      this.classList.add("active");
       const content = accordionBody.querySelector(`#${tabId}`);
       if (content) {
-        content.classList.add('active');
+        content.classList.add("active");
       }
     });
   });
@@ -607,19 +629,29 @@ function updateAccordionVisibility(emailConsentChecked, textConsentChecked) {
   const emailCollapseBtn = document.getElementById("email-collapse-btn");
   const textExpandBtn = document.getElementById("text-expand-btn");
   const textCollapseBtn = document.getElementById("text-collapse-btn");
-  
+
   if (emailAccordion) {
     emailAccordion.classList.toggle("expanded", emailConsentChecked);
     // Update button states
-    if (emailExpandBtn) emailExpandBtn.style.display = emailConsentChecked ? "none" : "inline-flex";
-    if (emailCollapseBtn) emailCollapseBtn.style.display = emailConsentChecked ? "inline-flex" : "none";
+    if (emailExpandBtn)
+      emailExpandBtn.style.display = emailConsentChecked
+        ? "none"
+        : "inline-flex";
+    if (emailCollapseBtn)
+      emailCollapseBtn.style.display = emailConsentChecked
+        ? "inline-flex"
+        : "none";
   }
-  
+
   if (textAccordion) {
     textAccordion.classList.toggle("expanded", textConsentChecked);
     // Update button states
-    if (textExpandBtn) textExpandBtn.style.display = textConsentChecked ? "none" : "inline-flex";
-    if (textCollapseBtn) textCollapseBtn.style.display = textConsentChecked ? "inline-flex" : "none";
+    if (textExpandBtn)
+      textExpandBtn.style.display = textConsentChecked ? "none" : "inline-flex";
+    if (textCollapseBtn)
+      textCollapseBtn.style.display = textConsentChecked
+        ? "inline-flex"
+        : "none";
   }
 }
 
@@ -634,7 +666,7 @@ function updateAccordionVisibility(emailConsentChecked, textConsentChecked) {
 function buildLeaseInfoEls(leasesData = leases) {
   const leasesAccordion = document.getElementById("leases-accordion");
   leasesAccordion.innerHTML = "";
-  
+
   if (leasesData && leasesData.length > 0) {
     for (let lease of leasesData) {
       leasesAccordion.innerHTML += createLeaseInfoEl(lease);
@@ -645,7 +677,8 @@ function buildLeaseInfoEls(leasesData = leases) {
       initLeaseInfoEl(lease);
     }
   } else {
-    leasesAccordion.innerHTML = '<div class="text-muted text-center p-3">No leases found. Use the search above to add your first lease.</div>';
+    leasesAccordion.innerHTML =
+      '<div class="text-muted text-center p-3">No leases found. Use the search above to add your first lease.</div>';
   }
 }
 
@@ -730,7 +763,7 @@ async function addLease(leaseId) {
     headers: { "Content-Type": "application/json;charset=utf-8" },
     body: JSON.stringify({ lease_id: leaseId }),
   });
-  
+
   if (res.ok) {
     const lease = await res.json();
     const idxOfLease = leases.findIndex((x) => x.lease_id === lease.lease_id);
@@ -756,7 +789,7 @@ async function deleteLease(leaseId) {
     headers: { "Content-Type": "application/json;charset=utf-8" },
     body: JSON.stringify({ lease_id: leaseId }),
   });
-  
+
   if (res.ok) {
     const idxOfLease = leases.findIndex((x) => x.lease_id === leaseId);
     leases.splice(idxOfLease, 1);
@@ -777,22 +810,22 @@ async function deleteLease(leaseId) {
 async function searchLeases() {
   const searchResultsDiv = document.getElementById("lease-search-results");
   const userInput = document.getElementById("lease-search-text-input").value;
-  
+
   if (userInput === "") {
     clearLeaseSearch();
     return;
   }
-  
+
   const res = await authorizedFetch("/searchLeases", {
     method: "POST",
     headers: { "Content-Type": "application/json;charset=utf-8" },
     body: JSON.stringify({ search: userInput }),
   });
-  
+
   if (res.ok) {
     const returnedLeases = await res.json();
     searchResultsDiv.innerHTML = "";
-    
+
     if (returnedLeases.length > 0) {
       for (let lease of returnedLeases) {
         searchResultsDiv.innerHTML += `<button type="button" class="list-group-item list-group-item-action">${lease}</button>`;
@@ -801,12 +834,14 @@ async function searchLeases() {
         button.addEventListener("click", () => addLease(button.textContent));
       }
     } else {
-      searchResultsDiv.innerHTML = '<button type="button" class="list-group-item list-group-item-action">No leases with a similar ID were found.</button>';
+      searchResultsDiv.innerHTML =
+        '<button type="button" class="list-group-item list-group-item-action">No leases with a similar ID were found.</button>';
     }
     searchResultsDiv.style.display = "flex";
   } else {
     console.log("There was an error while searching for leases.");
-    searchResultsDiv.innerHTML = '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
+    searchResultsDiv.innerHTML =
+      '<button type="button" class="list-group-item list-group-item-action">An error occurred. Please try again.</button>';
     searchResultsDiv.style.display = "flex";
   }
 }

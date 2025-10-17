@@ -23,7 +23,7 @@ export function createShellCastPopupLayer() {
 }
 
 export function popupContent(title, siteName, iconUrl, text) {
-  return `<div id="closable-card" class="card mb-3 popup-background" style="width:350px">  
+  return `<div id="closable-card" class="card mb-3 popup-background" style="width:350px">
     <div class="card-header container-fluid">
       <div class="row">
         <div class="col-10 text-center" style="color: white;"><h6>${title}</h6></div>
@@ -32,7 +32,7 @@ export function popupContent(title, siteName, iconUrl, text) {
             <span aria-hidden="true"" ><h6>&times;</h6></span>
           </button>
         </div>
-      </div> 
+      </div>
     </div>
     <div class="card-body no-padding">
       <div class="row g-0 no-margin">
@@ -71,7 +71,7 @@ export function partnerAppLyrPopupContent(feature) {
       title = WC_POPUP.title;
       iconUrl = WC_POPUP.iconUrl;
       hpUrl = WC_POPUP.hpUrl;
-      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
+      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the
                       Web Camera at this location. This will open the WebCOOS camera site in a new tab.
                       <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                       </p>`;
@@ -79,8 +79,8 @@ export function partnerAppLyrPopupContent(feature) {
       title = VB_POPUP.title;
       iconUrl = VB_POPUP.iconUrl;
       hpUrl = VB_POPUP.hpUrl;
-      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the 
-                        Beach Condition Reporting System at this location. This will open the Mote Marine Laboratory 
+      contentText = `<p class="small-font">Click <span><a href="${url}" target="_blank">here</a></span> to view the
+                        Beach Condition Reporting System at this location. This will open the Mote Marine Laboratory
                         site in a new tab.
                         <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                         </p>`;

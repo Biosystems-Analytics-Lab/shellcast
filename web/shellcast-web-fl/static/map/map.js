@@ -1,6 +1,6 @@
 "use strict";
-import {auth} from "../common/common.js";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { auth } from "../common/common.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 import {
   addAllMapLayers,
@@ -16,21 +16,37 @@ import {
   getLeaseData,
   getPartnerSitesSourceData,
   handleUndef,
-  mapBoundingBox
+  mapBoundingBox,
 } from "./utils.js";
 
-import {initGrowingUnitTable, initLeaseTable, setTableSearchBoxes} from "./table.js";
-import {createShellCastPopupLayer, partnerAppLyrPopupContent, POPUP_CONTENT_ELE, popupContent} from "./popup.js";
-import {clusterMemberStyle, clusterStyle, generatePointsCircle} from "./cluster.js";
+import {
+  initGrowingUnitTable,
+  initLeaseTable,
+  setTableSearchBoxes,
+} from "./table.js";
+import {
+  createShellCastPopupLayer,
+  partnerAppLyrPopupContent,
+  POPUP_CONTENT_ELE,
+  popupContent,
+} from "./popup.js";
+import {
+  clusterMemberStyle,
+  clusterStyle,
+  generatePointsCircle,
+} from "./cluster.js";
 import {
   CMU_LYR_NAME,
   INITIAL_ZOOM,
   LEASE_PNT_LYR_NAME,
   MAP_CENTER,
   MARKER_SVG,
-  PARTNER_APP_LYR_NAME
+  PARTNER_APP_LYR_NAME,
 } from "./map_constants.js";
-import {addPartnerSitesLegendControl, addShellCastLegendControl} from "./legends-dayselector.js";
+import {
+  addPartnerSitesLegendControl,
+  addShellCastLegendControl,
+} from "./legends-dayselector.js";
 
 /** The ID of the HTML element that holds the map. */
 const MAP_ELE_ID = "closure-map";

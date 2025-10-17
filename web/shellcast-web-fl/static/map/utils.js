@@ -1,6 +1,11 @@
 "use strict";
-import {authorizedFetch} from "../common/common.js";
-import {COLOR_PALLET, GROWING_UNIT_BOUNDS_PATH, HOME_ICON, PARTNER_APP_POINTS_PATH} from "./map_constants.js";
+import { authorizedFetch } from "../common/common.js";
+import {
+  COLOR_PALLET,
+  GROWING_UNIT_BOUNDS_PATH,
+  HOME_ICON,
+  PARTNER_APP_POINTS_PATH,
+} from "./map_constants.js";
 
 /**
  * Returns a value of the risk factor.
@@ -230,12 +235,11 @@ export function addHomeExtentButton(map, extent, popupLyr) {
   map.addControl(homeExtent);
 }
 
-
 export function mapBoundingBox(map) {
   const extent = map.getView().calculateExtent(map.getSize());
   // Set the initial view to show all points of interest
   map.getView().fit(extent, {
-    padding: [50, 50, 50, 50]
+    padding: [50, 50, 50, 50],
   });
   return extent;
 }

@@ -17,10 +17,11 @@ STATE = "SC"
 setup_logging.create_log_files(STATE)
 setup_logging.setup_logger(STATE)
 
-from sc_pqpf.sc_pqpf import SCPQPF  # noqa: E402
+import logging  # noqa: E402
+
 from management import DirectoryConfig, NotificationConfig  # noqa: E402
 from notifications import EmailNotification
-import logging  # noqa: E402
+from sc_pqpf.sc_pqpf import SCPQPF  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +43,9 @@ if __name__ == "__main__":
     notification_config = NotificationConfig(STATE)
     if notification_config.notifications_enabled:
         try:
-            email_notify_inst = EmailNotification(dir_config, notification_config, STATE)
+            email_notify_inst = EmailNotification(
+                dir_config, notification_config, STATE
+            )
             email_notify_inst.send()
         except Exception as e:
             logger.error(f"Failed to send email notification: {str(e)}")

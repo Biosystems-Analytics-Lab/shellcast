@@ -7,16 +7,15 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 
+import constants as ct
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
-from shapely.errors import ShapelyDeprecationWarning
-from shapely.geometry import Point
-
-import constants as ct
 import utils
 from pqpf_procs import PQPFProcs
+from shapely.errors import ShapelyDeprecationWarning
+from shapely.geometry import Point
 
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
@@ -271,11 +270,13 @@ class FLPQPF:
                 for row in reader:
                     flag = False
                     # e.g 1/1-12/31 or multiple like 4/1-6/30, 9/1-11/30
-                    dt_str_lst = row[2].strip('[]').split(", ")
+                    dt_str_lst = row[2].strip("[]").split(", ")
                     if dt_str_lst and len(dt_str_lst) > 0:
                         for dt_str in dt_str_lst:
                             dates = utils.convert_date_string(dt_str)
-                            if utils.is_season(self.date_today, dates["start"], dates["end"]):
+                            if utils.is_season(
+                                self.date_today, dates["start"], dates["end"]
+                            ):
                                 flag = True
                                 break
                     # cmu_id, prob_1d_perc, if not in season, assign 100

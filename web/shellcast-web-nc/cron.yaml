@@ -1,6 +1,6 @@
 cron:
-- description: "Send notifications daily for NC"
-  url: /sendNotifications
-  target: default
-  schedule: every day 07:00
-  timezone: America/New_York
+  - description: "Send notifications daily for NC"
+    url: /sendNotifications
+    target: default
+    schedule: every day 07:00
+    timezone: America/New_York

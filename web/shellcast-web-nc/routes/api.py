@@ -1,18 +1,14 @@
-from flask import Blueprint, jsonify, request
-from sqlalchemy.exc import IntegrityError
-
 from firebase_admin import auth
-
+from flask import Blueprint, jsonify, request
 from models import db
-from models.User import User
 from models.CMU import CMU
 from models.CMUProbability import CMUProbability
-from models.UserLease import UserLease
 from models.Lease import Lease
-
-from routes.validators.ProfileInfoValidator import ProfileInfoValidator
-
+from models.User import User
+from models.UserLease import UserLease
 from routes.authentication import userRequired
+from routes.validators.ProfileInfoValidator import ProfileInfoValidator
+from sqlalchemy.exc import IntegrityError
 
 api = Blueprint("api", __name__)
 

@@ -124,4 +124,3 @@ BEGIN
     AND u.deleted = false
     AND ul.deleted = 0;
 END //
-

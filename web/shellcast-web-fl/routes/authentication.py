@@ -1,10 +1,8 @@
 from functools import wraps
 
-from flask import request
-
 from firebase_admin import auth
 from firebase_admin.auth import ExpiredIdTokenError, InvalidIdTokenError
-
+from flask import request
 from models import db
 from models.User import User
 

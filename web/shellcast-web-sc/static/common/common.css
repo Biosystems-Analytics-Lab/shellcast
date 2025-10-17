@@ -15,7 +15,7 @@
 }
 
 #account-dropdown:hover {
-  color: #7ED3F6;
+  color: #7ed3f6;
 }
 
 .navbar-logo {
@@ -43,7 +43,8 @@
 }
 
 .text-bubble pre {
-  font-family: Univers,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-family: Univers, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
   font-size: 1rem;
   margin-bottom: 0;
 }
@@ -113,11 +114,11 @@ footer a:hover {
 .navbar {
   background-color: white;
   border-bottom: 2px #007fad solid;
-  box-shadow: 0 2px 2px 0px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 2px 0px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-toggler {
-  border-color: rgba(0,0,0,.1);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .navbar-toggler-icon {
@@ -146,26 +147,32 @@ footer a:hover {
 }
 
 .bg-primary {
-  background-color: #007fad!important;
+  background-color: #007fad !important;
 }
 
-a, .btn-link, .dropdown-item {
+a,
+.btn-link,
+.dropdown-item {
   color: #007fad;
 }
 
-a:hover, a:focus, .btn-link:hover, .dropdown-item:hover {
-  color: #7ED3F6;
+a:hover,
+a:focus,
+.btn-link:hover,
+.dropdown-item:hover {
+  color: #7ed3f6;
   background-color: transparent;
 }
 
-.btn-primary, .btn-primary:disabled {
+.btn-primary,
+.btn-primary:disabled {
   background-color: #007fad;
   border-color: #007fad;
 }
 
 .btn-primary:hover {
-  background-color: #7ED3F6;
-  border-color: #7ED3F6;
+  background-color: #7ed3f6;
+  border-color: #7ed3f6;
 }
 
 .dropdown-item:active {
@@ -190,7 +197,7 @@ a:hover, a:focus, .btn-link:hover, .dropdown-item:hover {
   border-color: #bd2130;
 }
 
-.cards-wrapper{
+.cards-wrapper {
   width: 76%;
   margin-top: 30px;
   margin-left: 10%;
@@ -199,10 +206,10 @@ a:hover, a:focus, .btn-link:hover, .dropdown-item:hover {
 
 /*https://stackoverflow.com/questions/36430816/bootstrap-4-card-deck-with-number-of-columns-based-on-viewport*/
 @media (max-width: 900px) {
-    .card-deck .card {
-      min-width: 50.1%; /* 1 Column */
-      margin-bottom: 12px;
-    }
+  .card-deck .card {
+    min-width: 50.1%; /* 1 Column */
+    margin-bottom: 12px;
+  }
 }
 
 .index-content {

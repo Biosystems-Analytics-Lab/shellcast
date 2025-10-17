@@ -47,12 +47,12 @@ check_gcloud_setup() {
 get_project_name() {
     local project_name
     project_name=$(gcloud config get-value project 2>/dev/null)
-    
+
     if [ -z "$project_name" ]; then
         print_error "No project configured. Please run 'gcloud config set project PROJECT_NAME' first."
         exit 1
     fi
-    
+
     echo "$project_name"
 }
 
@@ -60,33 +60,33 @@ get_project_name() {
 clean_staging_for_project() {
     local project_name="$1"
     local force_cleanup="$2"
-    
+
     local staging_bucket="staging.$project_name.appspot.com"
-    
+
     print_status "Project: $project_name"
     print_status "Staging bucket: $staging_bucket"
-    
+
     # Check if staging bucket exists
     if ! gsutil ls "gs://$staging_bucket" &> /dev/null; then
         print_warning "Staging bucket $staging_bucket does not exist or is not accessible."
         return 0
     fi
-    
+
     if [ "$force_cleanup" != "true" ]; then
         print_warning "This will delete ALL files in $staging_bucket"
         print_warning "You will need to use 'gcloud app deploy --no-cache' for next deployment"
-        
+
         read -p "Are you sure you want to continue? (y/N): " -n 1 -r
         echo
-        
+
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             print_status "Operation cancelled for $project_name"
             return 0
         fi
     fi
-    
+
     print_status "Deleting staging files for $project_name..."
-    
+
     # Delete all files in staging bucket
     if gsutil -m rm "gs://$staging_bucket/**" 2>/dev/null; then
         print_status "Staging files deleted successfully for $project_name!"
@@ -99,12 +99,12 @@ clean_staging_for_project() {
 clean_specific_staging_dirs() {
     local project_name="$1"
     local staging_bucket="staging.$project_name.appspot.com"
-    
+
     print_status "Cleaning specific staging directories for $project_name..."
-    
+
     # Common staging directories to clean
     local dirs=("containers/images" "app" "source-contexts" "temp")
-    
+
     for dir in "${dirs[@]}"; do
         local path="gs://$staging_bucket/$dir"
         if gsutil ls "$path" &> /dev/null; then
@@ -122,9 +122,9 @@ clean_specific_staging_dirs() {
 list_staging_files() {
     local project_name="$1"
     local staging_bucket="staging.$project_name.appspot.com"
-    
+
     print_status "Listing staging files for $project_name..."
-    
+
     if gsutil ls "gs://$staging_bucket" &> /dev/null; then
         gsutil ls -r "gs://$staging_bucket" | head -20
         echo "..."
@@ -161,7 +161,7 @@ main() {
     local list_files=false
     local specific_dirs=false
     local all_projects=false
-    
+
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -196,20 +196,20 @@ main() {
                 ;;
         esac
     done
-    
+
     print_header "ShellCast Staging Cleanup Script"
-    
+
     # Check gcloud setup
     check_gcloud_setup
-    
+
     # Handle all projects option
     if [ "$all_projects" = true ]; then
         local projects=("ncsu-shellcast" "shellcast-fl" "shellcast-nc" "shellcast-sc")
-        
+
         for proj in "${projects[@]}"; do
             echo ""
             print_header "Processing project: $proj"
-            
+
             if [ "$list_files" = true ]; then
                 list_staging_files "$proj"
             elif [ "$specific_dirs" = true ]; then
@@ -218,16 +218,16 @@ main() {
                 clean_staging_for_project "$proj" "$force_cleanup"
             fi
         done
-        
+
         print_status "Completed processing all projects"
         exit 0
     fi
-    
+
     # Get project name if not specified
     if [ -z "$project_name" ]; then
         project_name=$(get_project_name)
     fi
-    
+
     # Execute based on options
     if [ "$list_files" = true ]; then
         list_staging_files "$project_name"
@@ -236,13 +236,13 @@ main() {
     else
         clean_staging_for_project "$project_name" "$force_cleanup"
     fi
-    
+
     print_status "Operation completed successfully!"
-    
+
     if [ "$force_cleanup" != true ] && [ "$list_files" != true ] && [ "$specific_dirs" != true ]; then
         print_warning "Remember to use 'gcloud app deploy --no-cache' for next deployment"
     fi
 }
 
 # Run main function with all arguments
-main "$@" 
+main "$@"

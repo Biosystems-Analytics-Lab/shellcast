@@ -1,41 +1,41 @@
 #leases-map {
-    height: 46vh;
-    width: 100%;
-    display: table;
-    /*padding-top: 43vh;*/
-    font-size: small;
+  height: 46vh;
+  width: 100%;
+  display: table;
+  /*padding-top: 43vh;*/
+  font-size: small;
 }
 
 #lease-legend {
-    display: table;
-    margin-left: 20px;
-    margin-top: 43vh;
-    font-size: small;
+  display: table;
+  margin-left: 20px;
+  margin-top: 43vh;
+  font-size: small;
 }
 
 .legend-key {
-    display: table-cell;
-    width: 30px;
-    margin-left: 10px;
-    border: 1px solid black;
+  display: table-cell;
+  width: 30px;
+  margin-left: 10px;
+  border: 1px solid black;
 }
 
 .legend-text {
-    display: table-cell;
-    vertical-align: middle;
-    padding-left: 5px;
-    padding-right: 10px;
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 5px;
+  padding-right: 10px;
 }
 
 #delete-account-div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #forms {
-    margin: auto;
-    max-width: 900px;
+  margin: auto;
+  max-width: 900px;
 }
 
 /* ============================================================================
@@ -132,7 +132,7 @@
   display: flex;
   align-items: center;
   min-height: 1.25rem;
-  padding-left: 2.0rem;
+  padding-left: 2rem;
 }
 
 .form-check-input {
@@ -154,9 +154,9 @@
    ============================================================================ */
 
 .notification-options > label {
-    display: block;
-    margin-top: 8px;
-    margin-bottom: 0;
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 0;
 }
 
 .notification-preferences-form {
@@ -184,7 +184,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -325,8 +325,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ============================================================================
@@ -376,7 +382,8 @@
 
 /* ============================================================================
    EXAMPLE NOTIFICATIONS
-   ============================================================================ */.text-bubble {
+   ============================================================================ */
+.text-bubble {
   background: #e9ecef;
   padding: 0.875rem;
   border-radius: 6px;
@@ -429,39 +436,39 @@
 }
 
 .search-bar {
-    position: relative;
+  position: relative;
 }
 
 .search-results {
-    display: none;
-    position: absolute;
-    z-index: 1000;
-    width: 100%;
-    max-height: 175px;
-    overflow: hidden;
-    overflow-y: scroll;
-    border: 1px solid #999;
-    border-top: 0 solid #fff;
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  max-height: 175px;
+  overflow: hidden;
+  overflow-y: scroll;
+  border: 1px solid #999;
+  border-top: 0 solid #fff;
 }
 
 .lease-form-buttons {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .dropdown-menu {
-    max-height: 200px;
-    overflow-y: auto;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .no-gutters {
-    margin-right: 0;
-    margin-left: 0;
+  margin-right: 0;
+  margin-left: 0;
 
-    > .col,
-    > [class*="col-"] {
-        padding-right: 0;
-        padding-left: 0;
-    }
+  > .col,
+  > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+  }
 }

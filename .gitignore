@@ -75,4 +75,3 @@ vignettes/*.pdf
 .Renviron
 ncep-lib-utils/
 .python-version
-

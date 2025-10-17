@@ -159,13 +159,12 @@ function addAllMapLayers(mapEl) {
   });
 }
 
-
 function mapBoundingBox() {
   // Calculate the initial extent that shows all points of interest
   const extent = map.getView().calculateExtent(map.getSize());
   // Set the initial view to show all points of interest
   map.getView().fit(extent, {
-    padding: [50, 50, 50, 50]
+    padding: [50, 50, 50, 50],
   });
   return extent;
 }
@@ -290,7 +289,9 @@ async function initMap(growingUnitData) {
         let text = `<p>
                 <b>Today:</b> ${handleUndef(feature.get("prob_1d_perc"))}
                 <br><b>Tomorrow:</b> ${handleUndef(feature.get("prob_2d_perc"))}
-                <br><b>In 2 days:</b> ${handleUndef(feature.get("prob_3d_perc"))}
+                <br><b>In 2 days:</b> ${handleUndef(
+                  feature.get("prob_3d_perc"),
+                )}
                 </p>`;
         popupHtmlContent.innerHTML = popupContent(
           title,
@@ -377,7 +378,9 @@ function addLeaseDataToMap(pointFeatures) {
       let text = `<p>
                 <b>Today:</b> ${handleUndef(feature.get("prob_1d_perc"))}
                 <br><b>Tomorrow:</b> ${handleUndef(feature.get("prob_2d_perc"))}
-                <br><b>In 2 days:</b> ${handleUndef(feature.get("prob_3d_perc"))}
+                <br><b>In 2 days:</b> ${handleUndef(
+                  feature.get("prob_3d_perc"),
+                )}
                 </p>`;
       popupHtmlContent.innerHTML = popupContent(title, siteName, iconUrl, text);
       popupLyr.setPosition(coordinate);

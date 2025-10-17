@@ -3,10 +3,9 @@ import os
 
 import firebase_admin
 import requests
-from firebase_admin import auth
-from flask import Flask, request, Response
-
 from config import Config, DevConfig
+from firebase_admin import auth
+from flask import Flask, Response, request
 from models import db
 from routes.api import api
 from routes.cron import cron

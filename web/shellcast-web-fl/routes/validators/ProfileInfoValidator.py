@@ -1,6 +1,6 @@
 import re
 
-from email_validator import validate_email, EmailNotValidError
+from email_validator import EmailNotValidError, validate_email
 from models import db
 
 

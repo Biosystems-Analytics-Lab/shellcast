@@ -1,4 +1,3 @@
-
 # README.md (`docs` directory)
 
 The `docs` directory contains several markdown documents explaining how to perform a variety of tasks related to ShellCast.

@@ -1,8 +1,7 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime
-from sqlalchemy.sql import functions
-from sqlalchemy.orm import relationship
-
 from models import db
+from sqlalchemy import Column, DateTime, Float, Integer, String
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import functions
 
 
 class Lease(db.Model):

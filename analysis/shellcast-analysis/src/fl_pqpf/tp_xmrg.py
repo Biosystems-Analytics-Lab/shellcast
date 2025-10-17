@@ -17,9 +17,8 @@ from ftplib import FTP, error_perm
 from pathlib import Path
 from typing import List
 
-import pytz
-
 import constants as ct
+import pytz
 import utils
 
 logger = logging.getLogger(__name__)

@@ -1,10 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
-from sqlalchemy.sql import functions, expression
-from sqlalchemy.orm import relationship
-
 from models import db
-from models.UserLease import UserLease
 from models.Notification import Notification
+from models.UserLease import UserLease
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import expression, functions
 
 
 class User(db.Model):
@@ -54,8 +53,12 @@ class User(db.Model):
     text_opt_in_date = Column(DateTime)
     email_opt_out_date = Column(DateTime)
     text_opt_out_date = Column(DateTime)
-    email_verification_sent = Column(Boolean, server_default=expression.false(), default=False)
-    text_verification_sent = Column(Boolean, server_default=expression.false(), default=False)
+    email_verification_sent = Column(
+        Boolean, server_default=expression.false(), default=False
+    )
+    text_verification_sent = Column(
+        Boolean, server_default=expression.false(), default=False
+    )
     deleted = Column(Boolean, server_default=expression.false(), default=False)
     created = Column(DateTime, server_default=functions.now())
     updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())

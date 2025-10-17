@@ -1,6 +1,10 @@
 "use strict";
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-import {getAuth, onAuthStateChanged, signOut,} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 // Firebase configuration
 const FIREBASE_CONFIG = {

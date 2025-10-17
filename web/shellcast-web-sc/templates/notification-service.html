@@ -1,267 +1,326 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}ShellCast Notification Service{%
+endblock %} {% block additional_head %}
+<!-- Custom CSS -->
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ url_for('static', filename='notification-service/notification-service.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="container">
+  <h1>
+    <center>Notification <br />Terms & Conditions and Privacy Policy</center>
+  </h1>
+  <h2>
+    Terms & Conditions <br /><span
+      ><h4>Tentative Effective Date: November 1st, 2025</h4></span
+    >
+  </h2>
 
-{% block title %}ShellCast Notification Service{% endblock %}
+  <h3>1. Introduction</h3>
+  <p>
+    By subscribing to the ShellCast Notification Service, you consent to
+    receiving SMS messages about ShellCast's potential lease closures today,
+    tomorrow, or in 2 days. Message frequency may vary depending on weather
+    conditions, and standard message and data rates may apply.
+  </p>
 
-{% block additional_head %}
-    <!-- Custom CSS -->
-    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='notification-service/notification-service.css') }}">
-{% endblock %}
+  <h3>2. Subscription and Consent</h3>
+  <h5>Opt-In process</h5>
+  <p>
+    Text and email notification services are exclusively available to registered
+    users. To register and log in to the ShellCast website, a Gmail address is
+    required. Users must also register their lease location and select a risk
+    category for lease closure at which they will receive notifications:
+    "Moderate or higher," "High or higher," or "Very high."
+  </p>
+  <h5>Opt-in Information</h5>
+  <div style="margin-left: 20px">
+    <p>
+      Registered users can manage notification settings via the
+      <b>Preferences</b> link in the top-right corner, by clicking their
+      registered email. To opt-in, check the relevant box, provide a mobile
+      phone number or email address, confirm consent, and save the settings.
+      Users can opt-in to both options.
+    </p>
+    <h5>Opt-In Form Examples</h5>
+    <img
+      src="{{ url_for('static', filename='img/preference/notification_text_opt-in.png') }}"
+      alt="Text Message Opt-In"
+      style="width: 90%; height: auto"
+    />
+    <img
+      src="{{ url_for('static', filename='img/preference/notification_email_opt-in.png') }}"
+      alt="Email Message Opt-In"
+      style="width: 90%; height: auto"
+    />
+  </div>
 
-{% block content %}
-    <div class="container">
-        <h1><center>Notification <br>Terms & Conditions and Privacy Policy</center></h1>
-        <h2>Terms & Conditions
-        <br><span><h4>Tentative Effective Date: November 1st, 2025</h4></span></h2>
+  <h3>Verification</h3>
+  <p>
+    Upon subscribing, users will receive a one-time verification message.
+    Continued use of the Service confirms your consent.
+  </p>
 
-        <h3>1. Introduction</h3>
-        <p>
-            By subscribing to the ShellCast Notification Service, you consent to receiving SMS messages about 
-            ShellCast's potential lease closures today, tomorrow, or in 2 days. Message frequency may vary 
-            depending on weather conditions, and standard message and data rates may apply.
-        </p>
+  <h3>3. Message Content and Frequency</h3>
+  <h5>Types of Messages</h5>
+  <p>
+    Users will be notified about the potential risk of temporary harvest closure
+    for registered leases. The forecasts provide estimates on the risk that a
+    lease site or growing area will temporarily close today, tomorrow, or in 2
+    days due to excess rainfall in states aside from Florida. Florida utilizes a
+    different excess rainfall system and it is only possible to estimate day-of
+    closure risk. For more information see
+    <a href="https://ncsu-shellcast.appspot.com/how-it-works"
+      >How ShellCast Works</a
+    >.
+  </p>
 
-        <h3>2. Subscription and Consent</h3>
-        <h5>Opt-In process</h5>
-        <p>
-            Text and email notification services are exclusively available to registered users. To register and 
-            log in to the ShellCast website, a Gmail address is required. Users must also register their lease 
-            location and select a risk category for lease closure at which they will receive notifications: 
-            "Moderate or higher," "High or higher," or "Very high."
-        </p>
-        <h5>Opt-in Information</h5>
-        <div style="margin-left: 20px;">
-            <p>
-                Registered users can manage notification settings via the <b>Preferences</b> link in the top-right corner, 
-                by clicking their registered email. To opt-in, check the relevant box, provide a mobile phone number or 
-                email address, confirm consent, and save the settings. Users can opt-in to both options.
-            </p>
-            <h5>Opt-In Form Examples</h5>
-            <img src="{{ url_for('static', filename='img/preference/notification_text_opt-in.png') }}" alt="Text Message Opt-In" style="width: 90%; height: auto;">
-            <img src="{{ url_for('static', filename='img/preference/notification_email_opt-in.png') }}" alt="Email Message Opt-In" style="width: 90%; height: auto;">
-        </div>
-            
-        <h3>Verification</h3>
-        <p>
-            Upon subscribing, users will receive a one-time verification message. Continued use of the Service 
-            confirms your consent.
-        </p>
+  <h5>Text Message Example</h5>
+  <img
+    src="{{ url_for('static', filename='img/preference/notification_text_message_example.png') }}"
+    alt="Text Message Example"
+  />
 
-        <h3>3. Message Content and Frequency</h3>
-        <h5>Types of Messages</h5>
-        <p>
-            Users will be notified about the potential risk of temporary harvest closure for registered leases. 
-            The forecasts provide estimates on the risk that a lease site or growing area will temporarily close 
-            today, tomorrow, or in 2 days due to excess rainfall in states aside from Florida. Florida utilizes a 
-            different excess rainfall system and it is only possible to estimate day-of closure risk. For more 
-            information see <a href="https://ncsu-shellcast.appspot.com/how-it-works">How ShellCast Works</a>.
-        </p>
+  <h5>Email Message Example</h5>
+  <img
+    src="{{ url_for('static', filename='img/preference/notification_email_message_example.png') }}"
+    alt="Email Message Example"
+  />
 
-        <h5>Text Message Example</h5>
-        <img src="{{ url_for('static', filename='img/preference/notification_text_message_example.png') }}" alt="Text Message Example">
+  <h5>Frequency Disclosure</h5>
+  <p>
+    Message frequency depends on the weather conditions. If there's a risk of
+    closure for one of your leases and the closure category matches your
+    notification settings, ShellCast will send a notification between 6:00 a.m.
+    and 7:00 a.m. ET.
+  </p>
 
-        <h5>Email Message Example</h5>
-        <img src="{{ url_for('static', filename='img/preference/notification_email_message_example.png') }}" alt="Email Message Example">
-      
-        <h5>Frequency Disclosure</h5>
-        <p>
-            Message frequency depends on the weather conditions. If there's a risk of closure for one of 
-            your leases and the closure category matches your notification settings, ShellCast will send 
-            a notification between 6:00 a.m. and 7:00 a.m. ET.
-        </p>
+  <h3>4. Opt-Out and Help</h3>
+  <h5>Opt-Out Process</h5>
+  <strong style="font-size: 0.9em; color: grey">Text Notification</strong>
+  <ul>
+    <li style="margin-left: 30px">
+      To stop receiving text messages, reply with any of the following keywords:
+      STOP, QUIT, END, REVOKE, OPT OUT, CANCEL, or UNSUBSCRIBE. Alternatively,
+      visit the Preferences page on the ShellCast website to uncheck the consent
+      box.
+    </li>
+  </ul>
+  <strong style="font-size: 0.9em; color: grey">Email Notification</strong>
+  <ul>
+    <li style="margin-left: 30px">
+      To stop receiving email notifications, click "Unsubscribe" in any
+      ShellCast notification email or visit the Preferences page on the
+      ShellCast website to uncheck the consent box.
+    </li>
+  </ul>
 
+  <h5>Opt-Out Message Example</h5>
+  <p>
+    "You have successfully opted out of messages from ShellCast forecasting
+    tool. You will receive no further messages."
+  </p>
 
-        <h3>4. Opt-Out and Help</h3>
-        <h5>Opt-Out Process</h5>
-        <strong style="font-size: 0.9em; color: grey">Text Notification</strong>
-        <ul>
-            <li style="margin-left: 30px;">To stop receiving text messages, reply with any of the following keywords: STOP, QUIT, 
-                END, REVOKE, OPT OUT, CANCEL, or UNSUBSCRIBE. Alternatively, visit the Preferences page on 
-                the ShellCast website to uncheck the consent box.</li>
-        </ul>
-        <strong style="font-size: 0.9em; color: grey">Email Notification</strong>
-        <ul>
-            <li style="margin-left: 30px;">To stop receiving email notifications, click "Unsubscribe" in any ShellCast notification 
-                email or visit the Preferences page on the ShellCast website to uncheck the consent box.</li>
-        </ul>
-        
-        <h5>Opt-Out Message Example</h5>
-            <p>
-                "You have successfully opted out of messages from ShellCast forecasting tool. 
-                You will receive no further messages."
-            </p>
-        
-        
-        <h5>Help Process</h5>
-        <p>
-            For support or more information, reply HELP to a text notification, visit the FAQs on the ShellCast website, 
-            or contact us directly.
-        </p>
-        
-        <h5>Help Message Example</h5>
-        <p>
-            "Thank you for reaching out to ShellCast. For support, please email us at 
-            <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>.
-            Reply STOP to opt out."
-        </p>
+  <h5>Help Process</h5>
+  <p>
+    For support or more information, reply HELP to a text notification, visit
+    the FAQs on the ShellCast website, or contact us directly.
+  </p>
 
-        <h3>5. Privacy Policy</h3>
+  <h5>Help Message Example</h5>
+  <p>
+    "Thank you for reaching out to ShellCast. For support, please email us at
+    <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>. Reply STOP
+    to opt out."
+  </p>
 
-        <h5>Data Collection and Use</h5>
-        <p>
-            We collect your personal information (e.g. email, mobile number, lease locations, and 
-            notification settings) to provide the ShellCast notification service. We do not share 
-            your information with third parties for marketing purposes.
-        </p>
+  <h3>5. Privacy Policy</h3>
 
-        <h5>Data Security</h5>
-        <p>
-            We implement industry-standard measures to safeguard your information. However, while 
-            we strive for maximum security, we cannot guarantee absolute protection.
-        </p>
+  <h5>Data Collection and Use</h5>
+  <p>
+    We collect your personal information (e.g. email, mobile number, lease
+    locations, and notification settings) to provide the ShellCast notification
+    service. We do not share your information with third parties for marketing
+    purposes.
+  </p>
 
-        <h5>Privacy Disclosure</h5>
-        <p>
-            Please review our full Privacy Policy below for detailed information on how your data is 
-            collected, used and protected.
-        </p>
+  <h5>Data Security</h5>
+  <p>
+    We implement industry-standard measures to safeguard your information.
+    However, while we strive for maximum security, we cannot guarantee absolute
+    protection.
+  </p>
 
-        <h3>6. Fee and Carrier Charges</h3>
-        <h5>Carrier Fees:</h5>
-        <p>
-            Standard message and data rates may apply based on your mobile carrier and plan. You are 
-            solely responsible for any fees incurred by your use of the ShellCast notification service.
-        </p>
+  <h5>Privacy Disclosure</h5>
+  <p>
+    Please review our full Privacy Policy below for detailed information on how
+    your data is collected, used and protected.
+  </p>
 
-        <h5>No Additional Service Fee</h5>
-        <p>
-            There is no additional service fee for using the ShellCast notification service.
-        </p>
+  <h3>6. Fee and Carrier Charges</h3>
+  <h5>Carrier Fees:</h5>
+  <p>
+    Standard message and data rates may apply based on your mobile carrier and
+    plan. You are solely responsible for any fees incurred by your use of the
+    ShellCast notification service.
+  </p>
 
-        <h3>7. Amendments and Governing Law</h3>
-        <h5>Modifications</h5>
-        <p>
-            We reserve the right to modify these Terms & Conditions and our Privacy Policy at any time. 
-            Any changes will be posted on our website and become effective upon posting.
-        </p>
+  <h5>No Additional Service Fee</h5>
+  <p>
+    There is no additional service fee for using the ShellCast notification
+    service.
+  </p>
 
-        <h5>Governing Law</h5> 
-        <p>
-            These Terms & Conditions and our Privacy Policy are governed by and construed in accordance             with the laws of the State of North Carolina. Any disputes will be subject to the exclusive 
-            jurisdiction of the courts of the State of North Carolina.
-        </p>
+  <h3>7. Amendments and Governing Law</h3>
+  <h5>Modifications</h5>
+  <p>
+    We reserve the right to modify these Terms & Conditions and our Privacy
+    Policy at any time. Any changes will be posted on our website and become
+    effective upon posting.
+  </p>
 
-        <h3>8. Contact Information</h3>
-        <p>
-            If you have any questions or concerns regarding these Terms & Conditions or the Service, 
-            please contact us at:
-            <b>Email:</b> <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>
-        </p>
-        <br>
-        
-        <h2>Privacy Policy
-        <br><span><h4>Tentative Effective Date: November 1st, 2025</h4></span></h2>
-     
-        <h3>1. Introduction</h3>
-        <p>
-            ShellCast forecasting tool is run by a team of researchers in the Biological and Agricultural 
-            Engineering Department at NC State University led by Dr. Natalie Nelson. The ShellCast team 
-            ("We", "Our", "Us") is committed to protecting your privacy. This Privacy Policy explains how 
-            we collect, use, store, and safeguard your personal information when you subscribe to our service. 
-            By opting in to our service, you agree to the practices outlined in this policy.
-        </p>
+  <h5>Governing Law</h5>
+  <p>
+    These Terms & Conditions and our Privacy Policy are governed by and
+    construed in accordance with the laws of the State of North Carolina. Any
+    disputes will be subject to the exclusive jurisdiction of the courts of the
+    State of North Carolina.
+  </p>
 
-        <h3>2. Information We Collect</h3>
-        <p>
-            When you sign up for our notification service, we collect and process the following types of information:
-        </p>
-        <h5>Personal Information</h5>
-        <ul>
-            <li>Your email address</li>
-            <li>Your mobile number</li>
-            <li>Your lease location</li>
-        </ul>
-        <h5>Usage Information</h5>
-        <ul>
-            <li>Your notification preferences and subscription details</li>
-            <li>Records of interactions with our service (e.g., opt-in/opt-out actions)</li>
-        </ul>
+  <h3>8. Contact Information</h3>
+  <p>
+    If you have any questions or concerns regarding these Terms & Conditions or
+    the Service, please contact us at:
+    <b>Email:</b>
+    <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>
+  </p>
+  <br />
 
-        <h3>3. How We Use Your Information</h3>
-        <p>
-           Your information is used solely for the purpose of providing the ShellCast notification service.
-        </p>
-        <h5>Notification Delivery</h5>
-        <p>
-            To send possible temporary closure of one or more of your registered leases.
-        </p>
-        <h5>Service Enhancement</h5>
-        <p>
-            To analyze usage and improve the functionality and reliability of our notification system.
-        </p>
-        <h5>Compliance and Communication</h5>
-        <p>
-            To ensure adherence to regulatory requirements and to inform you of service updates, 
-            maintenance, or security issues.
-        </p>
-   
-        <h3>4. Data Protection and Security</h3>
-        <p>
-            We take the security of your personal information seriously. Access to your personal 
-            data is limited to authorized personnel who require it for service operation and maintenance.
-        </p>
+  <h2>
+    Privacy Policy <br /><span
+      ><h4>Tentative Effective Date: November 1st, 2025</h4></span
+    >
+  </h2>
 
-        <h3>5. Data Sharing and Disclosure</h3>
-        <h5>Limited Sharing</h5>
-        <p>
-            Your personal information is not shared with third parties for marketing purposes.
-        </p>
-        <h5>Legal Obligations</h5>
-        <p>
-            We may disclose your information when required to comply with legal obligations, 
-            such as a court order, or to protect our rights.
-        </p>
+  <h3>1. Introduction</h3>
+  <p>
+    ShellCast forecasting tool is run by a team of researchers in the Biological
+    and Agricultural Engineering Department at NC State University led by Dr.
+    Natalie Nelson. The ShellCast team ("We", "Our", "Us") is committed to
+    protecting your privacy. This Privacy Policy explains how we collect, use,
+    store, and safeguard your personal information when you subscribe to our
+    service. By opting in to our service, you agree to the practices outlined in
+    this policy.
+  </p>
 
-        <h3>6. Your Rights and Choices</h3>
-        <h5>Access and Correction</h5>
-        <p>
-            You have the right to access and update your personal information. If you need to make 
-            any corrections or updates, please contact us using details provided below.
-        </p>
-        <h5>Opt-Out</h5>
-        <p>
-            You may opt-out of receiving notifications at any time by following the instructions 
-            included in each message (e.g., reply "STOP") or ShellCast website's preference settings.
-        </p>
-        <h5>Data Deletion</h5>
-        <p>
-            Upon request, and subject to applicable legal obligations, we will delete your personal data from our system.
-        </p>
+  <h3>2. Information We Collect</h3>
+  <p>
+    When you sign up for our notification service, we collect and process the
+    following types of information:
+  </p>
+  <h5>Personal Information</h5>
+  <ul>
+    <li>Your email address</li>
+    <li>Your mobile number</li>
+    <li>Your lease location</li>
+  </ul>
+  <h5>Usage Information</h5>
+  <ul>
+    <li>Your notification preferences and subscription details</li>
+    <li>
+      Records of interactions with our service (e.g., opt-in/opt-out actions)
+    </li>
+  </ul>
 
-        <h3>7. Data Retention</h3>
-        <p>
-            We retain your personal information only for as long as necessary to fulfill the purposes for which it was 
-            collected or as required by law. When your data is no longer needed, it will be securely deleted or anonymized.
-        </p>
+  <h3>3. How We Use Your Information</h3>
+  <p>
+    Your information is used solely for the purpose of providing the ShellCast
+    notification service.
+  </p>
+  <h5>Notification Delivery</h5>
+  <p>
+    To send possible temporary closure of one or more of your registered leases.
+  </p>
+  <h5>Service Enhancement</h5>
+  <p>
+    To analyze usage and improve the functionality and reliability of our
+    notification system.
+  </p>
+  <h5>Compliance and Communication</h5>
+  <p>
+    To ensure adherence to regulatory requirements and to inform you of service
+    updates, maintenance, or security issues.
+  </p>
 
-        <h3>8. International Data Transfers</h3>
-        <p>
-            Your personal information is stored and processed within the United States. By using our service, 
-            you consent to transfer and processing of your data in the United States, where data protection 
-            law may differ from those in your jurisdiction.
-        </p>
+  <h3>4. Data Protection and Security</h3>
+  <p>
+    We take the security of your personal information seriously. Access to your
+    personal data is limited to authorized personnel who require it for service
+    operation and maintenance.
+  </p>
 
-        <h3>9. Changes to this Privacy Policy</h3>
-        <p>
-            We may update this Privacy Policy from time to time. When we make changes, we will revise the 
-            "Effective Date" and post the updated policy on our website. Your continued use of our service 
-            after any changes indicates your acceptance of new terms.
-        </p>
+  <h3>5. Data Sharing and Disclosure</h3>
+  <h5>Limited Sharing</h5>
+  <p>
+    Your personal information is not shared with third parties for marketing
+    purposes.
+  </p>
+  <h5>Legal Obligations</h5>
+  <p>
+    We may disclose your information when required to comply with legal
+    obligations, such as a court order, or to protect our rights.
+  </p>
 
-        <h3>10. Contact Information</h3>
-        <p>
-            If you have any questions or concerns about  this Privacy Policy or data practices, please contact us at:
-            <b>Email:</b> <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>
-            <br><br>
+  <h3>6. Your Rights and Choices</h3>
+  <h5>Access and Correction</h5>
+  <p>
+    You have the right to access and update your personal information. If you
+    need to make any corrections or updates, please contact us using details
+    provided below.
+  </p>
+  <h5>Opt-Out</h5>
+  <p>
+    You may opt-out of receiving notifications at any time by following the
+    instructions included in each message (e.g., reply "STOP") or ShellCast
+    website's preference settings.
+  </p>
+  <h5>Data Deletion</h5>
+  <p>
+    Upon request, and subject to applicable legal obligations, we will delete
+    your personal data from our system.
+  </p>
 
-    </div>
+  <h3>7. Data Retention</h3>
+  <p>
+    We retain your personal information only for as long as necessary to fulfill
+    the purposes for which it was collected or as required by law. When your
+    data is no longer needed, it will be securely deleted or anonymized.
+  </p>
+
+  <h3>8. International Data Transfers</h3>
+  <p>
+    Your personal information is stored and processed within the United States.
+    By using our service, you consent to transfer and processing of your data in
+    the United States, where data protection law may differ from those in your
+    jurisdiction.
+  </p>
+
+  <h3>9. Changes to this Privacy Policy</h3>
+  <p>
+    We may update this Privacy Policy from time to time. When we make changes,
+    we will revise the "Effective Date" and post the updated policy on our
+    website. Your continued use of our service after any changes indicates your
+    acceptance of new terms.
+  </p>
+
+  <h3>10. Contact Information</h3>
+  <p>
+    If you have any questions or concerns about this Privacy Policy or data
+    practices, please contact us at:
+    <b>Email:</b>
+    <a href="mailto:shellcastapp@ncsu.edu">shellcastapp@ncsu.edu</a>
+    <br /><br />
+  </p>
+</div>
 {% endblock %}

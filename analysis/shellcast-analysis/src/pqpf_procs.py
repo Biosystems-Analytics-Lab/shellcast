@@ -11,11 +11,10 @@ import sys
 import warnings
 from datetime import datetime
 
-import pygrib
-from shapely.errors import ShapelyDeprecationWarning
-
 import constants as ct
+import pygrib
 import utils
+from shapely.errors import ShapelyDeprecationWarning
 
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 

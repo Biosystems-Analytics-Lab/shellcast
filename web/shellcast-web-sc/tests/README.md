@@ -81,7 +81,7 @@ def test_user_creation(self, db_session):
     user = User(firebase_uid="test", email="test@example.com")
     db_session.add(user)
     db_session.commit()
-    
+
     # Test business logic, not database specifics
     assert user.email == "test@example.com"
     assert user.email_consent == False  # Default value
@@ -92,7 +92,7 @@ def test_user_creation(self, db_session):
 # For unit tests (fast)
 def test_user_model(self, db_session):
     # Uses SQLite by default
-    
+
 # For integration tests (production-like)
 def test_user_mysql_specific(self, mysql_session):
     # Uses MySQL for realistic testing
@@ -102,11 +102,11 @@ def test_user_mysql_specific(self, mysql_session):
 ```python
 class TestUserModel:
     """Tests that work with both SQLite and MySQL."""
-    
+
     def test_user_creation(self, db_session):
         # This test runs in both environments
         pass
-    
+
     def test_mysql_specific_features(self, mysql_session):
         # This test only runs with MySQL
         # Test MySQL-specific features like JSON columns, etc.
@@ -124,11 +124,11 @@ class TestUserModel:
 
 def test_data_type_validation(self, db_session):
     user = User(email="test@example.com")
-    
+
     # Test with valid data types
     user.prob_pref = 5  # Should work in both
     user.email_consent = True  # Should work in both
-    
+
     # Test edge cases that might differ
     try:
         user.prob_pref = "invalid"  # Might fail in MySQL
@@ -148,18 +148,18 @@ def test_constraint_validation(self, db_session):
     user1 = User(firebase_uid="uid1", email="test@example.com")
     db_session.add(user1)
     db_session.commit()
-    
+
     # Try to create duplicate (should fail)
     user2 = User(firebase_uid="uid2", email="test@example.com")
     db_session.add(user2)
-    
+
     try:
         db_session.commit()
         assert False, "Should have failed with duplicate email"
     except Exception as e:
         # Different databases have different error messages
         error_msg = str(e).lower()
-        assert any(keyword in error_msg for keyword in 
+        assert any(keyword in error_msg for keyword in
                   ["duplicate", "unique", "constraint"])
 ```
 
