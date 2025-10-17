@@ -1,0 +1,59 @@
+# Pre-commit configuration for ShellCast project
+# Handles both analysis and web environments
+
+repos:
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
+      - id: check-ast
+      - id: check-docstring-first
+      - id: requirements-txt-fixer
+
+  # Python code formatting and linting
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+        files: \.py$
+        # Exclude virtual environments and data folders
+        exclude: ^(analysis/shellcast-analysis/analysisenv/|web/webvenv/|analysis/shellcast-analysis/data/|data_prep/fl/final_outputs/).*$
+
+  # Python import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+        files: \.py$
+        exclude: ^(analysis/shellcast-analysis/analysisenv/|web/webvenv/|analysis/shellcast-analysis/data/|data_prep/fl/final_outputs/).*$
+
+  # Python linting (very lenient)
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        files: \.py$
+        # Configuration is in .flake8 file
+
+  # Shell script linting (optional - only if shellcheck is installed)
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck
+        language: system
+        files: \.sh$
+        pass_filenames: true
+        # Only run if shellcheck is installed
+        stages: [manual]
