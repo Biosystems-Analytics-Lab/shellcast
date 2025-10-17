@@ -1,11 +1,11 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytz
-from flask import Blueprint, render_template, current_app
+from flask import Blueprint, current_app, render_template
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from models import db
 from models.CMUProbability import CMUProbability
 from models.User import User
-from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 # the number of seconds in one hour
 SECONDS_IN_HOURS = 3600
@@ -93,11 +93,6 @@ def feedbackPage():
     return render_template("feedback.html")
 
 
-@pages.route("/unsubscribe")
-def unsubscribePage():
-    return render_template("unsubscribe.html")
-
-
 @pages.route("/u/<token>")
 def oneClickUnsubscribe(token):
     """
@@ -105,19 +100,43 @@ def oneClickUnsubscribe(token):
     """
     serializer = URLSafeTimedSerializer(current_app.config["EMAIL_SECRET_KEY"])
     try:
-        data = serializer.loads(token, salt="email-unsubscribe", max_age=60 * 60 * 24 * 60)
+        data = serializer.loads(
+            token, salt="email-unsubscribe", max_age=60 * 60 * 24 * 60
+        )
         user_id = data.get("uid")
     except SignatureExpired:
-        return render_template("unsubscribed.html", success=False, message="This unsubscribe link has expired."), 400
+        return (
+            render_template(
+                "unsubscribed.html",
+                success=False,
+                message="This unsubscribe link has expired.",
+            ),
+            400,
+        )
     except BadSignature:
-        return render_template("unsubscribed.html", success=False, message="Invalid unsubscribe link."), 400
+        return (
+            render_template(
+                "unsubscribed.html", success=False, message="Invalid unsubscribe link."
+            ),
+            400,
+        )
 
     if not user_id:
-        return render_template("unsubscribed.html", success=False, message="Invalid unsubscribe link."), 400
+        return (
+            render_template(
+                "unsubscribed.html", success=False, message="Invalid unsubscribe link."
+            ),
+            400,
+        )
 
     user = db.session.query(User).filter_by(id=user_id, deleted=False).first()
     if not user:
-        return render_template("unsubscribed.html", success=False, message="User not found."), 404
+        return (
+            render_template(
+                "unsubscribed.html", success=False, message="User not found."
+            ),
+            404,
+        )
 
     # Update user's email preferences and consent
     user.email_consent = False
@@ -128,6 +147,17 @@ def oneClickUnsubscribe(token):
         db.session.commit()
     except Exception:
         db.session.rollback()
-        return render_template("unsubscribed.html", success=False, message="An error occurred while unsubscribing."), 500
+        return (
+            render_template(
+                "unsubscribed.html",
+                success=False,
+                message="An error occurred while unsubscribing.",
+            ),
+            500,
+        )
 
-    return render_template("unsubscribed.html", success=True, message="You have been unsubscribed successfully.")
+    return render_template(
+        "unsubscribed.html",
+        success=True,
+        message="You have been unsubscribed successfully.",
+    )

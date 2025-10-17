@@ -6,6 +6,9 @@ import os.path
 from datetime import datetime
 from email.message import EmailMessage
 
+import pandas as pd
+import utils
+from constants import PQPF_DATA_DIR
 from cryptography.fernet import Fernet
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -13,13 +16,9 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from itsdangerous import URLSafeTimedSerializer
-
-import utils
-from constants import PQPF_DATA_DIR
-from management import NotificationConfig, DirectoryConfig
-from utils import execute_stored_procedure
-import pandas as pd
+from management import DirectoryConfig, NotificationConfig
 from sqlalchemy import create_engine
+from utils import execute_stored_procedure
 
 logger = logging.getLogger(__name__)
 
@@ -29,20 +28,20 @@ PROB_CATS = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High", 5: "Very High"}
 def generate_unsubscribe_token(user_id, email, secret_key):
     """
     Generate a secure unsubscribe token for a user.
-    
+
     Args:
         user_id (int): The user's ID
         email (str): The user's email address
         secret_key (str): Secret key for token signing
-        
+
     Returns:
         str: A secure, time-limited unsubscribe token
     """
     serializer = URLSafeTimedSerializer(secret_key)
     token_data = {
-        'uid': user_id,
-        'email': email,
-        'timestamp': datetime.now().isoformat()
+        "uid": user_id,
+        "email": email,
+        "timestamp": datetime.now().isoformat(),
     }
     return serializer.dumps(token_data, salt="email-unsubscribe")
 
@@ -81,13 +80,12 @@ def filter_users_by_preferences(users_data, prob_1d_only=False):
                 f"{user.get('prob_pref')}, actual: {user.get('prob_1d_perc')}"
             )
         else:
-            meets_probability_threshold = (
-                user["prob_pref"] is not None  # Ensure prob_pref is not None
-                and (
-                    user["prob_1d_perc"] >= user["prob_pref"]
-                    or user["prob_2d_perc"] >= user["prob_pref"]
-                    or user["prob_3d_perc"] >= user["prob_pref"]
-                )
+            meets_probability_threshold = user[
+                "prob_pref"
+            ] is not None and (  # Ensure prob_pref is not None
+                user["prob_1d_perc"] >= user["prob_pref"]
+                or user["prob_2d_perc"] >= user["prob_pref"]
+                or user["prob_3d_perc"] >= user["prob_pref"]
             )
             logger.debug(
                 f"User {user.get('user_id')} "
@@ -266,11 +264,18 @@ class NotificationEmailContentGenerator:
 
                 # Generate unsubscribe link for SC only
                 if self.state.upper() == "SC":
-                    unsubscribe_link = self._generate_unsubscribe_link(first.get("user_id"), user_email)
-                    content = message + self.notification_config.notification_footer + "<br><br>" + unsubscribe_link
+                    unsubscribe_link = self._generate_unsubscribe_link(
+                        first.get("user_id"), user_email
+                    )
+                    content = (
+                        message
+                        + self.notification_config.notification_footer
+                        + "<br><br>"
+                        + unsubscribe_link
+                    )
                 else:
                     content = message + self.notification_config.notification_footer
-                    
+
                 # Add to results if both subject and content are valid
                 if subject and content:
                     results.append(
@@ -308,11 +313,15 @@ class NotificationEmailContentGenerator:
     def _generate_unsubscribe_link(self, user_id, email):
         """Generate unsubscribe link for the user with state-specific URL."""
         try:
-            token = generate_unsubscribe_token(user_id, email, self.notification_config.secret_key)
+            token = generate_unsubscribe_token(
+                user_id, email, self.notification_config.secret_key
+            )
             base_url = self.notification_config.web_base_url
             unsubscribe_url = f"{base_url}/u/{token}"
-            return (f"To unsubscribe from these notifications, <a href='{unsubscribe_url}'>Unsubscribe</a> or \n"
-                f"visit <a href='{base_url}'>go.ncsu.edu/shellcast</a> Preferences page.")
+            return (
+                f"To unsubscribe from these notifications, <a href='{unsubscribe_url}'>Unsubscribe</a> or \n"
+                f"visit <a href='{base_url}'>go.ncsu.edu/shellcast</a> Preferences page."
+            )
         except Exception as e:
             logger.error(f"Error generating unsubscribe link for user {user_id}: {e}")
             # Fallback to preferences page if token generation fails
@@ -404,15 +413,16 @@ class GmailServices:
             message["To"] = to_addresses
             message["From"] = self.config.sender
             message["Subject"] = subject
-            
+
             # Set both plain text and HTML content
             # Convert HTML to plain text for text version
             import re
-            plain_text = re.sub(r'<[^>]+>', '', content)  # Remove HTML tags
-            plain_text = plain_text.replace('&nbsp;', ' ')  # Replace HTML entities
-            
+
+            plain_text = re.sub(r"<[^>]+>", "", content)  # Remove HTML tags
+            plain_text = plain_text.replace("&nbsp;", " ")  # Replace HTML entities
+
             message.set_content(plain_text)
-            message.add_alternative(content, subtype='html')
+            message.add_alternative(content, subtype="html")
 
             # Encode the message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
@@ -584,7 +594,7 @@ class DevEmailNotificationFL:
             List of file paths for CSV files matching the criteria
         """
         matching_files = []
-        
+
         for file in glob.glob(os.path.join(PQPF_DATA_DIR, "fl/outputs", "*.csv")):
             if any(keyword in file.lower() for keyword in ["lease", "tmp"]):
                 matching_files.append(file)
