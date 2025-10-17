@@ -311,8 +311,8 @@ class NotificationEmailContentGenerator:
             token = generate_unsubscribe_token(user_id, email, self.notification_config.secret_key)
             base_url = self.notification_config.web_base_url
             unsubscribe_url = f"{base_url}/u/{token}"
-            return (f"To unsubscribe from these notifications, <a href='{unsubscribe_url}'>click here</a> or \n"
-                f"visit <a href='{base_url}'>ShellCast</a> Preferences page.")
+            return (f"To unsubscribe from these notifications, <a href='{unsubscribe_url}'>Unsubscribe</a> or \n"
+                f"visit <a href='{base_url}'>go.ncsu.edu/shellcast</a> Preferences page.")
         except Exception as e:
             logger.error(f"Error generating unsubscribe link for user {user_id}: {e}")
             # Fallback to preferences page if token generation fails
