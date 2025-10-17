@@ -262,8 +262,8 @@ class NotificationEmailContentGenerator:
                 if not message:
                     continue
 
-                # Generate unsubscribe link for SC only
-                if self.state.upper() == "SC":
+                # Generate unsubscribe link for SC and FL
+                if self.state.upper() in ["SC", "FL"]:
                     unsubscribe_link = self._generate_unsubscribe_link(
                         first.get("user_id"), user_email
                     )

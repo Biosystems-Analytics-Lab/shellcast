@@ -20,6 +20,8 @@ class ProfileInfoValidator:
         self.email_pref = json.get("email_pref")
         self.text_pref = json.get("text_pref")
         self.prob_pref = json.get("prob_pref")
+        self.email_consent = json.get("email_consent")
+        self.text_consent = json.get("text_consent")
 
         self.errors = []
 
@@ -34,6 +36,8 @@ class ProfileInfoValidator:
             self.validateEmailPref,
             self.validateTextPref,
             self.validateProbPref,
+            self.validateEmailConsent,
+            self.validateTextConsent,
         ]
         valid = True
         for validator in validators:
@@ -77,4 +81,14 @@ class ProfileInfoValidator:
             return self.addError("Probability preference must be an integer.")
         if probPrefInt not in [3, 4, 5]:
             return self.addError("Probability preference must be 3, 4, or 5.")
+        return True
+
+    def validateEmailConsent(self):
+        if self.email_consent != True and self.email_consent != False:
+            return self.addError("Email consent must be true or false.")
+        return True
+
+    def validateTextConsent(self):
+        if self.text_consent != True and self.text_consent != False:
+            return self.addError("Text consent must be true or false.")
         return True

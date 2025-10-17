@@ -11,9 +11,9 @@ import sys
 
 def run_test(test_file):
     """Run a single test file."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"🧪 Running: {test_file}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     try:
         # Determine the working directory for this test
@@ -86,9 +86,9 @@ def main():
             failed += 1
 
     # Summary
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("🎯 Test Summary")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"✅ Passed: {passed}")
     print(f"❌ Failed: {failed}")
     print(f"📊 Total: {passed + failed}")

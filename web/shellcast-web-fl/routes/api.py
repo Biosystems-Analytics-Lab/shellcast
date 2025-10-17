@@ -27,6 +27,8 @@ def userInfo(user):
             "email_pref": user.email_pref,
             "text_pref": user.text_pref,
             "prob_pref": user.prob_pref,
+            "email_consent": user.email_consent,
+            "text_consent": user.text_consent,
         }
         if user.phone_number != None:
             userInfo["phone_number"] = user.phone_number
@@ -43,6 +45,8 @@ def userInfo(user):
             user.email_pref = validator.email_pref
             user.text_pref = validator.text_pref
             user.prob_pref = validator.prob_pref
+            user.email_consent = validator.email_consent
+            user.text_consent = validator.text_consent
             db.session.add(user)
             db.session.commit()
             return constructResponse(user)
@@ -68,6 +72,8 @@ def deleteAccount(user):
         user.email_pref = User.DEFAULT_email_pref
         user.text_pref = User.DEFAULT_text_pref
         user.prob_pref = User.DEFAULT_prob_pref
+        user.email_consent = User.DEFAULT_email_consent
+        user.text_consent = User.DEFAULT_text_consent
 
         # mark user record as deleted
         user.deleted = True

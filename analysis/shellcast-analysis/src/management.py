@@ -246,8 +246,19 @@ class NotificationConfig:
         """Get the secret key for token generation"""
         import os
 
-        # Check environment variable first (for production), then config file
-        return (
-            os.environ.get("EMAIL_SECRET_KEY")
-            or self.config["Notification"]["EMAIL_SECRET_KEY"]
-        )
+        # Check environment variable first (for production)
+        env_key = os.environ.get("EMAIL_SECRET_KEY")
+        if env_key:
+            return env_key
+
+        # Check state-specific secret key
+        if self._state:
+            state_key = f"{self._state}.Notification"
+            if (
+                state_key in self.config
+                and "EMAIL_SECRET_KEY" in self.config[state_key]
+            ):
+                return self.config[state_key]["EMAIL_SECRET_KEY"]
+
+        # Fallback to default notification secret key
+        return self.config["Notification"]["EMAIL_SECRET_KEY"]
