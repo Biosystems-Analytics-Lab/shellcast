@@ -1,22 +1,15 @@
-import json
-import sys
-
-from flask import Blueprint, jsonify, request
-from sqlalchemy.exc import IntegrityError
-
 from firebase_admin import auth
-
+from flask import Blueprint, jsonify, request
 from models import db
-from models.User import User
 
 # from models.CMU import CMU
 from models.CMUProbability import CMUProbability
-from models.UserLease import UserLease
 from models.Lease import Lease
-
-from routes.validators.ProfileInfoValidator import ProfileInfoValidator
-
+from models.User import User
+from models.UserLease import UserLease
 from routes.authentication import userRequired
+from routes.validators.ProfileInfoValidator import ProfileInfoValidator
+from sqlalchemy.exc import IntegrityError
 
 api = Blueprint("api", __name__)
 
@@ -37,7 +30,7 @@ def userInfo(user):
             "email_consent": user.email_consent,
             "text_consent": user.text_consent,
         }
-        if user.phone_number != None:
+        if user.phone_number is not None:
             userInfo["phone_number"] = user.phone_number
         return userInfo
 
@@ -231,51 +224,3 @@ def searchLeases(user):
         .all()
     )
     return jsonify(list(map(lambda x: x[0], ncdmfLeaseIds)))
-
-
-@api.route("/unsubscribe", methods=["POST"])
-def unsubscribe():
-    """
-    Unsubscribes a user from email notifications based on email and token.
-    This endpoint doesn't require authentication as it's accessed via email links.
-    """
-    try:
-        data = request.json
-        email = data.get("email")
-        token = data.get("token")
-        
-        if not email or not token:
-            return {"errors": ["Email and token are required."]}, 400
-        
-        # Find the user by email
-        user = db.session.query(User).filter_by(email=email, deleted=False).first()
-        
-        if not user:
-            return {"errors": ["User not found."]}, 404
-        
-        # TODO: Validate the token here
-        # For now, we'll assume the token is valid if it exists
-        # You should implement proper token validation logic
-        
-        # Update the user's email consent and opt-out date
-        from datetime import datetime, timezone
-        
-        user.email_consent = False
-        user.email_opt_out_date = datetime.now(timezone.utc)
-        
-        # Also disable email preferences since user is unsubscribing
-        user.email_pref = False
-        
-        db.session.add(user)
-        db.session.commit()
-        
-        return {
-            "message": "Successfully unsubscribed from email notifications",
-            "email": email,
-            "unsubscribed_at": user.email_opt_out_date.isoformat()
-        }, 200
-        
-    except Exception as e:
-        print(f"Error in unsubscribe endpoint: {e}")
-        db.session.rollback()
-        return {"errors": ["An error occurred while processing your request."]}, 500
