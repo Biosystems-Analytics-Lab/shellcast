@@ -114,7 +114,6 @@ BEGIN
         u.id AS user_id,
         u.email,
         u.phone_number,
-        u.service_provider_id,
         u.email_pref,
         u.email_consent,
         u.text_pref,

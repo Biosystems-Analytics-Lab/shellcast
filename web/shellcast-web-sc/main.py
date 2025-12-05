@@ -119,6 +119,17 @@ def createApp():
         app.config["CLOUD_SQL_INSTANCE_NAME"],
     )
 
+    # Set Bandwidth SMS credentials
+    app.config.update(
+        {
+            "BW_USERNAME": os.environ.get("BW_USERNAME"),
+            "BW_PASSWORD": os.environ.get("BW_PASSWORD"),
+            "BW_APPLICATION_ID": os.environ.get("BW_APPLICATION_ID"),
+            "BW_ACCOUNT_ID": os.environ.get("BW_ACCOUNT_ID"),
+            "BW_NUMBER": os.environ.get("BW_NUMBER"),
+        }
+    )
+
     # register blueprints
     app.register_blueprint(pages)
     app.register_blueprint(api)
