@@ -1,4 +1,4 @@
-boto3>=1.34.124
+bandwidth-sdk>=14.0.0
 cryptography>=43.0.3
 email_validator>=2.1.1
 firebase-admin>=6.5.0
@@ -8,5 +8,4 @@ gcloud>=0.18.3
 google-cloud-logging>=3.10.0
 PyMySQL>=1.1.1
 python-dotenv>=1.0.1
-pytz>=2024.1
 PyYAML>=6.0.1

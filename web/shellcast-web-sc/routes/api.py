@@ -1,11 +1,10 @@
 import logging
+import os
 from datetime import datetime, timezone
 
 from firebase_admin import auth
 from flask import Blueprint, jsonify, request
 from models import db
-
-# from models.CMU import CMU
 from models.CMUProbability import CMUProbability
 from models.Lease import Lease
 from models.User import User
@@ -15,6 +14,15 @@ from routes.validators.ProfileInfoValidator import ProfileInfoValidator
 from sqlalchemy.exc import IntegrityError
 
 api = Blueprint("api", __name__)
+
+# State identifier for SC
+STATE = "SC"
+
+# Help message for HELP command
+HELP_MESSAGE = (
+    "Thank you for reaching out to ShellCast. For support, please email us at "
+    "shellcastapp@ncsu.edu. Reply STOP to opt out."
+)
 
 
 @api.route("/userInfo", methods=["GET", "POST"])
@@ -227,3 +235,84 @@ def searchLeases(user):
         .all()
     )
     return jsonify(list(map(lambda x: x[0], ncdmfLeaseIds)))
+
+
+# =============================================================================
+# Bandwidth SMS Callback Handler (Internal - receives forwarded callbacks from NC)
+# =============================================================================
+
+
+@api.route("/bandwidth/callback/internal", methods=["POST"])
+def bandwidth_callback_internal():
+    """
+    Internal endpoint for Bandwidth callbacks forwarded from NC service.
+    NC is the default service and routes SC callbacks here.
+
+    Purpose: Handle opt-out (STOP) commands to update SC's users table.
+    Note: Notification logging is centralized in NC's notification_events table.
+
+    Callback types handled:
+    - message-received: Incoming SMS from user (STOP/HELP commands)
+    """
+    # Verify it came from NC service
+    forwarded_by = request.headers.get("X-Forwarded-By")
+    if forwarded_by != "nc-callback-router":
+        logging.warning("Callback received without proper forwarding header")
+
+    try:
+        callback_data = request.json
+
+        if not callback_data:
+            logging.warning("Received empty callback")
+            return "", 200
+
+        for event in callback_data:
+            event_type = event.get("type")
+            message_id = event.get("message", {}).get("id")
+            from_number = event.get("message", {}).get("from")
+            text = event.get("message", {}).get("text", "")
+
+            logging.info(f"SC Bandwidth callback - Type: {event_type}")
+
+            # Only handle inbound messages (STOP/HELP) - delivery status logged in NC
+            if event_type == "message-received":
+                _handle_inbound_message_sc(from_number, text, message_id)
+
+        return "", 200
+
+    except Exception as e:
+        logging.error(f"Error processing Bandwidth callback: {e}")
+        return "", 200
+
+
+def _handle_inbound_message_sc(from_number, text, message_id):
+    """
+    Handle incoming SMS from user (STOP, HELP) for SC.
+    Updates SC's users table for opt-out.
+    """
+    logging.info(f"Received SMS from {from_number}: {text}")
+
+    text_upper = text.strip().upper()
+
+    # Handle opt-out keywords - update SC users table
+    if text_upper in ["STOP", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]:
+        user = db.session.query(User).filter_by(phone_number=from_number).first()
+        if user:
+            user.text_pref = False
+            user.text_consent = False
+            user.text_opt_out_date = datetime.now(timezone.utc)
+            db.session.commit()
+            logging.info(f"SC User {user.id} opted out of SMS notifications")
+        else:
+            logging.warning(f"No SC user found with phone number {from_number}")
+
+    # Handle HELP keyword - send help message
+    elif text_upper == "HELP":
+        from routes.cron import _send_bandwidth_message
+
+        logging.info(f"Sending help message to {from_number}")
+        try:
+            _send_bandwidth_message([from_number])
+            logging.info("Help message sent successfully")
+        except Exception as e:
+            logging.error(f"Failed to send help message: {e}")
