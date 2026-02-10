@@ -25,6 +25,7 @@ analysis/shellcast-analysis/data/
 data_prep/fl/final_outputs/
 **/lease_db_data.py
 node_modules/
+**/static/lib/
 venv/
 webenv/
 analysisenv/
