@@ -1,11 +1,8 @@
 import logging
 import os
-import time
 from datetime import datetime, timezone
 
 import bandwidth
-import boto3
-import pytz
 from bandwidth.bandwidth_client import BandwidthClient
 from bandwidth.rest import ApiException
 from botocore.exceptions import ClientError
@@ -48,100 +45,6 @@ bandwidth_client = BandwidthClient(
     messaging_basic_auth_password=current_app.config["BW_PASSWORD"],
 )
 messaging_client = bandwidth_client.messaging_client.client
-
-# from bandwidth.messaging.models.message_request import MessageRequest
-
-# messagingBody = MessageRequest()
-# messagingBody.to = ["{to}"]
-# messagingBody.mfrom = "{from}"
-# messagingBody.text = "Hello, I am sending a message! How fun!"
-# messagingBody.application_id = "{app_id}"
-
-# messaging_client.create_message("{account_id}", body=messagingBody)
-
-# @app.route("/messaging", methods=["POST"])
-# def messaging():
-#     data = json.loads(request.data)
-#     if (data[0].get("type") == "message-delivered"):
-#         //successful delivery action
-#         return ('', 200)
-#     if (data[0].get("type") == "message-failed"):
-#         failure_reason = data[0].get("description");
-#         //failed delivery action
-#         return ('', 200)
-#     return ('', 200)
-# app.run()
-
-# def sendEmailWithAWSSES(client, address, subject, body):
-# try:
-#     response = client.send_email(
-#         Destination={"ToAddresses": [address]},
-#         Message={
-#             "Subject": {"Charset": CHARSET, "Data": subject},
-#             "Body": {"Text": {"Charset": CHARSET, "Data": body}},
-#         },
-#         Source=SENDER,
-#     )
-# except ClientError as e:
-#     logging.error("Error while sending email to " + address)
-#     logging.error(e.response["Error"]["Message"])
-#     return False, e.response["Error"]["Message"]
-# else:
-#     logging.info("Email successfully sent to " + address)
-#     logging.info(response["MessageId"])
-#     return True, response["MessageId"]
-
-
-# def sendNotificationsWithAWSSES(emailNotifications, textNotifications):
-# Create a new SES client
-# client = boto3.client(
-#     "ses",
-#     region_name=current_app.config["AWS_REGION"],
-#     aws_access_key_id=current_app.config["AWS_ACCESS_KEY_ID"],
-#     aws_secret_access_key=current_app.config["AWS_SECRET_ACCESS_KEY"],
-# )
-# curDate = datetime.now(pytz.timezone("US/Eastern")).strftime("%m/%d/%Y")
-# emailNotificationSubject = SUBJECT_TEMPLATE.format(curDate)
-# responses = []
-# # send the email notifications
-# for address, emailBodyChunks, userId in emailNotifications:
-#     body = "".join(emailBodyChunks)
-#     sendSuccess, response = sendEmailWithAWSSES(
-#         client, address, emailNotificationSubject, body
-#     )
-#     responses.append(
-#         (address, body, NOTIFICATION_TYPE_EMAIL, userId, sendSuccess, response)
-#     )
-#     time.sleep(
-#         EMAIL_SEND_INTERVAL
-#     )  # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
-# # send the text notifications
-# for address, body, userId in textNotifications:
-#     sendSuccess, response = sendEmailWithAWSSES(
-#         client, address, TEXT_NOTIFICATION_SUBJECT, body
-#     )
-#     responses.append(
-#         (address, body, NOTIFICATION_TYPE_TEXT, userId, sendSuccess, response)
-#     )
-#     time.sleep(
-#         EMAIL_SEND_INTERVAL
-#     )  # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
-# return responses
-
-
-# def probabilityToRisk(closureValue):
-#     flag = ""
-#     if closureValue == 1:
-#         flag = "Very Low"
-#     elif closureValue == 2:
-#         flag = "Low"
-#     elif closureValue == 3:
-#         flag = "Moderate"
-#     elif closureValue == 4:
-#         flag = "High"
-#     elif closureValue == 5:
-#         flag = "Very High"
-#     return flag
 
 
 def notification_preprocess():
@@ -208,95 +111,8 @@ def _send_bandwidth_message(to_numbers):
         return response
 
 
-@cron.route("/bandwidth/callback", methods=["POST"])
-def bandwidthCallback():
-    """
-    Handle callbacks from Bandwidth for SMS delivery status and incoming messages.
-    This endpoint receives webhooks for:
-    - message-delivered: SMS was successfully delivered
-    - message-failed: SMS delivery failed
-    - message-received: Incoming SMS from user (e.g., STOP/START commands)
-    """
-    try:
-        # Bandwidth sends an array of message events
-        callback_data = request.json
-
-        if not callback_data:
-            logging.warning("Received empty callback from Bandwidth")
-            return "", 200
-
-        # Process each event in the callback
-        for event in callback_data:
-            event_type = event.get("type")
-            message_id = event.get("message", {}).get("id")
-            to_number = event.get("message", {}).get("to", [None])[0]
-            from_number = event.get("message", {}).get("from")
-            text = event.get("message", {}).get("text", "")
-
-            logging.info(
-                f"Bandwidth callback received - Type: {event_type}, Message ID: {message_id}"
-            )
-
-            if event_type == "message-delivered":
-                # SMS was successfully delivered
-                logging.info(
-                    f"Message {message_id} delivered successfully to {to_number}"
-                )
-
-            elif event_type == "message-failed":
-                # SMS delivery failed
-                error_code = event.get("errorCode")
-                description = event.get("description")
-                logging.error(
-                    f"Message {message_id} failed to {to_number}: {description} (Code: {error_code})"
-                )
-
-            elif event_type == "message-received":
-                # Incoming SMS from user (e.g., STOP, START, HELP)
-                logging.info(f"Received SMS from {from_number}: {text}")
-
-                # Handle opt-out keywords (STOP, UNSUBSCRIBE, CANCEL, END, QUIT)
-                text_upper = text.strip().upper()
-                if text_upper in ["STOP", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]:
-                    # Find user by phone number and disable text notifications
-                    user = (
-                        db.session.query(User)
-                        .filter_by(phone_number=from_number)
-                        .first()
-                    )
-                    if user:
-                        user.text_pref = False
-                        user.text_opt_out_date = datetime.now(timezone.utc)
-                        db.session.add(user)
-                        db.session.commit()
-                        logging.info(f"User {user.id} opted out of SMS notifications")
-
-                elif text_upper in ["HELP"]:
-                    # Send help message
-                    logging.info(f"Sending help message to {from_number}")
-                    _send_bandwidth_message(from_number, HELP_MESSAGE)
-                    logging.info(f"Help message sent")
-
-                # Handle opt-in keywords (START, UNSTOP)
-                # elif text_upper in ["START", "UNSTOP"]:
-                #     # Find user by phone number and enable text notifications
-                #     user = db.session.query(User).filter_by(phone_number=from_number).first()
-                #     if user:
-                #         user.text_consent = True
-                #         db.session.add(user)
-                #         db.session.commit()
-                #         logging.info(f"User {user.id} opted back in to SMS notifications")
-
-            else:
-                logging.warning(f"Unknown event type received: {event_type}")
-
-        # Always return 200 OK to acknowledge receipt
-        return "", 200
-
-    except Exception as e:
-        logging.error(f"Error processing Bandwidth callback: {e}")
-        # Still return 200 to prevent Bandwidth from retrying
-        return "", 200
+# Bandwidth callback is handled in api.py via /api/bandwidth/callback/internal
+# NC service receives all callbacks and routes SC callbacks to this service
 
 
 # @cron.route("/sendNotifications")
