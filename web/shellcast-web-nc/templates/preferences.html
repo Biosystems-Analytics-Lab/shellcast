@@ -137,11 +137,8 @@
             <div class="notification-accordion">
               <div class="accordion-header">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref" disabled>
+                  <input class="form-check-input" type="checkbox" name="text-pref" id="text-pref">
                   <label class="form-check-label" for="text-pref">Text</label>
-                  <small class="text-danger ml-2">
-                    <i class="fas fa-exclamation-triangle"></i> Temporarily unavailable for system update
-                  </small>
                 </div>
                 <div class="accordion-controls">
                   <button type="button" class="btn btn-sm btn-outline-secondary" id="text-expand-btn" title="Expand">
@@ -217,6 +214,12 @@
                       </small>
                     </div>
                   </div>
+                  <div id="text-notification-status" class="mb-2">
+                    <small class="text-muted">
+                      <span id="text-status-emoji">⚠️</span>
+                      <span id="text-status-message">You must check the consent box above to receive text notifications.</span>
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>
@@ -253,7 +256,13 @@
 
         {# Form Actions #}
         <div class="form-actions">
-          <div><small id="profile-form-help-text" role="alert" class="alert"></small></div>
+          <div class="form-help-text-wrapper"><small id="profile-form-help-text" role="alert"></small></div>
+          <div id="profile-form-status" class="form-status mb-2" style="display: none;">
+            <small class="text-muted">
+              <span id="profile-form-status-emoji"></span>
+              <span id="profile-form-status-message"></span>
+            </small>
+          </div>
           <button class="btn btn-secondary" type="button" name="prof-form-cancel-btn" disabled>Cancel</button>
           <button class="btn btn-primary" type="button" name="prof-form-save-btn" disabled>Submit</button>
         </div>

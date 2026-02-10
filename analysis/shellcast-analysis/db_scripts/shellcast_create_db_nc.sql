@@ -79,6 +79,41 @@ CREATE TABLE cmu_probabilities (
   created datetime DEFAULT NOW()
 );
 
+
+-- Stores text notification and email notification events.
+CREATE TABLE notification_events (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    state varchar(2) NOT NULL,
+    user_id int NOT NULL,
+    notification_type VARCHAR(10) NOT NULL,       -- 'email' or 'text'
+
+    -- Recipient info (one will be NULL depending on type)
+    email_address VARCHAR(100) NULL,              -- For email notifications
+    phone_number VARCHAR(15) NULL,                -- For SMS notifications
+
+     -- Message content
+    text_content_template TEXT (200) NULL, -- for "sms_clousre_aleart"
+    email_content TEXT(1000) NULL,
+
+    -- Status tracking
+    send_success BOOLEAN DEFAULT TRUE,
+
+    -- SMS and Email
+    message_id VARCHAR(100) NULL,
+    message_direction VARCHAR(10) NULL, -- "inbound" or "outbound"
+    delivery_status VARCHAR(20) NULL, -- "RECEIVED", "QUEUED", "SENDING", "SENT", "FAILED", "DELIVERED", "ACCEPTED", "UNDELIVERABLE", "FAILED", "UNKNOWN"
+    delivery_time DATETIME NULL, -- "messages.receiveTime - 2020-04-07T14:03:07.000Z"
+    error_code VARCHAR(20) NULL, -- "messages.errorCode"
+
+
+    created DATETIME DEFAULT NOW(),
+    -- Indexes
+    INDEX idx_state_user (state, user_id),
+    INDEX idx_phone (phone_number),
+    INDEX idx_email (email_address),
+    INDEX idx_bandwidth_msg (message_id)
+);
+
 USE shellcast_nc;
 DELIMITER //
 CREATE PROCEDURE SelectCmuProbsToday()
@@ -127,7 +162,9 @@ BEGIN
         u.email,
         u.phone_number,
         u.email_pref,
+        u.email_consent,
         u.text_pref,
+        u.text_consent,
         u.prob_pref,
         l.lease_id,
         l.grow_area_name,
