@@ -11,6 +11,7 @@ const LEASE_SEARCH_DELAY = 400;
 // GLOBAL STATE
 // ============================================================================
 let profileInfo = {};
+let savedProfileData = {}; // Original data from database for comparison
 let leases = [];
 let leaseSearchTimer = null;
 
@@ -38,6 +39,16 @@ async function getProfileInfo() {
  *    event listeners as part of the form initialization
  */
 function initProfileForm(profInfo, ignoreAddingEventListeners) {
+  if (!profInfo || typeof profInfo !== "object") {
+    profInfo = {
+      email: "",
+      phone_number: "",
+      email_pref: false,
+      text_pref: false,
+      prob_pref: 3,
+    };
+  }
+
   const profForm = document.forms["profile-information-form"];
   const emailInput = profForm.elements["email-address"];
   const phoneNumberInput = profForm.elements["phone-number"];
@@ -48,9 +59,26 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   const cancelBtn = profForm.elements["prof-form-cancel-btn"];
   const saveBtn = profForm.elements["prof-form-save-btn"];
 
+  // Store original saved data for comparison (only on first load, not after save)
+  // Track: email_pref, email, email_consent, text_pref, text_consent, phone_number, prob_pref
+  if (!ignoreAddingEventListeners) {
+    const phoneDigits = (profInfo.phone_number || "").replace(/\D/g, "");
+    const emailPref = Boolean(profInfo.email_pref);
+    const textPref = Boolean(profInfo.text_pref);
+    savedProfileData = {
+      email: (profInfo.email || "").trim(),
+      phone_number: phoneDigits,
+      email_pref: emailPref,
+      text_pref: textPref,
+      email_consent: emailPref,
+      text_consent: textPref,
+      prob_pref: Number(profInfo.prob_pref) || 3,
+    };
+  }
+
   // Set form values
-  emailInput.value = profInfo.email;
-  phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number);
+  emailInput.value = profInfo.email || "";
+  phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number || "");
   emailCheckbox.checked = profInfo.email_pref;
   textCheckbox.checked = profInfo.text_pref;
 
@@ -68,32 +96,9 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
     textConsentCheckbox.checked = profInfo.text_pref;
   }
 
-  // Initially expand accordions if user has preferences enabled
-  // (but don't auto-collapse them later - let user control with OK button)
-  if (profInfo.email_pref || profInfo.text_pref) {
-    updateAccordionVisibility(profInfo.email_pref, profInfo.text_pref);
-  }
-
-  // Initialize original states for accordion revert functionality
-  // Try to load from localStorage first, fallback to server data
-  const cachedEmailState = localStorage.getItem("shellcast_email_preferences");
-  const cachedTextState = localStorage.getItem("shellcast_text_preferences");
-
-  originalEmailState = cachedEmailState
-    ? JSON.parse(cachedEmailState)
-    : {
-        email: profInfo.email,
-        email_pref: profInfo.email_pref,
-        email_consent: profInfo.email_pref,
-      };
-
-  originalTextState = cachedTextState
-    ? JSON.parse(cachedTextState)
-    : {
-        phone_number: profInfo.phone_number,
-        text_pref: profInfo.text_pref,
-        text_consent: profInfo.text_pref,
-      };
+  // Initially expand accordions based on user preferences
+  // Expand text accordion by default so users can see the settings
+  updateAccordionVisibility(profInfo.email_pref, true);
 
   // Set probability preference
   for (let radio of probRadios) {
@@ -102,13 +107,10 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
     radio.disabled = noNotificationsCheckbox.checked;
   }
 
-  // Reset button states
-  cancelBtn.disabled = true;
-  saveBtn.disabled = true;
-
   // Add event listeners
   if (!ignoreAddingEventListeners) {
     profForm.addEventListener("input", onProfileFormChange);
+    profForm.addEventListener("change", onProfileFormChange);
     cancelBtn.addEventListener("click", cancelProfileFormChanges);
     saveBtn.addEventListener("click", saveProfileFormChanges);
     phoneNumberInput.addEventListener(
@@ -127,8 +129,14 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
     }
 
     setupAccordionTabs();
-    setupAccordionButtons();
+    setupExpandCollapseButtons();
   }
+
+  // Update text notification status on page load
+  updateTextNotificationStatus();
+
+  // Set Submit/Cancel button state based on changes (disabled when form matches saved data)
+  validateForm();
 }
 
 /**
@@ -149,18 +157,6 @@ function onProfileFormChange(e) {
   if (helpText) {
     helpText.innerHTML = "";
     helpText.style.color = "";
-  }
-
-  // Prevent text checkbox from being checked during system update
-  if (e.target === textCheckbox && textCheckbox.checked) {
-    textCheckbox.checked = false;
-    return;
-  }
-
-  // Prevent email consent checkbox from being checked during system update
-  if (e.target === emailConsentCheckbox && emailConsentCheckbox.checked) {
-    emailConsentCheckbox.checked = false;
-    return;
   }
 
   // Handle consent withdrawal logic (highest priority)
@@ -207,11 +203,6 @@ function onProfileFormChange(e) {
   // Handle email checkbox logic - set user's email when checked
   if (e.target === emailCheckbox && emailCheckbox.checked) {
     const emailInput = profForm.elements["email-address"];
-    console.log(
-      "Email checkbox checked, current email value:",
-      emailInput.value,
-    );
-    console.log("User profile info:", window.userProfileInfo);
 
     // Set email if we have user profile data and either:
     // 1. Email field is empty, OR
@@ -228,7 +219,6 @@ function onProfileFormChange(e) {
       window.userProfileInfo &&
       window.userProfileInfo.email
     ) {
-      console.log("Setting email to:", window.userProfileInfo.email);
       emailInput.value = window.userProfileInfo.email;
     }
   }
@@ -250,14 +240,8 @@ function onProfileFormChange(e) {
     radio.disabled = noNotificationsCheckbox.checked;
   }
 
-  // Validate form and update button states
+  // Validate form and update button states (including cancel button based on changes)
   validateForm();
-  profForm.elements["prof-form-cancel-btn"].disabled = false;
-}
-
-// Setup expand/collapse buttons only
-function setupAccordionButtons() {
-  setupExpandCollapseButtons();
 }
 
 /**
@@ -362,19 +346,13 @@ function collapseTextAccordion() {
   if (textCollapseBtn) textCollapseBtn.style.display = "none";
 }
 
-// Store original accordion states for reverting changes
-let originalEmailState = null;
-let originalTextState = null;
-
-// Track if changes have been made
-let emailChangesMade = false;
-let textChangesMade = false;
-
 /**
  * Resets the profile form to its original state.
  */
 function cancelProfileFormChanges() {
   initProfileForm(profileInfo, true);
+  // Update button states after reset
+  validateForm();
 }
 
 /**
@@ -391,7 +369,6 @@ async function saveProfileFormChanges() {
 
   // Validate form before saving
   if (!validateForm()) {
-    console.log("Form validation failed - cannot save");
     return;
   }
 
@@ -420,13 +397,18 @@ async function saveProfileFormChanges() {
     }
   }
 
-  // Privacy-first approach: Remove email/phone if preference is unchecked
+  // Consent is required for preferences to be active
+  // If user checked preference but not consent, treat as not opted in
+  const effectiveEmailPref = emailPref && emailConsentChecked;
+  const effectiveTextPref = textPref && textConsentChecked;
+
+  // Privacy-first approach: Remove email/phone if preference is unchecked or no consent
   const newProfileInfo = {
-    email: emailPref ? email : null,
-    phone_number: textPref ? phoneNumber : null,
+    email: effectiveEmailPref ? email : null,
+    phone_number: effectiveTextPref ? phoneNumber : null,
     service_provider_id: null, // NC doesn't have service provider field
-    email_pref: emailPref,
-    text_pref: textPref,
+    email_pref: effectiveEmailPref,
+    text_pref: effectiveTextPref,
     prob_pref: selectedProb,
     email_consent: emailConsentChecked,
     text_consent: textConsentChecked,
@@ -443,6 +425,20 @@ async function saveProfileFormChanges() {
     if (res.ok) {
       profileInfo = await res.json();
       helpText.style.color = "green";
+
+      // Update saved data to reflect the new saved state
+      const phoneDigits = (profileInfo.phone_number || "").replace(/\D/g, "");
+      const ep = Boolean(profileInfo.email_pref);
+      const tp = Boolean(profileInfo.text_pref);
+      savedProfileData = {
+        email: (profileInfo.email || "").trim(),
+        phone_number: phoneDigits,
+        email_pref: ep,
+        text_pref: tp,
+        email_consent: ep,
+        text_consent: tp,
+        prob_pref: Number(profileInfo.prob_pref) || 3,
+      };
 
       // Inform user about data removal if preference was unchecked
       let message = "Changes saved successfully!";
@@ -501,6 +497,82 @@ function validatePhoneNumber(phoneNumber) {
 }
 
 /**
+ * Gets the current form values for comparison
+ * @return {object} current form values
+ */
+function getCurrentFormValues() {
+  const profForm = document.forms["profile-information-form"];
+  const emailInput = profForm.elements["email-address"];
+  const phoneInput = profForm.elements["phone-number"];
+  const emailCheckbox = profForm.elements["email-pref"];
+  const textCheckbox = profForm.elements["text-pref"];
+  const emailConsentCheckbox = profForm.elements["email-consent"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  const probRadios = profForm.elements["notification-prob"];
+
+  // Get selected probability
+  let selectedProb = 3;
+  for (let radio of probRadios) {
+    if (radio.checked) {
+      selectedProb = Number(radio.value);
+      break;
+    }
+  }
+
+  const phoneDigits = (phoneInput?.value || "").replace(/\D/g, "");
+
+  // Return raw form state for change detection (all 7 tracked fields)
+  return {
+    email: (emailInput?.value || "").trim(),
+    phone_number: phoneDigits,
+    email_pref: Boolean(emailCheckbox?.checked),
+    text_pref: Boolean(textCheckbox?.checked),
+    email_consent: Boolean(emailConsentCheckbox?.checked),
+    text_consent: Boolean(textConsentCheckbox?.checked),
+    prob_pref: Number(selectedProb) || 3,
+  };
+}
+
+/**
+ * Checks if the form has changes from the saved data
+ * @return {boolean} true if there are changes
+ */
+function hasFormChanges() {
+  if (!savedProfileData || Object.keys(savedProfileData).length === 0) {
+    return false;
+  }
+
+  const current = getCurrentFormValues();
+  const saved = {
+    email: (savedProfileData.email || "").trim(),
+    phone_number: String(savedProfileData.phone_number || "").replace(/\D/g, ""),
+    email_pref: Boolean(savedProfileData.email_pref),
+    text_pref: Boolean(savedProfileData.text_pref),
+    email_consent: Boolean(savedProfileData.email_consent),
+    text_consent: Boolean(savedProfileData.text_consent),
+    prob_pref: Number(savedProfileData.prob_pref) || 3,
+  };
+
+  const emailChanged = current.email !== saved.email;
+  const phoneChanged = current.phone_number !== saved.phone_number;
+  const emailPrefChanged = current.email_pref !== saved.email_pref;
+  const textPrefChanged = current.text_pref !== saved.text_pref;
+  const emailConsentChanged = current.email_consent !== saved.email_consent;
+  const textConsentChanged = current.text_consent !== saved.text_consent;
+  const probPrefChanged = current.prob_pref !== saved.prob_pref;
+
+  return (
+    emailChanged ||
+    phoneChanged ||
+    emailPrefChanged ||
+    textPrefChanged ||
+    emailConsentChanged ||
+    textConsentChanged ||
+    probPrefChanged
+  );
+}
+
+/**
  * Validates the entire form and updates UI accordingly
  * @return {boolean} whether the form is valid
  */
@@ -513,18 +585,7 @@ function validateForm() {
   const emailConsentCheckbox = profForm.elements["email-consent"];
   const textConsentCheckbox = profForm.elements["text-consent"];
   const saveBtn = profForm.elements["prof-form-save-btn"];
-
-  console.log("Validating form...");
-  console.log("Email checkbox checked:", emailCheckbox.checked);
-  console.log(
-    "Email consent checked:",
-    emailConsentCheckbox ? emailConsentCheckbox.checked : "N/A",
-  );
-  console.log("Text checkbox checked:", textCheckbox.checked);
-  console.log(
-    "Text consent checked:",
-    textConsentCheckbox ? textConsentCheckbox.checked : "N/A",
-  );
+  const cancelBtn = profForm.elements["prof-form-cancel-btn"];
 
   let isValid = true;
 
@@ -554,8 +615,83 @@ function validateForm() {
     phoneInput.classList.remove("is-invalid");
   }
 
-  saveBtn.disabled = !isValid;
+  // Update text notification status message
+  updateTextNotificationStatus();
+
+  // Check if there are actual changes from saved data (email_pref, email, email_consent, text_pref, text_consent, phone_number, prob_pref)
+  const hasChanges = hasFormChanges();
+
+  // Enable submit when there are changes (validation still runs on Submit click)
+  saveBtn.disabled = !hasChanges;
+
+  // Enable cancel only if there are changes
+  cancelBtn.disabled = !hasChanges;
+
+  // Update form status at bottom: show "You have made changes" when any tracked variable changed
+  updateFormStatus(hasChanges);
+
   return isValid;
+}
+
+/**
+ * Updates the form status message at the bottom (emoji + text when user has made changes).
+ * Tracked variables: email_pref, email, email_consent, text_pref, text_consent, phone_number, prob_pref.
+ */
+function updateFormStatus(hasChanges) {
+  const statusDiv = document.getElementById("profile-form-status");
+  const statusEmoji = document.getElementById("profile-form-status-emoji");
+  const statusMessage = document.getElementById("profile-form-status-message");
+
+  if (!statusDiv || !statusEmoji || !statusMessage) return;
+
+  if (hasChanges) {
+    statusDiv.style.display = "block";
+    statusEmoji.textContent = "✏️";
+    statusMessage.textContent = "You have made changes. Click Submit to save.";
+  } else {
+    statusDiv.style.display = "none";
+  }
+}
+
+/**
+ * Updates the text notification status message based on current form state
+ */
+function updateTextNotificationStatus() {
+  const profForm = document.forms["profile-information-form"];
+  const textCheckbox = profForm.elements["text-pref"];
+  const textConsentCheckbox = profForm.elements["text-consent"];
+  const phoneInput = profForm.elements["phone-number"];
+  const statusEmoji = document.getElementById("text-status-emoji");
+  const statusMessage = document.getElementById("text-status-message");
+
+  if (!statusEmoji || !statusMessage) return;
+
+  const phoneNumber = phoneInput ? phoneInput.value.replace(/\D/g, "") : "";
+  const hasValidPhone = phoneNumber && phoneNumber.length === 10;
+  const hasConsent = textConsentCheckbox && textConsentCheckbox.checked;
+  const textEnabled = textCheckbox && textCheckbox.checked;
+
+  // Determine status and message with emojis
+  if (textEnabled && hasValidPhone && hasConsent) {
+    // Will receive notifications
+    statusEmoji.textContent = "✅";
+    statusMessage.textContent =
+      "You will receive text notifications for lease closure alerts.";
+  } else if (textEnabled && !hasConsent) {
+    // Text enabled but no consent
+    statusEmoji.textContent = "⚠️";
+    statusMessage.textContent =
+      "You must check the consent box above to receive text notifications.";
+  } else if (textEnabled && !hasValidPhone) {
+    // Text enabled but no valid phone
+    statusEmoji.textContent = "⚠️";
+    statusMessage.textContent =
+      "Please enter a valid 10-digit phone number to receive text notifications.";
+  } else {
+    // Text not enabled
+    statusEmoji.textContent = "ℹ️";
+    statusMessage.textContent = "Text notifications are currently disabled.";
+  }
 }
 
 // ============================================================================
@@ -612,6 +748,19 @@ function setupAccordionTabs() {
       const content = accordionBody.querySelector(`#${tabId}`);
       if (content) {
         content.classList.add("active");
+      }
+
+      // Show/hide text notification status based on active tab
+      const textNotificationStatus = document.getElementById(
+        "text-notification-status",
+      );
+      if (textNotificationStatus) {
+        // Show status only when "Phone Number" tab (text-input) is active
+        if (tabId === "text-input") {
+          textNotificationStatus.style.display = "block";
+        } else if (tabId === "text-example") {
+          textNotificationStatus.style.display = "none";
+        }
       }
     });
   });
@@ -898,7 +1047,6 @@ async function handleSignedInUser(user) {
 
   // Get user's profile information
   profileInfo = await getProfileInfo();
-  console.log("Profile info from API:", profileInfo);
   // Store profile info globally for access by other functions
   window.userProfileInfo = profileInfo;
   initProfileForm(profileInfo);

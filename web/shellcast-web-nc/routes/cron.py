@@ -1,211 +1,225 @@
 import logging
+import os
 import time
-from datetime import datetime
 
-import boto3
-import pytz
-from botocore.exceptions import ClientError
-from flask import Blueprint, current_app
+import bandwidth
+from flask import Blueprint, current_app, request
 from models import db
-from models.Notification import Notification
+from models.NotificationEvent import NotificationEvent
 from models.User import User
 from routes.authentication import cronOnly
+from sqlalchemy import text
 
-# The address that all emails are sent from.
-# This address must be verified with Amazon SES.
-SENDER = "ShellCast <shellcastapp@ncsu.edu>"
-# The subject line template for all emails.
-SUBJECT_TEMPLATE = "NC ShellCast Forecasts for {}"
-# The character encoding for all emails.
-CHARSET = "UTF-8"
-# The text that is at the beginning of every notification.
-NOTIFICATION_HEADER = "https://go.ncsu.edu/shellcast\n\n"
-# The template for lease information in notifications.
-LEASE_TEMPLATE = (
-    "One or more of your leases is at risk of closing today, tomorrow or in 2 days.\n"
-    "Visit go.ncsu.edu/shellcast for details."
-    "\n\nLease: {}\n  Today: {}\n  Tomorrow: {}\n  In 2 days: {}\n"
-)
-# The text that is at the end of every notification.
-NOTIFICATION_FOOTER = (
-    "\nThese predictions are in no way indicative of whether or not a lease will actually be "
-    "temporarily closed for harvest."
-)
-# The amount of time between sending emails
-EMAIL_SEND_INTERVAL = 0.1
-# The subject for text notifications
-TEXT_NOTIFICATION_SUBJECT = ""
-# The text for text notifications (max length of 138 characters)
-TEXT_NOTIFICATION_TEXT = (
-    "One or more of your leases is at risk of closing today, tomorrow, or in 2 days. "
-    "Visit go.ncsu.edu/shellcast for details."
+# Bandwidth SMS message template
+TEXT_NOTIFICATION_MESSAGE = (
+    "ShellCast: One or more of your leases is at risk of closing today, tomorrow, or in 2 days. "
+    "See https://go.ncsu.edu/shellcast Reply STOP to cancel."
 )
 
-NOTIFICATION_TYPE_EMAIL = "email"
-NOTIFICATION_TYPE_TEXT = "text"
+# State identifier for NC
+STATE = "NC"
 
 cron = Blueprint("cron", __name__)
 
 
-def sendEmailWithAWSSES(client, address, subject, body):
-    try:
-        response = client.send_email(
-            Destination={"ToAddresses": [address]},
-            Message={
-                "Subject": {"Charset": CHARSET, "Data": subject},
-                "Body": {"Text": {"Charset": CHARSET, "Data": body}},
-            },
-            Source=SENDER,
-        )
-    except ClientError as e:
-        logging.error("Error while sending email to " + address)
-        logging.error(e.response["Error"]["Message"])
-        return False, e.response["Error"]["Message"]
-    else:
-        logging.info("Email successfully sent to " + address)
-        logging.info(response["MessageId"])
-        return True, response["MessageId"]
+# =============================================================================
+# Bandwidth SMS Notification Functions
+# =============================================================================
 
 
-def sendNotificationsWithAWSSES(emailNotifications, textNotifications):
-    # Create a new SES client
-    client = boto3.client(
-        "ses",
-        region_name=current_app.config["AWS_REGION"],
-        aws_access_key_id=current_app.config["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=current_app.config["AWS_SECRET_ACCESS_KEY"],
+def get_lease_probabilities_today():
+    """
+    Call stored procedure using db.session
+    """
+    result = db.session.execute(text("CALL SelectUserLeaseProbsToday()"))
+
+    # Convert to list of dicts
+    column_names = result.keys()
+    data = [dict(zip(column_names, row)) for row in result.fetchall()]
+
+    return data
+
+
+def notification_preprocess_sms():
+    """
+    Query users who should receive SMS notifications based on their preferences
+    and today's closure probabilities.
+    Returns list of tuples: (user_id, phone_number)
+    """
+    # Query users who have opted in for SMS notifications
+    users = (
+        User.query.filter_by(text_pref=True, text_consent=True, deleted=False)
+        .filter(User.phone_number.isnot(None))
+        .all()
     )
-    curDate = datetime.now(pytz.timezone("US/Eastern")).strftime("%m/%d/%Y")
-    emailNotificationSubject = SUBJECT_TEMPLATE.format(curDate)
-    responses = []
-    # send the email notifications
-    for address, emailBodyChunks, userId in emailNotifications:
-        body = "".join(emailBodyChunks)
-        sendSuccess, response = sendEmailWithAWSSES(
-            client, address, emailNotificationSubject, body
-        )
-        responses.append(
-            (address, body, NOTIFICATION_TYPE_EMAIL, userId, sendSuccess, response)
-        )
-        time.sleep(
-            EMAIL_SEND_INTERVAL
-        )  # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
-    # send the text notifications
-    for address, body, userId in textNotifications:
-        sendSuccess, response = sendEmailWithAWSSES(
-            client, address, TEXT_NOTIFICATION_SUBJECT, body
-        )
-        responses.append(
-            (address, body, NOTIFICATION_TYPE_TEXT, userId, sendSuccess, response)
-        )
-        time.sleep(
-            EMAIL_SEND_INTERVAL
-        )  # add a delay so that we don't exceed our max send rate (currently 14 emails/second)
-    return responses
 
+    users_to_notify = []
 
-def probabilityToRisk(closureValue):
-    flag = ""
-    if closureValue == 1:
-        flag = "Very Low"
-    elif closureValue == 2:
-        flag = "Low"
-    elif closureValue == 3:
-        flag = "Moderate"
-    elif closureValue == 4:
-        flag = "High"
-    elif closureValue == 5:
-        flag = "Very High"
-    return flag
-
-
-@cron.route("/sendNotifications")
-@cronOnly
-def sendNotifications():
-    """
-    Sends notifications to all users whose leases warrant a notification.
-    """
-    logging.info("Constructing and sending notifications...")
-    t0 = time.perf_counter_ns()
-    emailNotificationsToSend = []
-    textNotificationsToSend = []
-    # build the notifications for each user
-    users = db.session.query(User).filter_by(deleted=False).all()
     for user in users:
-        # get email address
-        emailAddress = user.email
-        # get phone number and service provider gateway (phonenumber@smsgateway)
-        textAddress = None
-        if user.phone_number is not None and user.service_provider_id is not None:
-            textAddress = "{}@{}".format(
-                user.phone_number, user.service_provider.sms_gateway
-            )
-        # construct notification text
-        notificationText = [NOTIFICATION_HEADER]
-        needToSendNotification = False
-        # for each of the user's leases
-        for lease in user.leases:
-            # get the latest closure probability for the lease
-            prob = lease.getLatestProbability()
-            # if the lease has not been deleted and there's a probability for the lease
-            if not lease.deleted and prob:
-                # if any of the day probs are >= the user's prob preference
+        # Check if any of user's leases have high probability
+        for user_lease in user.leases:
+            if user_lease.deleted:
+                continue
+            prob = user_lease.getLatestProbability()
+            if prob:
                 if (
                     (prob.prob_1d_perc and prob.prob_1d_perc >= user.prob_pref)
                     or (prob.prob_2d_perc and prob.prob_2d_perc >= user.prob_pref)
                     or (prob.prob_3d_perc and prob.prob_3d_perc >= user.prob_pref)
                 ):
-                    leaseInfo = LEASE_TEMPLATE.format(
-                        lease.lease_id,
-                        probabilityToRisk(prob.prob_1d_perc),
-                        probabilityToRisk(prob.prob_2d_perc),
-                        probabilityToRisk(prob.prob_3d_perc),
-                    )
-                    notificationText.append(leaseInfo)
-                    needToSendNotification = True
-        # add a disclaimer to the end of the notifications
-        notificationText.append(NOTIFICATION_FOOTER)
+                    users_to_notify.append((user.id, user.phone_number))
+                    break  # Only need to notify once per user
 
-        if needToSendNotification:
-            # only send emails or texts depending on the user's preferences
-            if user.email_pref and emailAddress is not None:
-                emailNotificationsToSend.append(
-                    (emailAddress, notificationText, user.id)
-                )
-            if user.text_pref and textAddress is not None:
-                textNotificationsToSend.append(
-                    (textAddress, TEXT_NOTIFICATION_TEXT, user.id)
-                )
-
-    # send notifications
-    responses = sendNotificationsWithAWSSES(
-        emailNotificationsToSend, textNotificationsToSend
+    logging.info(
+        f"Found {len(users_to_notify)} users to notify out of {len(users)} eligible users"
     )
-    # log all notifications that were sent
-    for (
-        address,
-        notificationText,
-        notificationType,
-        userId,
-        sendSuccess,
-        resText,
-    ) in responses:
-        notification = Notification(
-            address=address,
-            notification_text=notificationText,
-            notification_type=notificationType,
-            user_id=userId,
-            send_success=sendSuccess,
-            response_text=resText,
+    return users_to_notify
+
+
+def _send_bandwidth_message_single(to_number, message_text=None):
+    """
+    Send an SMS message to a single recipient using Bandwidth.
+    Used for HELP responses.
+    """
+    if message_text is None:
+        message_text = TEXT_NOTIFICATION_MESSAGE
+
+    BW_USERNAME = os.getenv("BW_USERNAME")
+    BW_PASSWORD = os.getenv("BW_PASSWORD")
+    BW_ACCOUNT_ID = os.getenv("BW_ACCOUNT_ID")
+    BW_APPLICATION_ID = os.getenv("BW_APPLICATION_ID")
+    BW_FROM_NUMBER = os.getenv("BW_NUMBER")
+
+    configuration = bandwidth.Configuration(username=BW_USERNAME, password=BW_PASSWORD)
+
+    with bandwidth.ApiClient(configuration) as api_client:
+        messages_api = bandwidth.MessagesApi(api_client)
+        message_request = bandwidth.MessageRequest(
+            application_id=BW_APPLICATION_ID,
+            to=[to_number],
+            var_from=BW_FROM_NUMBER,
+            text=message_text,
+            tag=STATE,  # Include state for callback routing
         )
-        db.session.add(notification)
-    db.session.commit()
+        response = messages_api.create_message(BW_ACCOUNT_ID, message_request)
+        return response
+
+
+def _send_bandwidth_message_bulk(users_to_notify):
+    """
+    Send SMS messages to multiple recipients using Bandwidth.
+    users_to_notify: list of tuples (user_id, phone_number)
+    """
+    if not users_to_notify:
+        logging.info("No users to send SMS notifications to")
+        return []
+
+    BW_USERNAME = os.getenv("BW_USERNAME")
+    BW_PASSWORD = os.getenv("BW_PASSWORD")
+    BW_ACCOUNT_ID = os.getenv("BW_ACCOUNT_ID")
+    BW_APPLICATION_ID = os.getenv("BW_APPLICATION_ID")
+    BW_FROM_NUMBER = os.getenv("BW_NUMBER")
+
+    configuration = bandwidth.Configuration(username=BW_USERNAME, password=BW_PASSWORD)
+    results = []
+
+    with bandwidth.ApiClient(configuration) as api_client:
+        messages_api = bandwidth.MessagesApi(api_client)
+
+        for user_id, phone_number in users_to_notify:
+            try:
+                message_request = bandwidth.MessageRequest(
+                    application_id=BW_APPLICATION_ID,
+                    to=[phone_number],
+                    var_from=BW_FROM_NUMBER,
+                    text=TEXT_NOTIFICATION_MESSAGE,
+                    tag=STATE,  # Include state for callback routing
+                )
+                response = messages_api.create_message(BW_ACCOUNT_ID, message_request)
+
+                # Log the notification event
+                event = NotificationEvent.log_sms_outbound(
+                    state=STATE,
+                    user_id=user_id,
+                    phone_number=phone_number,
+                    template_name="sms_closure_alert",
+                    message_id=response.id if response else None,
+                    send_success=True,
+                )
+                db.session.add(event)
+                results.append(
+                    (user_id, phone_number, True, response.id if response else None)
+                )
+                logging.info(f"SMS sent to {phone_number} for user {user_id}")
+
+            except Exception as e:
+                logging.error(f"Failed to send SMS to {phone_number}: {e}")
+                # Log failed attempt
+                event = NotificationEvent.log_sms_outbound(
+                    state=STATE,
+                    user_id=user_id,
+                    phone_number=phone_number,
+                    template_name="sms_closure_alert",
+                    message_id=None,
+                    send_success=False,
+                )
+                db.session.add(event)
+                results.append((user_id, phone_number, False, None))
+
+            # Small delay to avoid rate limiting
+            time.sleep(0.1)
+
+        db.session.commit()
+
+    return results
+
+
+@cron.route("/send_bandwidth_message", methods=["POST"])
+@cronOnly
+def send_bandwidth_message():
+    """
+    Cron endpoint to send SMS notifications using Bandwidth.
+    """
+    logging.info("Starting Bandwidth SMS notification send...")
+    t0 = time.perf_counter_ns()
+
+    users_to_notify = notification_preprocess_sms()
+    results = _send_bandwidth_message_bulk(users_to_notify)
+
+    success_count = sum(1 for r in results if r[2])
+    fail_count = len(results) - success_count
+
     t1 = time.perf_counter_ns()
-    result = "Constructed and sent {} email notifications and {} text notifications to {} users in {} seconds".format(
-        len(emailNotificationsToSend),
-        len(textNotificationsToSend),
-        len(users),
-        (t1 - t0) / 1000000000,
-    )
+    result = f"Sent {success_count} SMS notifications ({fail_count} failed) in {(t1 - t0) / 1e9:.2f} seconds"
     logging.info(result)
-    return result
+
+    return result, 200
+
+
+# Bandwidth callback is handled in api.py via /api/bandwidth/callback
+# NC receives all callbacks and routes SC/FL callbacks to their respective services
+
+
+# =============================================================================
+# Test endpoint (for local development only)
+# =============================================================================
+
+
+@cron.route("/test/send_sms", methods=["POST", "GET"])
+def test_send_sms():
+    """
+    Test endpoint for sending SMS - DO NOT USE IN PRODUCTION.
+    Only works when DEBUG mode is enabled.
+    """
+    if not current_app.config.get("DEBUG"):
+        return "Not allowed in production", 403
+
+    test_number = request.args.get("phone")
+    if not test_number:
+        return "Missing 'phone' parameter", 400
+
+    try:
+        response = _send_bandwidth_message_single(test_number)
+        return f"SMS sent! Message ID: {response.id if response else 'unknown'}", 200
+    except Exception as e:
+        return f"Failed to send SMS: {e}", 500

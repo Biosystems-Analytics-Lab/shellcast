@@ -1,9 +1,15 @@
+import logging
+import os
+from datetime import datetime, timezone
+
+import requests
 from firebase_admin import auth
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from models import db
 from models.CMU import CMU
 from models.CMUProbability import CMUProbability
 from models.Lease import Lease
+from models.NotificationEvent import NotificationEvent
 from models.User import User
 from models.UserLease import UserLease
 from routes.authentication import userRequired
@@ -11,6 +17,15 @@ from routes.validators.ProfileInfoValidator import ProfileInfoValidator
 from sqlalchemy.exc import IntegrityError
 
 api = Blueprint("api", __name__)
+
+# State identifier for NC
+STATE = "NC"
+
+# Help message for HELP command
+HELP_MESSAGE = (
+    "Thank you for reaching out to ShellCast. For support, please email us at "
+    "shellcastapp@ncsu.edu. Reply STOP to opt out."
+)
 
 
 @api.route("/userInfo", methods=["GET", "POST"])
@@ -217,3 +232,206 @@ def searchLeases(user):
         .all()
     )
     return jsonify(list(map(lambda x: x[0], ncdmfLeaseIds)))
+
+
+# =============================================================================
+# Bandwidth SMS Callback Handler (NC is the default service)
+# =============================================================================
+
+
+@api.route("/api/bandwidth/callback", methods=["POST"])
+def bandwidth_callback():
+    """
+    Handle callbacks from Bandwidth for SMS delivery status and incoming messages.
+    NC is the default service, so it receives all callbacks and routes to appropriate state.
+
+    Callback types:
+    - message-delivered: SMS was successfully delivered
+    - message-failed: SMS delivery failed
+    - message-received: Incoming SMS from user (e.g., STOP/START commands)
+    """
+    try:
+        callback_data = request.json
+
+        if not callback_data:
+            logging.warning("Received empty callback from Bandwidth")
+            return "", 200
+
+        for event in callback_data:
+            event_type = event.get("type")
+            tag = event.get("tag", "")  # State tag from when message was sent
+            message_id = event.get("message", {}).get("id")
+            to_number = event.get("message", {}).get("to", [None])[0]
+            from_number = event.get("message", {}).get("from")
+            text = event.get("message", {}).get("text", "")
+
+            logging.info(
+                f"Bandwidth callback - Type: {event_type}, Tag: {tag}, Message ID: {message_id}"
+            )
+
+            # Route to appropriate state service if not NC
+            if tag and tag != STATE:
+                _route_callback_to_state(tag, [event])
+                continue
+
+            # Handle NC callbacks directly
+            if event_type == "message-delivered":
+                _handle_delivery_success(message_id, to_number)
+
+            elif event_type == "message-failed":
+                error_code = event.get("errorCode")
+                description = event.get("description")
+                _handle_delivery_failure(message_id, to_number, error_code, description)
+
+            elif event_type == "message-received":
+                _handle_inbound_message(from_number, text, message_id)
+
+            else:
+                logging.warning(f"Unknown event type received: {event_type}")
+
+        return "", 200
+
+    except Exception as e:
+        logging.error(f"Error processing Bandwidth callback: {e}")
+        return "", 200
+
+
+def _route_callback_to_state(state, events):
+    """
+    Route callback events to the appropriate state service.
+    """
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "ncsu-shellcast")
+
+    state_urls = {
+        "SC": f"https://shellcast-web-sc-dot-{project_id}.appspot.com/api/bandwidth/callback/internal",
+        "FL": f"https://shellcast-web-fl-dot-{project_id}.appspot.com/api/bandwidth/callback/internal",
+    }
+
+    if state not in state_urls:
+        logging.warning(f"Unknown state tag: {state}, cannot route callback")
+        return
+
+    try:
+        response = requests.post(
+            state_urls[state],
+            json=events,
+            headers={
+                "Content-Type": "application/json",
+                "X-Forwarded-By": "nc-callback-router",
+            },
+            timeout=10,
+        )
+        logging.info(
+            f"Routed callback to {state} service, status: {response.status_code}"
+        )
+    except Exception as e:
+        logging.error(f"Failed to route callback to {state}: {e}")
+
+
+def _handle_delivery_success(message_id, to_number):
+    """Handle successful SMS delivery callback."""
+    logging.info(f"Message {message_id} delivered successfully to {to_number}")
+
+    if message_id:
+        event = NotificationEvent.query.filter_by(message_id=message_id).first()
+        if event:
+            event.update_delivery_status("DELIVERED")
+            db.session.commit()
+
+
+def _handle_delivery_failure(message_id, to_number, error_code, description):
+    """Handle failed SMS delivery callback."""
+    logging.error(
+        f"Message {message_id} failed to {to_number}: {description} (Code: {error_code})"
+    )
+
+    if message_id:
+        event = NotificationEvent.query.filter_by(message_id=message_id).first()
+        if event:
+            event.update_delivery_status("FAILED", error_code=error_code)
+            db.session.commit()
+
+
+def _handle_inbound_message(from_number, text, message_id):
+    """Handle incoming SMS from user (STOP, START, HELP, etc.)."""
+    from routes.cron import _send_bandwidth_message_single
+
+    logging.info(f"Received SMS from {from_number}: {text}")
+
+    # Clean phone number (remove +1 prefix if present)
+    clean_number = from_number[2:] if from_number.startswith("+1") else from_number
+
+    text_upper = text.strip().upper()
+
+    # Handle opt-out keywords
+    if text_upper in ["STOP", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]:
+        user = db.session.query(User).filter_by(phone_number=clean_number).first()
+        if user:
+            user.text_pref = False
+            user.text_consent = False
+            user.text_opt_out_date = datetime.now(timezone.utc)
+
+            # Log the inbound event
+            event = NotificationEvent.log_sms_inbound(
+                state=STATE,
+                user_id=user.id,
+                phone_number=clean_number,
+                message_id=message_id,
+            )
+            db.session.add(event)
+            db.session.commit()
+            logging.info(f"User {user.id} opted out of SMS notifications")
+
+            # Send opt-out confirmation
+            try:
+                _send_bandwidth_message_single(
+                    from_number,
+                    "ShellCast: You've been unsubscribed and will no longer receive alerts. Reply START to resubscribe.",
+                )
+            except Exception as e:
+                logging.error(f"Failed to send opt-out confirmation: {e}")
+        else:
+            logging.warning(
+                f"No user found with phone number {clean_number} for opt-out"
+            )
+
+    # Handle opt-in keywords
+    elif text_upper in ["START", "UNSTOP", "SUBSCRIBE"]:
+        user = db.session.query(User).filter_by(phone_number=clean_number).first()
+        if user:
+            user.text_pref = True
+            user.text_consent = True
+            user.text_opt_in_date = datetime.now(timezone.utc)
+
+            # Log the inbound event
+            event = NotificationEvent.log_sms_inbound(
+                state=STATE,
+                user_id=user.id,
+                phone_number=clean_number,
+                message_id=message_id,
+            )
+            db.session.add(event)
+            db.session.commit()
+            logging.info(f"User {user.id} opted back in to SMS notifications")
+
+            # Send opt-in confirmation
+            try:
+                _send_bandwidth_message_single(
+                    from_number,
+                    "ShellCast: You've been resubscribed to closure alerts. Reply STOP to unsubscribe.",
+                )
+            except Exception as e:
+                logging.error(f"Failed to send opt-in confirmation: {e}")
+        else:
+            logging.warning(
+                f"No user found with phone number {clean_number} for opt-in"
+            )
+
+    # Handle HELP keyword
+    elif text_upper == "HELP":
+        logging.info(f"Sending help message to {from_number}")
+        try:
+            _send_bandwidth_message_single(from_number, HELP_MESSAGE)
+            logging.info("Help message sent successfully")
+        except Exception as e:
+            logging.error(f"Failed to send help message: {e}")
