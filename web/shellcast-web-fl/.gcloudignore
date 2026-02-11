@@ -45,3 +45,6 @@ htmlcov
 .DS_Store
 # ignore analysis code
 analysis
+# ignore Node dependencies (build copies only ol.js + ol.css to static/lib)
+node_modules
+static/node_modules
