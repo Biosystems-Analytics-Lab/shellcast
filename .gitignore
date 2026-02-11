@@ -27,6 +27,10 @@ data_prep/fl/final_outputs/
 node_modules/
 **/static/lib/
 **/instance/
+# Frontend Node build metadata and scripts for web apps
+web/shellcast-web-*/package.json
+web/shellcast-web-*/package-lock.json
+web/shellcast-web-*/scripts/
 venv/
 webenv/
 analysisenv/

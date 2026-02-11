@@ -46,4 +46,8 @@ htmlcov
 analysis
 # ignore Node dependencies (build copies only ol.js + ol.css to static/lib)
 node_modules
-static/node_modules
+# ignore Node build metadata and scripts
+package.json
+package-lock.json
+scripts
+static/scripts
