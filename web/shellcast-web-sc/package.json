@@ -1,0 +1,13 @@
+{
+  "name": "shellcast-web-sc",
+  "version": "1.0.0",
+  "description": "ShellCast SC web app - run build to copy OpenLayers into static for deployment",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/copy-ol-to-static.js",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "ol": "^9.2.4"
+  }
+}
