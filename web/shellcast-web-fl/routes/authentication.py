@@ -1,3 +1,5 @@
+import os
+import secrets
 from functools import wraps
 
 from firebase_admin import auth
@@ -56,18 +58,22 @@ def userRequired(func):
 
 def cronOnly(func):
     """
-    A decorator function that ensures that a request is made by the
-    GCP App Engine cron service.
+    Ensures the request is from GAE cron (X-Appengine-Cron) or from NC orchestrator
+    (X-NC-Orchestrator-Secret). NC triggers FL/SC when cron runs only on NC.
     """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        # check for X-Appengine-Cron header
-        try:
-            if not request.headers["X-Appengine-Cron"]:
-                return {"message": "Request must be made by cron service"}, 401
-        except KeyError:
-            return {"message": "Request must be made by cron service"}, 401
-        return func(*args, **kwargs)
+        # GAE cron sends this header
+        if request.headers.get("X-Appengine-Cron"):
+            return func(*args, **kwargs)
+        # NC orchestrator sends this when triggering FL send
+        secret = os.getenv("NC_ORCHESTRATOR_SECRET")
+        if secret and request.headers.get("X-NC-Orchestrator-Secret"):
+            if secrets.compare_digest(
+                request.headers["X-NC-Orchestrator-Secret"], secret
+            ):
+                return func(*args, **kwargs)
+        return {"message": "Request must be made by cron service"}, 401
 
     return wrapper

@@ -65,13 +65,15 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
     const phoneDigits = (profInfo.phone_number || "").replace(/\D/g, "");
     const emailPref = Boolean(profInfo.email_pref);
     const textPref = Boolean(profInfo.text_pref);
+    const emailConsent = Boolean(profInfo.email_consent);
+    const textConsent = Boolean(profInfo.text_consent);
     savedProfileData = {
       email: (profInfo.email || "").trim(),
       phone_number: phoneDigits,
       email_pref: emailPref,
       text_pref: textPref,
-      email_consent: emailPref,
-      text_consent: textPref,
+      email_consent: emailConsent,
+      text_consent: textConsent,
       prob_pref: Number(profInfo.prob_pref) || 3,
     };
   }
@@ -86,14 +88,16 @@ function initProfileForm(profInfo, ignoreAddingEventListeners) {
   // If neither email nor text is enabled, check "no notifications"
   noNotificationsCheckbox.checked = !profInfo.email_pref && !profInfo.text_pref;
 
-  // Set consent checkboxes based on preferences (for initial load)
+  // Set consent from database only; never auto-check when user checks preference (user must consent explicitly)
   const emailConsentCheckbox = profForm.elements["email-consent"];
   const textConsentCheckbox = profForm.elements["text-consent"];
   if (emailConsentCheckbox) {
-    emailConsentCheckbox.checked = profInfo.email_pref;
+    emailConsentCheckbox.checked = Boolean(profInfo.email_consent);
+    emailConsentCheckbox.disabled = !emailCheckbox.checked;
   }
   if (textConsentCheckbox) {
-    textConsentCheckbox.checked = profInfo.text_pref;
+    textConsentCheckbox.checked = Boolean(profInfo.text_consent);
+    textConsentCheckbox.disabled = !textCheckbox.checked;
   }
 
   // Initially expand accordions based on user preferences
@@ -159,23 +163,10 @@ function onProfileFormChange(e) {
     helpText.style.color = "";
   }
 
-  // Handle consent withdrawal logic (highest priority)
-  if (e.target === emailConsentCheckbox) {
-    // If email consent is unchecked, uncheck email preference and clear email
-    if (!emailConsentCheckbox.checked) {
-      emailCheckbox.checked = false;
-      profForm.elements["email-address"].value = "";
-    }
-  } else if (e.target === textConsentCheckbox) {
-    // If text consent is unchecked, uncheck text preference and clear phone
-    if (!textConsentCheckbox.checked) {
-      textCheckbox.checked = false;
-      profForm.elements["phone-number"].value = "";
-    }
-  }
+  // Consent is never auto-checked; user must check it explicitly (common practice for SMS/email opt-in).
+  // We do not change preference or clear fields when user unchecks consent; save uses effective opt-in.
 
-  // Handle preference checkbox logic (lower priority)
-  // Note: We don't auto-check consent - user must do this deliberately
+  // Handle preference checkbox logic
 
   // Handle "no notifications" logic
   if (e.target === noNotificationsCheckbox) {
@@ -191,6 +182,13 @@ function onProfileFormChange(e) {
       }
     }
   } else if (e.target === emailCheckbox || e.target === textCheckbox) {
+    // If user unchecks preference, also uncheck consent (common practice: no channel = no consent)
+    if (e.target === emailCheckbox && !emailCheckbox.checked && emailConsentCheckbox) {
+      emailConsentCheckbox.checked = false;
+    }
+    if (e.target === textCheckbox && !textCheckbox.checked && textConsentCheckbox) {
+      textConsentCheckbox.checked = false;
+    }
     // If email or text is checked, uncheck "no notifications"
     if (emailCheckbox.checked || textCheckbox.checked) {
       noNotificationsCheckbox.checked = false;
@@ -233,6 +231,14 @@ function onProfileFormChange(e) {
   } else if (e.target === textCheckbox && textCheckbox.checked) {
     // Open text accordion when text preference is checked
     updateAccordionVisibility(emailCheckbox.checked, true);
+  }
+
+  // Disable consent checkboxes unless the corresponding preference is checked (avoids consent-only state)
+  if (emailConsentCheckbox) {
+    emailConsentCheckbox.disabled = !emailCheckbox.checked;
+  }
+  if (textConsentCheckbox) {
+    textConsentCheckbox.disabled = !textCheckbox.checked;
   }
 
   // Update probability radio button states
@@ -397,18 +403,20 @@ async function saveProfileFormChanges() {
     }
   }
 
-  // Consent is required for preferences to be active
-  // If user checked preference but not consent, treat as not opted in
+  // Save phone when Text is checked and number is entered; consent is saved separately (SMS only sent when both pref and consent).
+  // Email: keep saved email when pref on but consent off so we don't accidentally clear.
   const effectiveEmailPref = emailPref && emailConsentChecked;
-  const effectiveTextPref = textPref && textConsentChecked;
+  const emailToSend = emailPref
+    ? (emailConsentChecked ? email : (savedProfileData.email || email) || null)
+    : null;
+  const phoneToSend = textPref && phoneNumber ? phoneNumber : null;
 
-  // Privacy-first approach: Remove email/phone if preference is unchecked or no consent
   const newProfileInfo = {
-    email: effectiveEmailPref ? email : null,
-    phone_number: effectiveTextPref ? phoneNumber : null,
+    email: emailToSend,
+    phone_number: phoneToSend,
     service_provider_id: null, // NC doesn't have service provider field
-    email_pref: effectiveEmailPref,
-    text_pref: effectiveTextPref,
+    email_pref: emailPref,
+    text_pref: textPref,
     prob_pref: selectedProb,
     email_consent: emailConsentChecked,
     text_consent: textConsentChecked,
@@ -426,17 +434,15 @@ async function saveProfileFormChanges() {
       profileInfo = await res.json();
       helpText.style.color = "green";
 
-      // Update saved data to reflect the new saved state
+      // Update saved data to reflect the new saved state (use consent from response)
       const phoneDigits = (profileInfo.phone_number || "").replace(/\D/g, "");
-      const ep = Boolean(profileInfo.email_pref);
-      const tp = Boolean(profileInfo.text_pref);
       savedProfileData = {
         email: (profileInfo.email || "").trim(),
         phone_number: phoneDigits,
-        email_pref: ep,
-        text_pref: tp,
-        email_consent: ep,
-        text_consent: tp,
+        email_pref: Boolean(profileInfo.email_pref),
+        text_pref: Boolean(profileInfo.text_pref),
+        email_consent: Boolean(profileInfo.email_consent),
+        text_consent: Boolean(profileInfo.text_consent),
         prob_pref: Number(profileInfo.prob_pref) || 3,
       };
 

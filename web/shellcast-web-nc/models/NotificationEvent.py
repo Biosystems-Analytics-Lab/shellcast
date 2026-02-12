@@ -11,6 +11,10 @@ class NotificationEvent(db.Model):
 
     __tablename__ = "notification_events"
 
+    # Template names for text_content_template (outbound SMS)
+    TEMPLATE_SMS_CLOSURE_ALERT = "sms_closure_alert"
+    TEMPLATE_SMS_SMOKE_TEST = "sms_smoke_test"
+
     id = Column(Integer, primary_key=True)
     state = Column(String(2), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)

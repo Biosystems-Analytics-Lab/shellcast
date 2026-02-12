@@ -134,12 +134,27 @@ def _send_bandwidth_message_bulk(users_to_notify):
 def send_bandwidth_message():
     """
     Cron endpoint to send SMS notifications using Bandwidth.
+    Logs each outbound to NC's notification_events.
     """
+    from routes.api import TEMPLATE_SMS_CLOSURE_ALERT, _log_sms_to_nc
+
     logging.info("Starting Bandwidth SMS notification send for FL...")
     t0 = time.perf_counter_ns()
 
     users_to_notify = notification_preprocess_sms()
     results = _send_bandwidth_message_bulk(users_to_notify)
+
+    for user_id, phone_number, success, message_id in results:
+        if success and message_id:
+            _log_sms_to_nc(
+                state=STATE,
+                user_id=user_id,
+                phone_number=phone_number,
+                direction="outbound",
+                message_id=message_id,
+                template_name=TEMPLATE_SMS_CLOSURE_ALERT,
+                send_success=True,
+            )
 
     success_count = sum(1 for r in results if r[2])
     fail_count = len(results) - success_count

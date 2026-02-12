@@ -37,6 +37,9 @@ HELP_MESSAGE = "Thank you for reaching out to ShellCast. For support, please ema
 NOTIFICATION_TYPE_EMAIL = "email"
 NOTIFICATION_TYPE_TEXT = "text"
 
+# State identifier for callback routing and NC logging
+STATE = "SC"
+
 cron = Blueprint("cron", __name__)
 
 
@@ -48,12 +51,13 @@ messaging_client = bandwidth_client.messaging_client.client
 
 
 def notification_preprocess():
-    phone_numbers_to_send = []
-    # Get probability data
+    """
+    Return list of (user_id, phone_number) for users who should receive SMS.
+    """
+    users_to_send = []
     data = execute_stored_procedure(
         current_app.config["SQLALCHEMY_DATABASE_URI"], "SelectUserLeaseProbsToday"
     )
-    # Process probability data
     for row in data:
         if (
             (row["text_pref"] and row["text_consent"])
@@ -65,50 +69,99 @@ def notification_preprocess():
                 or row["prob_pref"] <= row["prob_2d_perc"]
                 or row["prob_pref"] <= row["prob_3d_perc"]
             ):
-                # data_to_send = {"from": current_app.config["BW_NUMBER"], "to": row["phone_number"], "body": TEXT_NOTIFICATION_TEXT}
-                phone_numbers_to_send.append(row["phone_number"])
+                users_to_send.append((row["user_id"], row["phone_number"]))
 
-    return phone_numbers_to_send
+    return users_to_send
 
 
 @cron.route("/send_bandwidth_message", methods=["POST"])
 @cronOnly
 def send_bandwidth_message():
     """
-    Send an SMS message using Bandwidth.
+    Send SMS notifications per user using Bandwidth. Logs each to NC notification_events.
     """
-    phone_numbers_to_send = notification_preprocess()
-    _send_bandwidth_message(phone_numbers_to_send)
+    from routes.api import TEMPLATE_SMS_CLOSURE_ALERT, _log_sms_to_nc
+
+    users_to_notify = notification_preprocess()
+    results = _send_bandwidth_message_bulk(users_to_notify)
+
+    for user_id, phone_number, success, message_id in results:
+        if success and message_id:
+            _log_sms_to_nc(
+                state=STATE,
+                user_id=user_id,
+                phone_number=phone_number,
+                direction="outbound",
+                message_id=message_id,
+                template_name=TEMPLATE_SMS_CLOSURE_ALERT,
+                send_success=True,
+            )
+
     return "", 200
 
 
-def _send_bandwidth_message(to_numbers):
+def _send_bandwidth_message_single(to_number, message_text=None):
     """
-    Send an SMS message using Bandwidth.
+    Send an SMS to one recipient (e.g. HELP response). Uses tag=STATE for callback routing.
     """
+    if message_text is None:
+        message_text = TEXT_NOTIFICATION_MESSAGE
     BW_USERNAME = os.getenv("BW_USERNAME")
     BW_PASSWORD = os.getenv("BW_PASSWORD")
     BW_ACCOUNT_ID = os.getenv("BW_ACCOUNT_ID")
     BW_APPLICATION_ID = os.getenv("BW_APPLICATION_ID")
     BW_FROM_NUMBER = os.getenv("BW_NUMBER")
-
-    # Configure Bandwidth client
     configuration = bandwidth.Configuration(username=BW_USERNAME, password=BW_PASSWORD)
-
-    # Use context manager
     with bandwidth.ApiClient(configuration) as api_client:
-        # Create MessagesApi instance
         messages_api = bandwidth.MessagesApi(api_client)
-
-        # Create MessageRequest
         message_request = bandwidth.MessageRequest(
             application_id=BW_APPLICATION_ID,
-            to=to_numbers,
+            to=[to_number],
             var_from=BW_FROM_NUMBER,
-            text=TEXT_NOTIFICATION_MESSAGE,
+            text=message_text,
+            tag=STATE,
         )
         response = messages_api.create_message(BW_ACCOUNT_ID, message_request)
         return response
+
+
+def _send_bandwidth_message_bulk(users_to_notify):
+    """
+    Send SMS to multiple users. users_to_notify: list of (user_id, phone_number).
+    Returns list of (user_id, phone_number, success, message_id).
+    """
+    if not users_to_notify:
+        logging.info("No users to send SC SMS notifications to")
+        return []
+
+    BW_USERNAME = os.getenv("BW_USERNAME")
+    BW_PASSWORD = os.getenv("BW_PASSWORD")
+    BW_ACCOUNT_ID = os.getenv("BW_ACCOUNT_ID")
+    BW_APPLICATION_ID = os.getenv("BW_APPLICATION_ID")
+    BW_FROM_NUMBER = os.getenv("BW_NUMBER")
+    configuration = bandwidth.Configuration(username=BW_USERNAME, password=BW_PASSWORD)
+    results = []
+
+    with bandwidth.ApiClient(configuration) as api_client:
+        messages_api = bandwidth.MessagesApi(api_client)
+        for user_id, phone_number in users_to_notify:
+            try:
+                message_request = bandwidth.MessageRequest(
+                    application_id=BW_APPLICATION_ID,
+                    to=[phone_number],
+                    var_from=BW_FROM_NUMBER,
+                    text=TEXT_NOTIFICATION_MESSAGE,
+                    tag=STATE,
+                )
+                response = messages_api.create_message(BW_ACCOUNT_ID, message_request)
+                results.append(
+                    (user_id, phone_number, True, response.id if response else None)
+                )
+            except Exception as e:
+                logging.error(f"Failed to send SMS to {phone_number}: {e}")
+                results.append((user_id, phone_number, False, None))
+
+    return results
 
 
 # Bandwidth callback is handled in api.py via /api/bandwidth/callback/internal

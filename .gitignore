@@ -25,7 +25,6 @@ analysis/shellcast-analysis/data/
 data_prep/fl/final_outputs/
 **/lease_db_data.py
 node_modules/
-**/static/lib/
 **/instance/
 # Frontend Node build metadata and scripts for web apps
 web/shellcast-web-*/package.json
@@ -87,3 +86,5 @@ ncep-lib-utils/
 
 # App configuration files with sensitive information
 **/app.yaml
+
+**/static/lib/ol.js
