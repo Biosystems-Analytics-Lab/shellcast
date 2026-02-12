@@ -37,13 +37,15 @@ def userInfo(user):
 
     def constructResponse(userObj):
         userInfo = {
-            "email": user.email,
-            "email_pref": user.email_pref,
-            "text_pref": user.text_pref,
-            "prob_pref": user.prob_pref,
+            "email": userObj.email,
+            "email_pref": userObj.email_pref,
+            "text_pref": userObj.text_pref,
+            "email_consent": userObj.email_consent,
+            "text_consent": userObj.text_consent,
+            "prob_pref": userObj.prob_pref,
         }
-        if user.phone_number != None:
-            userInfo["phone_number"] = user.phone_number
+        if userObj.phone_number is not None:
+            userInfo["phone_number"] = userObj.phone_number
         return userInfo
 
     if request.method == "GET":
@@ -52,11 +54,34 @@ def userInfo(user):
         # validate the uploaded info
         validator = ProfileInfoValidator(request.json)
         if validator.validate():
-            user.email = validator.email
+            now = datetime.now(timezone.utc)
+            prev_email_consent = user.email_consent
+            prev_text_consent = user.text_consent
+            # Persist preferences and contact info
             user.phone_number = validator.phone_number
             user.email_pref = validator.email_pref
             user.text_pref = validator.text_pref
+            user.email_consent = validator.email_consent
+            user.text_consent = validator.text_consent
             user.prob_pref = validator.prob_pref
+            # Only clear email when explicitly opting out of email (email_pref False)
+            if validator.email_pref:
+                user.email = validator.email if validator.email else user.email
+            else:
+                user.email = validator.email
+            # Opt-in/opt-out timestamps: only set when consent actually changed
+            if validator.text_consent != prev_text_consent:
+                if validator.text_consent:
+                    user.text_opt_in_date = now
+                    user.text_opt_out_date = None
+                else:
+                    user.text_opt_out_date = now
+            if validator.email_consent != prev_email_consent:
+                if validator.email_consent:
+                    user.email_opt_in_date = now
+                    user.email_opt_out_date = None
+                else:
+                    user.email_opt_out_date = now
             db.session.add(user)
             db.session.commit()
             return constructResponse(user)
@@ -269,24 +294,29 @@ def bandwidth_callback():
                 f"Bandwidth callback - Type: {event_type}, Tag: {tag}, Message ID: {message_id}"
             )
 
-            # Route to appropriate state service if not NC
-            if tag and tag != STATE:
-                _route_callback_to_state(tag, [event])
-                continue
-
-            # Handle NC callbacks directly
+            # Delivery status: update NC's NotificationEvent for all states (NC, FL, SC)
             if event_type == "message-delivered":
                 _handle_delivery_success(message_id, to_number)
-
             elif event_type == "message-failed":
                 error_code = event.get("errorCode")
                 description = event.get("description")
                 _handle_delivery_failure(message_id, to_number, error_code, description)
 
-            elif event_type == "message-received":
-                _handle_inbound_message(from_number, text, message_id)
+            # Route delivery events to state service for their internal handling
+            if (
+                event_type in ("message-delivered", "message-failed")
+                and tag
+                and tag != STATE
+            ):
+                _route_callback_to_state(tag, [event])
+                continue
 
-            else:
+            # Inbound: handle NC, then forward to FL and SC so they can handle and log
+            if event_type == "message-received":
+                _handle_inbound_message(from_number, text, message_id)
+                _route_callback_to_state("FL", [event])
+                _route_callback_to_state("SC", [event])
+            elif event_type not in ("message-delivered", "message-failed"):
                 logging.warning(f"Unknown event type received: {event_type}")
 
         return "", 200
@@ -303,8 +333,8 @@ def _route_callback_to_state(state, events):
     project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "ncsu-shellcast")
 
     state_urls = {
-        "SC": f"https://shellcast-web-sc-dot-{project_id}.appspot.com/api/bandwidth/callback/internal",
-        "FL": f"https://shellcast-web-fl-dot-{project_id}.appspot.com/api/bandwidth/callback/internal",
+        "SC": f"https://shellcast-sc-dot-{project_id}.appspot.com/api/bandwidth/callback/internal",
+        "FL": f"https://shellcast-fl-dot-{project_id}.appspot.com/api/bandwidth/callback/internal",
     }
 
     if state not in state_urls:
@@ -326,6 +356,65 @@ def _route_callback_to_state(state, events):
         )
     except Exception as e:
         logging.error(f"Failed to route callback to {state}: {e}")
+
+
+# =============================================================================
+# Centralized notification logging (for FL/SC to record in NC DB)
+# =============================================================================
+
+
+@api.route("/api/bandwidth/log-event", methods=["POST"])
+def bandwidth_log_event():
+    """
+    Internal endpoint for FL and SC to log SMS events to NC's notification_events.
+    Secured with X-NC-Log-Secret header. Used so all states log in one place.
+    """
+    secret = request.headers.get("X-NC-Log-Secret")
+    expected = os.getenv("NC_LOG_SECRET")
+    if not expected or secret != expected:
+        logging.warning("bandwidth_log_event: missing or invalid X-NC-Log-Secret")
+        return "", 403
+
+    try:
+        data = request.json or {}
+        state = data.get("state")
+        user_id = data.get("user_id")
+        phone_number = data.get("phone_number")
+        message_id = data.get("message_id")
+        direction = data.get("direction")  # "outbound" | "inbound"
+        template_name = data.get("template_name")
+        send_success = data.get("send_success", True)
+
+        if not state or state not in ("FL", "SC"):
+            return "", 400
+        if not user_id or not phone_number or not direction:
+            return "", 400
+        if direction == "outbound" and not template_name:
+            return "", 400
+
+        if direction == "outbound":
+            event = NotificationEvent.log_sms_outbound(
+                state=state,
+                user_id=int(user_id),
+                phone_number=phone_number,
+                template_name=template_name,
+                message_id=message_id,
+                send_success=send_success,
+            )
+        else:
+            event = NotificationEvent.log_sms_inbound(
+                state=state,
+                user_id=int(user_id),
+                phone_number=phone_number,
+                message_id=message_id,
+            )
+        db.session.add(event)
+        db.session.commit()
+        return "", 200
+    except Exception as e:
+        logging.error(f"bandwidth_log_event: {e}")
+        db.session.rollback()
+        return "", 500
 
 
 def _handle_delivery_success(message_id, to_number):

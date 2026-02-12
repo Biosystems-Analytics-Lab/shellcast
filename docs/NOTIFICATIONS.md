@@ -24,3 +24,28 @@ python src/generate_secret_key.py
 ```bash
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
+
+## SMS (Bandwidth) – centralized logging in NC
+
+All SMS notification events (NC, FL, SC) are logged in the **NC** database table `notification_events`. Bandwidth has a single callback URL pointing at the NC app; NC forwards callbacks to FL/SC when needed.
+
+- **NC**
+  - Set `NC_LOG_SECRET` (shared secret for the log-event endpoint).
+  - Callback handles delivery status for all states and forwards inbound to FL and SC.
+
+- **FL and SC**
+  - Set `NC_LOG_URL` (NC app base URL, e.g. `https://shellcast-web-nc-dot-<project>.appspot.com`).
+  - Set `NC_LOG_SECRET` (same value as NC).
+  - FL/SC call NC’s `/api/bandwidth/log-event` to record outbound sends and inbound STOP/START.
+
+### SMS cron orchestrator (single cron on NC)
+
+Only the **NC** app has a GAE cron job for SMS. NC runs its own send, then triggers FL and SC by HTTP (POST to each app’s `/send_bandwidth_message`). FL and SC have no cron entries for SMS; they are invoked by NC.
+
+- **NC**
+  - Set `NC_ORCHESTRATOR_SECRET` (shared secret NC sends when calling FL/SC).
+  - Cron handler calls FL and SC with header `X-NC-Orchestrator-Secret`.
+
+- **FL and SC**
+  - Set `NC_ORCHESTRATOR_SECRET` (same value as NC).
+  - The `/send_bandwidth_message` endpoint accepts either GAE cron (header `X-Appengine-Cron`) or NC orchestrator (header `X-NC-Orchestrator-Secret`).

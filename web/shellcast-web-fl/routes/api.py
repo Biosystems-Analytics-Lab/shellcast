@@ -1,6 +1,8 @@
 import logging
+import os
 from datetime import datetime, timezone
 
+import requests
 from firebase_admin import auth
 from flask import Blueprint, jsonify, request
 from models import db
@@ -289,24 +291,94 @@ def bandwidth_callback_internal():
         return "", 200
 
 
+# Template name for NC notification_events (must match NC's NotificationEvent)
+TEMPLATE_SMS_CLOSURE_ALERT = "sms_closure_alert"
+
+
+def _log_sms_to_nc(
+    state,
+    user_id,
+    phone_number,
+    direction,
+    message_id=None,
+    template_name=None,
+    send_success=True,
+):
+    """Log an SMS event to NC's notification_events (centralized logging)."""
+    url = os.getenv("NC_LOG_URL")
+    secret = os.getenv("NC_LOG_SECRET")
+    if not url or not secret:
+        logging.warning("NC_LOG_URL or NC_LOG_SECRET not set, skipping log to NC")
+        return
+    endpoint = url.rstrip("/") + "/api/bandwidth/log-event"
+    payload = {
+        "state": state,
+        "user_id": user_id,
+        "phone_number": phone_number,
+        "message_id": message_id,
+        "direction": direction,
+        "send_success": send_success,
+    }
+    if direction == "outbound":
+        payload["template_name"] = template_name or TEMPLATE_SMS_CLOSURE_ALERT
+    try:
+        r = requests.post(
+            endpoint,
+            json=payload,
+            headers={"Content-Type": "application/json", "X-NC-Log-Secret": secret},
+            timeout=10,
+        )
+        if r.status_code != 200:
+            logging.warning(f"NC log-event returned {r.status_code}")
+    except Exception as e:
+        logging.error(f"Failed to log SMS to NC: {e}")
+
+
 def _handle_inbound_message_fl(from_number, text, message_id):
     """
-    Handle incoming SMS from user (STOP, HELP) for FL.
-    Updates FL's users table for opt-out.
+    Handle incoming SMS from user (STOP, START, HELP) for FL.
+    Updates FL's users table and logs inbound to NC.
     """
     logging.info(f"Received SMS from {from_number}: {text}")
 
+    clean_number = from_number[2:] if from_number.startswith("+1") else from_number
     text_upper = text.strip().upper()
 
     # Handle opt-out keywords - update FL users table
     if text_upper in ["STOP", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]:
-        user = db.session.query(User).filter_by(phone_number=from_number).first()
+        user = db.session.query(User).filter_by(phone_number=clean_number).first()
         if user:
             user.text_pref = False
             user.text_consent = False
             user.text_opt_out_date = datetime.now(timezone.utc)
             db.session.commit()
+            _log_sms_to_nc(
+                state="FL",
+                user_id=user.id,
+                phone_number=clean_number,
+                direction="inbound",
+                message_id=message_id,
+            )
             logging.info(f"FL User {user.id} opted out of SMS notifications")
+        else:
+            logging.warning(f"No FL user found with phone number {from_number}")
+
+    # Handle opt-in keywords
+    elif text_upper in ["START", "UNSTOP", "SUBSCRIBE"]:
+        user = db.session.query(User).filter_by(phone_number=clean_number).first()
+        if user:
+            user.text_pref = True
+            user.text_consent = True
+            user.text_opt_in_date = datetime.now(timezone.utc)
+            db.session.commit()
+            _log_sms_to_nc(
+                state="FL",
+                user_id=user.id,
+                phone_number=clean_number,
+                direction="inbound",
+                message_id=message_id,
+            )
+            logging.info(f"FL User {user.id} opted in to SMS notifications")
         else:
             logging.warning(f"No FL user found with phone number {from_number}")
 
