@@ -1,11 +1,20 @@
 import logging
 import os
+import sys
 
 import firebase_admin
 import requests
-from config import Config, DevConfig
 from firebase_admin import auth
 from flask import Flask, Response, request
+
+# Load environment variables from .env file for local development
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not available, continue without it
+
 from models import db
 from routes.api import api
 from routes.cron import cron
@@ -28,12 +37,96 @@ if "GAE_APPLICATION" in os.environ:
 firebase_admin.initialize_app()
 
 
-def createApp(configObj):
+def createApp():
     """
-    Returns a Flask app configured with the given configuration object.
+    Returns a Flask app configured with environment variables (from app.yaml on GAE, .env locally).
     """
     app = Flask(__name__)
-    app.config.from_object(configObj)
+
+    # Provide safe local defaults for development if not set
+    os.environ.setdefault("HOST", "127.0.0.1")
+    os.environ.setdefault("PORT", "8080")
+    os.environ.setdefault("SECRET_KEY", "dev-secret-key")
+
+    # Validate required environment variables
+    required_vars = [
+        "HOST",
+        "PORT",
+        "SECRET_KEY",
+        "EMAIL_SECRET_KEY",
+        "DB_USER",
+        "DB_PASS",
+        "DB_NAME",
+        "DB_UNIX_SOCKET_PATH_PREFIX",
+        "CLOUD_SQL_INSTANCE_NAME",
+        "DB_POOL_SIZE",
+        "DB_MAX_OVERFLOW",
+        "DB_POOL_TIMEOUT",
+        "DB_POOL_RECYCLE",
+    ]
+
+    missing_vars = [var for var in required_vars if not os.environ.get(var)]
+    if missing_vars:
+        error_msg = (
+            f"Missing required environment variables: {', '.join(missing_vars)}\n"
+        )
+        error_msg += "Please set these variables in your .env file or environment."
+        print(f"ERROR: {error_msg}", file=sys.stderr)
+        raise ValueError(error_msg)
+
+    # Configure Flask app directly from environment variables
+    app.config.update(
+        {
+            # Flask Configuration
+            "DEBUG": os.environ.get("DEBUG", "false").lower() == "true",
+            "TESTING": os.environ.get("TESTING", "false").lower() == "true",
+            "SECRET_KEY": os.environ.get("SECRET_KEY"),
+            "EMAIL_SECRET_KEY": os.environ.get("EMAIL_SECRET_KEY"),
+            # Database Configuration
+            "DB_HOST": os.environ.get("DB_HOST"),
+            "DB_PORT": os.environ.get("DB_PORT"),
+            "DB_USER": os.environ.get("DB_USER"),
+            "DB_PASS": os.environ.get("DB_PASS"),
+            "DB_NAME": os.environ.get("DB_NAME"),
+            # Cloud SQL Configuration
+            "DB_UNIX_SOCKET_PATH_PREFIX": os.environ.get("DB_UNIX_SOCKET_PATH_PREFIX"),
+            "CLOUD_SQL_INSTANCE_NAME": os.environ.get("CLOUD_SQL_INSTANCE_NAME"),
+            # SQLAlchemy Configuration
+            "SQLALCHEMY_TRACK_MODIFICATIONS": os.environ.get(
+                "SQLALCHEMY_TRACK_MODIFICATIONS", "false"
+            ).lower()
+            == "true",
+            "SQLALCHEMY_ENGINE_OPTIONS": {
+                "pool_size": int(os.environ.get("DB_POOL_SIZE")),
+                "max_overflow": int(os.environ.get("DB_MAX_OVERFLOW")),
+                "pool_timeout": int(os.environ.get("DB_POOL_TIMEOUT")),
+                "pool_recycle": int(os.environ.get("DB_POOL_RECYCLE")),
+            },
+            # AWS SES (optional; for email)
+            "AWS_ACCESS_KEY_ID": os.environ.get("AWS_ACCESS_KEY_ID"),
+            "AWS_SECRET_ACCESS_KEY": os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            "AWS_REGION": os.environ.get("AWS_REGION", "us-east-1"),
+        }
+    )
+
+    # Database URI: use env override (e.g. tests with sqlite) or build from Cloud SQL settings
+    if os.environ.get("SQLALCHEMY_DATABASE_URI"):
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+            "SQLALCHEMY_DATABASE_URI"
+        )
+    else:
+        app.config[
+            "SQLALCHEMY_DATABASE_URI"
+        ] = "mysql+pymysql://{}:{}@/{}?unix_socket={}{}&ssl_disabled=true".format(
+            app.config["DB_USER"],
+            app.config["DB_PASS"],
+            app.config["DB_NAME"],
+            app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
+            app.config["CLOUD_SQL_INSTANCE_NAME"],
+        )
+
+    # Set Gmail redirect URI if provided
+    app.config["GMAIL_REDIRECT_URI"] = os.environ.get("GMAIL_REDIRECT_URI")
 
     # register blueprints
     app.register_blueprint(pages)
@@ -113,12 +206,13 @@ app = None
 # if running the file directly
 if __name__ == "__main__":
     logging.info("Starting app with development configuration")
-    # setup for running locally (development configuration)
-    app = createApp(DevConfig())
-    # run the app locally
-    app.run(host=DevConfig.HOST, port=DevConfig.PORT, debug=True)
-    print()
-else:  # else the app is being run from a WSGI application such as gunicorn
+    app = createApp()
+    app.run(
+        host=os.environ.get("HOST", "127.0.0.1"),
+        port=int(os.environ.get("PORT") or 0),
+        debug=os.environ.get("DEBUG", "false").lower() == "true",
+    )
+else:
+    # run from WSGI (e.g. gunicorn on GAE)
     logging.info("Starting app with production configuration")
-    # setup for production configuration
-    app = createApp(Config())
+    app = createApp()
