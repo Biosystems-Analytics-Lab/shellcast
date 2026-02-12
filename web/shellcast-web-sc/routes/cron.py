@@ -2,10 +2,8 @@ import logging
 import os
 from datetime import datetime, timezone
 
-import bandwidth
-from bandwidth.bandwidth_client import BandwidthClient
-from bandwidth.rest import ApiException
 from botocore.exceptions import ClientError
+from core.notifications.bandwidth_send import send_sms_batch, send_sms_single
 from flask import Blueprint, current_app, request
 from models import db
 from models.Notification import Notification
@@ -41,13 +39,6 @@ NOTIFICATION_TYPE_TEXT = "text"
 STATE = "SC"
 
 cron = Blueprint("cron", __name__)
-
-
-bandwidth_client = BandwidthClient(
-    messaging_basic_auth_user_name=current_app.config["BW_USERNAME"],
-    messaging_basic_auth_password=current_app.config["BW_PASSWORD"],
-)
-messaging_client = bandwidth_client.messaging_client.client
 
 
 def notification_preprocess():
@@ -101,67 +92,27 @@ def send_bandwidth_message():
 
 
 def _send_bandwidth_message_single(to_number, message_text=None):
-    """
-    Send an SMS to one recipient (e.g. HELP response). Uses tag=STATE for callback routing.
-    """
-    if message_text is None:
-        message_text = TEXT_NOTIFICATION_MESSAGE
-    BW_USERNAME = os.getenv("BW_USERNAME")
-    BW_PASSWORD = os.getenv("BW_PASSWORD")
-    BW_ACCOUNT_ID = os.getenv("BW_ACCOUNT_ID")
-    BW_APPLICATION_ID = os.getenv("BW_APPLICATION_ID")
-    BW_FROM_NUMBER = os.getenv("BW_NUMBER")
-    configuration = bandwidth.Configuration(username=BW_USERNAME, password=BW_PASSWORD)
-    with bandwidth.ApiClient(configuration) as api_client:
-        messages_api = bandwidth.MessagesApi(api_client)
-        message_request = bandwidth.MessageRequest(
-            application_id=BW_APPLICATION_ID,
-            to=[to_number],
-            var_from=BW_FROM_NUMBER,
-            text=message_text,
-            tag=STATE,
-        )
-        response = messages_api.create_message(BW_ACCOUNT_ID, message_request)
-        return response
+    """Send one SMS via Bandwidth (STOP/START/HELP replies). Delegates to core."""
+    text = message_text if message_text is not None else TEXT_NOTIFICATION_MESSAGE
+    return send_sms_single(to_number, text, STATE)
 
 
 def _send_bandwidth_message_bulk(users_to_notify):
-    """
-    Send SMS to multiple users. users_to_notify: list of (user_id, phone_number).
+    """Send SMS to multiple users.
+
+    users_to_notify: list of (user_id, phone_number).
     Returns list of (user_id, phone_number, success, message_id).
     """
     if not users_to_notify:
-        logging.info("No users to send SC SMS notifications to")
+        logging.info(f"No users to send {STATE} SMS notifications to")
         return []
 
-    BW_USERNAME = os.getenv("BW_USERNAME")
-    BW_PASSWORD = os.getenv("BW_PASSWORD")
-    BW_ACCOUNT_ID = os.getenv("BW_ACCOUNT_ID")
-    BW_APPLICATION_ID = os.getenv("BW_APPLICATION_ID")
-    BW_FROM_NUMBER = os.getenv("BW_NUMBER")
-    configuration = bandwidth.Configuration(username=BW_USERNAME, password=BW_PASSWORD)
-    results = []
-
-    with bandwidth.ApiClient(configuration) as api_client:
-        messages_api = bandwidth.MessagesApi(api_client)
-        for user_id, phone_number in users_to_notify:
-            try:
-                message_request = bandwidth.MessageRequest(
-                    application_id=BW_APPLICATION_ID,
-                    to=[phone_number],
-                    var_from=BW_FROM_NUMBER,
-                    text=TEXT_NOTIFICATION_MESSAGE,
-                    tag=STATE,
-                )
-                response = messages_api.create_message(BW_ACCOUNT_ID, message_request)
-                results.append(
-                    (user_id, phone_number, True, response.id if response else None)
-                )
-            except Exception as e:
-                logging.error(f"Failed to send SMS to {phone_number}: {e}")
-                results.append((user_id, phone_number, False, None))
-
-    return results
+    return send_sms_batch(
+        users_to_notify,
+        text=TEXT_NOTIFICATION_MESSAGE,
+        state=STATE,
+        sleep_seconds=0.0,
+    )
 
 
 # Bandwidth callback is handled in api.py via /api/bandwidth/callback/internal
