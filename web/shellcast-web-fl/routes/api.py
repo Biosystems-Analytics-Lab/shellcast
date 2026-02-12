@@ -3,6 +3,12 @@ import os
 from datetime import datetime, timezone
 
 import requests
+from core.notifications.inbound import handle_stop_start
+from core.notifications.phone_utils import (
+    clean_inbound_phone,
+    is_start_keyword,
+    is_stop_keyword,
+)
 from firebase_admin import auth
 from flask import Blueprint, jsonify, request
 from models import db
@@ -335,57 +341,42 @@ def _log_sms_to_nc(
 
 
 def _handle_inbound_message_fl(from_number, text, message_id):
-    """
-    Handle incoming SMS from user (STOP, START, HELP) for FL.
-    Updates FL's users table and logs inbound to NC.
-    """
-    logging.info(f"Received SMS from {from_number}: {text}")
+    """Handle incoming SMS from user (STOP, START, HELP) for FL."""
+    from routes.cron import _send_bandwidth_message_single
 
-    clean_number = from_number[2:] if from_number.startswith("+1") else from_number
+    def _log_inbound_fl(state: str, user_id: int, phone_number: str, msg_id: str):
+        _log_sms_to_nc(
+            state=state,
+            user_id=user_id,
+            phone_number=phone_number,
+            direction="inbound",
+            message_id=msg_id,
+        )
+
+    handled = handle_stop_start(
+        state="FL",
+        db_session=db.session,
+        user_model=User,
+        from_number=from_number,
+        text=text,
+        message_id=message_id,
+        log_inbound_fn=_log_inbound_fl,
+        send_opt_out_fn=lambda to: _send_bandwidth_message_single(
+            to,
+            "ShellCast: You've been unsubscribed and will no longer receive alerts. Reply START to resubscribe.",
+        ),
+        send_opt_in_fn=lambda to: _send_bandwidth_message_single(
+            to,
+            "ShellCast: You've been resubscribed to closure alerts. Reply STOP to unsubscribe.",
+        ),
+    )
+
+    if handled:
+        return
+
+    # HELP keyword - send help message
     text_upper = text.strip().upper()
-
-    # Handle opt-out keywords - update FL users table
-    if text_upper in ["STOP", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]:
-        user = db.session.query(User).filter_by(phone_number=clean_number).first()
-        if user:
-            user.text_pref = False
-            user.text_consent = False
-            user.text_opt_out_date = datetime.now(timezone.utc)
-            db.session.commit()
-            _log_sms_to_nc(
-                state="FL",
-                user_id=user.id,
-                phone_number=clean_number,
-                direction="inbound",
-                message_id=message_id,
-            )
-            logging.info(f"FL User {user.id} opted out of SMS notifications")
-        else:
-            logging.warning(f"No FL user found with phone number {from_number}")
-
-    # Handle opt-in keywords
-    elif text_upper in ["START", "UNSTOP", "SUBSCRIBE"]:
-        user = db.session.query(User).filter_by(phone_number=clean_number).first()
-        if user:
-            user.text_pref = True
-            user.text_consent = True
-            user.text_opt_in_date = datetime.now(timezone.utc)
-            db.session.commit()
-            _log_sms_to_nc(
-                state="FL",
-                user_id=user.id,
-                phone_number=clean_number,
-                direction="inbound",
-                message_id=message_id,
-            )
-            logging.info(f"FL User {user.id} opted in to SMS notifications")
-        else:
-            logging.warning(f"No FL user found with phone number {from_number}")
-
-    # Handle HELP keyword - send help message
-    elif text_upper == "HELP":
-        from routes.cron import _send_bandwidth_message_single
-
+    if text_upper == "HELP":
         logging.info(f"Sending help message to {from_number}")
         help_message = (
             "Thank you for reaching out to ShellCast. For support, please email us at "

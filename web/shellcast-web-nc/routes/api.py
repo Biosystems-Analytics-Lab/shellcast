@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timezone
 
 import requests
+from core.notifications.inbound import handle_stop_start
 from firebase_admin import auth
 from flask import Blueprint, current_app, jsonify, request
 from models import db
@@ -445,79 +446,40 @@ def _handle_inbound_message(from_number, text, message_id):
     """Handle incoming SMS from user (STOP, START, HELP, etc.)."""
     from routes.cron import _send_bandwidth_message_single
 
-    logging.info(f"Received SMS from {from_number}: {text}")
+    def _log_inbound_nc(state: str, user_id: int, phone_number: str, msg_id: str):
+        event = NotificationEvent.log_sms_inbound(
+            state=state,
+            user_id=user_id,
+            phone_number=phone_number,
+            message_id=msg_id,
+        )
+        db.session.add(event)
+        db.session.commit()
 
-    # Clean phone number (remove +1 prefix if present)
-    clean_number = from_number[2:] if from_number.startswith("+1") else from_number
+    handled = handle_stop_start(
+        state=STATE,
+        db_session=db.session,
+        user_model=User,
+        from_number=from_number,
+        text=text,
+        message_id=message_id,
+        log_inbound_fn=_log_inbound_nc,
+        send_opt_out_fn=lambda to: _send_bandwidth_message_single(
+            to,
+            "ShellCast: You've been unsubscribed and will no longer receive alerts. Reply START to resubscribe.",
+        ),
+        send_opt_in_fn=lambda to: _send_bandwidth_message_single(
+            to,
+            "ShellCast: You've been resubscribed to closure alerts. Reply STOP to unsubscribe.",
+        ),
+    )
 
-    text_upper = text.strip().upper()
-
-    # Handle opt-out keywords
-    if text_upper in ["STOP", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"]:
-        user = db.session.query(User).filter_by(phone_number=clean_number).first()
-        if user:
-            user.text_pref = False
-            user.text_consent = False
-            user.text_opt_out_date = datetime.now(timezone.utc)
-
-            # Log the inbound event
-            event = NotificationEvent.log_sms_inbound(
-                state=STATE,
-                user_id=user.id,
-                phone_number=clean_number,
-                message_id=message_id,
-            )
-            db.session.add(event)
-            db.session.commit()
-            logging.info(f"User {user.id} opted out of SMS notifications")
-
-            # Send opt-out confirmation
-            try:
-                _send_bandwidth_message_single(
-                    from_number,
-                    "ShellCast: You've been unsubscribed and will no longer receive alerts. Reply START to resubscribe.",
-                )
-            except Exception as e:
-                logging.error(f"Failed to send opt-out confirmation: {e}")
-        else:
-            logging.warning(
-                f"No user found with phone number {clean_number} for opt-out"
-            )
-
-    # Handle opt-in keywords
-    elif text_upper in ["START", "UNSTOP", "SUBSCRIBE"]:
-        user = db.session.query(User).filter_by(phone_number=clean_number).first()
-        if user:
-            user.text_pref = True
-            user.text_consent = True
-            user.text_opt_in_date = datetime.now(timezone.utc)
-
-            # Log the inbound event
-            event = NotificationEvent.log_sms_inbound(
-                state=STATE,
-                user_id=user.id,
-                phone_number=clean_number,
-                message_id=message_id,
-            )
-            db.session.add(event)
-            db.session.commit()
-            logging.info(f"User {user.id} opted back in to SMS notifications")
-
-            # Send opt-in confirmation
-            try:
-                _send_bandwidth_message_single(
-                    from_number,
-                    "ShellCast: You've been resubscribed to closure alerts. Reply STOP to unsubscribe.",
-                )
-            except Exception as e:
-                logging.error(f"Failed to send opt-in confirmation: {e}")
-        else:
-            logging.warning(
-                f"No user found with phone number {clean_number} for opt-in"
-            )
+    if handled:
+        return
 
     # Handle HELP keyword
-    elif text_upper == "HELP":
+    text_upper = text.strip().upper()
+    if text_upper == "HELP":
         logging.info(f"Sending help message to {from_number}")
         try:
             _send_bandwidth_message_single(from_number, HELP_MESSAGE)

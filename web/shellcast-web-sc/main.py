@@ -198,11 +198,11 @@ if __name__ == "__main__":
     logging.info("Starting app with development configuration")
     # setup for running locally (development configuration)
     app = createApp()
-    # run the app locally using Flask config
+    # run the app locally using environment variables (aligned with NC/FL)
     app.run(
-        host=app.config.get("HOST"),
-        port=int(app.config.get("PORT") or 0),
-        debug=app.config.get("DEBUG"),
+        host=os.environ.get("HOST", "127.0.0.1"),
+        port=int(os.environ.get("PORT") or 0),
+        debug=os.environ.get("DEBUG", "false").lower() == "true",
     )
     print()
 else:  # else the app is being run from a WSGI application such as gunicorn
