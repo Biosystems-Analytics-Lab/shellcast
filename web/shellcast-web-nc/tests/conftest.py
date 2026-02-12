@@ -1,9 +1,26 @@
+import os
 import random
 import string
 
+# Set test environment before main (and createApp) are loaded
+os.environ.setdefault("HOST", "127.0.0.1")
+os.environ.setdefault("PORT", "3361")
+os.environ.setdefault("TESTING", "true")
+os.environ.setdefault("SECRET_KEY", "test-secret-key")
+os.environ.setdefault("EMAIL_SECRET_KEY", "test-email-secret-key")
+os.environ.setdefault("DB_USER", "test")
+os.environ.setdefault("DB_PASS", "test")
+os.environ.setdefault("DB_NAME", "shellcast_nc")
+os.environ.setdefault("DB_UNIX_SOCKET_PATH_PREFIX", "./cloudsql/")
+os.environ.setdefault("CLOUD_SQL_INSTANCE_NAME", "test:us-east1:test")
+os.environ.setdefault("DB_POOL_SIZE", "5")
+os.environ.setdefault("DB_MAX_OVERFLOW", "2")
+os.environ.setdefault("DB_POOL_TIMEOUT", "30")
+os.environ.setdefault("DB_POOL_RECYCLE", "1800")
+os.environ.setdefault("SQLALCHEMY_DATABASE_URI", "sqlite:///test_shellcast.db")
+
 import boto3
 import pytest
-from config import TestConfig
 from firebase_admin import auth
 from firebase_admin.auth import (
     ExpiredIdTokenError,
@@ -48,7 +65,7 @@ def monkeyPatchBotoClient():
 # will be run once at the beginning of the testing session
 @pytest.fixture(scope="session")
 def app():
-    return createApp(TestConfig())
+    return createApp()
 
 
 # will be run once at the beginning of the testing session
@@ -105,10 +122,10 @@ def dbSession(db):
 
     # teardown
     transaction.rollback()  # rollback all database operations
-    for (
-        table
-    ) in tablesUsed:  # reset the auto_increment fields for all tables that were used
-        session.execute("ALTER TABLE {} AUTO_INCREMENT = 1;".format(table))
+    # Reset auto_increment only for MySQL (SQLite does not support this)
+    if "sqlite" not in db.engine.url.drivername:
+        for table in tablesUsed:
+            session.execute("ALTER TABLE {} AUTO_INCREMENT = 1;".format(table))
     connection.close()
     session.remove()
 

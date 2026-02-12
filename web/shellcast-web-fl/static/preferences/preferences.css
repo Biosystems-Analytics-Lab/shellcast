@@ -427,12 +427,35 @@
   font-size: 0.875rem;
 }
 
+.form-help-text-wrapper {
+  min-height: 0;
+  margin-bottom: 0;
+}
+
+/* Hide help text area when empty so it doesn't add extra space above form status */
+#profile-form-help-text:empty {
+  display: none !important;
+  margin: 0;
+  padding: 0;
+}
+
 #profile-form-help-text {
   text-align: right !important;
   padding-right: 0 !important;
   padding-left: 0 !important;
   display: block;
   width: 100%;
+}
+
+.form-status {
+  width: 100%;
+  padding-top: 0.25rem;
+}
+
+/* Text notification status inline helper */
+#text-notification-status {
+  background-color: transparent;
+  padding-left: 1rem;
 }
 
 .search-bar {
