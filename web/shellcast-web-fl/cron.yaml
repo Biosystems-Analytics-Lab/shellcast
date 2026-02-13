@@ -1,6 +1,6 @@
 cron:
   - description: "Send notifications daily for FL"
-    url: /sendNotifications
+    url: /send_bandwidth_message
     target: shellcast-fl
     schedule: every day 07:00
     timezone: America/New_York
