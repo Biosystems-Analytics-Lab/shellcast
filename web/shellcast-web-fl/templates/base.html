@@ -2,10 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title>{% block title %}ShellCast{% endblock %}</title>
     <link
@@ -13,15 +10,9 @@
       type="image/x-icon"
       href="{{ url_for('static', filename='img/icon/favicon.ico') }}"
     />
-    <link
-      rel="manifest"
-      href="{{ url_for('static', filename='manifest.webmanifest') }}"
-    />
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}" />
 
-    <meta
-      name="description"
-      content="Temporary closure forecasts for NC shellfish waters"
-    />
+    <meta name="description" content="Temporary closure forecasts for NC shellfish waters" />
     <meta
       name="keywords"
       content="shellfish,rainfall,conditionally approved,growing area,waters,harvest,temporary,closure,closed,north carolina,nc,nc state,ncsu,biosystems,analytics"
@@ -73,40 +64,28 @@
     {% endblock %} {% block common_js %} {#
     <!-- Custom JS -->
     #}
-    <script
-      defer
-      src="{{ url_for('static', filename='common/common.js') }}"
-      type="module"
-    ></script>
+    <script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
     {% endblock %} {% block additional_head %}{% endblock %}
   </head>
-  <body>
+  <body class="{% block body_class %}{% endblock %}">
     {# get the name of the current page #} {% set curPageName =
-    self._TemplateReference__context.name.split(".")[0] %} {# define the element
-    used to indicate the current nav link for screen readers #} {% set srCurNav
-    %}
+    self._TemplateReference__context.name.split(".")[0] %} {# define the element used to indicate
+    the current nav link for screen readers #} {% set srCurNav %}
     <span class="sr-only"> (current)</span>
-    {% endset %} {# a macro for creating a nav item in the nav bar #} {% macro
-    navLink(pageName, navRoute, navItemText) -%} {% if curPageName == pageName
-    %}
-    <a class="nav-item nav-link active" href="#"
-      >{{ navItemText ~ srCurNav }}</a
-    >
+    {% endset %} {# a macro for creating a nav item in the nav bar #} {% macro navLink(pageName,
+    navRoute, navItemText) -%} {% if curPageName == pageName %}
+    <a class="nav-item nav-link active" href="#">{{ navItemText ~ srCurNav }}</a>
     {% else %}
     <a class="nav-item nav-link" href="{{ navRoute }}">{{ navItemText }}</a>
-    {% endif %} {%- endmacro %} {# the set of nav items to display in the nav
-    bar #} {% set navItems = [("index", "/", "Home"), ("map", "/map", "Map"),
-    ("about", "/about", "About Us"), ("how-it-works", "/how-it-works", "How
-    ShellCast Works"), ("notification-service", "/notification-service",
-    "Notification Service"), ("faqs", "/faqs", "FAQs"), ("feedback",
+    {% endif %} {%- endmacro %} {# the set of nav items to display in the nav bar #} {% set navItems
+    = [("index", "/", "Home"), ("map", "/map", "Map"), ("about", "/about", "About Us"),
+    ("how-it-works", "/how-it-works", "How ShellCast Works"), ("notification-service",
+    "/notification-service", "Notification Service"), ("faqs", "/faqs", "FAQs"), ("feedback",
     "/feedback", "Feedback")] %} {% block navigation %} {#
     <!-- Navigation -->
     #}
     <nav class="navbar navbar-expand-lg" id="navigation-bar">
-      <a
-        class="navbar-brand"
-        href="{{ '#' if curPageName == 'index' else '/' }}"
-      >
+      <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">
         <img
           src="{{ url_for('static', filename='img/shellcast_logo.png') }}"
           alt="ShellCast logo"
@@ -130,9 +109,8 @@
       <div class="collapse navbar-collapse justify-content-stretch" id="navbar">
         {# Navbar for navigation links #}
         <div class="navbar-nav">
-          {# iterate through navItems to construct the nav bar#} {% for
-          pageName, navRoute, navItemText in navItems -%} {{- navLink(pageName,
-          navRoute, navItemText) -}} {%- endfor %}
+          {# iterate through navItems to construct the nav bar#} {% for pageName, navRoute,
+          navItemText in navItems -%} {{- navLink(pageName, navRoute, navItemText) -}} {%- endfor %}
         </div>
 
         {# Navbar for account dropdown menu #}
@@ -153,19 +131,11 @@
             >
               Account
             </a>
-            <div
-              class="dropdown-menu dropdown-menu-right"
-              aria-labelledby="account-dropdown"
-            >
-              <a
-                class="dropdown-item"
-                id="account-dropdown-preferences"
-                href="/preferences"
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="account-dropdown">
+              <a class="dropdown-item" id="account-dropdown-preferences" href="/preferences"
                 >Preferences</a
               >
-              <button class="dropdown-item" id="account-dropdown-sign-out">
-                Sign Out
-              </button>
+              <button class="dropdown-item" id="account-dropdown-sign-out">Sign Out</button>
             </div>
           </div>
         </div>
@@ -211,9 +181,7 @@
       </p>
 
       <p>
-        <a href="#" onclick="$('#disclaimer-privacy-modal').modal('show');"
-          >Disclaimer</a
-        >
+        <a href="#" onclick="$('#disclaimer-privacy-modal').modal('show')">Disclaimer</a>
         |
         <a
           href="https://docs.google.com/document/d/e/2PACX-1vRWCpV0MJbKJNFmPC8etjjRQEw75XyHlA_bnfVn7KbNjNMJ90RH-3jTe6YPs0RVL-UO27yv9c2OGF4L/pub"
@@ -249,18 +217,14 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="disclaimer-privacy-label">
-              Disclaimer and Privacy Policy
-            </h5>
+            <h5 class="modal-title" id="disclaimer-privacy-label">Disclaimer and Privacy Policy</h5>
           </div>
           <div class="modal-body">
             <p>
-              ShellCast forecasts offer predictions that are in no way
-              indicative of whether or not a growing unit will actually be
-              temporarily closed for harvest. Please only use ShellCast for
-              planning purposes. For official information on closures, contact
-              your state's shellfish sanitation office. Learn more about
-              ShellCast forecasts on the
+              ShellCast forecasts offer predictions that are in no way indicative of whether or not
+              a growing unit will actually be temporarily closed for harvest. Please only use
+              ShellCast for planning purposes. For official information on closures, contact your
+              state's shellfish sanitation office. Learn more about ShellCast forecasts on the
               <a href="/how-it-works">How ShellCast Works</a> page.
             </p>
             <p>
@@ -274,24 +238,16 @@
             </p>
             <p>
               <strong
-                >By clicking "Accept", you acknowledge the disclaimer and accept
-                the privacy policy.</strong
+                >By clicking "Accept", you acknowledge the disclaimer and accept the privacy
+                policy.</strong
               >
             </p>
             <p>
-              <em
-                >This notice is not shown if you sign in/create an account.</em
-              >
+              <em>This notice is not shown if you sign in/create an account.</em>
             </p>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Accept
-            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Accept</button>
           </div>
         </div>
       </div>

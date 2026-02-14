@@ -1,82 +1,115 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Preferences - ShellCast{% endblock %} {% block
+additional_head %}
 
-{% block title %}Preferences - ShellCast{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='lib/ol.css') }}" />
+<script src="{{ url_for('static', filename='lib/ol.js') }}"></script>
+<!-- Custom JS -->
+<script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
+<script
+  defer
+  src="{{ url_for('static', filename='preferences/preferences.js') }}"
+  type="module"
+></script>
+<script defer src="{{ url_for('static', filename='preferences/leases-map.js') }}"></script>
+<!-- Custom CSS -->
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ url_for('static', filename='common/css/notification_prefs.css') }}"
+/>
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ url_for('static', filename='preferences/preferences.css') }}"
+/>
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='map/map.css') }}" />
 
-{% block additional_head %}
+{% endblock %} {% block content %}
+<h1 class="page-main-header">Preferences</h1>
 
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='lib/ol.css') }}"
-  >
-  <script src="{{ url_for('static', filename='lib/ol.js') }}"></script>
-  <!-- Custom JS -->
-  <script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
-  <script defer src="{{ url_for('static', filename='preferences/preferences.js') }}" type="module"></script>
-  <script defer src="{{ url_for('static', filename='preferences/leases-map.js') }}"></script>
-  <!-- Custom CSS -->
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='common/css/notification_prefs.css') }}">
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='preferences/preferences.css') }}">
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='map/map.css') }}">
+<div id="user-signed-out" style="height: 100vh"></div>
 
-{% endblock %}
-
-{% block content %}
-  <h1 class="page-main-header">Preferences</h1>
-
-  <div id="user-signed-out" style="height: 100vh"></div>
-
-  <div id="user-signed-in" style="display: none">
-
-    <div id="delete-account-div">
-      <button class="btn btn-danger" type="button" id="delete-account-btn"
-              onclick="$('#account-deletion-modal').modal('show');">Delete Account
-      </button>
-    </div>
-<br>
-    <div id="forms">
-      {# Notification Preferences Form (shared template) #}
-      {% include '_notification_preferences.html' %}
-
-      {# User leases #}
-      <div class="needs-validation mb-5 notification-preferences-form">
-        <h2 class="form-section-title">My Leases</h2>
-        <p>
-          You can search for your lease ID number on the map below.
-          Use the number labeled as "Lease ID". Please note that leases outside of
-          conditionally approved areas will not be searchable because ShellCast cannot
-          generate a forecast for these leases.
-        </p>
+<div id="user-signed-in" style="display: none">
+  <div id="delete-account-div">
+    <button
+      class="btn btn-danger"
+      type="button"
+      id="delete-account-btn"
+      onclick="$('#account-deletion-modal').modal('show')"
+    >
+      Delete Account
+    </button>
+  </div>
+  <br />
+  <div id="forms">
+    {# Notification Preferences Form (shared template) #} {% include
+    '_notification_preferences.html' %} {# User leases #}
+    <div class="needs-validation mb-5 notification-preferences-form">
+      <h2 class="form-section-title">My Leases</h2>
+      <p>
+        You can search for your lease ID number on the map below. Use the number labeled as "Lease
+        ID". Please note that leases outside of conditionally approved areas will not be searchable
+        because ShellCast cannot generate a forecast for these leases.
+      </p>
 
       <div class="row justify-content-between no-gutters">
         <div class="col">
           <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="auzDropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;">
+            <button
+              class="btn btn-primary dropdown-toggle"
+              type="button"
+              id="auzDropdownMenuButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              style="width: 100%"
+            >
               Select Agricultural Use Zones
             </button>
-            <div id="auzDropdownMenu" class="dropdown-menu w-100" aria-labelledby="auzDropdownMenuButton"></div>
+            <div
+              id="auzDropdownMenu"
+              class="dropdown-menu w-100"
+              aria-labelledby="auzDropdownMenuButton"
+            ></div>
           </div>
         </div>
-        <div class="col align-self-center" style="text-align:center;">or</div>
+        <div class="col align-self-center" style="text-align: center">or</div>
         <div class="col">
           <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="indivDropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;">
+            <button
+              class="btn btn-primary dropdown-toggle"
+              type="button"
+              id="indivDropdownMenuButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              style="width: 100%"
+            >
               Select Individual Lease Sites
             </button>
-            <div id="indivDropdownMenu" class="dropdown-menu w-100" aria-labelledby="indivDropdownMenuButton"></div>
+            <div
+              id="indivDropdownMenu"
+              class="dropdown-menu w-100"
+              aria-labelledby="indivDropdownMenuButton"
+            ></div>
           </div>
         </div>
       </div>
-      <p style="padding-top: 20px;">You may need to zoom in if you cannot see lease IDs.</p>
+      <p style="padding-top: 20px">You may need to zoom in if you cannot see lease IDs.</p>
 
-      <div id="leases-map"></div> <!-- end Find leases map -->
+      <div id="leases-map"></div>
+      <!-- end Find leases map -->
 
-      </br>
+      <br />
       <div class="mb-3 search-bar">
         <div class="input-group">
-          <input id="lease-search-text-input" type="text" class="form-control search-input"
-                 placeholder="Search for a lease id..." aria-label="Search for a lease id...">
+          <input
+            id="lease-search-text-input"
+            type="text"
+            class="form-control search-input"
+            placeholder="Search for a lease id..."
+            aria-label="Search for a lease id..."
+          />
           <div class="input-group-append">
             <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
             <button class="btn btn-primary" type="button" id="lease-clear-btn">Clear</button>
@@ -91,38 +124,47 @@
           {# leases are programmatically added here with JS #}
         </div>
       </div>
-      </div>
-
     </div>
+  </div>
 
-    {# <!-- Account Deletion Modal --> #}
-    <div class="modal fade" id="account-deletion-modal" tabindex="-1" aria-labelledby="account-deletion-label"
-         aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="account-deletion-label">Delete Account?</h5>
-          </div>
-          <div class="modal-body">
-            <p>
-              Are you sure that you want to delete your account?
-            </p>
-            <p>
-              Your email address, phone number, mobile phone service provider, and
-              notification preferences will be removed from our database. You can
-              choose to make a new account with the same information later.
-            </p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary"
-                    onclick="$('#account-deletion-modal').modal('hide');">Cancel
-            </button>
-            <button type="button" class="btn btn-danger" id="confirm-account-deletion-btn">Delete Account
-            </button>
-          </div>
+  {#
+  <!-- Account Deletion Modal -->
+  #}
+  <div
+    class="modal fade"
+    id="account-deletion-modal"
+    tabindex="-1"
+    aria-labelledby="account-deletion-label"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="account-deletion-label">Delete Account?</h5>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure that you want to delete your account?</p>
+          <p>
+            Your email address, phone number, mobile phone service provider, and notification
+            preferences will be removed from our database. You can choose to make a new account with
+            the same information later.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="$('#account-deletion-modal').modal('hide')"
+          >
+            Cancel
+          </button>
+          <button type="button" class="btn btn-danger" id="confirm-account-deletion-btn">
+            Delete Account
+          </button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
 {% endblock %}

@@ -87,7 +87,7 @@ async function authorizedFetch(url, options = {}) {
     // init event listeners
     document
       .getElementById("account-dropdown-sign-out")
-      .addEventListener("click", async (event) => {
+      .addEventListener("click", async (_event) => {
         await signOut(auth);
         location.reload();
       });

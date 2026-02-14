@@ -40,15 +40,17 @@ All SMS notification events (NC, FL, SC) are logged in the **NC** database table
 
 ### SMS cron orchestrator (single cron on NC)
 
-Only the **NC** app has a GAE cron job for SMS. NC runs its own send, then triggers FL and SC by HTTP (POST to each app’s `/send_bandwidth_message`). FL and SC have no cron entries for SMS; they are invoked by NC.
+Only the **NC** app has a GAE cron job for SMS. NC runs its own send, then triggers FL and SC by HTTP. FL and SC have no cron entries for SMS; they are invoked by NC.
 
 - **NC**
   - Set `NC_ORCHESTRATOR_SECRET` (shared secret NC sends when calling FL/SC).
-  - Cron handler calls FL and SC with header `X-NC-Orchestrator-Secret`.
+  - Cron handler calls FL at `/send_bandwidth_message` and SC at `/send-bandwidth-message` (kebab-case), with header `X-NC-Orchestrator-Secret`.
 
-- **FL and SC**
-  - Set `NC_ORCHESTRATOR_SECRET` (same value as NC).
-  - The `/send_bandwidth_message` endpoint accepts either GAE cron (header `X-Appengine-Cron`) or NC orchestrator (header `X-NC-Orchestrator-Secret`).
+- **FL**
+  - Set `NC_ORCHESTRATOR_SECRET` (same value as NC). The `/send_bandwidth_message` endpoint accepts GAE cron or NC orchestrator (header `X-NC-Orchestrator-Secret`).
+
+- **SC**
+  - Set `NC_ORCHESTRATOR_SECRET` (same value as NC). The `/send-bandwidth-message` endpoint accepts GAE cron or NC orchestrator (header `X-NC-Orchestrator-Secret`).
 
 ### Testing the Bandwidth callback
 

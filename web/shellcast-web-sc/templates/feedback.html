@@ -1,22 +1,23 @@
-{% extends "base.html" %} {% block title %}ShellCast Feedback{% endblock %} {%
-block additional_head %}
-<!-- Custom CSS -->
+{% extends "base.html" %}
+{% block title %}ShellCast Feedback{% endblock %}
+{% block body_class %}sticky-footer-page{% endblock %}
+{% block additional_head %}
 <link
   type="text/css"
   rel="stylesheet"
   href="{{ url_for('static', filename='feedback/feedback.css') }}"
 />
-{% endblock %} {% block content %}
+{% endblock %}
+{% block content %}
 <div class="container">
   <h1>ShellCast Feedback Form</h1>
   <p></p>
 
   <p>
-    Have an idea as to how we can improve ShellCast? Want to submit a feature
-    request or make a complaint? Please contact us! Submit your feedback using
-    this
-    <a href="https://forms.gle/Zfyya8sTXN98JAF87">Google form</a>. Your response
-    will be sent to our team.
+    Have an idea as to how we can improve ShellCast? Want to submit a feature request or make a
+    complaint? Please contact us! Submit your feedback using this
+    <a href="https://forms.gle/Zfyya8sTXN98JAF87">Google form</a>. Your response will be sent to our
+    team.
   </p>
   <p></p>
   <p></p>

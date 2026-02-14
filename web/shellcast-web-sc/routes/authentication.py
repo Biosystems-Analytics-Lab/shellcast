@@ -9,29 +9,29 @@ from models import db
 from models.User import User
 
 
-def ensureUserExists(fbUserInfo):
+def ensure_user_exists(fb_user_info):
     """
     Checks if a user record already exists for the given Firebase user and
     adds one to the database if not.
     """
     # extract user info
-    fbUid = fbUserInfo.get("uid")
-    email = fbUserInfo.get("email")
+    fb_uid = fb_user_info.get("uid")
+    email = fb_user_info.get("email")
 
     # check if the user with this Firebase UID already exists
-    user = User.query.filter_by(firebase_uid=fbUid).first()
+    user = User.query.filter_by(firebase_uid=fb_uid).first()
     if user is not None:
         return user
 
     # otherwise we need to create a new user
-    newUser = User(firebase_uid=fbUid, email=email)
-    db.session.add(newUser)
+    new_user = User(firebase_uid=fb_uid, email=email)
+    db.session.add(new_user)
     db.session.commit()
 
-    return newUser
+    return new_user
 
 
-def userRequired(func):
+def user_required(func):
     """
     A decorator function that verifies the Firebase JWT token in the
     Authorization header and ensures that a corresponding user record
@@ -43,20 +43,20 @@ def userRequired(func):
     def wrapper(*args, **kwargs):
         # check for a Firebase JWT in the Authorization header
         try:
-            idToken = request.headers["Authorization"].split(" ").pop()
-            fbUserInfo = auth.verify_id_token(idToken)
+            id_token = request.headers["Authorization"].split(" ").pop()
+            fb_user_info = auth.verify_id_token(id_token)
         except ExpiredIdTokenError:
             return {"message": "ID token is expired"}, 401
         except InvalidIdTokenError:
             return {"message": "ID token is invalid"}, 401
 
-        user = ensureUserExists(fbUserInfo)
+        user = ensure_user_exists(fb_user_info)
         return func(*args, **kwargs, user=user)
 
     return wrapper
 
 
-def cronOnly(func):
+def cron_only(func):
     """
     Ensures the request is from GAE cron (X-Appengine-Cron) or from NC orchestrator
     (X-NC-Orchestrator-Secret). NC triggers FL/SC when cron runs only on NC.

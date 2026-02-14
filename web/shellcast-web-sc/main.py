@@ -37,7 +37,7 @@ if "GAE_APPLICATION" in os.environ:
 firebase_admin.initialize_app()
 
 
-def createApp():
+def create_app():
     """
     Returns a Flask app configured with environment variables.
     """
@@ -141,21 +141,21 @@ def createApp():
     # application to convert the probability to risk factor in html.jinja
     @app.context_processor
     def my_utility_processor():
-        def probabilityToRisk(closureValue):
+        def probability_to_risk(closure_value):
             flag = ""
-            if closureValue == 1:
+            if closure_value == 1:
                 flag = "Very Low"
-            elif closureValue == 2:
+            elif closure_value == 2:
                 flag = "Low"
-            elif closureValue == 3:
+            elif closure_value == 3:
                 flag = "Moderate"
-            elif closureValue == 4:
+            elif closure_value == 4:
                 flag = "High"
-            elif closureValue == 5:
+            elif closure_value == 5:
                 flag = "Very High"
             return flag
 
-        return dict(probabilityToRisk=probabilityToRisk)
+        return dict(probability_to_risk=probability_to_risk)
 
     @app.route("/__/auth", methods=["POST", "GET"])
     def proxy_to_firebase():
@@ -197,7 +197,7 @@ app = None
 if __name__ == "__main__":
     logging.info("Starting app with development configuration")
     # setup for running locally (development configuration)
-    app = createApp()
+    app = create_app()
     # run the app locally using environment variables (aligned with NC/FL)
     app.run(
         host=os.environ.get("HOST", "127.0.0.1"),
@@ -208,4 +208,4 @@ if __name__ == "__main__":
 else:  # else the app is being run from a WSGI application such as gunicorn
     logging.info("Starting app with production configuration")
     # setup for production configuration
-    app = createApp()
+    app = create_app()

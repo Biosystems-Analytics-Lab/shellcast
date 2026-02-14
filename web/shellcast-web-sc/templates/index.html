@@ -2,10 +2,7 @@
 <html lang="en" style="height: 100%">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title>{% block title %}ShellCast{% endblock %}</title>
     <link
@@ -13,15 +10,9 @@
       type="image/x-icon"
       href="{{ url_for('static', filename='img/icon/favicon.ico') }}"
     />
-    <link
-      rel="manifest"
-      href="{{ url_for('static', filename='manifest.webmanifest') }}"
-    />
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}" />
 
-    <meta
-      name="description"
-      content="Temporary closure forecasts for NC shellfish waters"
-    />
+    <meta name="description" content="Temporary closure forecasts for NC shellfish waters" />
     <meta
       name="keywords"
       content="shellfish,rainfall,conditionally approved,growing area,waters,harvest,temporary,closure,closed,north carolina,nc,nc state,ncsu,biosystems,analytics"
@@ -58,14 +49,8 @@
     {% endblock %} {% block firebase_js %} {#
     <!-- Firebase JS -->
     #}
-    <script
-      defer
-      src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"
-    ></script>
-    <script
-      defer
-      src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"
-    ></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
     {% endblock %} {% block common_css %} {#
     <!-- Custom CSS -->
     #}
@@ -78,29 +63,21 @@
   </head>
   <body class="d-flex flex-column" style="min-height: 100%">
     {# get the name of the current page #} {% set curPageName =
-    self._TemplateReference__context.name.split(".")[0] %} {# define the element
-    used to indicate the current nav link for screen readers #} {% set srCurNav
-    %}
+    self._TemplateReference__context.name.split(".")[0] %} {# define the element used to indicate
+    the current nav link for screen readers #} {% set srCurNav %}
     <span class="sr-only"> (current)</span>
-    {% endset %} {# a macro for creating a nav item in the nav bar #} {% macro
-    navLink(pageName, navRoute, navItemText) -%} {% if curPageName == pageName
-    %}
-    <a class="nav-item nav-link active" href="#"
-      >{{ navItemText ~ srCurNav }}</a
-    >
+    {% endset %} {# a macro for creating a nav item in the nav bar #} {% macro navLink(pageName,
+    navRoute, navItemText) -%} {% if curPageName == pageName %}
+    <a class="nav-item nav-link active" href="#">{{ navItemText ~ srCurNav }}</a>
     {% else %}
     <a class="nav-item nav-link" href="{{ navRoute }}">{{ navItemText }}</a>
-    {% endif %} {%- endmacro %} {# the set of nav items to display in the nav
-    bar #} {% set navItems = [("about", "/about", "About Us"), ("how-it-works",
-    "/how-it-works", "How ShellCast Works"), ("faqs", "/faqs", "FAQs"),
-    ("feedback", "/feedback", "Feedback")] %} {% block navigation %} {#
+    {% endif %} {%- endmacro %} {# the set of nav items to display in the nav bar #} {% set navItems
+    = [("about", "/about", "About Us"), ("how-it-works", "/how-it-works", "How ShellCast Works"),
+    ("faqs", "/faqs", "FAQs"), ("feedback", "/feedback", "Feedback")] %} {% block navigation %} {#
     <!-- Navigation -->
     #}
     <nav class="navbar navbar-expand-lg" id="navigation-bar">
-      <a
-        class="navbar-brand"
-        href="{{ '#' if curPageName == 'index' else '/' }}"
-      >
+      <a class="navbar-brand" href="{{ '#' if curPageName == 'index' else '/' }}">
         <img
           src="{{ url_for('static', filename='img/shellcast_logo.png') }}"
           alt="ShellCast logo"
@@ -124,9 +101,8 @@
       <div class="collapse navbar-collapse justify-content-stretch" id="navbar">
         {# Navbar for navigation links #}
         <div class="navbar-nav">
-          {# iterate through navItems to construct the nav bar#} {% for
-          pageName, navRoute, navItemText in navItems -%} {{- navLink(pageName,
-          navRoute, navItemText) -}} {%- endfor %}
+          {# iterate through navItems to construct the nav bar#} {% for pageName, navRoute,
+          navItemText in navItems -%} {{- navLink(pageName, navRoute, navItemText) -}} {%- endfor %}
         </div>
       </div>
     </nav>
@@ -137,11 +113,7 @@
       <div class="cards-wrapper">
         <div class="card-deck">
           <div class="card">
-            <img
-              class="card-img-top"
-              src="static/img/nc.jpg"
-              alt="Card image cap"
-            />
+            <img class="card-img-top" src="static/img/nc.jpg" alt="Card image cap" />
             <div class="card-body">
               <div class="text-center">
                 <a
@@ -154,25 +126,15 @@
             </div>
           </div>
           <div class="card">
-            <img
-              class="card-img-top"
-              src="static/img/sc.jpg"
-              alt="Card image cap"
-            />
+            <img class="card-img-top" src="static/img/sc.jpg" alt="Card image cap" />
             <div class="card-body">
               <div class="text-center">
-                <a href="/map" class="btn btn-primary" style="width: 90%"
-                  >South Carolina</a
-                >
+                <a href="/map" class="btn btn-primary" style="width: 90%">South Carolina</a>
               </div>
             </div>
           </div>
           <div class="card">
-            <img
-              class="card-img-top"
-              src="static/img/fl.jpg"
-              alt="Card image cap"
-            />
+            <img class="card-img-top" src="static/img/fl.jpg" alt="Card image cap" />
             <div class="card-body">
               <div class="text-center">
                 <a
@@ -224,9 +186,7 @@
         </p>
 
         <p>
-          <a href="#" onclick="$('#disclaimer-privacy-modal').modal('show');"
-            >Disclaimer</a
-          >
+          <a href="#" onclick="$('#disclaimer-privacy-modal').modal('show')">Disclaimer</a>
           |
           <a
             href="https://docs.google.com/document/d/e/2PACX-1vRWCpV0MJbKJNFmPC8etjjRQEw75XyHlA_bnfVn7KbNjNMJ90RH-3jTe6YPs0RVL-UO27yv9c2OGF4L/pub"

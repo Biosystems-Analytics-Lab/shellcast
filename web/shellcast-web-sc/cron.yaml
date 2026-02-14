@@ -1,6 +1,6 @@
 cron:
   - description: "Send notifications daily for SC"
-    url: /send_bandwidth_message
+    url: /send-bandwidth-message
     target: shellcast-sc
     schedule: every day 07:00
     timezone: America/New_York

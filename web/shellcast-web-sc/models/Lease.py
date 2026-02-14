@@ -19,7 +19,7 @@ class Lease(db.Model):
 
     user_leases = relationship("UserLease", back_populates="leases")
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "lease_id": self.lease_id,
             "grow_area_name": self.grow_area_name,

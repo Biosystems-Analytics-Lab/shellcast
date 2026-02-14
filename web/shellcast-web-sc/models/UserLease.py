@@ -20,7 +20,7 @@ class UserLease(db.Model):
     user = relationship("User", back_populates="leases")
     leases = relationship("Lease", back_populates="user_leases")
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "lease_id": self.lease_id,
             "grow_area_name": self.leases.grow_area_name
@@ -38,14 +38,14 @@ class UserLease(db.Model):
             "deleted": self.deleted,
         }
 
-    def getLatestProbability(self):
-        leaseProb = (
+    def get_latest_probability(self):
+        lease_prob = (
             db.session.query(CMUProbability)
             .filter_by(lease_id=self.lease_id)
             .order_by(CMUProbability.id.desc())
             .first()
         )
-        return leaseProb
+        return lease_prob
 
     def __repr__(self):
         return "<UserLease: {}, {}, {}, {}, {}, {}>".format(
