@@ -70,7 +70,7 @@ class User(db.Model):
         "Notification", order_by=Notification.created, back_populates="user"
     )
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "firebase_uid": self.firebase_uid,
             "phone_number": self.phone_number,

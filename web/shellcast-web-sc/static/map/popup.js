@@ -65,7 +65,7 @@ export function partnerAppLyrPopupContent(feature) {
       hpUrl = HB_POPUP.hpUrl;
       contentText = `<p class="small-font">Headed to the beach? Click <span><a href="${url}" target="_blank">here</a>
                       </span> to see if the water quality is healthy before heading in.
-                      <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span></br>
+                      <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span><br>
                       </p>`;
     } else if (domainName === PARTNER_SITE_DOMAINS.WC) {
       title = WC_POPUP.title;

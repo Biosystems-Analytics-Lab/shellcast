@@ -25,7 +25,7 @@ let leaseSearchTimer = null;
  * @return {object} the user's profile information (email and phone number)
  */
 async function getProfileInfo() {
-  const res = await authorizedFetch("/userInfo");
+  const res = await authorizedFetch("/user-info");
   if (res.ok) {
     return await res.json();
   }
@@ -190,7 +190,7 @@ async function searchLeases() {
     return;
   }
 
-  const res = await authorizedFetch("/searchLeases", {
+  const res = await authorizedFetch("/search-leases", {
     method: "POST",
     headers: { "Content-Type": "application/json;charset=utf-8" },
     body: JSON.stringify({ search: userInput }),
@@ -248,7 +248,7 @@ function searchLeasesOnDelay() {
  * Deletes the user's account.
  */
 async function deleteAccount() {
-  const res = await authorizedFetch("/deleteAccount");
+  const res = await authorizedFetch("/delete-account");
   if (res.ok) {
     window.location.replace("/");
   } else {
@@ -265,7 +265,7 @@ async function deleteAccount() {
  * Displays the UI for a signed in user and initializes the lease forms.
  * @param {firebase.User} user
  */
-async function handleSignedInUser(user) {
+async function handleSignedInUser(_user) {
   // Show signed in view
   document.getElementById("user-signed-in").style.display = "block";
   document.getElementById("user-signed-out").style.display = "none";
@@ -324,7 +324,7 @@ function handleSignedOutUser() {
  * Updates the notification status message to inform users whether they will receive notifications
  * based on their current form selections.
  */
-function updateNotificationStatus() {
+function _updateNotificationStatus() {
   const profForm = document.forms["profile-information-form"];
   const emailStatusText = document.getElementById("email-notification-status");
   const textStatusText = document.getElementById("text-notification-status");
@@ -335,7 +335,6 @@ function updateNotificationStatus() {
 
   const emailCheckbox = profForm.elements["email-pref"];
   const textCheckbox = profForm.elements["text-pref"];
-  const emailConsentCheckbox = profForm.elements["email-consent"];
   const textConsentCheckbox = profForm.elements["text-consent"];
   const emailInput = profForm.elements["email-address"];
   const phoneInput = profForm.elements["phone-number"];

@@ -46,7 +46,7 @@ export let strToEl = function (htmlStr) {
  * Fetches the growing unit data from the server and returns it.
  */
 export async function getGrowingUnitData() {
-  const res = await fetch("/growingUnitProbs");
+  const res = await fetch("/growing-unit-probs");
   if (res.ok) {
     return await res.json();
   }
@@ -59,7 +59,7 @@ export async function getGrowingUnitData() {
  * Fetches the current user's lease data from the server and returns it.
  */
 export async function getLeaseData() {
-  const res = await authorizedFetch("/leaseProbs");
+  const res = await authorizedFetch("/lease-probs");
   if (res.ok) {
     return await res.json();
   }

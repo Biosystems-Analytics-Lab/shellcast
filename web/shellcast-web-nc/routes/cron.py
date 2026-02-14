@@ -12,14 +12,14 @@ from models.User import User
 from routes.authentication import cronOnly
 from sqlalchemy import text
 
-# Bandwidth SMS message template
-TEXT_NOTIFICATION_MESSAGE = (
-    "ShellCast: One or more of your leases is at risk of closing today, tomorrow, or in 2 days. "
-    "See https://go.ncsu.edu/shellcast Reply STOP to cancel."
-)
-
 # State identifier for NC
 STATE = "NC"
+
+# Bandwidth SMS message template
+TEXT_NOTIFICATION_MESSAGE = (
+    f"ShellCast-{STATE}: One or more of your leases is at risk of closing today, tomorrow, or in 2 days. "
+    "See https://go.ncsu.edu/shellcast Reply STOP to cancel."
+)
 
 cron = Blueprint("cron", __name__)
 
@@ -125,7 +125,8 @@ def _send_bandwidth_message_bulk(users_to_notify):
 
 def _trigger_state_send(state):
     """
-    Trigger the state app's /send_bandwidth_message (used when cron runs only on NC).
+    Trigger the state app's SMS send (used when cron runs only on NC).
+    FL uses /send_bandwidth_message; SC uses /send-bandwidth-message (kebab-case).
     POSTs with X-NC-Orchestrator-Secret so FL/SC accept the request.
     """
     project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "ncsu-shellcast")
@@ -133,7 +134,8 @@ def _trigger_state_send(state):
     if not secret:
         logging.warning("NC_ORCHESTRATOR_SECRET not set; cannot trigger %s send", state)
         return None
-    url = f"https://shellcast-{state.lower()}-dot-{project_id}.appspot.com/send_bandwidth_message"
+    path = "send-bandwidth-message" if state == "SC" else "send_bandwidth_message"
+    url = f"https://shellcast-{state.lower()}-dot-{project_id}.appspot.com/{path}"
     try:
         r = requests.post(
             url,

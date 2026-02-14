@@ -18,7 +18,7 @@ class Notification(db.Model):
 
     user = relationship("User", back_populates="notifications")
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "address": self.address,
             "notification_text": self.notification_text,

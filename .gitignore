@@ -4,6 +4,9 @@
 .DS_Store
 .env
 .eslintrc
+.prettierrc
+package.json
+package-lock.json
 cloud-sql-proxy*
 config*
 my-cloud-sql-proxy.sh

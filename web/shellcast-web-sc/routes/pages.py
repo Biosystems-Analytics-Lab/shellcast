@@ -14,87 +14,87 @@ pages = Blueprint("shellcast-sc", __name__)
 
 
 @pages.route("/")
-def indexPage():
+def index_page():
     return render_template("index.html")
 
 
 @pages.route("/map")
-def mapPage():
-    lastGrowingUnitProb = (
+def map_page():
+    last_growing_unit_prob = (
         db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).first()
     )
-    templateVals = {
+    template_vals = {
         "lastUpdated": "No calculations run yet",
         "hoursAgo": "?",
         "day1": "?",
         "day2": "?",
         "day3": "?",
     }
-    if lastGrowingUnitProb:
+    if last_growing_unit_prob:
         local = pytz.timezone("US/Eastern")
-        local_dt = local.localize(lastGrowingUnitProb.created, is_dst=None)
-        lastUpdatedTimeUTC = local_dt.astimezone(pytz.utc)
-        curTimeUTC = datetime.now(timezone.utc)
-        duration = curTimeUTC - lastUpdatedTimeUTC
-        durationSecs = duration.total_seconds()
-        templateVals["hoursAgo"] = int(divmod(durationSecs, SECONDS_IN_HOURS)[0])
-        lastUpdatedTimeEST = lastUpdatedTimeUTC.astimezone(local)
+        local_dt = local.localize(last_growing_unit_prob.created, is_dst=None)
+        last_updated_time_utc = local_dt.astimezone(pytz.utc)
+        cur_time_utc = datetime.now(timezone.utc)
+        duration = cur_time_utc - last_updated_time_utc
+        duration_secs = duration.total_seconds()
+        template_vals["hoursAgo"] = int(divmod(duration_secs, SECONDS_IN_HOURS)[0])
+        last_updated_time_est = last_updated_time_utc.astimezone(local)
 
-        templateVals["hoursAgo"] = int(divmod(durationSecs, SECONDS_IN_HOURS)[0])
-        templateVals["lastUpdated"] = lastUpdatedTimeEST.strftime(
+        template_vals["hoursAgo"] = int(divmod(duration_secs, SECONDS_IN_HOURS)[0])
+        template_vals["lastUpdated"] = last_updated_time_est.strftime(
             "%B %d, %Y %I:%M %p"
         )  # ex: July 24, 2020 04:14 PM
-        templateVals["day1"] = lastUpdatedTimeEST.strftime("%B %d (%A)")
-        templateVals["day2"] = (lastUpdatedTimeEST + timedelta(days=1)).strftime(
+        template_vals["day1"] = last_updated_time_est.strftime("%B %d (%A)")
+        template_vals["day2"] = (last_updated_time_est + timedelta(days=1)).strftime(
             "%B %d (%A)"
         )
-        templateVals["day3"] = (lastUpdatedTimeEST + timedelta(days=2)).strftime(
+        template_vals["day3"] = (last_updated_time_est + timedelta(days=2)).strftime(
             "%B %d (%A)"
         )
-    return render_template("map.html", **templateVals)
+    return render_template("map.html", **template_vals)
 
 
 @pages.route("/about")
-def aboutPage():
+def about_page():
     return render_template("about.html")
 
 
 @pages.route("/how-it-works")
-def howItWorksPage():
+def how_it_works_page():
     return render_template("how-it-works.html")
 
 
 @pages.route("/notification-service")
-def notificationServicePage():
+def notification_service_page():
     return render_template("notification-service.html")
 
 
 @pages.route("/faqs")
-def faqsPage():
+def faqs_page():
     return render_template("faqs.html")
 
 
 @pages.route("/preferences")
-def preferencesPage():
-    probOptions = [3, 4, 5]
+def preferences_page():
+    prob_options = [3, 4, 5]
     return render_template(
         "preferences.html",
-        probOptions=probOptions,
+        probOptions=prob_options,
     )
 
 
 @pages.route("/signin")
-def signinPage():
+def signin_page():
     return render_template("signin.html")
 
 
 @pages.route("/feedback")
-def feedbackPage():
+def feedback_page():
     return render_template("feedback.html")
 
 
 @pages.route("/u/<token>")
-def oneClickUnsubscribe(token):
+def one_click_unsubscribe(token):
     """
     One-click unsubscribe without exposing email. Token encodes user id and is time-limited.
     """

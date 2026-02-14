@@ -232,7 +232,6 @@ export function initNotificationForm(deps) {
     const textCheckbox = profForm?.elements["text-pref"];
     const emailInput = profForm?.elements["email-address"];
     const phoneInput = profForm?.elements["phone-number"];
-    const emailConsentCheckbox = profForm?.elements["email-consent"];
     const textConsentCheckbox = profForm?.elements["text-consent"];
     const saveBtn = profForm?.elements["prof-form-save-btn"];
     const cancelBtn = profForm?.elements["prof-form-cancel-btn"];
@@ -253,12 +252,14 @@ export function initNotificationForm(deps) {
 
     if (textCheckbox?.checked) {
       const phoneNumber = phoneInput?.value?.replace(/\D/g, "") ?? "";
+      const hasTextConsent = textConsentCheckbox?.checked ?? false;
       if (!phoneNumber || !validatePhoneNumber(phoneNumber)) {
         phoneInput?.classList.add("is-invalid");
         isValid = false;
       } else {
         phoneInput?.classList.remove("is-invalid");
       }
+      if (!hasTextConsent) isValid = false;
     } else {
       phoneInput?.classList.remove("is-invalid");
     }
@@ -575,7 +576,7 @@ export function initNotificationForm(deps) {
     };
 
     try {
-      const res = await authorizedFetch("/userInfo", {
+      const res = await authorizedFetch("/user-info", {
         method: "POST",
         headers: { "Content-Type": "application/json;charset=utf-8" },
         body: JSON.stringify(newProfileInfo),

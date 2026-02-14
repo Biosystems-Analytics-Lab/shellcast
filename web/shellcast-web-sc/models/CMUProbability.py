@@ -12,7 +12,7 @@ class CMUProbability(db.Model):
     prob_3d_perc = Column(Integer)
     created = Column(DateTime, server_default=functions.now())
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "lease_id": self.lease_id,
             "prob_1d_perc": self.prob_1d_perc,

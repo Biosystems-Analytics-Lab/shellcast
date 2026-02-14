@@ -1,97 +1,121 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Preferences - ShellCast{% endblock %} {% block
+additional_head %}
+<!-- Custom JS -->
+<script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
+<script
+  defer
+  src="{{ url_for('static', filename='preferences/preferences.js') }}"
+  type="module"
+></script>
+<!-- Custom CSS -->
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ url_for('static', filename='common/css/notification_prefs.css') }}"
+/>
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ url_for('static', filename='preferences/preferences.css') }}"
+/>
+{% endblock %} {% block content %}
+<h1 class="page-main-header">Preferences</h1>
 
-{% block title %}Preferences - ShellCast{% endblock %}
+<div id="user-signed-out" style="height: 100vh"></div>
 
-{% block additional_head %}
-  <!-- Custom JS -->
-  <script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
-  <script defer src="{{ url_for('static', filename='preferences/preferences.js') }}" type="module"></script>
-  <!-- Custom CSS -->
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='common/css/notification_prefs.css') }}">
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='preferences/preferences.css') }}">
-{% endblock %}
+<div id="user-signed-in" style="display: none">
+  <br />
+  <div id="delete-account-div">
+    <button
+      class="btn btn-danger"
+      type="button"
+      id="delete-account-btn"
+      onclick="$('#account-deletion-modal').modal('show')"
+    >
+      Delete Account
+    </button>
+  </div>
+  <br />
+  <div id="forms">
+    {# Notification Preferences Form (shared template) #} {% include
+    '_notification_preferences.html' %} {# User leases #}
+    <div class="needs-validation mb-5 notification-preferences-form">
+      <h2 class="form-section-title">My Leases</h2>
 
-{% block content %}
-  <h1 class="page-main-header">Preferences</h1>
-
-  <div id="user-signed-out" style="height: 100vh"></div>
-
-  <div id="user-signed-in" style="display: none">
-    <br>
-    <div id="delete-account-div">
-      <button class="btn btn-danger" type="button" id="delete-account-btn"
-              onclick="$('#account-deletion-modal').modal('show');">Delete Account
-      </button>
-    </div>
-    <br>
-    <div id="forms">
-
-      {# Notification Preferences Form (shared template) #}
-      {% include '_notification_preferences.html' %}
-
-      {# User leases #}
-      <div class="needs-validation mb-5 notification-preferences-form">
-        <h2 class="form-section-title">My Leases</h2>
-
-        <div class="lease-info">
-          <p class="lease-description">
-            You can search for your lease ID number on the
-            <a href="https://arcg.is/1ieXrX">NC DMF Shellfish Leasing Application</a>.
-            Use the number labeled as "Lease ID". Please note that leases outside of
-            conditionally approved areas will not be searchable because ShellCast cannot
-            generate a forecast for these leases.
-          </p>
-        </div>
-
-        <div class="search-section">
-          <label for="lease-search-text-input" class="form-label">Search for Leases</label>
-          <div class="input-group">
-            <input id="lease-search-text-input" type="text" class="form-control search-input"
-                   placeholder="Search for a lease by its NCDMF ID..." aria-label="Search for a lease by its NCDMF ID...">
-            <div class="input-group-append">
-              <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
-              <button class="btn btn-secondary" type="button" id="lease-clear-btn">Clear</button>
-            </div>
-          </div>
-
-          <div class="list-group search-results" id="lease-search-results"></div>
-        </div>
-
-        <div id="leases" class="leases-container">
-          <div class="accordion" id="leases-accordion">
-            {# leases are programmatically added here with JS #}
-          </div>
-        </div>
+      <div class="lease-info">
+        <p class="lease-description">
+          You can search for your lease ID number on the
+          <a href="https://arcg.is/1ieXrX">NC DMF Shellfish Leasing Application</a>. Use the number
+          labeled as "Lease ID". Please note that leases outside of conditionally approved areas
+          will not be searchable because ShellCast cannot generate a forecast for these leases.
+        </p>
       </div>
 
-    </div>
-  </div>
+      <div class="search-section">
+        <label for="lease-search-text-input" class="form-label">Search for Leases</label>
+        <div class="input-group">
+          <input
+            id="lease-search-text-input"
+            type="text"
+            class="form-control search-input"
+            placeholder="Search for a lease by its NCDMF ID..."
+            aria-label="Search for a lease by its NCDMF ID..."
+          />
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>
+            <button class="btn btn-secondary" type="button" id="lease-clear-btn">Clear</button>
+          </div>
+        </div>
 
-  {# <!-- Account Deletion Modal --> #}
-  <div class="modal fade" id="account-deletion-modal" tabindex="-1" aria-labelledby="account-deletion-label"
-       aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="account-deletion-label">Delete Account?</h5>
-        </div>
-        <div class="modal-body">
-          <p>
-            Are you sure that you want to delete your account?
-          </p>
-          <p>
-            Your email address, phone number, mobile phone service provider, and
-            notification preferences will be removed from our database. You can
-            choose to make a new account with the same information later.
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="$('#account-deletion-modal').modal('hide');">Cancel
-          </button>
-          <button type="button" class="btn btn-danger" id="confirm-account-deletion-btn">Delete Account</button>
+        <div class="list-group search-results" id="lease-search-results"></div>
+      </div>
+
+      <div id="leases" class="leases-container">
+        <div class="accordion" id="leases-accordion">
+          {# leases are programmatically added here with JS #}
         </div>
       </div>
     </div>
   </div>
+</div>
+
+{#
+<!-- Account Deletion Modal -->
+#}
+<div
+  class="modal fade"
+  id="account-deletion-modal"
+  tabindex="-1"
+  aria-labelledby="account-deletion-label"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="account-deletion-label">Delete Account?</h5>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure that you want to delete your account?</p>
+        <p>
+          Your email address, phone number, mobile phone service provider, and notification
+          preferences will be removed from our database. You can choose to make a new account with
+          the same information later.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="$('#account-deletion-modal').modal('hide')"
+        >
+          Cancel
+        </button>
+        <button type="button" class="btn btn-danger" id="confirm-account-deletion-btn">
+          Delete Account
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

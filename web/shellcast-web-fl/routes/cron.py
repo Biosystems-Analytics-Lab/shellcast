@@ -8,14 +8,13 @@ from models import db
 from models.User import User
 from routes.authentication import cronOnly
 
-# Bandwidth SMS message template (FL only has 1-day forecast)
-TEXT_NOTIFICATION_MESSAGE = (
-    "ShellCast: One or more of your leases is at risk of closing today. "
-    "See https://go.ncsu.edu/shellcast Reply STOP to cancel."
-)
-
 # State identifier for FL
 STATE = "FL"
+# Bandwidth SMS message template (FL only has 1-day forecast)
+TEXT_NOTIFICATION_MESSAGE = (
+    f"ShellCast-{STATE}: One or more of your leases is at risk of closing today. "
+    "See https://go.ncsu.edu/shellcast Reply STOP to cancel."
+)
 
 cron = Blueprint("cron", __name__)
 

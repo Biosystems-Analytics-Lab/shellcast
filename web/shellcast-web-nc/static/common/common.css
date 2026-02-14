@@ -1,3 +1,14 @@
+/* Sticky footer: keep footer at bottom of viewport when content is short (signin, feedback) */
+body.sticky-footer-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body.sticky-footer-page .content {
+  flex: 1;
+}
+
 .content {
   padding: 1rem;
 }
