@@ -59,12 +59,12 @@
     <link
       type="text/css"
       rel="stylesheet"
-      href="{{ url_for('static', filename='common/common.css') }}"
+      href="{{ url_for('static', filename='common/css/common.css') }}"
     />
     {% endblock %} {% block common_js %} {#
     <!-- Custom JS -->
     #}
-    <script defer src="{{ url_for('static', filename='common/common.js') }}" type="module"></script>
+    <script defer src="{{ url_for('static', filename='common/js/common.js') }}" type="module"></script>
     {% endblock %} {% block additional_head %}{% endblock %}
   </head>
   <body class="{% block body_class %}{% endblock %}">

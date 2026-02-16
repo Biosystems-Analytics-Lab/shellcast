@@ -1,6 +1,6 @@
 "use strict";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import { auth, authorizedFetch } from "../common/common.js";
+import { auth, authorizedFetch } from "../common/js/common.js";
 import { initNotificationForm } from "../common/js/notification_prefs.js";
 
 /* The number of milliseconds between when a user changes the lease search
@@ -22,7 +22,7 @@ let leaseSearchTimer = null;
  */
 async function getProfileInfo() {
   try {
-    const res = await authorizedFetch("/userInfo");
+    const res = await authorizedFetch("/user-info");
     if (res.ok) {
       return await res.json();
     }
@@ -35,23 +35,21 @@ async function getProfileInfo() {
 }
 
 async function getGeoJsonLeases() {
-  let auz_leases = [];
-  let individual_leases = [];
-  let data = fetch(LEASES_BOUNDS_PATH)
-    .then((response) => response.json())
-    .then((data) => {
-      data.features.forEach((feature) => {
-        if (feature.properties.src == "AUZ") {
-          if (auz_leases.indexOf(feature.properties.parcel_nam) === -1) {
-            auz_leases.push(feature.properties.parcel_nam);
-          }
-        } else if (feature.properties.src == "Individual") {
-          if (individual_leases.indexOf(feature.properties.waterbody) === -1) {
-            individual_leases.push(feature.properties.waterbody);
-          }
-        }
-      });
-    });
+  const auz_leases = [];
+  const individual_leases = [];
+  const response = await fetch(LEASES_BOUNDS_PATH);
+  const data = await response.json();
+  data.features.forEach((feature) => {
+    if (feature.properties.src == "AUZ") {
+      if (auz_leases.indexOf(feature.properties.parcel_nam) === -1) {
+        auz_leases.push(feature.properties.parcel_nam);
+      }
+    } else if (feature.properties.src == "Individual") {
+      if (individual_leases.indexOf(feature.properties.waterbody) === -1) {
+        individual_leases.push(feature.properties.waterbody);
+      }
+    }
+  });
   //  const auzDiv = document.querySelector("#auz-menu");
   //  for (let i = 0; auz_leases.length; i++) {
   //    // console.log(auz_leases[i]);
@@ -75,7 +73,7 @@ function createLeaseInfoEl(lease) {
   // const leaseType =
   //   lease.grow_area_type.charAt(0).toUpperCase() +
   //   lease.grow_area_type.slice(1);
-  const threshold = lease.rainfall_desc.replace('"', '"');
+  // const threshold = lease.rainfall_desc.replace('"', '"');
   const LEASE_INFO_EL = `
     <div class="card">
       <div class="card-header" id="heading-${lease.lease_id}">
@@ -135,7 +133,7 @@ function buildLeaseInfoEls() {
   leasesAccordion.innerHTML = "";
   for (let lease of leases) {
     console.log("building lease form", lease);
-    lease.rainfall = lease.rainfall_desc.replace(/\"/g, "&quot;");
+    lease.rainfall = lease.rainfall_desc.replace(/"/g, "&quot;");
     leasesAccordion.innerHTML += createLeaseInfoEl(lease);
   }
 
@@ -236,7 +234,7 @@ async function searchLeases() {
     return;
   }
   try {
-    const res = await authorizedFetch("/searchLeases", {
+    const res = await authorizedFetch("/search-leases", {
       method: "POST",
       headers: { "Content-Type": "application/json;charset=utf-8" },
       body: JSON.stringify({ search: userInput }),
@@ -303,7 +301,7 @@ function searchLeasesOnDelay() {
 
 async function deleteAccount() {
   try {
-    const res = await authorizedFetch("/deleteAccount");
+    const res = await authorizedFetch("/delete-account");
     if (res.ok) {
       window.location.replace("/");
     } else {
@@ -321,10 +319,10 @@ async function deleteAccount() {
 }
 
 /**
- * Displays the UI for a signed in user and initializes the lease forms.
- * @param {firebase.User} user
+ * Displays the UI for a signed-in user and initializes the lease forms.
+ * Called when Firebase auth state is signed in; the check is done by the caller (onAuthStateChanged).
  */
-async function handleSignedInUser(user) {
+async function handleSignedInUser() {
   // hide signed-out view and show signed-in view
   document.getElementById("user-signed-in").style.display = "block";
   document.getElementById("user-signed-out").style.display = "none";
@@ -385,6 +383,6 @@ function handleSignedOutUser() {
 (async () => {
   // change UI based on auth state
   onAuthStateChanged(auth, (user) => {
-    user ? handleSignedInUser(user) : handleSignedOutUser();
+    user ? handleSignedInUser() : handleSignedOutUser();
   });
 })();

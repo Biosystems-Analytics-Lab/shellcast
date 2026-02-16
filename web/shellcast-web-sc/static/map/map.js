@@ -1,5 +1,5 @@
 "use strict";
-import { auth } from "../common/common.js";
+import { auth } from "../common/js/common.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
 import {

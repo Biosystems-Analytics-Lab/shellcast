@@ -1,5 +1,5 @@
 "use strict";
-import { authorizedFetch } from "../common/common.js";
+import { authorizedFetch } from "../common/js/common.js";
 import {
   COLOR_PALLET,
   GROWING_UNIT_BOUNDS_PATH,
