@@ -119,7 +119,7 @@ def send_bandwidth_message():
     return result, 200
 
 
-# Bandwidth callback is handled in api.py via /bandwidth/callback/internal
+# Bandwidth callback (from NC) is handled in api.py via /api/bandwidth/callback/internal
 # NC service receives all callbacks and routes SC callbacks to this service
 
 
