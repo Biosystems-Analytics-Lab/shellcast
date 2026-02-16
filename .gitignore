@@ -32,7 +32,15 @@ node_modules/
 # Frontend Node build metadata and scripts for web apps
 web/shellcast-web-*/package.json
 web/shellcast-web-*/package-lock.json
-web/shellcast-web-*/scripts/
+# Do not push scripts/ in any shellcast-web-* app
+**/shellcast-web-**/scripts/
+# Other Node/npm/yarn files (do not push)
+**/yarn.lock
+**/.nvmrc
+**/.node-version
+**/.npmrc
+**/npm-debug.log*
+**/.yarn/
 venv/
 webenv/
 analysisenv/
