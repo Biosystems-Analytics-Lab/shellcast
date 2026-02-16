@@ -1,7 +1,7 @@
 from models import db
 from models.Notification import Notification
 from models.UserLease import UserLease
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, functions
 
@@ -85,4 +85,4 @@ class User(db.Model):
         }
 
     def __repr__(self):
-        return "<User: {}>".format(self.email)
+        return f"<User: {self.email}>"
