@@ -1,5 +1,5 @@
 {# Shared notification preferences form - used by NC, FL, SC preferences pages #}
-<form class="needs-validation mb-5 notification-preferences-form" id="profile-information-form">
+<form class="needs-validation mb-5 notification-preferences-form" id="profile-information-form" name="profile-information-form">
   <h2 class="form-section-title">My Notification Preferences</h2>
 
   {# Notification Preferences with Accordions #}
@@ -61,7 +61,8 @@
             <div class="accordion-tab-content active" id="email-input">
               <label for="email-address" class="form-label">Email address</label>
               <input
-                type="email"
+                type="text"
+                autocomplete="email"
                 class="form-control"
                 name="email-address"
                 id="email-address"
@@ -295,8 +296,8 @@
           value="{{ probOption }}"
         />
         <label class="form-check-label" for="notification-prob-{{ probOption }}">
-          {{ probability_to_risk(probOption) }}{% if probability_to_risk(probOption) != "Very High"
-          %} or higher{% endif %}</label
+          {{ probability_to_risk(probOption) }}{% if probability_to_risk(probOption) != "Very High" %}
+          or higher{% endif %}</label
         >
       </div>
       {% endfor %}

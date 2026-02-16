@@ -15,15 +15,11 @@ function validateEmail(email) {
 }
 
 function validatePhoneNumber(phoneNumber) {
-  return (
-    phoneNumber && phoneNumber.length === 10 && /^\d{10}$/.test(phoneNumber)
-  );
+  return phoneNumber && phoneNumber.length === 10 && /^\d{10}$/.test(phoneNumber);
 }
 
 function maskPhoneNumber(phoneNumber = "") {
-  const digits = phoneNumber
-    .replace(/\D/g, "")
-    .match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+  const digits = phoneNumber.replace(/\D/g, "").match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
 
   const numDigitsEntered = digits[0].length;
   if (numDigitsEntered > 0) {
@@ -41,6 +37,83 @@ function maskPhoneNumber(phoneNumber = "") {
 // ============================================================================
 // INIT: build closure over deps
 // ============================================================================
+
+/** Form and element name constants (single source of truth). */
+const FORM_IDS = {
+  form: "profile-information-form",
+  email: "email-address",
+  phone: "phone-number",
+  emailPref: "email-pref",
+  textPref: "text-pref",
+  textConsent: "text-consent",
+  probRadios: "notification-prob",
+  saveBtn: "prof-form-save-btn",
+  cancelBtn: "prof-form-cancel-btn",
+  noNotifications: "no-notifications",
+};
+
+/**
+ * Returns current form and its elements, or null if form missing.
+ * @returns {{ form: HTMLFormElement, elements: Record<string, Element> } | null}
+ */
+function getFormRefs() {
+  const form = document.forms[FORM_IDS.form];
+  if (!form) return null;
+  return {
+    form,
+    elements: {
+      email: form.elements[FORM_IDS.email],
+      phone: form.elements[FORM_IDS.phone],
+      emailPref: form.elements[FORM_IDS.emailPref],
+      textPref: form.elements[FORM_IDS.textPref],
+      textConsent: form.elements[FORM_IDS.textConsent],
+      probRadios: form.elements[FORM_IDS.probRadios],
+      saveBtn: form.elements[FORM_IDS.saveBtn],
+      cancelBtn: form.elements[FORM_IDS.cancelBtn],
+      noNotifications: form.elements[FORM_IDS.noNotifications],
+    },
+  };
+}
+
+/**
+ * Normalize profile data for comparison and storage (consistent trim, digits, booleans, prob).
+ * @param {object} raw - Raw profile or form data
+ * @returns {object} Normalized object with email, phone_number, email_pref, text_pref, text_consent, prob_pref
+ */
+function normalizeProfileData(raw) {
+  if (!raw || typeof raw !== "object") {
+    return {
+      email: "",
+      phone_number: "",
+      email_pref: false,
+      text_pref: false,
+      text_consent: false,
+      prob_pref: 3,
+    };
+  }
+  const phoneDigits = String(raw.phone_number || "").replace(/\D/g, "");
+  return {
+    email: (raw.email || "").trim(),
+    phone_number: phoneDigits,
+    email_pref: Boolean(raw.email_pref),
+    text_pref: Boolean(raw.text_pref),
+    text_consent: Boolean(raw.text_consent),
+    prob_pref: Number(raw.prob_pref) || 3,
+  };
+}
+
+/**
+ * Get selected value from notification-prob radio group, or 3.
+ * @param {HTMLFormControlsCollection|undefined} probRadios
+ * @returns {number}
+ */
+function getSelectedProb(probRadios) {
+  if (!probRadios) return 3;
+  for (let radio of probRadios) {
+    if (radio.checked) return Number(radio.value) || 3;
+  }
+  return 3;
+}
 
 /**
  * Initializes the notification preferences form. Call once after DOM and profile data are ready.
@@ -61,61 +134,30 @@ export function initNotificationForm(deps) {
   } = deps;
 
   function getCurrentFormValues() {
-    const profForm = document.forms["profile-information-form"];
-    const emailInput = profForm?.elements["email-address"];
-    const phoneInput = profForm?.elements["phone-number"];
-    const emailCheckbox = profForm?.elements["email-pref"];
-    const textCheckbox = profForm?.elements["text-pref"];
-    const emailConsentCheckbox = profForm?.elements["email-consent"];
-    const textConsentCheckbox = profForm?.elements["text-consent"];
-    const probRadios = profForm?.elements["notification-prob"];
-
-    let selectedProb = 3;
-    if (probRadios) {
-      for (let radio of probRadios) {
-        if (radio.checked) {
-          selectedProb = Number(radio.value);
-          break;
-        }
-      }
-    }
-
-    const phoneDigits = (phoneInput?.value || "").replace(/\D/g, "");
-
-    return {
-      email: (emailInput?.value || "").trim(),
+    const refs = getFormRefs();
+    if (!refs) return normalizeProfileData({});
+    const { elements } = refs;
+    const phoneDigits = (elements.phone?.value || "").replace(/\D/g, "");
+    return normalizeProfileData({
+      email: elements.email?.value,
       phone_number: phoneDigits,
-      email_pref: Boolean(emailCheckbox?.checked),
-      text_pref: Boolean(textCheckbox?.checked),
-      email_consent: emailConsentCheckbox ? Boolean(emailConsentCheckbox.checked) : true,
-      text_consent: Boolean(textConsentCheckbox?.checked),
-      prob_pref: Number(selectedProb) || 3,
-    };
+      email_pref: elements.emailPref?.checked,
+      text_pref: elements.textPref?.checked,
+      text_consent: elements.textConsent?.checked,
+      prob_pref: getSelectedProb(elements.probRadios),
+    });
   }
 
   function hasFormChanges() {
     const saved = getSavedProfileData();
-    if (!saved || Object.keys(saved).length === 0) {
-      return false;
-    }
-
+    if (!saved || Object.keys(saved).length === 0) return false;
     const current = getCurrentFormValues();
-    const s = {
-      email: (saved.email || "").trim(),
-      phone_number: String(saved.phone_number || "").replace(/\D/g, ""),
-      email_pref: Boolean(saved.email_pref),
-      text_pref: Boolean(saved.text_pref),
-      email_consent: Boolean(saved.email_consent),
-      text_consent: Boolean(saved.text_consent),
-      prob_pref: Number(saved.prob_pref) || 3,
-    };
-
+    const s = normalizeProfileData(saved);
     return (
       current.email !== s.email ||
       current.phone_number !== s.phone_number ||
       current.email_pref !== s.email_pref ||
       current.text_pref !== s.text_pref ||
-      current.email_consent !== s.email_consent ||
       current.text_consent !== s.text_consent ||
       current.prob_pref !== s.prob_pref
     );
@@ -138,26 +180,23 @@ export function initNotificationForm(deps) {
   }
 
   function updateEmailNotificationStatus() {
-    const profForm = document.forms["profile-information-form"];
-    const emailCheckbox = profForm?.elements["email-pref"];
-    const emailInput = profForm?.elements["email-address"];
+    const refs = getFormRefs();
     const statusEmoji = document.getElementById("email-status-emoji");
     const statusMessage = document.getElementById("email-status-message");
+    if (!statusEmoji || !statusMessage || !refs) return;
 
-    if (!statusEmoji || !statusMessage) return;
-
-    const email = emailInput ? emailInput.value.trim() : "";
+    const { emailPref: emailCheckbox, email: emailInput } = refs.elements;
+    const email = (emailInput?.value ?? "").trim();
     const hasValidEmail =
       email &&
       email !== "you@example.com" &&
       !email.includes("example.com") &&
       validateEmail(email);
-    const emailEnabled = emailCheckbox && emailCheckbox.checked;
+    const emailEnabled = emailCheckbox?.checked;
 
     if (emailEnabled && hasValidEmail) {
       statusEmoji.textContent = "✅";
-      statusMessage.textContent =
-        "You will receive email notifications for lease closure alerts.";
+      statusMessage.textContent = "You will receive email notifications for lease closure alerts.";
     } else if (emailEnabled && !hasValidEmail) {
       statusEmoji.textContent = "⚠️";
       statusMessage.textContent =
@@ -169,24 +208,24 @@ export function initNotificationForm(deps) {
   }
 
   function updateTextNotificationStatus() {
-    const profForm = document.forms["profile-information-form"];
-    const textCheckbox = profForm?.elements["text-pref"];
-    const textConsentCheckbox = profForm?.elements["text-consent"];
-    const phoneInput = profForm?.elements["phone-number"];
+    const refs = getFormRefs();
     const statusEmoji = document.getElementById("text-status-emoji");
     const statusMessage = document.getElementById("text-status-message");
+    if (!statusEmoji || !statusMessage || !refs) return;
 
-    if (!statusEmoji || !statusMessage) return;
-
-    const phoneNumber = phoneInput ? phoneInput.value.replace(/\D/g, "") : "";
-    const hasValidPhone = phoneNumber && phoneNumber.length === 10;
-    const hasConsent = textConsentCheckbox && textConsentCheckbox.checked;
-    const textEnabled = textCheckbox && textCheckbox.checked;
+    const {
+      textPref: textCheckbox,
+      textConsent: textConsentCheckbox,
+      phone: phoneInput,
+    } = refs.elements;
+    const phoneNumber = phoneInput?.value?.replace(/\D/g, "") ?? "";
+    const hasValidPhone = phoneNumber.length === 10;
+    const hasConsent = Boolean(textConsentCheckbox?.checked);
+    const textEnabled = Boolean(textCheckbox?.checked);
 
     if (textEnabled && hasValidPhone && hasConsent) {
       statusEmoji.textContent = "✅";
-      statusMessage.textContent =
-        "You will receive text notifications for lease closure alerts.";
+      statusMessage.textContent = "You will receive text notifications for lease closure alerts.";
     } else if (textEnabled && !hasConsent) {
       statusEmoji.textContent = "⚠️";
       statusMessage.textContent =
@@ -211,67 +250,63 @@ export function initNotificationForm(deps) {
 
     if (emailAccordion) {
       emailAccordion.classList.toggle("expanded", emailExpanded);
-      if (emailExpandBtn)
-        emailExpandBtn.style.display = emailExpanded ? "none" : "inline-flex";
-      if (emailCollapseBtn)
-        emailCollapseBtn.style.display = emailExpanded ? "inline-flex" : "none";
+      if (emailExpandBtn) emailExpandBtn.style.display = emailExpanded ? "none" : "inline-flex";
+      if (emailCollapseBtn) emailCollapseBtn.style.display = emailExpanded ? "inline-flex" : "none";
     }
 
     if (textAccordion) {
       textAccordion.classList.toggle("expanded", textExpanded);
-      if (textExpandBtn)
-        textExpandBtn.style.display = textExpanded ? "none" : "inline-flex";
-      if (textCollapseBtn)
-        textCollapseBtn.style.display = textExpanded ? "inline-flex" : "none";
+      if (textExpandBtn) textExpandBtn.style.display = textExpanded ? "none" : "inline-flex";
+      if (textCollapseBtn) textCollapseBtn.style.display = textExpanded ? "inline-flex" : "none";
     }
   }
 
   function validateForm() {
-    const profForm = document.forms["profile-information-form"];
-    const emailCheckbox = profForm?.elements["email-pref"];
-    const textCheckbox = profForm?.elements["text-pref"];
-    const emailInput = profForm?.elements["email-address"];
-    const phoneInput = profForm?.elements["phone-number"];
-    const emailConsentCheckbox = profForm?.elements["email-consent"];
-    const textConsentCheckbox = profForm?.elements["text-consent"];
-    const saveBtn = profForm?.elements["prof-form-save-btn"];
-    const cancelBtn = profForm?.elements["prof-form-cancel-btn"];
+    const refs = getFormRefs();
+    if (!refs) return false;
+    const { elements } = refs;
 
-    let isValid = true;
+    const email = (elements.email?.value ?? "").trim();
+    const emailPrefChecked = Boolean(elements.emailPref?.checked);
 
-    if (emailCheckbox?.checked) {
-      const email = emailInput?.value?.trim() ?? "";
+    // Email: only require valid email when email_pref is checked.
+    // When unchecked, email can be empty or filled; never block Submit for email.
+    let emailBlocksSubmit = false;
+    if (emailPrefChecked) {
       if (!email || !validateEmail(email)) {
-        emailInput?.classList.add("is-invalid");
-        isValid = false;
+        elements.email?.classList.add("is-invalid");
+        emailBlocksSubmit = true;
       } else {
-        emailInput?.classList.remove("is-invalid");
+        elements.email?.classList.remove("is-invalid");
       }
     } else {
-      emailInput?.classList.remove("is-invalid");
+      elements.email?.classList.remove("is-invalid");
     }
 
-    if (textCheckbox?.checked) {
-      const phoneNumber = phoneInput?.value?.replace(/\D/g, "") ?? "";
+    // Text: only require valid phone (and consent) when text_pref is checked.
+    let textBlocksSubmit = false;
+    if (elements.textPref?.checked) {
+      const phoneNumber = elements.phone?.value?.replace(/\D/g, "") ?? "";
       if (!phoneNumber || !validatePhoneNumber(phoneNumber)) {
-        phoneInput?.classList.add("is-invalid");
-        isValid = false;
+        elements.phone?.classList.add("is-invalid");
+        textBlocksSubmit = true;
       } else {
-        phoneInput?.classList.remove("is-invalid");
+        elements.phone?.classList.remove("is-invalid");
       }
     } else {
-      phoneInput?.classList.remove("is-invalid");
+      elements.phone?.classList.remove("is-invalid");
     }
 
     updateEmailNotificationStatus();
     updateTextNotificationStatus();
 
     const hasChanges = hasFormChanges();
-    if (saveBtn) saveBtn.disabled = !hasChanges;
-    if (cancelBtn) cancelBtn.disabled = !hasChanges;
+    const canSubmit = hasChanges && !emailBlocksSubmit && !textBlocksSubmit;
+    if (elements.saveBtn) elements.saveBtn.disabled = !canSubmit;
+    if (elements.cancelBtn) elements.cancelBtn.disabled = !hasChanges;
     updateFormStatus(hasChanges);
 
-    return isValid;
+    return !emailBlocksSubmit && !textBlocksSubmit;
   }
 
   function setupAccordionTabs() {
@@ -292,9 +327,7 @@ export function initNotificationForm(deps) {
         const content = accordionBody?.querySelector(`#${tabId}`);
         if (content) content.classList.add("active");
 
-        const textNotificationStatus = document.getElementById(
-          "text-notification-status",
-        );
+        const textNotificationStatus = document.getElementById("text-notification-status");
         if (textNotificationStatus) {
           if (tabId === "text-input") {
             textNotificationStatus.style.display = "block";
@@ -352,77 +385,48 @@ export function initNotificationForm(deps) {
   }
 
   function initProfileForm(profInfo, ignoreAddingEventListeners) {
-    if (!profInfo || typeof profInfo !== "object") {
-      profInfo = {
-        email: "",
-        phone_number: "",
-        email_pref: false,
-        text_pref: false,
-        prob_pref: 3,
-      };
-    }
+    const normalized = normalizeProfileData(profInfo);
+    const refs = getFormRefs();
+    if (!refs) return;
 
-    const profForm = document.forms["profile-information-form"];
-    if (!profForm) return;
-
-    const emailInput = profForm.elements["email-address"];
-    const phoneNumberInput = profForm.elements["phone-number"];
-    const noNotificationsCheckbox = profForm.elements["no-notifications"];
-    const emailCheckbox = profForm.elements["email-pref"];
-    const textCheckbox = profForm.elements["text-pref"];
-    const probRadios = profForm.elements["notification-prob"];
-    const cancelBtn = profForm.elements["prof-form-cancel-btn"];
-    const saveBtn = profForm.elements["prof-form-save-btn"];
+    const { form: profForm, elements } = refs;
 
     if (!ignoreAddingEventListeners) {
-      const phoneDigits = (profInfo.phone_number || "").replace(/\D/g, "");
-      setSavedProfileData({
-        email: (profInfo.email || "").trim(),
-        phone_number: phoneDigits,
-        email_pref: Boolean(profInfo.email_pref),
-        text_pref: Boolean(profInfo.text_pref),
-        email_consent: Boolean(profInfo.email_consent),
-        text_consent: Boolean(profInfo.text_consent),
-        prob_pref: Number(profInfo.prob_pref) || 3,
-      });
+      setSavedProfileData(normalized);
     }
 
-    emailInput.value = profInfo.email || "";
-    phoneNumberInput.value = maskPhoneNumber(profInfo.phone_number || "");
-    emailCheckbox.checked = profInfo.email_pref;
-    textCheckbox.checked = profInfo.text_pref;
-    noNotificationsCheckbox.checked =
-      !profInfo.email_pref && !profInfo.text_pref;
+    elements.email.value = normalized.email;
+    elements.phone.value = maskPhoneNumber(normalized.phone_number);
+    elements.emailPref.checked = normalized.email_pref;
+    elements.textPref.checked = normalized.text_pref;
+    elements.noNotifications.checked = !normalized.email_pref && !normalized.text_pref;
 
-    const emailConsentCheckbox = profForm.elements["email-consent"];
-    const textConsentCheckbox = profForm.elements["text-consent"];
-    if (emailConsentCheckbox) {
-      emailConsentCheckbox.checked = Boolean(profInfo.email_consent);
-      emailConsentCheckbox.disabled = !emailCheckbox.checked;
-    }
-    if (textConsentCheckbox) {
-      textConsentCheckbox.checked = Boolean(profInfo.text_consent);
-      textConsentCheckbox.disabled = !textCheckbox.checked;
+    if (elements.textConsent) {
+      elements.textConsent.checked = normalized.text_consent;
+      elements.textConsent.disabled = !elements.textPref.checked;
     }
 
-    updateAccordionVisibility(profInfo.email_pref, true);
+    updateAccordionVisibility(normalized.email_pref, true);
 
-    for (let radio of probRadios || []) {
-      const value = profInfo.prob_pref && profInfo.prob_pref.toString();
-      radio.checked = radio.value === value;
-      radio.disabled = noNotificationsCheckbox.checked;
+    const probValue = String(normalized.prob_pref);
+    for (let radio of elements.probRadios || []) {
+      radio.checked = radio.value === probValue;
+      radio.disabled = elements.noNotifications.checked;
     }
 
     if (!ignoreAddingEventListeners) {
       profForm.addEventListener("input", onProfileFormChange);
       profForm.addEventListener("change", onProfileFormChange);
-      cancelBtn.addEventListener("click", cancelProfileFormChanges);
-      saveBtn.addEventListener("click", saveProfileFormChanges);
-      phoneNumberInput.addEventListener("input", (e) => {
-        phoneNumberInput.value = maskPhoneNumber(e.target.value);
+      elements.cancelBtn.addEventListener("click", cancelProfileFormChanges);
+      elements.saveBtn.addEventListener("click", saveProfileFormChanges);
+      elements.phone.addEventListener("input", (e) => {
+        elements.phone.value = maskPhoneNumber(e.target.value);
       });
-      emailConsentCheckbox?.addEventListener("change", validateForm);
-      textConsentCheckbox?.addEventListener("change", validateForm);
+      elements.email.addEventListener("blur", () => {
+        updateEmailNotificationStatus();
+        validateForm();
+      });
+      elements.textConsent?.addEventListener("change", validateForm);
       setupAccordionTabs();
       setupExpandCollapseButtons();
     }
@@ -433,13 +437,17 @@ export function initNotificationForm(deps) {
   }
 
   function onProfileFormChange(e) {
-    const profForm = e.target.form;
-    const noNotificationsCheckbox = profForm.elements["no-notifications"];
-    const emailCheckbox = profForm.elements["email-pref"];
-    const textCheckbox = profForm.elements["text-pref"];
-    const emailConsentCheckbox = profForm.elements["email-consent"];
-    const textConsentCheckbox = profForm.elements["text-consent"];
-    const probRadios = profForm.elements["notification-prob"];
+    const form = e.target.form;
+    if (!form) return;
+    const emailInput = form.elements[FORM_IDS.email];
+    // Don't touch DOM while typing in email (avoids bounce from helpText clear / validation UI)
+    if (e.target === emailInput) return;
+
+    const noNotificationsCheckbox = form.elements[FORM_IDS.noNotifications];
+    const emailCheckbox = form.elements[FORM_IDS.emailPref];
+    const textCheckbox = form.elements[FORM_IDS.textPref];
+    const textConsentCheckbox = form.elements[FORM_IDS.textConsent];
+    const probRadios = form.elements[FORM_IDS.probRadios];
 
     const helpText = document.getElementById("profile-form-help-text");
     if (helpText) {
@@ -450,22 +458,10 @@ export function initNotificationForm(deps) {
     if (e.target === noNotificationsCheckbox) {
       if (noNotificationsCheckbox.checked) {
         emailCheckbox.checked = textCheckbox.checked = false;
-        if (emailConsentCheckbox) emailConsentCheckbox.checked = false;
         if (textConsentCheckbox) textConsentCheckbox.checked = false;
       }
     } else if (e.target === emailCheckbox || e.target === textCheckbox) {
-      if (
-        e.target === emailCheckbox &&
-        !emailCheckbox.checked &&
-        emailConsentCheckbox
-      ) {
-        emailConsentCheckbox.checked = false;
-      }
-      if (
-        e.target === textCheckbox &&
-        !textCheckbox.checked &&
-        textConsentCheckbox
-      ) {
+      if (e.target === textCheckbox && !textCheckbox.checked && textConsentCheckbox) {
         textConsentCheckbox.checked = false;
       }
       if (emailCheckbox.checked || textCheckbox.checked) {
@@ -476,7 +472,7 @@ export function initNotificationForm(deps) {
     }
 
     if (e.target === emailCheckbox && emailCheckbox.checked) {
-      const emailInput = profForm.elements["email-address"];
+      const emailInput = form.elements[FORM_IDS.email];
       const currentEmail = emailInput.value.trim();
       const isPlaceholderOrEmpty =
         !currentEmail ||
@@ -484,11 +480,7 @@ export function initNotificationForm(deps) {
         currentEmail === "You@example.com" ||
         currentEmail.includes("example.com");
       const profileInfo = getProfileInfo();
-      if (
-        isPlaceholderOrEmpty &&
-        profileInfo &&
-        profileInfo.email
-      ) {
+      if (isPlaceholderOrEmpty && profileInfo && profileInfo.email) {
         emailInput.value = profileInfo.email;
       }
     }
@@ -501,9 +493,6 @@ export function initNotificationForm(deps) {
       updateAccordionVisibility(emailCheckbox.checked, true);
     }
 
-    if (emailConsentCheckbox) {
-      emailConsentCheckbox.disabled = !emailCheckbox.checked;
-    }
     if (textConsentCheckbox) {
       textConsentCheckbox.disabled = !textCheckbox.checked;
     }
@@ -522,46 +511,24 @@ export function initNotificationForm(deps) {
   }
 
   async function saveProfileFormChanges() {
-    const profForm = document.forms["profile-information-form"];
+    const refs = getFormRefs();
     const helpText = document.getElementById("profile-form-help-text");
-
-    if (!profForm || !helpText) {
+    if (!refs || !helpText) {
       console.error("Required form elements not found!");
       return;
     }
 
     if (!validateForm()) return;
 
-    const email = profForm.elements["email-address"].value;
-    const phoneNumberRaw = profForm.elements["phone-number"].value.replace(
-      /\D/g,
-      "",
-    );
-    const phoneNumberMatch = phoneNumberRaw.match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-    const phoneNumber = phoneNumberMatch ? phoneNumberMatch[0] : "";
-    const emailPref = profForm.elements["email-pref"].checked;
-    const textPref = profForm.elements["text-pref"].checked;
-    const emailConsentChecked = profForm.elements["email-consent"]
-      ? profForm.elements["email-consent"].checked
-      : true;
-    const textConsentChecked = profForm.elements["text-consent"]
-      ? profForm.elements["text-consent"].checked
-      : false;
-    const probRadios = profForm.elements["notification-prob"];
-
-    let selectedProb;
-    for (let radio of probRadios) {
-      if (radio.checked) {
-        selectedProb = Number(radio.value);
-        break;
-      }
-    }
+    const current = getCurrentFormValues();
+    const emailPref = refs.elements.emailPref.checked;
+    const textPref = refs.elements.textPref.checked;
+    const textConsentChecked = Boolean(refs.elements.textConsent?.checked);
+    const selectedProb = getSelectedProb(refs.elements.probRadios);
 
     const saved = getSavedProfileData();
-    const emailToSend = emailPref
-      ? (emailConsentChecked ? email : (saved?.email || email) || null)
-      : null;
-    const phoneToSend = textPref && phoneNumber ? phoneNumber : null;
+    const emailToSend = (current.email || "").trim() || "";
+    const phoneToSend = textPref && current.phone_number ? current.phone_number : null;
 
     const newProfileInfo = {
       email: emailToSend,
@@ -570,12 +537,11 @@ export function initNotificationForm(deps) {
       email_pref: emailPref,
       text_pref: textPref,
       prob_pref: selectedProb,
-      email_consent: emailConsentChecked,
       text_consent: textConsentChecked,
     };
 
     try {
-      const res = await authorizedFetch("/userInfo", {
+      const res = await authorizedFetch("/user-info", {
         method: "POST",
         headers: { "Content-Type": "application/json;charset=utf-8" },
         body: JSON.stringify(newProfileInfo),
@@ -585,25 +551,9 @@ export function initNotificationForm(deps) {
         const profileInfo = await res.json();
         setProfileInfo(profileInfo);
         helpText.style.color = "green";
-
-        const phoneDigits = (profileInfo.phone_number || "").replace(/\D/g, "");
-        setSavedProfileData({
-          email: (profileInfo.email || "").trim(),
-          phone_number: phoneDigits,
-          email_pref: Boolean(profileInfo.email_pref),
-          text_pref: Boolean(profileInfo.text_pref),
-          email_consent: Boolean(profileInfo.email_consent),
-          text_consent: Boolean(profileInfo.text_consent),
-          prob_pref: Number(profileInfo.prob_pref) || 3,
-        });
+        setSavedProfileData(normalizeProfileData(profileInfo));
 
         let message = "Changes saved successfully!";
-        if (!emailPref && profileInfo.email) {
-          message += " Your email address has been removed from our system.";
-        }
-        if (!textPref && profileInfo.phone_number) {
-          message += " Your phone number has been removed from our system.";
-        }
         helpText.innerHTML = message;
       } else {
         const contentType = res.headers.get("content-type");
@@ -613,8 +563,7 @@ export function initNotificationForm(deps) {
           helpText.innerHTML = json.errors[0];
         } else {
           helpText.style.color = "red";
-          helpText.innerHTML =
-            "Server error occurred. Please refresh the page and try again.";
+          helpText.innerHTML = "Server error occurred. Please refresh the page and try again.";
         }
       }
       initProfileForm(getProfileInfo(), true);
