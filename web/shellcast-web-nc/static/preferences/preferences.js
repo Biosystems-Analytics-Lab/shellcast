@@ -1,6 +1,6 @@
 "use strict";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import { auth, authorizedFetch } from "../common/common.js";
+import { auth, authorizedFetch } from "../common/js/common.js";
 import { initNotificationForm } from "../common/js/notification_prefs.js";
 
 // ============================================================================
@@ -25,7 +25,7 @@ let leaseSearchTimer = null;
  * @return {Promise<object|null>} the user's profile information
  */
 async function getProfileInfo() {
-  const res = await authorizedFetch("/userInfo");
+  const res = await authorizedFetch("/user-info");
   if (res.ok) {
     return await res.json();
   }
@@ -194,7 +194,7 @@ async function searchLeases() {
     return;
   }
 
-  const res = await authorizedFetch("/searchLeases", {
+  const res = await authorizedFetch("/search-leases", {
     method: "POST",
     headers: { "Content-Type": "application/json;charset=utf-8" },
     body: JSON.stringify({ search: userInput }),
@@ -252,7 +252,7 @@ function searchLeasesOnDelay() {
  * Deletes the user's account.
  */
 async function deleteAccount() {
-  const res = await authorizedFetch("/deleteAccount");
+  const res = await authorizedFetch("/delete-account");
   if (res.ok) {
     window.location.replace("/");
   } else {
@@ -266,10 +266,10 @@ async function deleteAccount() {
 // ============================================================================
 
 /**
- * Displays the UI for a signed in user and initializes the lease forms.
- * @param {firebase.User} user
+ * Displays the UI for a signed-in user and initializes the lease forms.
+ * Called when Firebase auth state is signed in; the check is done by the caller (onAuthStateChanged).
  */
-async function handleSignedInUser(user) {
+async function handleSignedInUser() {
   // Show signed in view
   document.getElementById("user-signed-in").style.display = "block";
   document.getElementById("user-signed-out").style.display = "none";
@@ -327,6 +327,6 @@ function handleSignedOutUser() {
 // Initialize the application when the page loads
 (async () => {
   onAuthStateChanged(auth, (user) => {
-    user ? handleSignedInUser(user) : handleSignedOutUser();
+    user ? handleSignedInUser() : handleSignedOutUser();
   });
 })();

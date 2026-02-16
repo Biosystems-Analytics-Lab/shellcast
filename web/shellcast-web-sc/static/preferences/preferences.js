@@ -1,6 +1,6 @@
 "use strict";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import { auth, authorizedFetch } from "../common/common.js";
+import { auth, authorizedFetch } from "../common/js/common.js";
 import { initNotificationForm } from "../common/js/notification_prefs.js";
 
 // ============================================================================
@@ -262,10 +262,10 @@ async function deleteAccount() {
 // ============================================================================
 
 /**
- * Displays the UI for a signed in user and initializes the lease forms.
- * @param {firebase.User} user
+ * Displays the UI for a signed-in user and initializes the lease forms.
+ * Called when Firebase auth state is signed in; the check is done by the caller (onAuthStateChanged).
  */
-async function handleSignedInUser(_user) {
+async function handleSignedInUser() {
   // Show signed in view
   document.getElementById("user-signed-in").style.display = "block";
   document.getElementById("user-signed-out").style.display = "none";
@@ -317,139 +317,12 @@ function handleSignedOutUser() {
 }
 
 // ============================================================================
-// NOTIFICATION STATUS FUNCTIONS
-// ============================================================================
-
-/**
- * Updates the notification status message to inform users whether they will receive notifications
- * based on their current form selections.
- */
-function _updateNotificationStatus() {
-  const profForm = document.forms["profile-information-form"];
-  const emailStatusText = document.getElementById("email-notification-status");
-  const textStatusText = document.getElementById("text-notification-status");
-
-  if (!profForm || !emailStatusText || !textStatusText) {
-    return;
-  }
-
-  const emailCheckbox = profForm.elements["email-pref"];
-  const textCheckbox = profForm.elements["text-pref"];
-  const textConsentCheckbox = profForm.elements["text-consent"];
-  const emailInput = profForm.elements["email-address"];
-  const phoneInput = profForm.elements["phone-number"];
-  const noNotificationsCheckbox = profForm.elements["no-notifications"];
-
-  // Check if "no notifications" is selected
-  if (noNotificationsCheckbox && noNotificationsCheckbox.checked) {
-    emailStatusText.innerHTML = "🚫 Email notifications disabled";
-    emailStatusText.style.color = "orange";
-    emailStatusText.style.textAlign = "left";
-    textStatusText.innerHTML = "🚫 Text notifications disabled";
-    textStatusText.style.color = "orange";
-    textStatusText.style.textAlign = "left";
-    return;
-  }
-
-  // Check email notification requirements (email consent commented out)
-  let emailReady = false;
-  if (emailCheckbox && emailCheckbox.checked) {
-    const email = emailInput.value.trim();
-    if (
-      email &&
-      email !== "you@example.com" &&
-      !email.includes("example.com")
-    ) {
-      emailReady = true;
-    }
-  }
-
-  // Check text notification requirements
-  let textReady = false;
-  if (textCheckbox && textCheckbox.checked) {
-    if (textConsentCheckbox && textConsentCheckbox.checked) {
-      const phoneNumber = phoneInput.value.replace(/\D/g, "");
-      if (phoneNumber && phoneNumber.length === 10) {
-        textReady = true;
-      }
-    }
-  }
-
-  // Update email status
-  if (emailReady) {
-    emailStatusText.innerHTML = "✅ Email notifications enabled";
-    emailStatusText.style.color = "green";
-    emailStatusText.style.textAlign = "left";
-  } else {
-    // Check what's missing for email
-    let emailMissingItems = [];
-
-    if (emailCheckbox && emailCheckbox.checked) {
-      if (
-        !emailInput.value.trim() ||
-        emailInput.value.includes("example.com")
-      ) {
-        emailMissingItems.push("enter valid email");
-      }
-    }
-
-    if (emailMissingItems.length > 0) {
-      emailStatusText.innerHTML = `⚠️ To receive notifications: ${emailMissingItems.join(
-        ", ",
-      )}`;
-      emailStatusText.style.color = "orange";
-      emailStatusText.style.textAlign = "left";
-    } else {
-      emailStatusText.innerHTML =
-        "📧 You will not receive notifications - `Email` unchecked";
-      emailStatusText.style.color = "blue";
-      emailStatusText.style.textAlign = "left";
-    }
-  }
-
-  // Update text status
-  if (textReady) {
-    textStatusText.innerHTML = "✅ Text notifications enabled";
-    textStatusText.style.color = "green";
-    textStatusText.style.textAlign = "left";
-  } else {
-    // Check what's missing for text
-    let textMissingItems = [];
-
-    if (textCheckbox && textCheckbox.checked) {
-      if (!textConsentCheckbox || !textConsentCheckbox.checked) {
-        textMissingItems.push("check consent");
-      }
-      if (
-        !phoneInput.value.replace(/\D/g, "") ||
-        phoneInput.value.replace(/\D/g, "").length !== 10
-      ) {
-        textMissingItems.push("enter valid phone");
-      }
-    }
-
-    if (textMissingItems.length > 0) {
-      textStatusText.innerHTML = `⚠️ To receive notifications: ${textMissingItems.join(
-        ", ",
-      )}`;
-      textStatusText.style.color = "orange";
-      textStatusText.style.textAlign = "left";
-    } else {
-      textStatusText.innerHTML =
-        "📱 You will not receive notifications - `Text` unchecked";
-      textStatusText.style.color = "blue";
-      textStatusText.style.textAlign = "left";
-    }
-  }
-}
-
-// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
 // Initialize the application when the page loads
 (async () => {
   onAuthStateChanged(auth, (user) => {
-    user ? handleSignedInUser(user) : handleSignedOutUser();
+    user ? handleSignedInUser() : handleSignedOutUser();
   });
 })();

@@ -3,7 +3,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-import { auth } from "../common/common.js";
+import { auth } from "../common/js/common.js";
 
 document
   .getElementById("google-btn")
