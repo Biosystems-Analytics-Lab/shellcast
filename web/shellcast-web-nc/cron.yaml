@@ -1,6 +1,6 @@
 cron:
   - description: "Send text (SMS) notifications daily; NC runs its send then triggers FL and SC"
-    url: /send_bandwidth_message
+    url: /send-bandwidth-message
     target: default
     schedule: every day 07:00
     timezone: America/New_York
