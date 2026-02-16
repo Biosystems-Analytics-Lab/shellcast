@@ -11,7 +11,7 @@ from models.Lease import Lease
 from models.User import User
 from models.UserLease import UserLease
 from routes.authentication import user_required
-from routes.validators.ProfileInfoValidator import ProfileInfoValidator
+from routes.validators.profile_info_validator import ProfileInfoValidator
 from sqlalchemy.exc import IntegrityError
 
 api = Blueprint("api", __name__)
@@ -95,12 +95,12 @@ def user_info(user):
         # validate the uploaded info
         validator = ProfileInfoValidator(request.json)
         if validator.validate():
-            user.email = validator.email
+            if validator.email_pref:
+                user.email = validator.email or ""
             user.phone_number = validator.phone_number
             user.email_pref = validator.email_pref
             user.text_pref = validator.text_pref
             user.prob_pref = validator.prob_pref
-            user.email_consent = validator.email_consent
             user.text_consent = validator.text_consent
             db.session.add(user)
             db.session.commit()
@@ -286,7 +286,7 @@ def search_leases(user):
 # =============================================================================
 
 
-@api.route("/bandwidth/callback/internal", methods=["POST"])
+@api.route("/api/bandwidth/callback/internal", methods=["POST"])
 def bandwidth_callback_internal():
     """
     Internal endpoint for Bandwidth callbacks forwarded from NC service.
@@ -352,11 +352,11 @@ def _handle_inbound_message_sc(from_number, text, message_id):
         log_inbound_fn=_log_inbound_sc,
         send_opt_out_fn=lambda to: _send_bandwidth_message_single(
             to,
-            "ShellCast: You've been unsubscribed and will no longer receive alerts. Reply START to resubscribe.",
+            f"ShellCast-{STATE}: You've been unsubscribed and will no longer receive alerts. Reply START to resubscribe.",
         ),
         send_opt_in_fn=lambda to: _send_bandwidth_message_single(
             to,
-            "ShellCast: You've been resubscribed to closure alerts. Reply STOP to unsubscribe.",
+            f"ShellCast-{STATE}: You've been resubscribed to closure alerts. Reply STOP to unsubscribe.",
         ),
     )
 
