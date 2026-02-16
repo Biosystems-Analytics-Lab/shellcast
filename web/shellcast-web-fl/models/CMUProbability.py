@@ -1,5 +1,4 @@
-# noinspection PyUnresolvedReferences
-from models import CMU, db
+from models import db
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.sql import functions
 
@@ -26,6 +25,6 @@ class CMUProbability(db.Model):
         }
 
     def __repr__(self):
-        return "<CMUProbability: {}, {}>".format(
-            self.cmu_id, self.cmus.sh_name, self.prob_1d_perc
+        return (
+            f"<CMUProbability: {self.cmu_id}, {self.cmus.sh_name}, {self.prob_1d_perc}>"
         )
