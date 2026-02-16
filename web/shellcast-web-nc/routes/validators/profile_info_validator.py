@@ -36,7 +36,6 @@ class ProfileInfoValidator:
         self.email_pref = json_data.get("email_pref")
         self.text_pref = json_data.get("text_pref")
         self.prob_pref = json_data.get("prob_pref")
-        self.email_consent = json_data.get("email_consent")
         self.text_consent = json_data.get("text_consent")
         self.errors = []
 
@@ -66,7 +65,6 @@ class ProfileInfoValidator:
             self._validate_email_pref,
             self._validate_text_pref,
             self._validate_prob_pref,
-            self._validate_email_consent,
             self._validate_text_consent,
         ]
 
@@ -170,17 +168,6 @@ class ProfileInfoValidator:
                 f"Probability preference must be one of: {valid_values}."
             )
 
-        return True
-
-    def _validate_email_consent(self):
-        """
-        Validate email consent is a boolean value.
-
-        Returns:
-            bool: True if email consent is valid, False otherwise
-        """
-        if self.email_consent not in [True, False]:
-            return self.add_error("Email consent must be true or false.")
         return True
 
     def _validate_text_consent(self):
