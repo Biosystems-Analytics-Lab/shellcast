@@ -9,7 +9,7 @@ from flask import Blueprint, current_app, request
 from models import db
 from models.NotificationEvent import NotificationEvent
 from models.User import User
-from routes.authentication import cronOnly
+from routes.authentication import cron_only
 from sqlalchemy import text
 
 # State identifier for NC
@@ -126,7 +126,7 @@ def _send_bandwidth_message_bulk(users_to_notify):
 def _trigger_state_send(state):
     """
     Trigger the state app's SMS send (used when cron runs only on NC).
-    FL uses /send_bandwidth_message; SC uses /send-bandwidth-message (kebab-case).
+    FL and SC both use /send-bandwidth-message (kebab-case).
     POSTs with X-NC-Orchestrator-Secret so FL/SC accept the request.
     """
     project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "ncsu-shellcast")
@@ -134,7 +134,7 @@ def _trigger_state_send(state):
     if not secret:
         logging.warning("NC_ORCHESTRATOR_SECRET not set; cannot trigger %s send", state)
         return None
-    path = "send-bandwidth-message" if state == "SC" else "send_bandwidth_message"
+    path = "send-bandwidth-message"
     url = f"https://shellcast-{state.lower()}-dot-{project_id}.appspot.com/{path}"
     try:
         r = requests.post(
@@ -152,8 +152,8 @@ def _trigger_state_send(state):
         return None
 
 
-@cron.route("/send_bandwidth_message", methods=["POST"])
-@cronOnly
+@cron.route("/send-bandwidth-message", methods=["POST"])
+@cron_only
 def send_bandwidth_message():
     """
     Cron endpoint: run NC SMS send, then trigger FL and SC sends.
@@ -194,7 +194,7 @@ def send_bandwidth_message():
 # =============================================================================
 
 
-@cron.route("/test/send_sms", methods=["POST", "GET"])
+@cron.route("/test/send-sms", methods=["POST", "GET"])
 def test_send_sms():
     """
     Test endpoint for sending SMS - DO NOT USE IN PRODUCTION.

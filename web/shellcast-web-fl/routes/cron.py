@@ -1,12 +1,11 @@
 import logging
-import os
 import time
 
 from core.notifications.bandwidth_send import send_sms_batch, send_sms_single
 from flask import Blueprint, current_app, request
 from models import db
 from models.User import User
-from routes.authentication import cronOnly
+from routes.authentication import cron_only
 
 # State identifier for FL
 STATE = "FL"
@@ -77,8 +76,8 @@ def _send_bandwidth_message_bulk(users_to_notify):
     )
 
 
-@cron.route("/send_bandwidth_message", methods=["POST"])
-@cronOnly
+@cron.route("/send-bandwidth-message", methods=["POST"])
+@cron_only
 def send_bandwidth_message():
     """
     Cron endpoint to send SMS notifications using Bandwidth.
@@ -114,7 +113,7 @@ def send_bandwidth_message():
     return result, 200
 
 
-# Bandwidth callback is handled in api.py via /api/bandwidth/callback/internal
+# Bandwidth callback (from NC) is handled in api.py via /api/bandwidth/callback/internal
 # NC service receives all callbacks and routes FL callbacks to this service
 
 
@@ -123,7 +122,7 @@ def send_bandwidth_message():
 # =============================================================================
 
 
-@cron.route("/test/send_sms", methods=["POST", "GET"])
+@cron.route("/test/send-sms", methods=["POST", "GET"])
 def test_send_sms():
     """
     Test endpoint for sending SMS - DO NOT USE IN PRODUCTION.
