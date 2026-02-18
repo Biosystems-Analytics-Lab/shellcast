@@ -1,3 +1,3 @@
 # shellcast_analysis
 
-- [docs/ANALYSIS.md](/docs/ANALYSIS.md) explains the various analysis scripts and how to set up the analysis cron job on a virtual computing lab image.
+See [docs/ANALYSIS.md](../docs/ANALYSIS.md) and [docs/ANALYSIS_README.md](../docs/ANALYSIS_README.md) for analysis scripts and cron setup.

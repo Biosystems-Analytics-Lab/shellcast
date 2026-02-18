@@ -5,15 +5,22 @@
 ### Deploy to App Engine
 
 ```bash
-# Deploy and migrate traffic to new version
-gcloud app deploy
+# Check without deploying: run same command GAE uses (from app dir, e.g. web/shellcast-web-nc)
+# If this starts and http://localhost:8080 works, GAE should not 502. Stop with Ctrl+C.
+gunicorn -b :8080 main:app
 
-# Deploy without migrating traffic
-gcloud app deploy --no-promote
+# Deploy and migrate traffic to new version
+gcloud app deploy app.yaml cron.yaml
+
+# Test on GAE without traffic: deploy --no-promote -v staging, then open version URL
+gcloud app deploy app.yaml cron.yaml --no-promote -v staging
+# After testing: gcloud app services set-traffic default --splits=staging=1
 
 # Deploy without using cached images
 gcloud app deploy --no-cache
 ```
+
+See [DEPLOY_GAE.md](DEPLOY_GAE.md) for full workflow (local check + test-before-commit on GAE).
 
 ### Clean Up Staging Storage
 
