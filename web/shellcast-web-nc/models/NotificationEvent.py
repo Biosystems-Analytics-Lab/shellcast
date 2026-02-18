@@ -32,7 +32,7 @@ class NotificationEvent(db.Model):
     send_success = Column(Boolean, default=True)
 
     # SMS and Email message tracking
-    message_id = Column(String(100))  # Bandwidth message ID or SES message ID
+    message_id = Column(String(100))  # Bandwidth message ID
     message_direction = Column(String(10))  # 'inbound' or 'outbound'
     delivery_status = Column(
         String(20)

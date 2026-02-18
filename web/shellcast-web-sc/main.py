@@ -7,11 +7,12 @@ import requests
 from firebase_admin import auth
 from flask import Flask, Response, request
 
-# Load environment variables from .env file for local development
+# Load environment variables from .env (local and, if deployed, on GAE).
+# With override=True, .env wins over app.yaml env_variables when both exist.
 try:
     from dotenv import load_dotenv
 
-    load_dotenv()
+    load_dotenv(override=True)
 except ImportError:
     pass  # dotenv not available, continue without it
 
@@ -39,9 +40,18 @@ firebase_admin.initialize_app()
 
 def create_app():
     """
-    Returns a Flask app configured with environment variables.
+    Returns a Flask app configured with environment variables (.env if present, else app.yaml on GAE).
     """
     app = Flask(__name__)
+
+    # Allow GAE, local, and webhook Host headers (avoids "Host validation failed" / SecurityError).
+    # Webhooks (e.g. Bandwidth → /api/bandwidth/callback) may send a different Host; these patterns cover common cases.
+    app.config["TRUSTED_HOSTS"] = [
+        ".appspot.com",
+        "localhost",
+        "127.0.0.1",
+        ".run.app",  # Cloud Run if used as proxy
+    ]
 
     # Provide safe local defaults for development if not set
     os.environ.setdefault("HOST", "127.0.0.1")
@@ -105,30 +115,24 @@ def create_app():
         }
     )
 
-    # Set Gmail redirect URI based on BASE_URL
+    # Database URI: use env override (e.g. tests with sqlite) or build from Cloud SQL settings
+    if os.environ.get("SQLALCHEMY_DATABASE_URI"):
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+            "SQLALCHEMY_DATABASE_URI"
+        )
+    else:
+        app.config[
+            "SQLALCHEMY_DATABASE_URI"
+        ] = "mysql+pymysql://{}:{}@/{}?unix_socket={}{}&ssl_disabled=true".format(
+            app.config["DB_USER"],
+            app.config["DB_PASS"],
+            app.config["DB_NAME"],
+            app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
+            app.config["CLOUD_SQL_INSTANCE_NAME"],
+        )
+
+    # Set Gmail redirect URI if provided
     app.config["GMAIL_REDIRECT_URI"] = os.environ.get("GMAIL_REDIRECT_URI")
-
-    # Set database URI with SSL disabled for caching_sha2_password compatibility
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"
-    ] = "mysql+pymysql://{}:{}@/{}?unix_socket={}{}&ssl_disabled=true".format(
-        app.config["DB_USER"],
-        app.config["DB_PASS"],
-        app.config["DB_NAME"],
-        app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
-        app.config["CLOUD_SQL_INSTANCE_NAME"],
-    )
-
-    # Set Bandwidth SMS credentials
-    app.config.update(
-        {
-            "BW_USERNAME": os.environ.get("BW_USERNAME"),
-            "BW_PASSWORD": os.environ.get("BW_PASSWORD"),
-            "BW_APPLICATION_ID": os.environ.get("BW_APPLICATION_ID"),
-            "BW_ACCOUNT_ID": os.environ.get("BW_ACCOUNT_ID"),
-            "BW_NUMBER": os.environ.get("BW_NUMBER"),
-        }
-    )
 
     # register blueprints
     app.register_blueprint(pages)
@@ -191,21 +195,31 @@ def create_app():
     return app
 
 
+def bundle_js(app):
+    from flask_assets import Bundle, Environment
+
+    assets = Environment(app)
+    assets.append_path("static")
+    js = Bundle(
+        "node_modules/dist/ol.js", filters="jsmin", output="dist/js/main.min.js"
+    )
+    assets.register("ol_js", js)
+    js.build()
+
+
 app = None
 
 # if running the file directly
 if __name__ == "__main__":
     logging.info("Starting app with development configuration")
-    # setup for running locally (development configuration)
     app = create_app()
-    # run the app locally using environment variables (aligned with NC/FL)
     app.run(
         host=os.environ.get("HOST", "127.0.0.1"),
         port=int(os.environ.get("PORT") or 0),
         debug=os.environ.get("DEBUG", "false").lower() == "true",
     )
-    print()
-else:  # else the app is being run from a WSGI application such as gunicorn
+else:
+    # run from WSGI (e.g. gunicorn on GAE); entrypoint in app.yaml: gunicorn -b :$PORT main:app
     logging.info("Starting app with production configuration")
-    # setup for production configuration
     app = create_app()
+    application = app  # alias for runtimes that expect "application"

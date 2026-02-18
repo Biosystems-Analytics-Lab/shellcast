@@ -7,11 +7,12 @@ import requests
 from firebase_admin import auth
 from flask import Flask, Response, request
 
-# Load environment variables from .env file for local development
+# Load environment variables from .env (local and, if deployed, on GAE).
+# With override=True, .env wins over app.yaml env_variables when both exist.
 try:
     from dotenv import load_dotenv
 
-    load_dotenv()
+    load_dotenv(override=True)
 except ImportError:
     pass  # dotenv not available, continue without it
 
@@ -39,9 +40,18 @@ firebase_admin.initialize_app()
 
 def create_app():
     """
-    Returns a Flask app configured with environment variables (from app.yaml on GAE, .env locally).
+    Returns a Flask app configured with environment variables (.env if present, else app.yaml on GAE).
     """
     app = Flask(__name__)
+
+    # Allow GAE, local, and webhook Host headers (avoids "Host validation failed" / SecurityError).
+    # Webhooks (e.g. Bandwidth → /api/bandwidth/callback) may send a different Host; these patterns cover common cases.
+    app.config["TRUSTED_HOSTS"] = [
+        ".appspot.com",
+        "localhost",
+        "127.0.0.1",
+        ".run.app",  # Cloud Run if used as proxy
+    ]
 
     # Provide safe local defaults for development if not set
     os.environ.setdefault("HOST", "127.0.0.1")
@@ -102,10 +112,6 @@ def create_app():
                 "pool_timeout": int(os.environ.get("DB_POOL_TIMEOUT")),
                 "pool_recycle": int(os.environ.get("DB_POOL_RECYCLE")),
             },
-            # AWS SES (optional; for email)
-            "AWS_ACCESS_KEY_ID": os.environ.get("AWS_ACCESS_KEY_ID"),
-            "AWS_SECRET_ACCESS_KEY": os.environ.get("AWS_SECRET_ACCESS_KEY"),
-            "AWS_REGION": os.environ.get("AWS_REGION", "us-east-1"),
         }
     )
 
@@ -213,6 +219,7 @@ if __name__ == "__main__":
         debug=os.environ.get("DEBUG", "false").lower() == "true",
     )
 else:
-    # run from WSGI (e.g. gunicorn on GAE)
+    # run from WSGI (e.g. gunicorn on GAE); entrypoint in app.yaml: gunicorn -b :$PORT main:app
     logging.info("Starting app with production configuration")
     app = create_app()
+    application = app  # alias for runtimes that expect "application"
