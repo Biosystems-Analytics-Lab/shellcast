@@ -76,16 +76,18 @@ cd web/shellcast-web-nc
 gcloud app deploy app.yaml cron.yaml --quiet
 
 cd ../shellcast-web-fl
-gcloud app deploy app.yaml cron.yaml --quiet
+gcloud app deploy app.yaml --quiet
 
 cd ../shellcast-web-sc
-gcloud app deploy app.yaml cron.yaml --quiet
+gcloud app deploy app.yaml --quiet
 ```
+
+Only **NC** has and deploys `cron.yaml` (SMS is orchestrated by NC). FL and SC have no `cron.yaml` file.
 
 Or in one line from repo root:
 
 ```bash
-cd web/shellcast-web-nc && gcloud app deploy app.yaml cron.yaml --quiet && cd ../shellcast-web-fl && gcloud app deploy app.yaml cron.yaml --quiet && cd ../shellcast-web-sc && gcloud app deploy app.yaml cron.yaml --quiet
+cd web/shellcast-web-nc && gcloud app deploy app.yaml cron.yaml --quiet && cd ../shellcast-web-fl && gcloud app deploy app.yaml --quiet && cd ../shellcast-web-sc && gcloud app deploy app.yaml --quiet
 ```
 
 ## After deploy – verify
