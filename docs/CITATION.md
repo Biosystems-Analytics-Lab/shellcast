@@ -8,7 +8,7 @@
 
 # ShellCast License
 
-See [docs/LICENSE.md](/docs/LICENSE.md) for details on the license used for ShellCast.
+See [LICENSE.md](../LICENSE.md) in the repository root for details on the license used for ShellCast.
 
 # Contact
 
