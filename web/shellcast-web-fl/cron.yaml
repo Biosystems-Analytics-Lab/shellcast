@@ -1,6 +1,0 @@
-cron:
-  - description: "Send notifications daily for FL"
-    url: /send-bandwidth-message
-    target: shellcast-fl
-    schedule: every day 07:00
-    timezone: America/New_York
