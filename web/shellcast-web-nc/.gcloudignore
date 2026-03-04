@@ -53,3 +53,10 @@ scripts
 static/scripts
 # standalone text notification tests (local use)
 text_notification_standalone_tests
+
+.pytest_cache
+.ruff_cache
+.env
+node_modules
+app.yaml.template
+env.template
