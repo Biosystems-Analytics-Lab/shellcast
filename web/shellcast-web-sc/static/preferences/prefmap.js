@@ -97,12 +97,9 @@ async function prefInitMap(growingUnitData) {
 
   // Add popup
   prefMap.on("singleclick", function (evt) {
-    const feature = prefMap.forEachFeatureAtPixel(
-      evt.pixel,
-      function (feature) {
-        return feature;
-      },
-    );
+    const feature = prefMap.forEachFeatureAtPixel(evt.pixel, function (feature) {
+      return feature;
+    });
     if (feature) {
       let coordinate = evt.coordinate; //default projection is EPSG:3857 you may want to use ol.proj.transform
       const desc = `<div>Lease ID: ${feature.get("lease_id")}

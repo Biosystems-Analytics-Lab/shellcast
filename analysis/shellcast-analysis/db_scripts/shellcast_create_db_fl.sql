@@ -23,7 +23,7 @@ CREATE TABLE users (
     text_verification_sent boolean NOT NULL DEFAULT false,
 	deleted boolean DEFAULT false,
 	created datetime DEFAULT NOW(),
-	updated datetime DEFAULT NOW() ON UPDATE NOW(),
+	updated datetime DEFAULT NOW() ON UPDATE NOW()
 );
 
 -- Stores the growing units.
@@ -64,7 +64,7 @@ CREATE TABLE user_leases (
 	created datetime DEFAULT NOW(),
 	updated datetime DEFAULT NOW() ON UPDATE NOW(),
     CONSTRAINT unique_leases_per_user UNIQUE (user_id, lease_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- Stores a log of all notifications that are sent to users.

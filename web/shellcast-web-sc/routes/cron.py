@@ -1,4 +1,6 @@
 import logging
+import os
+import secrets
 import time
 
 from core.notifications.bandwidth_send import send_sms_batch, send_sms_single
@@ -23,19 +25,24 @@ cron = Blueprint("cron", __name__)
 # =============================================================================
 
 
-def notification_preprocess_sms():
-    """
-    Query users who should receive SMS notifications based on their preferences
-    and today's closure probabilities.
-    Returns list of tuples: (user_id, phone_number)
-    """
-    users_to_notify = []
-    users = (
+def _get_sms_opted_in_users():
+    """Return users who are SMS-opted-in (text_pref + text_consent) with a phone number."""
+    return (
         db.session.query(User)
         .filter_by(deleted=False, text_pref=True, text_consent=True)
         .filter(User.phone_number.isnot(None))
         .all()
     )
+
+
+def notification_preprocess_sms():
+    """
+    Query users who should receive SMS notifications based on their preferences
+    and closure probabilities.
+    Returns list of tuples: (user_id, phone_number)
+    """
+    users_to_notify = []
+    users = _get_sms_opted_in_users()
 
     for user in users:
         # Check if any of user's leases have high probability
@@ -56,6 +63,15 @@ def notification_preprocess_sms():
         f"Found {len(users_to_notify)} users to notify out of {len(users)} eligible users"
     )
     return users_to_notify
+
+
+def notification_preprocess_sms_for_test():
+    """
+    Same as notification_preprocess_sms but ignores closure probability.
+    Returns all opted-in users with a phone number (for testing notifications).
+    """
+    users = _get_sms_opted_in_users()
+    return [(u.id, u.phone_number) for u in users]
 
 
 def _send_bandwidth_message_single(to_number, message_text=None):
@@ -80,6 +96,50 @@ def _send_bandwidth_message_bulk(users_to_notify):
         state=STATE,
         sleep_seconds=0.1,
     )
+
+
+@cron.route("/cron/test-notifications", methods=["GET", "POST"])
+def test_notifications():
+    """
+    Send SMS to all opted-in users regardless of closure probability (for testing).
+    Secured by SMOKE_TEXT_SECRET (?token= or X-Smoke-Test-Token header).
+    """
+    from routes.api import TEMPLATE_SMS_CLOSURE_ALERT, _log_sms_to_nc
+
+    secret = os.getenv("SMOKE_TEXT_SECRET")
+    if not secret:
+        logging.warning("test_notifications: SMOKE_TEXT_SECRET not set")
+        return {"ok": False, "error": "Test not configured"}, 503
+
+    token = request.args.get("token") or request.headers.get("X-Smoke-Test-Token")
+    if not token or not secrets.compare_digest(token, secret):
+        logging.warning("test_notifications: invalid or missing token")
+        return {"ok": False, "error": "Forbidden"}, 403
+
+    logging.info("Test notifications (ignore probability) - SC...")
+    users_to_notify = notification_preprocess_sms_for_test()
+    results = _send_bandwidth_message_bulk(users_to_notify)
+    for user_id, phone_number, success, message_id in results:
+        if success and message_id:
+            _log_sms_to_nc(
+                state=STATE,
+                user_id=user_id,
+                phone_number=phone_number,
+                direction="outbound",
+                message_id=message_id,
+                template_name=TEMPLATE_SMS_CLOSURE_ALERT,
+                send_success=True,
+            )
+    success_count = sum(1 for r in results if r[2])
+    fail_count = len(results) - success_count
+    return {
+        "ok": True,
+        "state": STATE,
+        "sent": success_count,
+        "failed": fail_count,
+        "total": len(results),
+        "message": f"Test: sent {success_count} SMS to opted-in users (no probability check).",
+    }, 200
 
 
 @cron.route("/send-bandwidth-message", methods=["POST"])

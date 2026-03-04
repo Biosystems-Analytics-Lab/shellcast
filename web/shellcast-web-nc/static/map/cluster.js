@@ -77,8 +77,7 @@ export function clusterStyle(feature) {
 }
 
 export function generatePointsCircle(count, clusterCenter, resolution) {
-  const circumference =
-    circleDistanceMultiplier * circleFootSeparation * (2 + count);
+  const circumference = circleDistanceMultiplier * circleFootSeparation * (2 + count);
   let legLength = circumference / (Math.PI * 2); //radius from circumference
   const angleStep = (Math.PI * 2) / count;
   const res = [];

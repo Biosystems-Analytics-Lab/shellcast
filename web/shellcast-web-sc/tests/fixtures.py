@@ -3,8 +3,6 @@ Test fixtures for ShellCast (Django-style).
 Provides consistent test data across all tests.
 """
 
-from datetime import datetime, timezone
-
 from models.Lease import Lease
 from models.Notification import Notification
 from models.User import User

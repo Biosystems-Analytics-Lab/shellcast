@@ -1,5 +1,5 @@
 from models import db
-from sqlalchemy import Column, DateTime, Float, Integer, String
+from sqlalchemy import Column, DateTime, Float, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import functions
 
@@ -19,7 +19,7 @@ class Lease(db.Model):
 
     user_leases = relationship("UserLease", back_populates="leases")
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "lease_id": self.lease_id,
             "grow_area_name": self.grow_area_name,
@@ -31,6 +31,4 @@ class Lease(db.Model):
         }
 
     def __repr__(self):
-        return "<NCDMFLease: {}, {}, {}>".format(
-            self.lease_id, self.grow_area_name, self.cmu_name
-        )
+        return f"<Lease: {self.lease_id}, {self.grow_area_name}, {self.grow_area_desc}, {self.cmu_name}>"

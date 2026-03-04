@@ -109,14 +109,14 @@ def create_app():
     app.config["GMAIL_REDIRECT_URI"] = os.environ.get("GMAIL_REDIRECT_URI")
 
     # Set database URI with SSL disabled for caching_sha2_password compatibility
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"
-    ] = "mysql+pymysql://{}:{}@/{}?unix_socket={}{}&ssl_disabled=true".format(
-        app.config["DB_USER"],
-        app.config["DB_PASS"],
-        app.config["DB_NAME"],
-        app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
-        app.config["CLOUD_SQL_INSTANCE_NAME"],
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        "mysql+pymysql://{}:{}@/{}?unix_socket={}{}&ssl_disabled=true".format(
+            app.config["DB_USER"],
+            app.config["DB_PASS"],
+            app.config["DB_NAME"],
+            app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
+            app.config["CLOUD_SQL_INSTANCE_NAME"],
+        )
     )
 
     # register blueprints

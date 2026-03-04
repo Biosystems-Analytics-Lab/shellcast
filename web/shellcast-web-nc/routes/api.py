@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import requests
 from core.notifications.inbound import handle_stop_start
 from firebase_admin import auth
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, jsonify, request
 from models import db
 from models.CMU import CMU
 from models.CMUProbability import CMUProbability
@@ -52,6 +52,8 @@ def user_info(user):
     if request.method == "GET":
         return construct_response(user)
     else:  # request.method == 'POST'
+        if request.json is None:
+            return {"errors": ["Request body must be JSON."]}, 400
         # validate the uploaded info
         validator = ProfileInfoValidator(request.json)
         if validator.validate():
@@ -96,7 +98,9 @@ def delete_account(user):
 
         # clear preferences
         user.email_pref = User.DEFAULT_email_pref
+        user.email_consent = User.DEFAULT_email_consent
         user.text_pref = User.DEFAULT_text_pref
+        user.text_consent = User.DEFAULT_text_consent
         user.prob_pref = User.DEFAULT_prob_pref
 
         # mark user record as deleted
@@ -150,7 +154,7 @@ def get_growing_unit_probabilities():
     growing_unit_probs_as_dicts = {}
     for unit in growing_unit_probs:
         cmu_name = unit.cmu_name
-        growing_unit_probs_as_dicts[cmu_name] = unit.asDict()
+        growing_unit_probs_as_dicts[cmu_name] = unit.as_dict()
 
     return jsonify(growing_unit_probs_as_dicts)
 

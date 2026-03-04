@@ -12,7 +12,7 @@ class TestPqpf(unittest.TestCase):
         self.pqpf_obj = pqpf.PQPF("NC", "docker.mysql")
 
     def test_regex_find(self):
-        fname = f"pqpf_p24i_conus_12f024.grb"
+        fname = "pqpf_p24i_conus_12f024.grb"
         print(pqpf.regex_find(REG_PATTERN_TODAY, fname))
         match_today = pqpf.regex_find(REG_PATTERN_TODAY, fname)[0]
         match_hours = pqpf.regex_find(REG_PATTERN_GRB_HOURS, fname)[0]

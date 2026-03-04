@@ -5,8 +5,6 @@ Tests model creation, validation, relationships, and methods.
 
 from datetime import datetime, timezone
 
-import pytest
-from models import db
 from models.User import User
 
 
@@ -36,7 +34,7 @@ class TestUserModel:
         assert user.prob_pref == User.DEFAULT_prob_pref
         assert user.email_consent == User.DEFAULT_email_consent
         assert user.text_consent == User.DEFAULT_text_consent
-        assert user.deleted == False
+        assert user.deleted is False
 
     def test_user_defaults(self, db_session):
         """Test that user defaults are set correctly."""
@@ -46,12 +44,12 @@ class TestUserModel:
         db_session.commit()
 
         # Verify defaults
-        assert user.email_pref == False
-        assert user.text_pref == False
+        assert user.email_pref is False
+        assert user.text_pref is False
         assert user.prob_pref == 3
-        assert user.email_consent == False
-        assert user.text_consent == False
-        assert user.deleted == False
+        assert user.email_consent is False
+        assert user.text_consent is False
+        assert user.deleted is False
         assert user.email_opt_in_date is None
         assert user.text_opt_in_date is None
         assert user.email_opt_out_date is None
@@ -73,8 +71,8 @@ class TestUserModel:
         user.email_opt_in_date = datetime.now(timezone.utc)
         db_session.commit()
 
-        assert user.email_consent == True
-        assert user.email_pref == True
+        assert user.email_consent is True
+        assert user.email_pref is True
         assert user.email_opt_in_date is not None
 
         # Test opt-out
@@ -83,8 +81,8 @@ class TestUserModel:
         user.email_opt_out_date = datetime.now(timezone.utc)
         db_session.commit()
 
-        assert user.email_consent == False
-        assert user.email_pref == False
+        assert user.email_consent is False
+        assert user.email_pref is False
         assert user.email_opt_out_date is not None
 
     def test_user_soft_delete(self, db_session):
@@ -103,7 +101,7 @@ class TestUserModel:
         # User should still exist in database but marked as deleted
         deleted_user = db_session.query(User).filter_by(id=user_id).first()
         assert deleted_user is not None
-        assert deleted_user.deleted == True
+        assert deleted_user.deleted is True
 
         # Query without deleted filter should not find the user
         active_user = (
@@ -191,13 +189,13 @@ class TestUserModel:
         assert user_dict["firebase_uid"] == "test_uid_dict"
         assert user_dict["email"] == "dict@example.com"
         assert user_dict["phone_number"] == "9876543210"
-        assert user_dict["email_pref"] == True
-        assert user_dict["text_pref"] == False
+        assert user_dict["email_pref"] is True
+        assert user_dict["text_pref"] is False
         assert user_dict["prob_pref"] == 4
-        assert user_dict["email_consent"] == True
-        assert user_dict["text_consent"] == False
-        assert user_dict["email_verification_sent"] == False
-        assert user_dict["text_verification_sent"] == False
+        assert user_dict["email_consent"] is True
+        assert user_dict["text_consent"] is False
+        assert user_dict["email_verification_sent"] is False
+        assert user_dict["text_verification_sent"] is False
 
     def test_user_relationships(self, db_session):
         """Test that user relationships are set up correctly."""

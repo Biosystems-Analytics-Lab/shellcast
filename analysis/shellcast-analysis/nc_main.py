@@ -21,7 +21,7 @@ import logging  # noqa: E402
 
 from management import DirectoryConfig, NotificationConfig  # noqa: E402
 from nc_pqpf.nc_pqpf import NCPQPF  # noqa: E402
-from notifications import EmailNotification
+from notifications import EmailNotification  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

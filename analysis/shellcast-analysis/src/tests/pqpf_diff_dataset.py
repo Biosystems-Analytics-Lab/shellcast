@@ -2,7 +2,6 @@ import os
 
 import geopandas as gpd
 import pandas as pd
-import pygrib
 import rasterio
 
 tiff = "D:/CGAProjects/shellcast/analysis/data/pqpf/nc\intermediate/tiffs/tp_2022093012f024_1p0.tif"
@@ -29,7 +28,7 @@ for t in os.listdir(tiff_dir):
     coords = [(x, y) for x, y in zip(gdf_q["geometry"].x, gdf_q["geometry"].y)]
     # for x in src.sample(coords):
     #     print(x[0])
-    gdf_q[f"pqpf_24"] = [x[0] for x in src.sample(coords)]
+    gdf_q["pqpf_24"] = [x[0] for x in src.sample(coords)]
     print(gdf_q)
     result_gdf = pd.concat([result_gdf, gdf_q])
 print(result_gdf)

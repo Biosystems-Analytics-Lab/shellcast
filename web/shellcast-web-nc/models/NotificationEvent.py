@@ -1,5 +1,5 @@
 from models import db
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
 from sqlalchemy.sql import functions
 
 
@@ -17,7 +17,7 @@ class NotificationEvent(db.Model):
 
     id = Column(Integer, primary_key=True)
     state = Column(String(2), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, nullable=False)
     notification_type = Column(String(10), nullable=False)  # 'email' or 'text'
 
     # Recipient info (one will be NULL depending on type)
@@ -112,7 +112,7 @@ class NotificationEvent(db.Model):
         if error_code:
             self.error_code = error_code
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "id": self.id,
             "state": self.state,

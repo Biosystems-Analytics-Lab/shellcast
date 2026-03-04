@@ -24,7 +24,10 @@ from routes.pages import pages
 # check if running on Google App Engine
 # (just checking for one of the environment variables found here:
 # https://cloud.google.com/appengine/docs/standard/python3/runtime#environment_variables)
-if "GAE_APPLICATION" in os.environ:
+RUNNING_ON_GAE = "GAE_APPLICATION" in os.environ or os.getenv("GAE_ENV", "").startswith(
+    "standard"
+)
+if RUNNING_ON_GAE:
     # integrate Python logging module with Google Cloud Logging (captures INFO level and higher by default)
     import google.cloud.logging
 
@@ -59,6 +62,8 @@ def create_app():
     os.environ.setdefault("SECRET_KEY", "dev-secret-key")
 
     # Validate required environment variables
+    # DB_HOST / DB_PORT are required for local TCP connections.
+    # CLOUD_SQL_INSTANCE_NAME is required on GAE for Unix socket connections.
     required_vars = [
         "HOST",
         "PORT",
@@ -67,13 +72,15 @@ def create_app():
         "DB_USER",
         "DB_PASS",
         "DB_NAME",
-        "DB_UNIX_SOCKET_PATH_PREFIX",
-        "CLOUD_SQL_INSTANCE_NAME",
         "DB_POOL_SIZE",
         "DB_MAX_OVERFLOW",
         "DB_POOL_TIMEOUT",
         "DB_POOL_RECYCLE",
     ]
+    if RUNNING_ON_GAE:
+        required_vars.append("CLOUD_SQL_INSTANCE_NAME")
+    else:
+        required_vars.extend(["DB_HOST", "DB_PORT"])
 
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
     if missing_vars:
@@ -99,7 +106,9 @@ def create_app():
             "DB_PASS": os.environ.get("DB_PASS"),
             "DB_NAME": os.environ.get("DB_NAME"),
             # Cloud SQL Configuration
-            "DB_UNIX_SOCKET_PATH_PREFIX": os.environ.get("DB_UNIX_SOCKET_PATH_PREFIX"),
+            "DB_UNIX_SOCKET_PATH_PREFIX": os.environ.get(
+                "DB_UNIX_SOCKET_PATH_PREFIX", "/cloudsql/"
+            ),
             "CLOUD_SQL_INSTANCE_NAME": os.environ.get("CLOUD_SQL_INSTANCE_NAME"),
             # SQLAlchemy Configuration
             "SQLALCHEMY_TRACK_MODIFICATIONS": os.environ.get(
@@ -115,21 +124,44 @@ def create_app():
         }
     )
 
-    # Database URI: use env override (e.g. tests with sqlite) or build from Cloud SQL settings
+    # Database URI: use env override (e.g. tests with sqlite) or build from settings.
+    # - On GAE: connect via Unix socket /cloudsql/<instance_name>
+    # - Local dev: connect via TCP host:port from .env (no proxy required if DB is reachable)
     if os.environ.get("SQLALCHEMY_DATABASE_URI"):
         app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
             "SQLALCHEMY_DATABASE_URI"
         )
     else:
-        app.config[
-            "SQLALCHEMY_DATABASE_URI"
-        ] = "mysql+pymysql://{}:{}@/{}?unix_socket={}{}&ssl_disabled=true".format(
-            app.config["DB_USER"],
-            app.config["DB_PASS"],
-            app.config["DB_NAME"],
-            app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
-            app.config["CLOUD_SQL_INSTANCE_NAME"],
-        )
+        if RUNNING_ON_GAE:
+            # Use Unix socket provided by App Engine standard.
+            socket_path = "{}{}".format(
+                app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
+                app.config["CLOUD_SQL_INSTANCE_NAME"],
+            )
+            app.config["SQLALCHEMY_DATABASE_URI"] = (
+                "mysql+pymysql://{}:{}@/{}?unix_socket={}&ssl_disabled=true".format(
+                    app.config["DB_USER"],
+                    app.config["DB_PASS"],
+                    app.config["DB_NAME"],
+                    socket_path,
+                )
+            )
+        else:
+            # Local TCP connection (DB_HOST:DB_PORT) – uses values from .env
+            host = app.config["DB_HOST"]
+            port = app.config["DB_PORT"]
+            if port:
+                hostport = f"{host}:{port}"
+            else:
+                hostport = host
+            app.config["SQLALCHEMY_DATABASE_URI"] = (
+                "mysql+pymysql://{}:{}@{}/{}".format(
+                    app.config["DB_USER"],
+                    app.config["DB_PASS"],
+                    hostport,
+                    app.config["DB_NAME"],
+                )
+            )
 
     # Set Gmail redirect URI if provided
     app.config["GMAIL_REDIRECT_URI"] = os.environ.get("GMAIL_REDIRECT_URI")
@@ -193,18 +225,6 @@ def create_app():
             return response
 
     return app
-
-
-def bundle_js(app):
-    from flask_assets import Bundle, Environment
-
-    assets = Environment(app)
-    assets.append_path("static")
-    js = Bundle(
-        "node_modules/dist/ol.js", filters="jsmin", output="dist/js/main.min.js"
-    )
-    assets.register("ol_js", js)
-    js.build()
 
 
 app = None

@@ -1,210 +1,169 @@
-import pytest
-from firebase_admin import auth
-from models.NCDMFLease import NCDMFLease
+"""Tests for /leases route (GET, POST, DELETE)."""
+
+from models.Lease import Lease
 from models.User import User
 from models.UserLease import UserLease
 
 
-def test_get_leases(client, dbSession, addMockFbUser):
-    # add a mock Firebase user
-    addMockFbUser(
-        dict(
-            uid="3sH9so5Y3DP72QA1XqbWw9J6I8o1",
-            email="blah@gmail.com",
-            phone_number="1234567890",
-        ),
-        "validUser1",
+def test_get_leases(client, db_session, add_mock_fb_user):
+    """GET /leases returns user's non-deleted leases."""
+    add_mock_fb_user(
+        dict(uid="uid1", email="u1@example.com", phone_number="15551234567"),
+        "token1",
     )
-
-    # add the user to the db
     user = User(
-        firebase_uid="3sH9so5Y3DP72QA1XqbWw9J6I8o1",
-        email="blah@gmail.com",
-        phone_number="1234567890",
+        firebase_uid="uid1",
+        email="u1@example.com",
+        phone_number="15551234567",
     )
+    db_session.add(user)
+    db_session.commit()
 
-    dbSession.add(user)
-    dbSession.commit()
-
-    # add some leases to the database
-    leases = [
-        UserLease(
-            user_id=user.id,
-            ncdmf_lease_id="45678",
-            grow_area_name="A01",
-            cmu_name="U001",
-            rainfall_thresh_in=1.5,
-            geometry=(34.404497, -77.567573),
-        ),
-        UserLease(
-            user_id=user.id,
-            ncdmf_lease_id="12345",
-            grow_area_name="B02",
-            cmu_name="U002",
-            rainfall_thresh_in=2.5,
-            geometry=(35.207332, -76.523872),
-        ),
-        UserLease(
-            user_id=user.id,
-            ncdmf_lease_id="82945",
-            grow_area_name="C01",
-            cmu_name="U003",
-            rainfall_thresh_in=1.5,
-            geometry=(36.164344, -75.927864),
-        ),
-    ]
-
-    dbSession.add_all(leases)
-    dbSession.commit()
-
-    res = client.get("/leases", headers={"Authorization": "validUser1"})
-    assert res.status_code == 200
-
-    json = res.get_json()
-    assert len(json) == 3
-
-    assert json[0]["ncdmf_lease_id"] == "45678"
-    assert json[0]["grow_area_name"] == "A01"
-    assert json[0]["cmu_name"] == "U001"
-    assert json[0]["rainfall_thresh_in"] == 1.5
-    assert json[0]["geometry"] == [34.404497, -77.567573]
-    assert json[1]["ncdmf_lease_id"] == "12345"
-    assert json[1]["grow_area_name"] == "B02"
-    assert json[1]["cmu_name"] == "U002"
-    assert json[1]["rainfall_thresh_in"] == 2.5
-    assert json[1]["geometry"] == [35.207332, -76.523872]
-    assert json[2]["ncdmf_lease_id"] == "82945"
-    assert json[2]["grow_area_name"] == "C01"
-    assert json[2]["cmu_name"] == "U003"
-    assert json[2]["rainfall_thresh_in"] == 1.5
-    assert json[2]["geometry"] == [36.164344, -75.927864]
-
-
-def test_add_lease(client, dbSession, addMockFbUser):
-    # add a mock Firebase user
-    addMockFbUser(
-        dict(uid="3sH9so5Y3DP72QA1XqbWw9J6I8o1", email="blah@gmail.com"), "validUser1"
-    )
-
-    # add the user to the db
-    user = User(firebase_uid="3sH9so5Y3DP72QA1XqbWw9J6I8o1", email="blah@gmail.com")
-    dbSession.add(user)
-    dbSession.commit()
-
-    # add one existing lease for the user
-    lease = UserLease(
-        user_id=user.id,
-        ncdmf_lease_id="45678",
+    lease1 = Lease(
+        lease_id="L001",
         grow_area_name="A01",
+        grow_area_desc="Area 1",
         cmu_name="U001",
         rainfall_thresh_in=1.5,
-        geometry=(34.404497, -77.567573),
     )
-    dbSession.add(lease)
-    dbSession.commit()
-
-    # add some NCDMF leases
-    ncdmfLeases = [
-        NCDMFLease(
-            ncdmf_lease_id="819401",
-            grow_area_name="D11",
-            cmu_name="U011",
-            rainfall_thresh_in=2.5,
-            geometry=(34.404497, -77.567573),
-        ),
-        NCDMFLease(
-            ncdmf_lease_id="123456",
-            grow_area_name="B05",
-            cmu_name="U021",
-            rainfall_thresh_in=3.5,
-            geometry=(35.923741, -76.239482),
-        ),
-        NCDMFLease(
-            ncdmf_lease_id="4-C-89",
-            grow_area_name="A01",
-            cmu_name="U031",
-            rainfall_thresh_in=1.5,
-            geometry=(36.303915, -75.864693),
-        ),
-    ]
-    dbSession.add_all(ncdmfLeases)
-    dbSession.commit()
-
-    # make a request to add the given lease
-    res = client.post(
-        "/leases",
-        headers={"Authorization": "validUser1"},
-        json={"ncdmf_lease_id": "4-C-89"},
+    lease2 = Lease(
+        lease_id="L002",
+        grow_area_name="B02",
+        grow_area_desc="Area 2",
+        cmu_name="U002",
+        rainfall_thresh_in=2.5,
     )
+    db_session.add_all([lease1, lease2])
+    db_session.commit()
+
+    db_session.add_all(
+        [
+            UserLease(user_id=user.id, lease_id="L001"),
+            UserLease(user_id=user.id, lease_id="L002"),
+        ]
+    )
+    db_session.commit()
+
+    res = client.get("/leases", headers={"Authorization": "token1"})
     assert res.status_code == 200
+    data = res.get_json()
+    assert len(data) == 2
+    by_id = {d["lease_id"]: d for d in data}
+    assert by_id["L001"]["grow_area_name"] == "A01"
+    assert by_id["L001"]["grow_area_desc"] == "Area 1"
+    assert by_id["L001"]["cmu_name"] == "U001"
+    assert by_id["L001"]["rainfall_thresh_in"] == 1.5
+    assert by_id["L002"]["grow_area_name"] == "B02"
+    assert by_id["L002"]["rainfall_thresh_in"] == 2.5
 
-    json = res.get_json()
 
-    assert json["ncdmf_lease_id"] == "4-C-89"
-    assert json["grow_area_name"] == "A01"
-    assert json["cmu_name"] == "U031"
-    assert json["rainfall_thresh_in"] == 1.5
-    assert json["geometry"] == [36.303915, -75.864693]
+def test_get_leases_empty(client, db_session, add_mock_fb_user):
+    """GET /leases with no leases returns empty list."""
+    add_mock_fb_user(dict(uid="uid1", email="u1@example.com"), "token1")
+    user = User(firebase_uid="uid1", email="u1@example.com")
+    db_session.add(user)
+    db_session.commit()
 
-    # get the user's leases
-    res = client.get("/leases", headers={"Authorization": "validUser1"})
+    res = client.get("/leases", headers={"Authorization": "token1"})
     assert res.status_code == 200
-
-    json = res.get_json()
-    assert len(json) == 2
-    assert json[1]["ncdmf_lease_id"] == "45678"
-    assert json[1]["grow_area_name"] == "A01"
-    assert json[1]["cmu_name"] == "U001"
-    assert json[1]["rainfall_thresh_in"] == 1.5
-    assert json[1]["geometry"] == [34.404497, -77.567573]
-    assert json[0]["ncdmf_lease_id"] == "4-C-89"
-    assert json[0]["grow_area_name"] == "A01"
-    assert json[0]["cmu_name"] == "U031"
-    assert json[0]["rainfall_thresh_in"] == 1.5
-    assert json[0]["geometry"] == [36.303915, -75.864693]
+    assert res.get_json() == []
 
 
-def test_add_invalid_lease(client, dbSession, addMockFbUser):
-    # add a mock Firebase user
-    addMockFbUser(
-        dict(uid="3sH9so5Y3DP72QA1XqbWw9J6I8o1", email="blah@gmail.com"), "validUser1"
-    )
+def test_post_leases_add(client, db_session, add_mock_fb_user):
+    """POST /leases with valid lease_id adds lease for user."""
+    add_mock_fb_user(dict(uid="uid1", email="u1@example.com"), "token1")
+    user = User(firebase_uid="uid1", email="u1@example.com")
+    db_session.add(user)
+    db_session.commit()
 
-    # add the user to the db
-    user = User(firebase_uid="3sH9so5Y3DP72QA1XqbWw9J6I8o1", email="blah@gmail.com")
-
-    dbSession.add(user)
-    dbSession.commit()
-
-    # add one existing lease for the user
-    lease = UserLease(
-        user_id=user.id,
-        ncdmf_lease_id="45678",
-        grow_area_name="A01",
+    lease = Lease(
+        lease_id="L999",
+        grow_area_name="X99",
+        grow_area_desc="Test",
         cmu_name="U001",
-        rainfall_thresh_in=1.5,
-        geometry=(34.404497, -77.567573),
+        rainfall_thresh_in=1.0,
     )
+    db_session.add(lease)
+    db_session.commit()
 
-    dbSession.add(lease)
-    dbSession.commit()
-
-    # make a request to add the given lease
     res = client.post(
         "/leases",
-        headers={"Authorization": "validUser1"},
-        json={"ncdmf_lease_id": "123-CD"},
+        headers={"Authorization": "token1"},
+        json={"lease_id": "L999"},
+    )
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["lease_id"] == "L999"
+    assert data["grow_area_name"] == "X99"
+    assert data["cmu_name"] == "U001"
+
+    res2 = client.get("/leases", headers={"Authorization": "token1"})
+    assert len(res2.get_json()) == 1
+    assert res2.get_json()[0]["lease_id"] == "L999"
+
+
+def test_post_leases_invalid_lease_id(client, db_session, add_mock_fb_user):
+    """POST /leases with nonexistent lease_id returns 400."""
+    add_mock_fb_user(dict(uid="uid1", email="u1@example.com"), "token1")
+    user = User(firebase_uid="uid1", email="u1@example.com")
+    db_session.add(user)
+    db_session.commit()
+
+    res = client.post(
+        "/leases",
+        headers={"Authorization": "token1"},
+        json={"lease_id": "NONEXISTENT"},
     )
     assert res.status_code == 400
+    assert "errors" in res.get_json()
 
-    # get the user's leases
-    res = client.get("/leases", headers={"Authorization": "validUser1"})
+
+def test_delete_leases(client, db_session, add_mock_fb_user):
+    """DELETE /leases soft-deletes user lease."""
+    add_mock_fb_user(dict(uid="uid1", email="u1@example.com"), "token1")
+    user = User(firebase_uid="uid1", email="u1@example.com")
+    db_session.add(user)
+    db_session.commit()
+    lease = Lease(
+        lease_id="L001",
+        grow_area_name="A01",
+        grow_area_desc="A",
+        cmu_name="U001",
+    )
+    db_session.add(lease)
+    db_session.commit()
+    user_lease = UserLease(user_id=user.id, lease_id="L001")
+    db_session.add(user_lease)
+    db_session.commit()
+
+    res = client.delete(
+        "/leases",
+        headers={"Authorization": "token1"},
+        json={"lease_id": "L001"},
+    )
     assert res.status_code == 200
 
-    json = res.get_json()
-    assert len(json) == 1
-    assert json[0]["ncdmf_lease_id"] == "45678"
-    assert json[0]["grow_area_name"] == "A01"
-    assert json[0]["cmu_name"] == "U001"
-    assert json[0]["rainfall_thresh_in"] == 1.5
-    assert json[0]["geometry"] == [34.404497, -77.567573]
+    res2 = client.get("/leases", headers={"Authorization": "token1"})
+    assert res2.get_json() == []
+
+
+def test_delete_leases_nonexistent(client, db_session, add_mock_fb_user):
+    """DELETE /leases for lease user does not have returns 400."""
+    add_mock_fb_user(dict(uid="uid1", email="u1@example.com"), "token1")
+    user = User(firebase_uid="uid1", email="u1@example.com")
+    db_session.add(user)
+    db_session.commit()
+
+    res = client.delete(
+        "/leases",
+        headers={"Authorization": "token1"},
+        json={"lease_id": "L999"},
+    )
+    assert res.status_code == 400
+    assert "errors" in res.get_json()
+
+
+def test_leases_unauthorized(client):
+    """GET /leases with invalid auth returns 401."""
+    res = client.get("/leases", headers={"Authorization": "invalid-token"})
+    assert res.status_code == 401

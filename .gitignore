@@ -99,3 +99,6 @@ ncep-lib-utils/
 **/app.yaml
 
 **/static/lib/ol.js
+
+# NC standalone text notification tests (local / manual use)
+web/shellcast-web-nc/text_notification_standalone_tests/

@@ -150,9 +150,9 @@ class FLPQPF:
             result_gdf[self.fl_config["LEASE_SHP_COL_RAIN_IN"]].astype("float")
             - result_gdf[TP_ACCUM]
         )
-        logger.info(f"[rain_in - raster value at point] --- calculated")
+        logger.info("[rain_in - raster value at point] --- calculated")
         result_gdf[PQPF_TH] = result_gdf[TP_CALC].apply(fl_qppf_threshold_generator)
-        logger.info(f"PQPF threshold --- assigned")
+        logger.info("PQPF threshold --- assigned")
         logger.info(utils.done_str)
         return result_gdf
 

@@ -1,10 +1,5 @@
 "use strict";
-import {
-  HB_POPUP,
-  PARTNER_SITE_DOMAINS,
-  VB_POPUP,
-  WC_POPUP,
-} from "./map_constants.js";
+import { HB_POPUP, PARTNER_SITE_DOMAINS, VB_POPUP, WC_POPUP } from "./map_constants.js";
 import { getDomainName } from "./utils.js";
 
 // Elements that make up the popup.
@@ -85,11 +80,6 @@ export function partnerAppLyrPopupContent(feature) {
                         <br><span><a class="text-decoration-none" href="${hpUrl}" target="_blank">${hpUrl}</a></span>
                         </p>`;
     }
-    POPUP_CONTENT_ELE.innerHTML = popupContent(
-      title,
-      siteName,
-      iconUrl,
-      contentText,
-    );
+    POPUP_CONTENT_ELE.innerHTML = popupContent(title, siteName, iconUrl, contentText);
   }
 }

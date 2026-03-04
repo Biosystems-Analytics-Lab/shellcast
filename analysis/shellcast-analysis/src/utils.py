@@ -257,7 +257,7 @@ def delete_outdated_grbs(file_dir: str) -> None:
                 os.remove(fpath)
                 logger.info(f"{f} deleted.")
     else:
-        logger.info(f"No data to delete.")
+        logger.info("No data to delete.")
     logger.info(done_str)
 
 

@@ -1,6 +1,5 @@
 from models import db
 from sqlalchemy import Column, DateTime, Integer, String
-from sqlalchemy.orm import relationship
 from sqlalchemy.sql import functions
 
 
@@ -13,7 +12,7 @@ class CMUProbability(db.Model):
     prob_3d_perc = Column(Integer)
     created = Column(DateTime, server_default=functions.now())
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "cmu_name": self.cmu_name,
             "prob_1d_perc": self.prob_1d_perc,

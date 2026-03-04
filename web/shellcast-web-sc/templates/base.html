@@ -57,7 +57,11 @@
     {% endblock %} {% block common_js %} {#
     <!-- Custom JS -->
     #}
-    <script defer src="{{ url_for('static', filename='common/js/common.js') }}" type="module"></script>
+    <script
+      defer
+      src="{{ url_for('static', filename='common/js/common.js') }}"
+      type="module"
+    ></script>
     {% endblock %} {% block additional_head %}{% endblock %}
   </head>
   <body class="{% block body_class %}{% endblock %}">

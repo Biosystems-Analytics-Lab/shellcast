@@ -24,8 +24,7 @@ import logging
 import os
 import sys
 import unittest
-from datetime import datetime
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 # Add the parent directory to the Python path to import from src
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
