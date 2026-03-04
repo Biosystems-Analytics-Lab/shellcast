@@ -5,7 +5,6 @@ Clean, modern testing approach with SQLite.
 
 from datetime import datetime, timezone
 
-import pytest
 from models.User import User
 
 
@@ -61,8 +60,8 @@ class TestUnsubscribeAPI:
 
         # Verify database was updated
         updated_user = User.query.filter_by(email="test@example.com").first()
-        assert updated_user.email_consent == False
-        assert updated_user.email_pref == False
+        assert updated_user.email_consent is False
+        assert updated_user.email_pref is False
         assert updated_user.email_opt_out_date is not None
 
     def test_unsubscribe_api_missing_email(self, client):
@@ -135,8 +134,8 @@ class TestUnsubscribeAPI:
 
         # Verify initial state
         user = User.query.filter_by(email="test_fields@example.com").first()
-        assert user.email_consent == True
-        assert user.email_pref == True
+        assert user.email_consent is True
+        assert user.email_pref is True
         assert user.email_opt_out_date is None
 
         # Perform unsubscription
@@ -149,8 +148,8 @@ class TestUnsubscribeAPI:
 
         # Verify all fields were updated
         updated_user = User.query.filter_by(email="test_fields@example.com").first()
-        assert updated_user.email_consent == False
-        assert updated_user.email_pref == False
+        assert updated_user.email_consent is False
+        assert updated_user.email_pref is False
         assert updated_user.email_opt_out_date is not None
 
         # Check that opt_out_date is recent (within last minute)

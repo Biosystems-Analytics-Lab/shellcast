@@ -19,22 +19,14 @@ import {
   mapBoundingBox,
 } from "./utils.js";
 
-import {
-  initGrowingUnitTable,
-  initLeaseTable,
-  setTableSearchBoxes,
-} from "./table.js";
+import { initGrowingUnitTable, initLeaseTable, setTableSearchBoxes } from "./table.js";
 import {
   createShellCastPopupLayer,
   partnerAppLyrPopupContent,
   POPUP_CONTENT_ELE,
   popupContent,
 } from "./popup.js";
-import {
-  clusterMemberStyle,
-  clusterStyle,
-  generatePointsCircle,
-} from "./cluster.js";
+import { clusterMemberStyle, clusterStyle, generatePointsCircle } from "./cluster.js";
 import {
   CMU_LYR_NAME,
   INITIAL_ZOOM,
@@ -43,10 +35,7 @@ import {
   MARKER_SVG,
   PARTNER_APP_LYR_NAME,
 } from "./map_constants.js";
-import {
-  addPartnerSitesLegendControl,
-  addShellCastLegendControl,
-} from "./legends-dayselector.js";
+import { addPartnerSitesLegendControl, addShellCastLegendControl } from "./legends-dayselector.js";
 
 /** The ID of the HTML element that holds the map. */
 const MAP_ELE_ID = "closure-map";
@@ -109,22 +98,20 @@ async function createPartnerAppLayer(sourceData) {
  * EVENT: Add a checkbox to show/hide the partner sites layer.
  */
 function partnerLegendCheckbox() {
-  document
-    .getElementById(PARTNER_LEGEND_CHECKBOX_ELE_ID)
-    .addEventListener("change", function () {
-      let legendTb = document.getElementById(PARTNER_LEGEND_CHECKBOX_ELE_TABLE);
-      let isVisible = partnerLyr.getVisible();
-      if (this.checked) {
-        if (!isVisible) {
-          partnerLyr.setVisible(true);
-          legendTb.style.display = "block";
-        }
-      } else {
-        partnerLyr.setVisible(false);
-        legendTb.style.display = "none";
-        popupLyr.setPosition(undefined);
+  document.getElementById(PARTNER_LEGEND_CHECKBOX_ELE_ID).addEventListener("change", function () {
+    let legendTb = document.getElementById(PARTNER_LEGEND_CHECKBOX_ELE_TABLE);
+    let isVisible = partnerLyr.getVisible();
+    if (this.checked) {
+      if (!isVisible) {
+        partnerLyr.setVisible(true);
+        legendTb.style.display = "block";
       }
-    });
+    } else {
+      partnerLyr.setVisible(false);
+      legendTb.style.display = "none";
+      popupLyr.setPosition(undefined);
+    }
+  });
 }
 
 function setCmuPolyStyleByDay(day) {
@@ -187,9 +174,7 @@ async function initMap(growingUnitData) {
   map.addControl(shellcastLegendControl);
 
   // Add Partner Sites legend at the right
-  let partnerAppLegendControl = addPartnerSitesLegendControl(
-    PARTNER_LEGEND_ELE_ID,
-  );
+  let partnerAppLegendControl = addPartnerSitesLegendControl(PARTNER_LEGEND_ELE_ID);
   map.addControl(partnerAppLegendControl);
   // Add Partner Sites legend checkbox to turn on and off the layer
   partnerLegendCheckbox();
@@ -205,15 +190,12 @@ async function initMap(growingUnitData) {
   map.on("singleclick", function (evt) {
     let coordinate = evt.coordinate;
     let lyrName;
-    const feature = map.forEachFeatureAtPixel(
-      evt.pixel,
-      function (feature, layer) {
-        if (layer) {
-          lyrName = layer.get("name");
-        }
-        return feature;
-      },
-    );
+    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+      if (layer) {
+        lyrName = layer.get("name");
+      }
+      return feature;
+    });
 
     if (feature) {
       if (lyrName === PARTNER_APP_LYR_NAME) {
@@ -230,8 +212,7 @@ async function initMap(growingUnitData) {
           const resolution = map.getView().getResolution();
           if (
             view.getZoom() === view.getMaxZoom() ||
-            (ol.extent.getWidth(extent) < resolution &&
-              ol.extent.getHeight(extent) < resolution)
+            (ol.extent.getWidth(extent) < resolution && ol.extent.getHeight(extent) < resolution)
           ) {
             // Show an expanded view of the cluster members.
             clickFeature = clusterMembers[0];
@@ -249,12 +230,7 @@ async function initMap(growingUnitData) {
         let text = `<p>
                 <b>Today:</b> ${handleUndef(feature.get("prob_1d_perc"))}
                 </p>`;
-        POPUP_CONTENT_ELE.innerHTML = popupContent(
-          title,
-          siteName,
-          iconUrl,
-          text,
-        );
+        POPUP_CONTENT_ELE.innerHTML = popupContent(title, siteName, iconUrl, text);
       }
       popupLyr.setPosition(coordinate);
     } else {
@@ -316,15 +292,12 @@ function addLeaseDataToMap(pointFeatures) {
   map.on("click", function (evt) {
     let coordinate = evt.coordinate;
     let lyrName;
-    const feature = map.forEachFeatureAtPixel(
-      evt.pixel,
-      function (feature, layer) {
-        if (layer) {
-          lyrName = layer.get("name");
-        }
-        return feature;
-      },
-    );
+    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+      if (layer) {
+        lyrName = layer.get("name");
+      }
+      return feature;
+    });
     if (lyrName === LEASE_PNT_LYR_NAME) {
       let title = "Growing Unit Closure Probability";
       let iconUrl = "static/img/map/shellcast-popup.png";
@@ -332,12 +305,7 @@ function addLeaseDataToMap(pointFeatures) {
       let text = `<p>
                 <b>Today:</b> ${handleUndef(feature.get("prob_1d_perc"))}
                 </p>`;
-      POPUP_CONTENT_ELE.innerHTML = popupContent(
-        title,
-        siteName,
-        iconUrl,
-        text,
-      );
+      POPUP_CONTENT_ELE.innerHTML = popupContent(title, siteName, iconUrl, text);
       popupLyr.setPosition(coordinate);
     } else {
       popupLyr.setPosition(undefined);
@@ -362,8 +330,7 @@ function addLeaseDataToMap(pointFeatures) {
 
       // show the leases table and explanation
       document.getElementById("lease-table-div").style.display = "block";
-      document.getElementById("lease-table-explanation").style.display =
-        "block";
+      document.getElementById("lease-table-explanation").style.display = "block";
 
       // hide the "Create Account" message
       document.getElementById("create-account-message").style.display = "none";

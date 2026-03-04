@@ -85,12 +85,10 @@ async function authorizedFetch(url, options = {}) {
     });
 
     // init event listeners
-    document
-      .getElementById("account-dropdown-sign-out")
-      .addEventListener("click", async () => {
-        await signOut(auth);
-        location.reload();
-      });
+    document.getElementById("account-dropdown-sign-out").addEventListener("click", async () => {
+      await signOut(auth);
+      location.reload();
+    });
 
     // update sign-in url
     document.getElementById("account-sign-in").href =

@@ -10,7 +10,6 @@ from models import db
 from models.NotificationEvent import NotificationEvent
 from models.User import User
 from routes.authentication import cron_only
-from sqlalchemy import text
 
 # State identifier for NC
 STATE = "NC"
@@ -29,17 +28,16 @@ cron = Blueprint("cron", __name__)
 # =============================================================================
 
 
-def get_lease_probabilities_today():
+def _get_sms_opted_in_users():
     """
-    Call stored procedure using db.session
+    Return users who have opted in for SMS (text_pref + text_consent) and
+    have a non-null phone number.
     """
-    result = db.session.execute(text("CALL SelectUserLeaseProbsToday()"))
-
-    # Convert to list of dicts
-    column_names = result.keys()
-    data = [dict(zip(column_names, row)) for row in result.fetchall()]
-
-    return data
+    return (
+        User.query.filter_by(text_pref=True, text_consent=True, deleted=False)
+        .filter(User.phone_number.isnot(None))
+        .all()
+    )
 
 
 def notification_preprocess_sms():
@@ -48,12 +46,8 @@ def notification_preprocess_sms():
     and today's closure probabilities.
     Returns list of tuples: (user_id, phone_number)
     """
-    # Query users who have opted in for SMS notifications
-    users = (
-        User.query.filter_by(text_pref=True, text_consent=True, deleted=False)
-        .filter(User.phone_number.isnot(None))
-        .all()
-    )
+    # Users who have opted in for SMS notifications
+    users = _get_sms_opted_in_users()
 
     users_to_notify = []
 
@@ -76,6 +70,15 @@ def notification_preprocess_sms():
         f"Found {len(users_to_notify)} users to notify out of {len(users)} eligible users"
     )
     return users_to_notify
+
+
+def notification_preprocess_sms_for_test():
+    """
+    Same as notification_preprocess_sms but ignores closure probability.
+    Returns all opted-in users with a phone number (for testing notifications).
+    """
+    users = _get_sms_opted_in_users()
+    return [(u.id, u.phone_number) for u in users]
 
 
 def _send_bandwidth_message_single(to_number, message_text=None):
@@ -150,6 +153,78 @@ def _trigger_state_send(state):
     except Exception as e:
         logging.error("Failed to trigger %s send: %s", state, e)
         return None
+
+
+def _trigger_state_test_notifications(state, token):
+    """
+    Trigger the state app's test-notifications endpoint (ignore probability).
+    POSTs to /cron/test-notifications with X-Smoke-Test-Token so FL/SC run their test send.
+    Returns (status_code, response_json_or_none).
+    """
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "ncsu-shellcast")
+    url = f"https://shellcast-{state.lower()}-dot-{project_id}.appspot.com/cron/test-notifications"
+    try:
+        r = requests.post(
+            url,
+            headers={
+                "Content-Type": "application/json",
+                "X-Smoke-Test-Token": token,
+            },
+            timeout=120,
+        )
+        body = None
+        if r.headers.get("Content-Type", "").startswith("application/json"):
+            try:
+                body = r.json()
+            except Exception:
+                pass
+        logging.info("Triggered %s test-notifications: %s", state, r.status_code)
+        return (r.status_code, body)
+    except Exception as e:
+        logging.error("Failed to trigger %s test-notifications: %s", state, e)
+        return (None, None)
+
+
+@cron.route("/cron/test-notifications", methods=["GET", "POST"])
+def test_notifications():
+    """
+    Send SMS to all opted-in users regardless of closure probability (for testing).
+    Secured by SMOKE_TEXT_SECRET (?token= or X-Smoke-Test-Token header).
+    Add ?orchestrate=1 to have NC also trigger FL and SC test-notifications (tests orchestration).
+    """
+    secret = os.getenv("SMOKE_TEXT_SECRET")
+    if not secret:
+        logging.warning("test_notifications: SMOKE_TEXT_SECRET not set")
+        return {"ok": False, "error": "Test not configured"}, 503
+
+    token = request.args.get("token") or request.headers.get("X-Smoke-Test-Token")
+    if not token or not secrets.compare_digest(token, secret):
+        logging.warning("test_notifications: invalid or missing token")
+        return {"ok": False, "error": "Forbidden"}, 403
+
+    logging.info("Test notifications (ignore probability) - NC...")
+    users_to_notify = notification_preprocess_sms_for_test()
+    results = _send_bandwidth_message_bulk(users_to_notify)
+    nc_sent = sum(1 for r in results if r[2])
+    nc_failed = len(results) - nc_sent
+
+    response = {
+        "ok": True,
+        "NC": {"sent": nc_sent, "failed": nc_failed, "total": len(results)},
+        "message": f"Test: NC sent {nc_sent} SMS (no probability check).",
+    }
+
+    orchestrate = request.args.get("orchestrate", "").lower() in ("1", "true", "yes")
+    if orchestrate:
+        fl_code, fl_body = _trigger_state_test_notifications("FL", token)
+        sc_code, sc_body = _trigger_state_test_notifications("SC", token)
+        response["FL"] = {"status_code": fl_code, "body": fl_body}
+        response["SC"] = {"status_code": sc_code, "body": sc_body}
+        response["message"] = (
+            f"Test: NC sent {nc_sent}; orchestrated FL (HTTP {fl_code}) and SC (HTTP {sc_code})."
+        )
+
+    return response, 200
 
 
 @cron.route("/send-bandwidth-message", methods=["POST"])
@@ -309,3 +384,41 @@ def smoke_test_sms():
     except Exception as e:
         logging.exception("smoke_test_sms: failed to send SMS")
         return {"ok": False, "error": str(e)}, 500
+
+
+# =============================================================================
+# Orchestration smoke test (NC → FL, NC → SC; no NC send)
+# =============================================================================
+
+
+@cron.route("/cron/smoke-test-orchestration", methods=["GET", "POST"])
+def smoke_test_orchestration():
+    """
+    Test that NC can reach FL and SC send endpoints (same HTTP trigger as real cron).
+    Does not run NC's own SMS send; only calls _trigger_state_send("FL") and ("SC").
+    Secured by SMOKE_TEXT_SECRET (?token= or X-Smoke-Test-Token header).
+    FL/SC will run their full send when triggered (if they have eligible users, SMS are sent).
+    """
+    secret = os.getenv("SMOKE_TEXT_SECRET")
+    if not secret:
+        logging.warning("smoke_test_orchestration: SMOKE_TEXT_SECRET not set")
+        return {"ok": False, "error": "Smoke test not configured"}, 503
+
+    token = request.args.get("token") or request.headers.get("X-Smoke-Test-Token")
+    if not token or not secrets.compare_digest(token, secret):
+        logging.warning("smoke_test_orchestration: invalid or missing token")
+        return {"ok": False, "error": "Forbidden"}, 403
+
+    fl_status = _trigger_state_send("FL")
+    sc_status = _trigger_state_send("SC")
+
+    ok = fl_status is not None and sc_status is not None
+    return (
+        {
+            "ok": ok,
+            "FL": fl_status,
+            "SC": sc_status,
+            "message": "Orchestration test: NC triggered FL and SC (they run their full send).",
+        },
+        200,
+    )

@@ -2,6 +2,15 @@ import os
 import random
 import string
 
+from dotenv import load_dotenv
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+# Load local .env for development/testing, but allow explicit test defaults
+# below to take precedence when they set a value.
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ENV_PATH = os.path.join(_BASE_DIR, ".env")
+load_dotenv(dotenv_path=_ENV_PATH, override=False)
+
 # Set test environment before main (and createApp) are loaded
 os.environ.setdefault("HOST", "127.0.0.1")
 os.environ.setdefault("PORT", "3361")
@@ -11,6 +20,8 @@ os.environ.setdefault("EMAIL_SECRET_KEY", "test-email-secret-key")
 os.environ.setdefault("DB_USER", "test")
 os.environ.setdefault("DB_PASS", "test")
 os.environ.setdefault("DB_NAME", "shellcast_nc")
+os.environ.setdefault("DB_HOST", "127.0.0.1")
+os.environ.setdefault("DB_PORT", "3306")
 os.environ.setdefault("DB_UNIX_SOCKET_PATH_PREFIX", "./cloudsql/")
 os.environ.setdefault("CLOUD_SQL_INSTANCE_NAME", "test:us-east1:test")
 os.environ.setdefault("DB_POOL_SIZE", "5")
@@ -18,6 +29,7 @@ os.environ.setdefault("DB_MAX_OVERFLOW", "2")
 os.environ.setdefault("DB_POOL_TIMEOUT", "30")
 os.environ.setdefault("DB_POOL_RECYCLE", "1800")
 os.environ.setdefault("SQLALCHEMY_DATABASE_URI", "sqlite:///test_shellcast.db")
+os.environ.setdefault("NC_LOG_SECRET", "test-nc-log-secret")
 
 import boto3
 import pytest
@@ -27,7 +39,7 @@ from firebase_admin.auth import (
     InvalidIdTokenError,
     UserNotFoundError,
 )
-from main import createApp
+from main import create_app
 from models import db as _db
 
 RNG_SEED = 8375
@@ -35,7 +47,7 @@ RNG_SEED = 8375
 
 # will be run once at the beginning of the testing session
 @pytest.fixture(scope="session")
-def monkeyPatchBotoClient():
+def monkeypatch_boto_client():
     emailsSent = {}
 
     class MockClient:
@@ -46,7 +58,7 @@ def monkeyPatchBotoClient():
             address = kwargs["Destination"]["ToAddresses"][0]
             subject = kwargs["Message"]["Subject"]["Data"]
             body = kwargs["Message"]["Body"]["Text"]["Data"]
-            if emailsSent.get(address) == None:
+            if emailsSent.get(address) is None:
                 emailsSent[address] = [{"subject": subject, "body": body}]
             else:
                 emailsSent[address].append({"subject": subject, "body": body})
@@ -65,7 +77,13 @@ def monkeyPatchBotoClient():
 # will be run once at the beginning of the testing session
 @pytest.fixture(scope="session")
 def app():
-    return createApp()
+    app = create_app()
+    ctx = app.app_context()
+    ctx.push()
+    try:
+        yield app
+    finally:
+        ctx.pop()
 
 
 # will be run once at the beginning of the testing session
@@ -90,12 +108,12 @@ def db(app):
 
 # will be called before every test function automatically
 @pytest.fixture(scope="function", autouse=True)
-def dbSession(db):
+def db_session(db):
     # setup
     connection = db.engine.connect()
     transaction = connection.begin()
-    options = dict(bind=connection, binds={})
-    session = db.create_scoped_session(options=options)
+    session_factory = sessionmaker(bind=connection)
+    session = scoped_session(session_factory)
     db.session = session
 
     # keeps track of the tables that are used during this session
@@ -131,7 +149,7 @@ def dbSession(db):
 
 
 @pytest.fixture(scope="function", autouse=True)
-def addMockFbUser():
+def add_mock_fb_user():
     """
     Monkey patches Firebase token verification and yields a function that can
     be used to create mock Firebase users and their ID tokens.
@@ -176,7 +194,7 @@ def addMockFbUser():
 
 
 @pytest.fixture(scope="function", autouse=True)
-def genRandomString():
+def gen_random_string():
     random.seed(RNG_SEED)
 
     def generator(chars=string.printable, length=10):

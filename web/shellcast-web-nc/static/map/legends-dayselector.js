@@ -24,9 +24,7 @@ class ShellCastLegend {
     const legend = document.createElement("div");
     legend.id = "shellcast-legend";
     for (let step of LEGEND_SCALE) {
-      const textDiv = strToEl(
-        `<div id="shellcast-legend-txt">${step.text}</div>`,
-      );
+      const textDiv = strToEl(`<div id="shellcast-legend-txt">${step.text}</div>`);
       legend.appendChild(textDiv);
       const colorDiv = document.createElement("div");
       colorDiv.id = "shellcast-legend-color";

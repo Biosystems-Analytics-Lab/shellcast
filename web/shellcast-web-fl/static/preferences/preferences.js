@@ -333,26 +333,22 @@ async function handleSignedInUser() {
   initNotificationForm({
     authorizedFetch,
     getProfileInfo: () => profileInfo,
-    setProfileInfo: (v) => { profileInfo = v; },
+    setProfileInfo: (v) => {
+      profileInfo = v;
+    },
     getSavedProfileData: () => savedProfileData,
-    setSavedProfileData: (v) => { savedProfileData = v; },
+    setSavedProfileData: (v) => {
+      savedProfileData = v;
+    },
   });
 
   // setup delete account button
-  document
-    .getElementById("confirm-account-deletion-btn")
-    .addEventListener("click", deleteAccount);
+  document.getElementById("confirm-account-deletion-btn").addEventListener("click", deleteAccount);
 
   // setup lease search bar
-  document
-    .getElementById("lease-search-text-input")
-    .addEventListener("input", searchLeasesOnDelay);
-  document
-    .getElementById("lease-search-btn")
-    .addEventListener("click", searchLeases);
-  document
-    .getElementById("lease-clear-btn")
-    .addEventListener("click", clearLeaseSearch);
+  document.getElementById("lease-search-text-input").addEventListener("input", searchLeasesOnDelay);
+  document.getElementById("lease-search-btn").addEventListener("click", searchLeases);
+  document.getElementById("lease-clear-btn").addEventListener("click", clearLeaseSearch);
 
   // get user's leases
   try {

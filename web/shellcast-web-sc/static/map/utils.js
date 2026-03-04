@@ -246,13 +246,7 @@ export function mapBoundingBox(map) {
   return extent;
 }
 
-export function addAllMapLayers(
-  mapEl,
-  lyrList,
-  popupLyr,
-  mapCenter,
-  zoomLevel,
-) {
+export function addAllMapLayers(mapEl, lyrList, popupLyr, mapCenter, zoomLevel) {
   return new ol.Map({
     target: mapEl,
     layers: lyrList,

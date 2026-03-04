@@ -18,7 +18,7 @@ def ensure_user_exists(fb_user_info):
 
     # check if the user with this Firebase UID already exists
     user = User.query.filter_by(firebase_uid=fb_uid).first()
-    if user != None:
+    if user is not None:
         return user
 
     # otherwise we need to create a new user

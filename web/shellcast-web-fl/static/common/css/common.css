@@ -54,8 +54,7 @@ body.sticky-footer-page .content {
 }
 
 .text-bubble pre {
-  font-family: Univers, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+  font-family: Univers, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 1rem;
   margin-bottom: 0;
 }

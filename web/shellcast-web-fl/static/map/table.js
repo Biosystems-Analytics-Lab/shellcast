@@ -10,9 +10,7 @@ export function setTableSearchBoxes() {
   const leaseTableSearchBox = document.querySelector("#lease-table-div input");
   leaseTableSearchBox.placeholder = "Search leases";
   leaseTableSearchBox.title = "Search leases table";
-  const growingUnitTableSearchBox = document.querySelector(
-    "#growing-unit-table-div input",
-  );
+  const growingUnitTableSearchBox = document.querySelector("#growing-unit-table-div input");
   growingUnitTableSearchBox.placeholder = "Search growing units";
   growingUnitTableSearchBox.title = "Search growing units table";
 }

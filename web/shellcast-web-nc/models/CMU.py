@@ -11,8 +11,8 @@ class CMU(db.Model):
     created = Column(DateTime, server_default=functions.now())
     # updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
-    def asDict(self):
+    def as_dict(self):
         return {"cmu_name": self.cmu_name}
 
     def __repr__(self):
-        return "<CMU: {}>".format(self.cmu_name)
+        return f"<CMU: {self.cmu_name}>"

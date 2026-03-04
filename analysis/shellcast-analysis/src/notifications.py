@@ -124,7 +124,7 @@ class Cipher:
         self.key_file = os.path.join(
             os.path.dirname(config.token_file), "encryption.key"
         )
-        logger.info(f"Initialized Cipher with key file")
+        logger.info("Initialized Cipher with key file")
 
     def get_or_create_encryption_key(self):
         """Get the encryption key from file or create a new one."""

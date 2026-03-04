@@ -22,7 +22,7 @@ CREATE TABLE users (
     text_verification_sent boolean NOT NULL DEFAULT false,
 	deleted boolean DEFAULT false,
 	created datetime DEFAULT NOW(),
-	updated datetime DEFAULT NOW() ON UPDATE NOW(),
+	updated datetime DEFAULT NOW() ON UPDATE NOW()
 );
 
 -- Stores information about all potential leases retrieved from the NCDMF API.

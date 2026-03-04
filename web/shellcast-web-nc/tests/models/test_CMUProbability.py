@@ -1,8 +1,7 @@
-import pytest
 from models.CMUProbability import CMUProbability
 
 
-def test_valid(dbSession):
+def test_valid(db_session):
     # add some probabilities to the database
     probs = [
         CMUProbability(cmu_name="U001", prob_1d_perc=60),
@@ -11,8 +10,8 @@ def test_valid(dbSession):
         CMUProbability(cmu_name="U004", prob_1d_perc=90),
     ]
 
-    dbSession.add_all(probs)
-    dbSession.commit()
+    db_session.add_all(probs)
+    db_session.commit()
 
     assert probs[0].id == 1
     assert probs[1].id == 2
@@ -33,12 +32,12 @@ def test_asDict():
         cmu_name="U004", prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80
     )
 
-    dictForm = prob.asDict()
+    dict_form = prob.as_dict()
 
-    assert dictForm["cmu_name"] == prob.cmu_name
-    assert dictForm["prob_1d_perc"] == prob.prob_1d_perc
-    assert dictForm["prob_2d_perc"] == prob.prob_2d_perc
-    assert dictForm["prob_3d_perc"] == prob.prob_3d_perc
+    assert dict_form["cmu_name"] == prob.cmu_name
+    assert dict_form["prob_1d_perc"] == prob.prob_1d_perc
+    assert dict_form["prob_2d_perc"] == prob.prob_2d_perc
+    assert dict_form["prob_3d_perc"] == prob.prob_3d_perc
 
 
 def test_repr():
@@ -46,10 +45,10 @@ def test_repr():
         cmu_name="U004", prob_1d_perc=60, prob_2d_perc=70, prob_3d_perc=80
     )
 
-    stringForm = prob.__repr__()
+    string_form = prob.__repr__()
 
-    assert "CMUProbability" in stringForm
-    assert str(prob.cmu_name) in stringForm
-    assert str(prob.prob_1d_perc) in stringForm
-    assert str(prob.prob_2d_perc) in stringForm
-    assert str(prob.prob_3d_perc) in stringForm
+    assert "CMUProbability" in string_form
+    assert str(prob.cmu_name) in string_form
+    assert str(prob.prob_1d_perc) in string_form
+    assert str(prob.prob_2d_perc) in string_form
+    assert str(prob.prob_3d_perc) in string_form

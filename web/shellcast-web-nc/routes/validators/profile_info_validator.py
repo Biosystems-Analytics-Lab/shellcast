@@ -97,7 +97,7 @@ class ProfileInfoValidator:
         try:
             validated_email = validate_email(self.email)
             # Update with normalized form
-            self.email = validated_email.email
+            self.email = validated_email.normalized
         except EmailNotValidError as e:
             print(f"Email validation error: {e}")
             return self.add_error("Email is not valid.")
