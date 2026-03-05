@@ -227,12 +227,13 @@ def test_notifications():
     return response, 200
 
 
-@cron.route("/send-bandwidth-message", methods=["POST"])
+@cron.route("/send-bandwidth-message", methods=["GET", "POST"])
 @cron_only
 def send_bandwidth_message():
     """
     Cron endpoint: run NC SMS send, then trigger FL and SC sends.
     GAE cron hits only NC; NC orchestrates FL and SC via HTTP.
+    Accepts GET (App Engine cron sends GET) and POST (FL/SC triggers).
     """
     logging.info("Starting Bandwidth SMS notification send (NC + FL + SC)...")
     t0 = time.perf_counter_ns()

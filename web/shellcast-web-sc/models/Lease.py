@@ -1,5 +1,5 @@
 from models import db
-from sqlalchemy import Column, DateTime, Float, String
+from sqlalchemy import Column, DateTime, Float, Numeric, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import functions
 
@@ -10,10 +10,10 @@ class Lease(db.Model):
     lease_id = Column(String(20), primary_key=True)
     grow_area_name = Column(String(3))
     grow_area_desc = Column(String(50))
-    cmu_name = Column(String(10), nullable=False)
-    rainfall_thresh_in = Column(Float)
-    latitude = Column(Float)
-    longitude = Column(Float)
+    cmu_name = Column(String(10))
+    rainfall_thresh_in = Column(Numeric(3, 2), nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
     created = Column(DateTime, server_default=functions.now())
     updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
 
@@ -31,6 +31,4 @@ class Lease(db.Model):
         }
 
     def __repr__(self):
-        return "<Lease: {}, {}, {}>".format(
-            self.lease_id, self.grow_area_name, self.cmu_name
-        )
+        return f"<Lease: {self.lease_id}, {self.grow_area_name}, {self.cmu_name}>"

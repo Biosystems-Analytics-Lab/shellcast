@@ -1,16 +1,19 @@
 from models import db
-from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, SmallInteger, String
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import functions
 
 
 class CMUProbability(db.Model):
     __tablename__ = "cmu_probabilities"
     id = Column(Integer, primary_key=True)
-    lease_id = Column(String(10), nullable=False)
-    prob_1d_perc = Column(Integer)
-    prob_2d_perc = Column(Integer)
-    prob_3d_perc = Column(Integer)
+    lease_id = Column(String(20), ForeignKey("leases.lease_id"), nullable=False)
+    prob_1d_perc = Column(SmallInteger)
+    prob_2d_perc = Column(SmallInteger)
+    prob_3d_perc = Column(SmallInteger)
     created = Column(DateTime, server_default=functions.now())
+
+    lease = relationship("Lease", backref="cmu_probabilities")
 
     def as_dict(self):
         return {
@@ -21,6 +24,4 @@ class CMUProbability(db.Model):
         }
 
     def __repr__(self):
-        return "<CMUProbability: {}, {}, {}, {}>".format(
-            self.lease_id, self.prob_1d_perc, self.prob_2d_perc, self.prob_3d_perc
-        )
+        return f"<CMUProbability: {self.lease_id}, {self.prob_1d_perc}, {self.prob_2d_perc}, {self.prob_3d_perc}>"

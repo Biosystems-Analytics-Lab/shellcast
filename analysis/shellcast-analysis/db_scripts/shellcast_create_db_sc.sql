@@ -13,7 +13,7 @@ CREATE TABLE users (
     email_consent boolean NOT NULL DEFAULT false,
 	text_pref boolean NOT NULL DEFAULT false,
     text_consent boolean NOT NULL DEFAULT false,
-	prob_pref tinyint NOT NULL DEFAULT 75,
+	prob_pref tinyint NOT NULL DEFAULT 3,
     email_opt_in_date datetime NULL,
     text_opt_in_date datetime NULL,
     email_opt_out_date datetime NULL,
@@ -52,17 +52,17 @@ CREATE TABLE user_leases (
 );
 
 -- Stores a log of all notifications that are sent to users.
-CREATE TABLE notification_log (
-	id int NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-	user_id int NOT NULL,
-	address varchar(50) NOT NULL,
-	notification_text text(10000) NOT NULL,
-	notification_type varchar(10) NOT NULL,
-	send_success boolean DEFAULT true,
-	response_text text(10000) NULL,
-	created datetime DEFAULT NOW(),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
+-- CREATE TABLE notification_log (
+-- 	id int NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+-- 	user_id int NOT NULL,
+-- 	address varchar(50) NOT NULL,
+-- 	notification_text text(10000) NOT NULL,
+-- 	notification_type varchar(10) NOT NULL,
+-- 	send_success boolean DEFAULT true,
+-- 	response_text text(10000) NULL,
+-- 	created datetime DEFAULT NOW(),
+--     FOREIGN KEY (user_id) REFERENCES users(id)
+-- );
 
 -- Stores the growing units.
 -- CREATE TABLE cmus (

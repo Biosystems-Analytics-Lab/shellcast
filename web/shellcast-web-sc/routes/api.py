@@ -118,9 +118,9 @@ def delete_account(user):
         # delete the user from Firebase
         auth.delete_user(user.firebase_uid)
 
-        # clear PII
+        # clear PII (email is NOT NULL in DB, so use empty string)
         user.firebase_uid = None
-        user.email = None
+        user.email = ""
         user.phone_number = None
 
         # clear preferences

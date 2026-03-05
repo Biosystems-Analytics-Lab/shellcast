@@ -21,20 +21,15 @@ class UserLease(db.Model):
     leases = relationship("Lease", back_populates="user_leases")
 
     def as_dict(self):
+        lease = self.leases
         return {
             "lease_id": self.lease_id,
-            "grow_area_name": self.leases.grow_area_name
-            if len(self.leases.grow_area_name) > 0
-            else "N/A",
-            "grow_area_desc": self.leases.grow_area_desc
-            if len(self.leases.grow_area_desc) > 0
-            else "N/A",
-            "cmu_name": self.leases.cmu_name
-            if len(self.leases.cmu_name) > 0
-            else "N/A",
-            "rainfall_thresh_in": self.leases.rainfall_thresh_in,
-            "latitude": self.leases.latitude,
-            "longitude": self.leases.longitude,
+            "grow_area_name": (lease.grow_area_name or "N/A") if lease else "N/A",
+            "grow_area_desc": (lease.grow_area_desc or "N/A") if lease else "N/A",
+            "cmu_name": (lease.cmu_name or "N/A") if lease else "N/A",
+            "rainfall_thresh_in": lease.rainfall_thresh_in if lease else None,
+            "latitude": lease.latitude if lease else None,
+            "longitude": lease.longitude if lease else None,
             "deleted": self.deleted,
         }
 
@@ -48,15 +43,11 @@ class UserLease(db.Model):
         return lease_prob
 
     def __repr__(self):
-        return "<UserLease: {}, {}, {}, {}, {}, {}>".format(
-            self.user_id,
-            self.lease_id,
-            self.leases.grow_area_name
-            if len(self.leases.grow_area_name) > 0
-            else "N/A",
-            self.leases.grow_area_desc
-            if len(self.leases.grow_area_desc) > 0
-            else "N/A",
-            self.leases.cmu_name if len(self.leases.cmu_name) > 0 else "N/A",
-            self.leases.rainfall_thresh_in,
+        lease = self.leases
+        ga = lease.grow_area_name or "N/A" if lease else "N/A"
+        gd = lease.grow_area_desc or "N/A" if lease else "N/A"
+        cmu = lease.cmu_name or "N/A" if lease else "N/A"
+        prob = lease.rainfall_thresh_in if lease else None
+        return (
+            f"<UserLease: {self.user_id}, {self.lease_id}, {ga}, {gd}, {cmu}, {prob}>"
         )
