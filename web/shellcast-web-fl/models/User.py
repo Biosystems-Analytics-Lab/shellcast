@@ -1,5 +1,4 @@
 from models import db
-from models.Notification import Notification
 from models.UserLease import UserLease
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
@@ -66,11 +65,8 @@ class User(db.Model):
     leases = relationship(
         "UserLease", order_by=UserLease.created, back_populates="user"
     )
-    notifications = relationship(
-        "Notification", order_by=Notification.created, back_populates="user"
-    )
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "firebase_uid": self.firebase_uid,
             "phone_number": self.phone_number,

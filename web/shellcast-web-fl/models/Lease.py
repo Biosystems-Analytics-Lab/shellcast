@@ -20,7 +20,7 @@ class Lease(db.Model):
     cmus = relationship("CMU", back_populates="leases")
     user_leases = relationship("UserLease", back_populates="leases")
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "lease_id": self.lease_id,
             "cmu_id": self.cmu_id,
@@ -35,9 +35,10 @@ class Lease(db.Model):
         }
 
     def __repr__(self):
+        sh_id = self.cmus.sh_id if self.cmus is not None else None
         return (
             "<Lease: "
-            f"{self.lease_id}, {self.cmu_id}, {self.sh_id},"
+            f"{self.lease_id}, {self.cmu_id}, {sh_id}, "
             f"{self.parcel_name}, {self.waterbody}, {self.grow_area_type}, "
-            f"{self.latitude}, {self.latitude}>"
+            f"{self.latitude}, {self.longitude}>"
         )

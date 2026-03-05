@@ -13,7 +13,7 @@ class CMUProbability(db.Model):
 
     cmus = db.relationship("CMU", back_populates="cmu_probabilities")
 
-    def asDict(self):
+    def as_dict(self):
         return {
             "cmu_id": self.cmu_id,
             "sh_id": self.cmus.sh_id,
