@@ -41,9 +41,9 @@ if RUNNING_ON_GAE:
 firebase_admin.initialize_app()
 
 
-def create_app():
+def create_app(config=None):
     """
-    Returns a Flask app configured with environment variables (.env if present, else app.yaml on GAE).
+    Returns a Flask app configured from env (or from config object when provided for tests).
     """
     app = Flask(__name__)
 
@@ -56,112 +56,121 @@ def create_app():
         ".run.app",  # Cloud Run if used as proxy
     ]
 
-    # Provide safe local defaults for development if not set
-    os.environ.setdefault("HOST", "127.0.0.1")
-    os.environ.setdefault("PORT", "8080")
-    os.environ.setdefault("SECRET_KEY", "dev-secret-key")
-
-    # Validate required environment variables
-    # DB_HOST / DB_PORT are required for local TCP connections.
-    # CLOUD_SQL_INSTANCE_NAME is required on GAE for Unix socket connections.
-    required_vars = [
-        "HOST",
-        "PORT",
-        "SECRET_KEY",
-        "EMAIL_SECRET_KEY",
-        "DB_USER",
-        "DB_PASS",
-        "DB_NAME",
-        "DB_POOL_SIZE",
-        "DB_MAX_OVERFLOW",
-        "DB_POOL_TIMEOUT",
-        "DB_POOL_RECYCLE",
-    ]
-    if RUNNING_ON_GAE:
-        required_vars.append("CLOUD_SQL_INSTANCE_NAME")
+    if config is not None:
+        # Test/config-based setup
+        app.config.from_object(config)
+        uri = getattr(config, "SQLALCHEMY_DATABASE_URI", None)
+        if callable(uri):
+            uri = config.SQLALCHEMY_DATABASE_URI
+        if uri is not None:
+            app.config["SQLALCHEMY_DATABASE_URI"] = uri
     else:
-        required_vars.extend(["DB_HOST", "DB_PORT"])
+        # Provide safe local defaults for development if not set
+        os.environ.setdefault("HOST", "127.0.0.1")
+        os.environ.setdefault("PORT", "8080")
+        os.environ.setdefault("SECRET_KEY", "dev-secret-key")
 
-    missing_vars = [var for var in required_vars if not os.environ.get(var)]
-    if missing_vars:
-        error_msg = (
-            f"Missing required environment variables: {', '.join(missing_vars)}\n"
-        )
-        error_msg += "Please set these variables in your .env file or environment."
-        print(f"ERROR: {error_msg}", file=sys.stderr)
-        raise ValueError(error_msg)
-
-    # Configure Flask app directly from environment variables
-    app.config.update(
-        {
-            # Flask Configuration
-            "DEBUG": os.environ.get("DEBUG", "false").lower() == "true",
-            "TESTING": os.environ.get("TESTING", "false").lower() == "true",
-            "SECRET_KEY": os.environ.get("SECRET_KEY"),
-            "EMAIL_SECRET_KEY": os.environ.get("EMAIL_SECRET_KEY"),
-            # Database Configuration
-            "DB_HOST": os.environ.get("DB_HOST"),
-            "DB_PORT": os.environ.get("DB_PORT"),
-            "DB_USER": os.environ.get("DB_USER"),
-            "DB_PASS": os.environ.get("DB_PASS"),
-            "DB_NAME": os.environ.get("DB_NAME"),
-            # Cloud SQL Configuration
-            "DB_UNIX_SOCKET_PATH_PREFIX": os.environ.get(
-                "DB_UNIX_SOCKET_PATH_PREFIX", "/cloudsql/"
-            ),
-            "CLOUD_SQL_INSTANCE_NAME": os.environ.get("CLOUD_SQL_INSTANCE_NAME"),
-            # SQLAlchemy Configuration
-            "SQLALCHEMY_TRACK_MODIFICATIONS": os.environ.get(
-                "SQLALCHEMY_TRACK_MODIFICATIONS", "false"
-            ).lower()
-            == "true",
-            "SQLALCHEMY_ENGINE_OPTIONS": {
-                "pool_size": int(os.environ.get("DB_POOL_SIZE")),
-                "max_overflow": int(os.environ.get("DB_MAX_OVERFLOW")),
-                "pool_timeout": int(os.environ.get("DB_POOL_TIMEOUT")),
-                "pool_recycle": int(os.environ.get("DB_POOL_RECYCLE")),
-            },
-        }
-    )
-
-    # Database URI: use env override (e.g. tests with sqlite) or build from settings.
-    # - On GAE: connect via Unix socket /cloudsql/<instance_name>
-    # - Local dev: connect via TCP host:port from .env (no proxy required if DB is reachable)
-    if os.environ.get("SQLALCHEMY_DATABASE_URI"):
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-            "SQLALCHEMY_DATABASE_URI"
-        )
-    else:
+        # Validate required environment variables
+        # DB_HOST / DB_PORT are required for local TCP connections.
+        # CLOUD_SQL_INSTANCE_NAME is required on GAE for Unix socket connections.
+        required_vars = [
+            "HOST",
+            "PORT",
+            "SECRET_KEY",
+            "EMAIL_SECRET_KEY",
+            "DB_USER",
+            "DB_PASS",
+            "DB_NAME",
+            "DB_POOL_SIZE",
+            "DB_MAX_OVERFLOW",
+            "DB_POOL_TIMEOUT",
+            "DB_POOL_RECYCLE",
+        ]
         if RUNNING_ON_GAE:
-            # Use Unix socket provided by App Engine standard.
-            socket_path = "{}{}".format(
-                app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
-                app.config["CLOUD_SQL_INSTANCE_NAME"],
+            required_vars.append("CLOUD_SQL_INSTANCE_NAME")
+        else:
+            required_vars.extend(["DB_HOST", "DB_PORT"])
+
+        missing_vars = [var for var in required_vars if not os.environ.get(var)]
+        if missing_vars:
+            error_msg = (
+                f"Missing required environment variables: {', '.join(missing_vars)}\n"
             )
-            app.config["SQLALCHEMY_DATABASE_URI"] = (
-                "mysql+pymysql://{}:{}@/{}?unix_socket={}&ssl_disabled=true".format(
-                    app.config["DB_USER"],
-                    app.config["DB_PASS"],
-                    app.config["DB_NAME"],
-                    socket_path,
-                )
+            error_msg += "Please set these variables in your .env file or environment."
+            print(f"ERROR: {error_msg}", file=sys.stderr)
+            raise ValueError(error_msg)
+
+        # Configure Flask app directly from environment variables
+        app.config.update(
+            {
+                # Flask Configuration
+                "DEBUG": os.environ.get("DEBUG", "false").lower() == "true",
+                "TESTING": os.environ.get("TESTING", "false").lower() == "true",
+                "SECRET_KEY": os.environ.get("SECRET_KEY"),
+                "EMAIL_SECRET_KEY": os.environ.get("EMAIL_SECRET_KEY"),
+                # Database Configuration
+                "DB_HOST": os.environ.get("DB_HOST"),
+                "DB_PORT": os.environ.get("DB_PORT"),
+                "DB_USER": os.environ.get("DB_USER"),
+                "DB_PASS": os.environ.get("DB_PASS"),
+                "DB_NAME": os.environ.get("DB_NAME"),
+                # Cloud SQL Configuration
+                "DB_UNIX_SOCKET_PATH_PREFIX": os.environ.get(
+                    "DB_UNIX_SOCKET_PATH_PREFIX", "/cloudsql/"
+                ),
+                "CLOUD_SQL_INSTANCE_NAME": os.environ.get("CLOUD_SQL_INSTANCE_NAME"),
+                # SQLAlchemy Configuration
+                "SQLALCHEMY_TRACK_MODIFICATIONS": os.environ.get(
+                    "SQLALCHEMY_TRACK_MODIFICATIONS", "false"
+                ).lower()
+                == "true",
+                "SQLALCHEMY_ENGINE_OPTIONS": {
+                    "pool_size": int(os.environ.get("DB_POOL_SIZE")),
+                    "max_overflow": int(os.environ.get("DB_MAX_OVERFLOW")),
+                    "pool_timeout": int(os.environ.get("DB_POOL_TIMEOUT")),
+                    "pool_recycle": int(os.environ.get("DB_POOL_RECYCLE")),
+                },
+            }
+        )
+
+        # Database URI: use env override (e.g. tests with sqlite) or build from settings.
+        # - On GAE: connect via Unix socket /cloudsql/<instance_name>
+        # - Local dev: connect via TCP host:port from .env (no proxy required if DB is reachable)
+        if os.environ.get("SQLALCHEMY_DATABASE_URI"):
+            app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+                "SQLALCHEMY_DATABASE_URI"
             )
         else:
-            # Local TCP connection (DB_HOST:DB_PORT) – uses values from .env
-            host = app.config["DB_HOST"]
-            port = app.config["DB_PORT"]
-            if port:
-                hostport = f"{host}:{port}"
-            else:
-                hostport = host
-            app.config["SQLALCHEMY_DATABASE_URI"] = (
-                "mysql+pymysql://{}:{}@{}/{}".format(
-                    app.config["DB_USER"],
-                    app.config["DB_PASS"],
-                    hostport,
-                    app.config["DB_NAME"],
+            if RUNNING_ON_GAE:
+                # Use Unix socket provided by App Engine standard.
+                socket_path = "{}{}".format(
+                    app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
+                    app.config["CLOUD_SQL_INSTANCE_NAME"],
                 )
-            )
+                app.config["SQLALCHEMY_DATABASE_URI"] = (
+                    "mysql+pymysql://{}:{}@/{}?unix_socket={}&ssl_disabled=true".format(
+                        app.config["DB_USER"],
+                        app.config["DB_PASS"],
+                        app.config["DB_NAME"],
+                        socket_path,
+                    )
+                )
+            else:
+                # Local TCP connection (DB_HOST:DB_PORT) – uses values from .env
+                host = app.config["DB_HOST"]
+                port = app.config["DB_PORT"]
+                if port:
+                    hostport = f"{host}:{port}"
+                else:
+                    hostport = host
+                app.config["SQLALCHEMY_DATABASE_URI"] = (
+                    "mysql+pymysql://{}:{}@{}/{}".format(
+                        app.config["DB_USER"],
+                        app.config["DB_PASS"],
+                        hostport,
+                        app.config["DB_NAME"],
+                    )
+                )
 
     # Set Gmail redirect URI if provided
     app.config["GMAIL_REDIRECT_URI"] = os.environ.get("GMAIL_REDIRECT_URI")
@@ -226,6 +235,9 @@ def create_app():
 
     return app
 
+
+# Alias for tests that use createApp(config)
+createApp = create_app
 
 app = None
 

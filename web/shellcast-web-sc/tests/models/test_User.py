@@ -46,7 +46,7 @@ class TestUserModel:
         # Verify defaults
         assert user.email_pref is False
         assert user.text_pref is False
-        assert user.prob_pref == 3
+        assert user.prob_pref == User.DEFAULT_prob_pref  # 75 for SC
         assert user.email_consent is False
         assert user.text_consent is False
         assert user.deleted is False
@@ -183,7 +183,7 @@ class TestUserModel:
         db_session.add(user)
         db_session.commit()
 
-        user_dict = user.asDict()
+        user_dict = user.as_dict()
 
         # Check all expected fields
         assert user_dict["firebase_uid"] == "test_uid_dict"
@@ -191,7 +191,7 @@ class TestUserModel:
         assert user_dict["phone_number"] == "9876543210"
         assert user_dict["email_pref"] is True
         assert user_dict["text_pref"] is False
-        assert user_dict["prob_pref"] == 4
+        assert user_dict["prob_pref"] == 4  # custom override
         assert user_dict["email_consent"] is True
         assert user_dict["text_consent"] is False
         assert user_dict["email_verification_sent"] is False
@@ -206,11 +206,7 @@ class TestUserModel:
 
         # Check that relationships are accessible (even if empty)
         assert hasattr(user, "leases")
-        assert hasattr(user, "notifications")
-
-        # Initially should be empty lists
         assert len(user.leases) == 0
-        assert len(user.notifications) == 0
 
     def test_user_repr_method(self, db_session):
         """Test the __repr__ method."""

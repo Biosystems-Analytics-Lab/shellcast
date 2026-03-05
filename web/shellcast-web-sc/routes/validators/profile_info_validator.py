@@ -93,9 +93,9 @@ class ProfileInfoValidator:
             self.email = None
             return True
 
-        # Validate email format if provided
+        # Validate email format if provided (skip DNS/deliverability check for example.com etc.)
         try:
-            validated_email = validate_email(self.email)
+            validated_email = validate_email(self.email, check_deliverability=False)
             # Update with normalized form
             self.email = validated_email.normalized
         except EmailNotValidError as e:

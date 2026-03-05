@@ -52,3 +52,10 @@ package.json
 package-lock.json
 scripts
 static/scripts
+
+.pytest_cache
+.ruff_cache
+.env
+node_modules
+app.yaml.template
+env.template
