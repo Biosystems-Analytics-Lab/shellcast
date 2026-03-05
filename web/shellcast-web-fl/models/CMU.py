@@ -20,7 +20,7 @@ class CMU(db.Model):
     leases = relationship("Lease", back_populates="cmus")
 
     # updated = Column(DateTime, server_default=functions.now(), onupdate=functions.now())
-    def asDict(self):
+    def as_dict(self):
         return {
             "id": self.id,
             "sh_id": self.sh_id,

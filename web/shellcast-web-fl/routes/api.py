@@ -122,25 +122,18 @@ def get_growing_unit_probabilities():
     """
     Returns the most recent closure probabilities for each growing unit.
     """
-    # TODO make sure this returns one (and only one) closure probability for each growing unit
-    latest_date = (
-        db.session.query(CMUProbability)
-        .order_by(CMUProbability.created.desc())
-        .first()
-        .created
-    )
-    count = (
-        db.session.query(CMUProbability)
-        .filter(CMUProbability.created == latest_date)
-        .count()
-    )
-    print(count)
+    # If no probabilities, return empty dict.
     growing_unit_probs = (
-        db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).limit(count)
+        db.session.query(CMUProbability).order_by(CMUProbability.id.desc()).all()
     )
+    if not growing_unit_probs:
+        return jsonify({})
+
     growing_unit_probs_as_dicts = {}
+    # Iterate newest-first; keep the first (latest) record per cmu_id.
     for unit in growing_unit_probs:
-        growing_unit_probs_as_dicts[unit.cmu_id] = unit.asDict()
+        if unit.cmu_id not in growing_unit_probs_as_dicts:
+            growing_unit_probs_as_dicts[unit.cmu_id] = unit.as_dict()
 
     return jsonify(growing_unit_probs_as_dicts)
 

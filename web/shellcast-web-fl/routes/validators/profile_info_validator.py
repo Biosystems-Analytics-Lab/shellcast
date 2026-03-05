@@ -52,7 +52,8 @@ class ProfileInfoValidator:
                 "An email address is required when email notifications are enabled."
             )
         try:
-            validated_email = validate_email(self.email)
+            # Disable deliverability/DNS checks so example.com and test domains are allowed.
+            validated_email = validate_email(self.email, check_deliverability=False)
             self.email = validated_email.normalized  # Update with the normalized form.
         except EmailNotValidError as e:
             print(str(e))

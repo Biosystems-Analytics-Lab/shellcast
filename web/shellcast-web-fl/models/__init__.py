@@ -7,7 +7,6 @@ db = SQLAlchemy()
 from models.CMU import CMU
 from models.CMUProbability import CMUProbability
 from models.Lease import Lease
-from models.Notification import Notification
 from models.User import User
 from models.UserLease import UserLease
 
