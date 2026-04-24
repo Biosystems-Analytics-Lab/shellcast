@@ -191,18 +191,30 @@
 
             <div class="accordion-tab-content active" id="text-input">
               <label for="phone-number" class="form-label">Mobile phone number</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text">+1</div>
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <span
+                    id="phone-verified-status"
+                    class="small text-muted d-flex align-items-center justify-content-center"
+                    style="width: 30px; margin: 0 0px 0 4px"
+                    aria-live="polite"
+                  ></span>
                 </div>
-                <input
-                  type="tel"
-                  class="form-control"
-                  name="phone-number"
-                  id="phone-number"
-                  placeholder="(***) ***-****"
-                  aria-describedby="phoneHelp"
-                />
+                <div class="col">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">+1</div>
+                    </div>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      name="phone-number"
+                      id="phone-number"
+                      placeholder="(***) ***-****"
+                      aria-describedby="phoneHelp"
+                    />
+                  </div>
+                </div>
               </div>
               <div class="invalid-feedback" style="width: 100%">
                 Please enter a valid phone number.
@@ -267,12 +279,22 @@
               </div>
             </div>
             <div id="text-notification-status" class="mb-2">
-              <small class="text-muted">
+              <small class="text-muted d-block text-center">
                 <span id="text-status-emoji">⚠️</span>
                 <span id="text-status-message"
                   >You must check the consent box above to receive text notifications.</span
                 >
               </small>
+            </div>
+            <div class="mb-2 d-flex justify-content-center">
+              <button
+                type="button"
+                id="resend-text-verification"
+                class="btn btn-outline-primary btn-sm"
+                disabled
+              >
+                Resend verification text
+              </button>
             </div>
           </div>
         </div>

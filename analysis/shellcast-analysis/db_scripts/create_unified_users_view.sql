@@ -7,6 +7,10 @@
 -- IMPORTANT: Views are read-only queries that execute in real-time.
 -- Changes to source tables are IMMEDIATELY visible when querying the view.
 -- No sync mechanism needed!
+--
+-- Column set matches shellcast_create_db_{nc,sc,fl}.sql (email/phone verification
+-- fields use email_verified*, phone_verified*, phone_verif_* — not legacy
+-- email_verification_sent / text_verification_sent).
 -- ============================================================================
 
 -- Create unified database (if it doesn't exist)
@@ -20,10 +24,6 @@ DROP VIEW IF EXISTS all_users;
 -- ============================================================================
 -- Create Unified View
 -- ============================================================================
--- This view automatically queries all three state databases in real-time.
--- When you SELECT from this view, it queries the actual tables, so
--- changes are immediately reflected.
--- ============================================================================
 
 CREATE VIEW all_users AS
 SELECT
@@ -33,16 +33,20 @@ SELECT
     phone_number,
     email,
     email_pref,
-    COALESCE(email_consent, 0) AS email_consent,  -- Handle NULL if column doesn't exist in NC
+    COALESCE(email_consent, 0) AS email_consent,
     text_pref,
-    COALESCE(text_consent, 0) AS text_consent,     -- Handle NULL if column doesn't exist in NC
+    COALESCE(text_consent, 0) AS text_consent,
     prob_pref,
     email_opt_in_date,
     text_opt_in_date,
     email_opt_out_date,
     text_opt_out_date,
-    COALESCE(email_verification_sent, 0) AS email_verification_sent,
-    COALESCE(text_verification_sent, 0) AS text_verification_sent,
+    COALESCE(email_verified, 0) AS email_verified,
+    email_verified_at,
+    COALESCE(phone_verified, 0) AS phone_verified,
+    phone_verified_at,
+    phone_verif_count,
+    phone_verif_count_date,
     deleted,
     created,
     updated
@@ -66,8 +70,12 @@ SELECT
     text_opt_in_date,
     email_opt_out_date,
     text_opt_out_date,
-    email_verification_sent,
-    text_verification_sent,
+    email_verified,
+    email_verified_at,
+    phone_verified,
+    phone_verified_at,
+    phone_verif_count,
+    phone_verif_count_date,
     deleted,
     created,
     updated
@@ -91,8 +99,12 @@ SELECT
     text_opt_in_date,
     email_opt_out_date,
     text_opt_out_date,
-    email_verification_sent,
-    text_verification_sent,
+    email_verified,
+    email_verified_at,
+    phone_verified,
+    phone_verified_at,
+    phone_verif_count,
+    phone_verif_count_date,
     deleted,
     created,
     updated
@@ -102,43 +114,6 @@ WHERE deleted = 0;
 -- ============================================================================
 -- Grant Permissions
 -- ============================================================================
--- Grant SELECT permission to your database users
--- Replace 'your_db_user' with your actual database username(s)
--- You may need separate grants for each state's database user
-
 -- Example (uncomment and modify):
 -- GRANT SELECT ON shellcast_unified.all_users TO 'your_db_user'@'%';
 -- FLUSH PRIVILEGES;
-
--- ============================================================================
--- Usage Examples
--- ============================================================================
-
--- Query all users across all states:
--- SELECT * FROM shellcast_unified.all_users;
-
--- Query users by state:
--- SELECT * FROM shellcast_unified.all_users WHERE state = 'NC';
-
--- Count users by state:
--- SELECT state, COUNT(*) as user_count FROM shellcast_unified.all_users GROUP BY state;
-
--- Find user by email across all states:
--- SELECT * FROM shellcast_unified.all_users WHERE email = 'user@example.com';
-
--- Find users with text notifications enabled:
--- SELECT * FROM shellcast_unified.all_users WHERE text_pref = 1 AND text_consent = 1;
-
--- ============================================================================
--- Testing Automatic Sync
--- ============================================================================
--- To verify that changes are automatically reflected:
---
--- 1. Make a change in source table:
---    UPDATE shellcast_nc.users SET email = 'newemail@example.com' WHERE id = 1;
---
--- 2. Query the view immediately:
---    SELECT * FROM shellcast_unified.all_users WHERE state = 'NC' AND id = 1;
---
--- 3. The change will be visible immediately - no sync needed!
--- ============================================================================

@@ -32,6 +32,7 @@ def handle_stop_start(
     if is_stop_keyword(text_upper):
         user = db_session.query(user_model).filter_by(phone_number=clean_number).first()
         if user:
+            was_opted_in = user.text_pref or user.text_consent
             user.text_pref = False
             user.text_consent = False
             user.text_opt_out_date = datetime.now(timezone.utc)
@@ -40,10 +41,11 @@ def handle_stop_start(
             log_inbound_fn(state, user.id, clean_number, message_id)
             logging.info(f"{state} User {user.id} opted out of SMS notifications")
 
-            try:
-                send_opt_out_fn(from_number)
-            except Exception as e:  # pragma: no cover - defensive logging
-                logging.error(f"{state}: Failed to send opt-out confirmation: {e}")
+            if was_opted_in:
+                try:
+                    send_opt_out_fn(from_number)
+                except Exception as e:  # pragma: no cover - defensive logging
+                    logging.error(f"{state}: Failed to send opt-out confirmation: {e}")
         else:
             logging.warning(
                 f"{state}: No user found with phone number {clean_number} for opt-out"
@@ -54,6 +56,7 @@ def handle_stop_start(
     if is_start_keyword(text_upper):
         user = db_session.query(user_model).filter_by(phone_number=clean_number).first()
         if user:
+            was_opted_out = not (user.text_pref and user.text_consent)
             user.text_pref = True
             user.text_consent = True
             user.text_opt_in_date = datetime.now(timezone.utc)
@@ -62,10 +65,11 @@ def handle_stop_start(
             log_inbound_fn(state, user.id, clean_number, message_id)
             logging.info(f"{state} User {user.id} opted in to SMS notifications")
 
-            try:
-                send_opt_in_fn(from_number)
-            except Exception as e:  # pragma: no cover - defensive logging
-                logging.error(f"{state}: Failed to send opt-in confirmation: {e}")
+            if was_opted_out:
+                try:
+                    send_opt_in_fn(from_number)
+                except Exception as e:  # pragma: no cover - defensive logging
+                    logging.error(f"{state}: Failed to send opt-in confirmation: {e}")
         else:
             logging.warning(
                 f"{state}: No user found with phone number {clean_number} for opt-in"

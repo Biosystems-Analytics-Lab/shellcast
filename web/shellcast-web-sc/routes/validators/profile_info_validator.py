@@ -117,9 +117,10 @@ class ProfileInfoValidator:
                 "A phone number is required when text notifications are enabled."
             )
 
-        # If text preference is not checked, phone number is optional
+        # If text preference is not checked, phone number is optional, but we keep
+        # whatever phone_number was previously stored so we don't force users to
+        # re-enter/verify on every toggle.
         if not self.text_pref:
-            self.phone_number = None
             return True
 
         # Validate phone number format if provided
