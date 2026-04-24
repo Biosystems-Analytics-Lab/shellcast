@@ -63,6 +63,27 @@ async function authorizedFetch(url, options = {}) {
   // send the request
   let request = fetch(url, options);
   let result = await request;
+
+  // Basic debug logging for unexpected non-2xx responses.
+  // Skip known, user-handled cases like verify-phone 429 so they don't spam the console.
+  if (!result.ok) {
+    const isHandledVerifyRateLimit =
+      result.status === 429 && typeof url === "string" && url.includes("/verify-phone/send");
+    if (!isHandledVerifyRateLimit) {
+      console.error("authorizedFetch non-OK response", {
+        url,
+        status: result.status,
+        statusText: result.statusText,
+      });
+      try {
+        const text = await result.clone().text();
+        console.error("authorizedFetch response body:", text);
+      } catch (e) {
+        console.error("authorizedFetch failed to read response body", e);
+      }
+    }
+  }
+
   // if the response says that the token expired
   if (result.status === 401 /*&& json.message === 'Token expired'*/) {
     // get an updated token

@@ -50,6 +50,7 @@ const FORM_IDS = {
   saveBtn: "prof-form-save-btn",
   cancelBtn: "prof-form-cancel-btn",
   noNotifications: "no-notifications",
+  resendVerifyBtn: "resend-text-verification",
 };
 
 /**
@@ -71,6 +72,7 @@ function getFormRefs() {
       saveBtn: form.elements[FORM_IDS.saveBtn],
       cancelBtn: form.elements[FORM_IDS.cancelBtn],
       noNotifications: form.elements[FORM_IDS.noNotifications],
+      resendVerify: document.getElementById(FORM_IDS.resendVerifyBtn),
     },
   };
 }
@@ -89,6 +91,7 @@ function normalizeProfileData(raw) {
       text_pref: false,
       text_consent: false,
       prob_pref: 3,
+      phone_verified: false,
     };
   }
   const phoneDigits = String(raw.phone_number || "").replace(/\D/g, "");
@@ -99,6 +102,7 @@ function normalizeProfileData(raw) {
     text_pref: Boolean(raw.text_pref),
     text_consent: Boolean(raw.text_consent),
     prob_pref: Number(raw.prob_pref) || 3,
+    phone_verified: Boolean(raw.phone_verified),
   };
 }
 
@@ -171,11 +175,60 @@ export function initNotificationForm(deps) {
     if (!statusDiv || !statusEmoji || !statusMessage) return;
 
     if (hasChanges) {
+      const refs = getFormRefs();
+      const elements = refs?.elements;
+      const textPrefChecked = Boolean(elements?.textPref?.checked);
+      const textConsentChecked = Boolean(elements?.textConsent?.checked);
+
       statusDiv.style.display = "block";
-      statusEmoji.textContent = "✏️";
-      statusMessage.textContent = "You have made changes. Click Submit to save.";
+      if (textPrefChecked && !textConsentChecked) {
+        // More specific guidance when text is enabled but consent is missing.
+        statusEmoji.textContent = "⚠️";
+        statusMessage.textContent =
+          "You have changes, but must check the consent box above to receive text notifications, or turn text notifications off.";
+      } else {
+        statusEmoji.textContent = "✏️";
+        statusMessage.textContent = "You have made changes. Click Submit to save.";
+      }
     } else {
-      statusDiv.style.display = "none";
+      statusDiv.style.display = "block";
+      statusEmoji.textContent = "ℹ️";
+      statusMessage.textContent = "You have no unsaved changes.";
+    }
+  }
+
+  function updateVerificationButtonState() {
+    const refs = getFormRefs();
+    if (!refs) return;
+    const { resendVerify } = refs.elements;
+    if (!resendVerify) return;
+
+    // If we've marked this button as rate-limited for today, keep it hidden/disabled.
+    if (resendVerify.dataset.rateLimited === "true") {
+      resendVerify.disabled = true;
+      resendVerify.style.display = "none";
+      return;
+    }
+
+    const savedRaw = getSavedProfileData();
+    if (!savedRaw || Object.keys(savedRaw).length === 0) {
+      resendVerify.disabled = true;
+      resendVerify.style.display = "none";
+      return;
+    }
+    const saved = normalizeProfileData(savedRaw);
+    const current = getCurrentFormValues();
+    const hasPhone = Boolean(current.phone_number);
+    const textPrefOn = Boolean(current.text_pref);
+    const textConsentOn = Boolean(current.text_consent);
+    const isVerified = Boolean(saved.phone_verified);
+    const shouldEnable = hasPhone && textPrefOn && textConsentOn && !isVerified;
+    if (shouldEnable) {
+      resendVerify.disabled = false;
+      resendVerify.style.display = "inline-block";
+    } else {
+      resendVerify.disabled = true;
+      resendVerify.style.display = "none";
     }
   }
 
@@ -222,10 +275,18 @@ export function initNotificationForm(deps) {
     const hasValidPhone = phoneNumber.length === 10;
     const hasConsent = Boolean(textConsentCheckbox?.checked);
     const textEnabled = Boolean(textCheckbox?.checked);
+    const savedRaw = getSavedProfileData();
+    const saved = normalizeProfileData(savedRaw || {});
+    const isVerified = Boolean(saved.phone_verified);
 
-    if (textEnabled && hasValidPhone && hasConsent) {
+    if (textEnabled && hasValidPhone && hasConsent && isVerified) {
       statusEmoji.textContent = "✅";
-      statusMessage.textContent = "You will receive text notifications for lease closure alerts.";
+      statusMessage.textContent =
+        "Your phone number is verified. You will receive text notifications for lease closure alerts.";
+    } else if (textEnabled && hasValidPhone && hasConsent && !isVerified) {
+      statusEmoji.textContent = "⚠️";
+      statusMessage.innerHTML =
+        "Your phone number is not yet verified.<br />We will not send text notifications until verification succeeds. Use the button below to resend the verification text.";
     } else if (textEnabled && !hasConsent) {
       statusEmoji.textContent = "⚠️";
       statusMessage.textContent =
@@ -261,15 +322,11 @@ export function initNotificationForm(deps) {
     }
   }
 
-  function validateForm() {
-    const refs = getFormRefs();
-    if (!refs) return false;
-    const { elements } = refs;
-
+  function validateEmailSection(elements) {
     const email = (elements.email?.value ?? "").trim();
     const emailPrefChecked = Boolean(elements.emailPref?.checked);
 
-    // Email: only require valid email when email_pref is checked.
+    // Only require valid email when email_pref is checked.
     // When unchecked, email can be empty or filled; never block Submit for email.
     let emailBlocksSubmit = false;
     if (emailPrefChecked) {
@@ -282,8 +339,11 @@ export function initNotificationForm(deps) {
     } else {
       elements.email?.classList.remove("is-invalid");
     }
+    return emailBlocksSubmit;
+  }
 
-    // Text: only require valid phone (and consent) when text_pref is checked.
+  function validateTextSection(elements) {
+    // Only require valid phone (and consent) when text_pref is checked.
     let textBlocksSubmit = false;
     if (elements.textPref?.checked) {
       const phoneNumber = elements.phone?.value?.replace(/\D/g, "") ?? "";
@@ -296,8 +356,18 @@ export function initNotificationForm(deps) {
     } else {
       elements.phone?.classList.remove("is-invalid");
     }
-    // SC: require text consent when text notifications are enabled
+    // Require text consent when text notifications are enabled
     if (elements.textPref?.checked && !elements.textConsent?.checked) textBlocksSubmit = true;
+    return textBlocksSubmit;
+  }
+
+  function validateForm() {
+    const refs = getFormRefs();
+    if (!refs) return false;
+    const { elements } = refs;
+
+    const emailBlocksSubmit = validateEmailSection(elements);
+    const textBlocksSubmit = validateTextSection(elements);
 
     updateEmailNotificationStatus();
     updateTextNotificationStatus();
@@ -429,6 +499,9 @@ export function initNotificationForm(deps) {
         validateForm();
       });
       elements.textConsent?.addEventListener("change", validateForm);
+      if (elements.resendVerify) {
+        elements.resendVerify.addEventListener("click", resendVerification);
+      }
       setupAccordionTabs();
       setupExpandCollapseButtons();
     }
@@ -436,6 +509,7 @@ export function initNotificationForm(deps) {
     updateEmailNotificationStatus();
     updateTextNotificationStatus();
     validateForm();
+    updateVerificationButtonState();
   }
 
   function onProfileFormChange(e) {
@@ -465,6 +539,17 @@ export function initNotificationForm(deps) {
     } else if (e.target === emailCheckbox || e.target === textCheckbox) {
       if (e.target === textCheckbox && !textCheckbox.checked && textConsentCheckbox) {
         textConsentCheckbox.checked = false;
+      }
+      if (emailCheckbox.checked || textCheckbox.checked) {
+        noNotificationsCheckbox.checked = false;
+      } else {
+        noNotificationsCheckbox.checked = true;
+      }
+    } else if (e.target === textConsentCheckbox && !textConsentCheckbox.checked) {
+      // If the user unchecks consent while text notifications are on,
+      // interpret that as turning off text notifications entirely.
+      if (textCheckbox.checked) {
+        textCheckbox.checked = false;
       }
       if (emailCheckbox.checked || textCheckbox.checked) {
         noNotificationsCheckbox.checked = false;
@@ -505,11 +590,61 @@ export function initNotificationForm(deps) {
 
     updateEmailNotificationStatus();
     validateForm();
+    updateVerificationButtonState();
   }
 
   function cancelProfileFormChanges() {
     initProfileForm(getProfileInfo(), true);
     validateForm();
+  }
+
+  async function resendVerification() {
+    const resendVerify = document.getElementById(FORM_IDS.resendVerifyBtn);
+    if (resendVerify) resendVerify.disabled = true;
+
+    try {
+      const current = getCurrentFormValues();
+      const payload = {
+        phone_number: current.phone_number || null,
+        text_pref: current.text_pref,
+        text_consent: current.text_consent,
+      };
+      const res = await authorizedFetch("/verify-phone/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json;charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const savedRaw = getSavedProfileData();
+        const saved = normalizeProfileData(savedRaw || {});
+        saved.phone_verified = true;
+        setSavedProfileData(saved);
+        updateTextNotificationStatus();
+        updateVerificationButtonState();
+      } else {
+        if (res.status === 429) {
+          const errorMessage429 =
+            "You have reached the maximum number of phone verification attempts for today. Please try again tomorrow.";
+          if (resendVerify) {
+            resendVerify.dataset.rateLimited = "true";
+            resendVerify.disabled = true;
+            resendVerify.style.display = "none";
+          }
+          const statusEmoji = document.getElementById("text-status-emoji");
+          const statusMessage = document.getElementById("text-status-message");
+          if (statusEmoji && statusMessage) {
+            statusEmoji.textContent = "⚠️";
+            statusMessage.textContent = errorMessage429;
+          }
+          // Do not change the main help text for 429; keep it focused on form changes.
+        }
+      }
+    } catch (err) {
+      console.error("Error sending verification SMS:", err);
+      // Leave main form help text unchanged; errors are shown via console/text status.
+    } finally {
+      updateVerificationButtonState();
+    }
   }
 
   async function saveProfileFormChanges() {
@@ -528,9 +663,12 @@ export function initNotificationForm(deps) {
     const textConsentChecked = Boolean(refs.elements.textConsent?.checked);
     const selectedProb = getSelectedProb(refs.elements.probRadios);
 
-    const saved = getSavedProfileData();
+    const savedRaw = getSavedProfileData();
+    const saved = normalizeProfileData(savedRaw);
     const emailToSend = (current.email || "").trim() || "";
-    const phoneToSend = textPref && current.phone_number ? current.phone_number : null;
+    // Do not clear phone number just because text_pref is off; only clear when the user
+    // actually removes it. Always send the current digits (or null if empty).
+    const phoneToSend = current.phone_number ? current.phone_number : null;
 
     const newProfileInfo = {
       email: emailToSend,
@@ -555,8 +693,67 @@ export function initNotificationForm(deps) {
         helpText.style.color = "green";
         setSavedProfileData(normalizeProfileData(profileInfo));
 
+        // Detect whether we should send a verification SMS.
+        // Two cases:
+        // 1) User turns on text + consent with a phone number and has never been verified.
+        // 2) User changes their phone number while text + consent are on (re-verify new number).
+        const phoneChanged = current.phone_number !== saved.phone_number;
+        const hasPhone = Boolean(current.phone_number);
+        const shouldSendVerification =
+          hasPhone && textPref && textConsentChecked && (!saved.phone_verified || phoneChanged);
+
         let message = "Changes saved successfully!";
+
+        let verificationFailed = false;
+
+        if (shouldSendVerification) {
+          message +=
+            " We will send a one-time text message to verify your phone number for alerts.";
+
+          try {
+            const payload = {
+              phone_number: current.phone_number || null,
+              text_pref: textPref,
+              text_consent: textConsentChecked,
+            };
+            const verifyRes = await authorizedFetch("/verify-phone/send", {
+              method: "POST",
+              headers: { "Content-Type": "application/json;charset=utf-8" },
+              body: JSON.stringify(payload),
+            });
+            if (verifyRes.ok) {
+              const updatedProfile = await verifyRes.json().catch(() => null);
+              if (updatedProfile && typeof updatedProfile === "object") {
+                setSavedProfileData(normalizeProfileData(updatedProfile));
+              } else {
+                const savedNow = normalizeProfileData(getSavedProfileData() || {});
+                savedNow.phone_verified = true;
+                setSavedProfileData(savedNow);
+              }
+              updateTextNotificationStatus();
+              updateVerificationButtonState();
+            } else {
+              verificationFailed = true;
+              try {
+                const json = await verifyRes.json();
+                console.error("verify-phone/send failed:", json);
+              } catch (e) {
+                console.error("verify-phone/send failed with status", verifyRes.status);
+              }
+            }
+          } catch (err) {
+            console.error("Error sending verification SMS:", err);
+            verificationFailed = true;
+          }
+        }
+
+        if (verificationFailed) {
+          message +=
+            " However, we could not send a verification text right now. You can try again using the “Resend verification text” link below.";
+        }
+
         helpText.innerHTML = message;
+        updateVerificationButtonState();
       } else {
         const contentType = res.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {

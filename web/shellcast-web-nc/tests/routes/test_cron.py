@@ -49,6 +49,7 @@ def test_send_bandwidth_message_sends_sms_and_logs_event(client, db_session):
         text_pref=True,
         text_consent=True,
         prob_pref=User.DEFAULT_prob_pref,
+        phone_verified=True,
     )
     db_session.add(user)
     db_session.commit()
@@ -146,6 +147,7 @@ def test_send_bandwidth_message_deleted_users_excluded(client, db_session):
         text_consent=True,
         prob_pref=User.DEFAULT_prob_pref,
         deleted=False,
+        phone_verified=True,
     )
     deleted_user = User(
         firebase_uid="uid-deleted",

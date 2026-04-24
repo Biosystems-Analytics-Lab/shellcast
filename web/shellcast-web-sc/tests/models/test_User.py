@@ -194,8 +194,8 @@ class TestUserModel:
         assert user_dict["prob_pref"] == 4  # custom override
         assert user_dict["email_consent"] is True
         assert user_dict["text_consent"] is False
-        assert user_dict["email_verification_sent"] is False
-        assert user_dict["text_verification_sent"] is False
+        assert user_dict["email_verified"] is False
+        assert user_dict["phone_verified"] is False
 
     def test_user_relationships(self, db_session):
         """Test that user relationships are set up correctly."""

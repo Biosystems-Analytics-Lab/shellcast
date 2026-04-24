@@ -26,10 +26,15 @@ cron = Blueprint("cron", __name__)
 
 
 def _get_sms_opted_in_users():
-    """Return users who are SMS-opted-in (text_pref + text_consent) with a phone number."""
+    """Return users who are SMS-opted-in, verified, and have a phone number."""
     return (
         db.session.query(User)
-        .filter_by(deleted=False, text_pref=True, text_consent=True)
+        .filter_by(
+            deleted=False,
+            text_pref=True,
+            text_consent=True,
+            phone_verified=True,
+        )
         .filter(User.phone_number.isnot(None))
         .all()
     )

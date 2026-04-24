@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import date, datetime
 
 import requests
 from core.notifications.inbound import handle_stop_start
@@ -84,6 +85,10 @@ def user_info(user):
             "prob_pref": user.prob_pref,
             "email_consent": user.email_consent,
             "text_consent": user.text_consent,
+            "phone_verified": getattr(user, "phone_verified", False),
+            "phone_verified_at": getattr(user, "phone_verified_at", None),
+            "phone_verif_count": getattr(user, "phone_verif_count", None),
+            "phone_verif_count_date": getattr(user, "phone_verif_count_date", None),
         }
         if user.phone_number is not None:
             user_info_dict["phone_number"] = user.phone_number
@@ -106,6 +111,109 @@ def user_info(user):
             db.session.commit()
             return construct_response(user)
         return {"errors": validator.errors}, 400
+
+
+@api.route("/verify-phone/send", methods=["POST"])
+@user_required
+def send_phone_verification(user):
+    """
+    Send a one-time SMS to verify the user's phone number for text alerts.
+
+    Preconditions (effective values):
+    - User is not deleted.
+    - Effective phone_number is present.
+    - Effective text_pref and text_consent are enabled.
+    """
+    if user.deleted:
+        return {"errors": ["User account is deleted."]}, 400
+
+    payload = request.get_json(silent=True) or {}
+    phone_number = (payload.get("phone_number") or user.phone_number or "").strip()
+
+    if "text_pref" in payload:
+        text_pref = bool(payload.get("text_pref"))
+    else:
+        text_pref = user.text_pref
+
+    if "text_consent" in payload:
+        text_consent = bool(payload.get("text_consent"))
+    else:
+        text_consent = user.text_consent
+
+    if not phone_number:
+        return {"errors": ["Phone number is required to send verification SMS."]}, 400
+
+    if not text_pref or not text_consent:
+        return {
+            "errors": [
+                "Text notifications and consent must be enabled before sending verification SMS."
+            ]
+        }, 400
+
+    # Enforce a maximum of 3 successful verification sends per day per user.
+    now = datetime.utcnow()
+    today = now.date()
+    last_dt = user.phone_verif_count_date
+    if isinstance(last_dt, date) and not isinstance(last_dt, datetime):
+        last_date = last_dt
+    elif last_dt:
+        last_date = last_dt.date()
+    else:
+        last_date = None
+    current_count = user.phone_verif_count or 0
+
+    if last_date == today and current_count >= 3:
+        return {
+            "errors": [
+                "You have reached the maximum number of phone verification attempts for today. Please try again tomorrow."
+            ]
+        }, 429
+
+    # Import here to avoid circular imports at module import time.
+    from routes.cron import _send_bandwidth_message_single
+
+    verification_text = (
+        f"ShellCast-{STATE}: Your phone number is confirmed for closure alerts. "
+        "Reply STOP to unsubscribe."
+    )
+
+    try:
+        response = _send_bandwidth_message_single(phone_number, verification_text)
+    except Exception as e:  # pragma: no cover - defensive logging
+        logging.error(f"Failed to send phone verification SMS for user {user.id}: {e}")
+        return {"errors": ["Failed to send verification SMS."]}, 500
+
+    if not response:
+        # Bandwidth helper returned no response / failure
+        return {"errors": ["Failed to send verification SMS."]}, 500
+
+    # Persist effective values and update verification status and attempt counters
+    user.phone_number = phone_number
+    user.text_pref = text_pref
+    user.text_consent = text_consent
+    if last_date == today:
+        user.phone_verif_count = current_count + 1
+        user.phone_verif_count_date = last_dt
+    else:
+        user.phone_verif_count = 1
+        user.phone_verif_count_date = now
+
+    user.phone_verified = True
+    user.phone_verified_at = now
+    db.session.add(user)
+    db.session.commit()
+
+    _log_sms_to_nc(
+        state=STATE,
+        user_id=user.id,
+        phone_number=user.phone_number,
+        direction="outbound",
+        message_id=response.id if getattr(response, "id", None) else None,
+        template_name="sms_verification",
+        send_success=True,
+    )
+
+    return {"ok": True}, 200
 
 
 @api.route("/delete-account")
@@ -312,15 +420,22 @@ def bandwidth_callback_internal():
 
         for event in callback_data:
             event_type = event.get("type")
+            tag = (
+                (event.get("tag") or event.get("message", {}).get("tag") or "")
+                .strip()
+                .upper()
+            )
             message_id = event.get("message", {}).get("id")
             from_number = event.get("message", {}).get("from")
             text = event.get("message", {}).get("text", "")
 
-            logging.info(f"SC Bandwidth callback - Type: {event_type}")
+            logging.info(f"SC Bandwidth callback - Type: {event_type}, Tag: {tag!r}")
 
-            # Only handle inbound messages (STOP/HELP) - delivery status logged in NC
-            if event_type == "message-received":
+            # Handle inbound when tag is SC or when tag is empty (NC forwarded; we process if we have this user)
+            if event_type == "message-received" and (tag == "SC" or not tag):
                 _handle_inbound_message_sc(from_number, text, message_id)
+            elif event_type == "message-received" and tag:
+                logging.info(f"SC ignoring message-received for tag={tag!r} (not SC)")
 
         return "", 200
 

@@ -11,6 +11,17 @@ from typing import List, Optional, Sequence, Tuple
 import bandwidth
 
 
+def _normalize_outbound_number(to_number: str) -> str:
+    if not to_number:
+        return to_number
+    stripped = to_number.strip()
+    if stripped.startswith("+"):
+        return stripped
+    if len(stripped) == 10 and stripped.isdigit():
+        return "+1" + stripped
+    return stripped
+
+
 def send_sms_single(
     to_number: str,
     text: str,
@@ -38,9 +49,10 @@ def send_sms_single(
     configuration = bandwidth.Configuration(username=bw_username, password=bw_password)
     with bandwidth.ApiClient(configuration) as api_client:
         messages_api = bandwidth.MessagesApi(api_client)
+        normalized_to = _normalize_outbound_number(to_number)
         message_request = bandwidth.MessageRequest(
             application_id=bw_application_id,
-            to=[to_number],
+            to=[normalized_to],
             var_from=bw_from_number,
             text=text,
             tag=state,
@@ -82,9 +94,10 @@ def send_sms_batch(
 
         for user_id, phone_number in users_to_notify:
             try:
+                normalized_to = _normalize_outbound_number(phone_number)
                 message_request = bandwidth.MessageRequest(
                     application_id=bw_application_id,
-                    to=[phone_number],
+                    to=[normalized_to],
                     var_from=bw_from_number,
                     text=text,
                     tag=state,
