@@ -34,6 +34,19 @@ async function getProfileInfo() {
   }
 }
 
+async function getProfileInfoWithRetry(maxAttempts = 3, delayMs = 500) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const info = await getProfileInfo();
+    if (info) {
+      return info;
+    }
+    if (attempt < maxAttempts) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+  return null;
+}
+
 async function getGeoJsonLeases() {
   const auz_leases = [];
   const individual_leases = [];
@@ -328,7 +341,11 @@ async function handleSignedInUser() {
   document.getElementById("user-signed-out").style.display = "none";
 
   // get user's profile information
-  profileInfo = await getProfileInfo();
+  profileInfo = await getProfileInfoWithRetry();
+  if (!profileInfo) {
+    console.error("Unable to initialize preferences: failed to load /user-info.");
+    return;
+  }
   window.userProfileInfo = profileInfo;
   initNotificationForm({
     authorizedFetch,
