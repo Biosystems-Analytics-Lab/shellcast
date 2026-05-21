@@ -1,8 +1,12 @@
-# WEB.md
+# 7. Web reference (detailed legacy guide)
 
-ShellCast's web setup is described in this file.</br></br>
-ShellCast was initially developed for North Carolina and later expanded to South Carolina and Florida. In order to achieve fast development, the web application was duplicated for SC and FL and modified accordingly. However, for scalability, separating APIs from front-end web components may be considered in the future.</br></br>
-_Please note that some steps in this document will only work on a Unix machine (Linux/Mac). There are certainly work arounds for Windows, but I did not thoroughly look into these and document them._
+> **Doc 7 of 7** · [← 6. Troubleshooting](06-TROUBLESHOOTING.md) · [Index](README.md)
+
+Long-form reference carried forward from the original `WEB.md`. For day-to-day work, prefer the numbered guides [01](01-GETTING_STARTED.md)–[06](06-TROUBLESHOOTING.md), [05-DEVELOPMENT.md](05-DEVELOPMENT.md) (and [subsections](05-development/)), and [README.md](README.md).
+
+ShellCast was initially developed for North Carolina and later expanded to South Carolina and Florida. The web application was duplicated for SC and FL and modified accordingly. For scalability, separating APIs from front-end web components may be considered in the future.
+
+Some steps below assume a **Unix** machine (Linux/macOS). Windows may work with TCP database access and adjusted paths; see [01-GETTING_STARTED.md](01-GETTING_STARTED.md).
 
 ## Table of Contents
 
@@ -53,13 +57,13 @@ _Please note that some steps in this document will only work on a Unix machine (
 
 - The GitHub repository and the deployment on Google Cloud App Engine are not necessarily in sync with each other i.e. there is no automation pipeline set up that will automatically deploy new commits to App Engine. You must explicitly deploy to GAE by following the [Deploy the app to Google App Engine instructions](#53-deploy-the-app-to-google-app-engine).
 
-- The NCSU Enterprise GitHub repo is mirrored on a GitHub public repo to share ShellCast code openly. See [Mirroring code updates on GitHub public repo](#54-mirroring-code-updates-on-GitHub-public-repo) for more information on how to add and push changes to ShellCast.
+- Source code is on [GitHub](https://github.com/Biosystems-Analytics-Lab/shellcast). See [GETTING_STARTED.md](../../GETTING_STARTED.md) for clone, pre-commit, and push workflow.
 
 ## 4. Development Environment Setup
 
 ### 4.1 Clone the GitHub repository
 
-Clone the GitHub repository to your machine by running `git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`. It's recommended that you clone the repository to a relatively shallow path in your file system. If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
+Clone the GitHub repository to your machine by running `git clone https://github.com/Biosystems-Analytics-Lab/shellcast.git`. It's recommended that you clone the repository to a relatively shallow path in your file system. If the path to the repo is too long, then it can cause issues with Unix sockets (see [Use the Cloud SQL proxy (TCP and Unix socket)](#51-use-the-cloud-sql-proxy-tcp-and-unix-socket)).
 
 ### 4.2 Setup Python virtual environment
 
@@ -109,7 +113,7 @@ cd {path to cloud-slq-proxy}
 
 If the connection is successful, the following Unix socket file will be created in the "cloudsql" directory. VS Code and PyCharm appear to show this file, but not the Finder.
 
-![unix socket](./images/unix_socket.png)
+![unix socket](../images/unix_socket.png)
 
 3. `Ctrl+C` to stop the proxy. It will delete the Unix socket file.
 
@@ -224,12 +228,11 @@ See [Clean up images in Container Registry](https://cloud.google.com/artifact-re
 
 _Note: As you are deleting all of them, you cannot use the cached image for the next deployment of your application. If this is the case, use `gcloud app deploy --no-cache`._ </br></br>
 
-### 5.4 Mirroring code updates on GitHub public repo
+### 5.5 Pushing code to GitHub
 
-1. The NCSU GitHub Enterprise repo of ShellCast at https://github.ncsu.edu/biosystemsanalyticslab/shellcast is also mirrored on the public GitHub site at https://github.com/Biosystems-Analytics-Lab/shellcast. Mirroring is set up through git add and git push remotes as explained under [in this blog under the "Adding multiple remotes" and "Push to multiple remotes" headings](https://jigarius.com/blog/multiple-git-remote-repositories).
-2. When adding and pushing changes to the remote NCSU Enterprise GitHub repo, use `git push all`. This will make sure both remote locations are up-to-date.
+ShellCast is maintained at [https://github.com/Biosystems-Analytics-Lab/shellcast](https://github.com/Biosystems-Analytics-Lab/shellcast). NCSU campus GitHub (`github.ncsu.edu`) has been retired; use a single `origin` remote and `git push` as described in [GETTING_STARTED.md](../../GETTING_STARTED.md).
 
-We created the GitHub public repo and initiated remote mirroring after realizng the public view of the NCSU Enterprise GitHub repo was only public with NCSU authentication (i.e., public to only folks affiliated with NCSU).
+_Historical note:_ The project was once mirrored from NCSU Enterprise GitHub to the public repo. That dual-remote workflow (`git push all`) is no longer needed.
 
 ## 6. Testing
 
@@ -288,4 +291,4 @@ Several ES6 features of JavaScript are used throughout the JS files such as: the
 
 ## 7. Contact Information
 
-If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit [GitHub issues](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

@@ -1,4 +1,6 @@
-# ShellCast Data Preparation
+# 4. ShellCast data preparation
+
+> **Doc 4 of 9** · [← 3. State guides](03-STATE_GUIDES.md) · [Index](README.md) · [Next: 5. Daily operations →](05-DAILY_OPERATIONS.md)
 
 ShellCast requires input data for analysis. North Carolina and South Carolina
 occasionally require data updates, which are done manually. Florida's shellfish harvest
@@ -7,6 +9,10 @@ fall, or both. In addition, the dates may change. To reflect seasonality changes
 ShellCast forecasting, shellfish harvest areas and leases data are downloaded from a
 web map server. Then, they are processed for ShellCast analysis input. This repository
 contains the scripts and data used to prepare the data for Florida ShellCast analysis.
+
+Uploading results to a GCS bucket was meant to automate analysis input updates; that approach did not remain reliable (changing source URLs and field names). **Local** `data/pqpf/fl/inputs/` is the practical path for daily runs — see [02-CONFIGURATION.md](02-CONFIGURATION.md) (`[gcp.bucket]`).
+
+> **Input dataset documentation** (shapefile layout, NC/SC manual updates, bucket layout, file lists) is planned as a separate guide. For daily analysis setup and how inputs are consumed at run time, see the [analysis documentation index](README.md) and [03-STATE_GUIDES.md](03-STATE_GUIDES.md).
 
 ## Requirements
 

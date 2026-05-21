@@ -1,4 +1,6 @@
-# ShellCast Web Apps: Consolidation Inventory
+# CONSOLIDATION_INVENTORY.md
+
+> **05-DEVELOPMENT** subsection · [← 5. Development](../05-DEVELOPMENT.md) · [Index](../README.md)
 
 This document inventories **routes**, **JavaScript functions**, **templates (HTML)**, and **CSS** across the three state apps (NC, FL, SC) to support a possible future consolidation into a single web service with state-based routing and shared vs state-specific logic.
 
@@ -25,7 +27,7 @@ This document inventories **routes**, **JavaScript functions**, **templates (HTM
 | `/preferences`          | ✓   | ✓   | ✓   | **Same**                                                      |
 | `/signin`               | ✓   | ✓   | ✓   | **Same**                                                      |
 | `/feedback`             | ✓   | ✓   | ✓   | **Same**                                                      |
-| `/u/<token>`            | —   | ✓   | ✓   | **FL, SC only** – one-click unsubscribe; NC has no this route |
+| `/u/<token>`            | ✓   | ✓   | ✓   | **Same** – one-click email unsubscribe |
 
 ### 1.2 API routes (`@api.route`)
 

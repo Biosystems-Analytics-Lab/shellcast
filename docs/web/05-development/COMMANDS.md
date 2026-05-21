@@ -1,4 +1,6 @@
-# ShellCast Useful Commands
+# COMMANDS.md
+
+> **05-DEVELOPMENT** subsection · [← 5. Development](../05-DEVELOPMENT.md) · [Index](../README.md)
 
 ## Google App Engine Commands
 
@@ -20,7 +22,7 @@ gcloud app deploy app.yaml cron.yaml --no-promote -v staging
 gcloud app deploy --no-cache
 ```
 
-See [DEPLOY_GAE.md](DEPLOY_GAE.md) for full workflow (local check + test-before-commit on GAE).
+See [04-DEPLOY_GAE.md](../04-DEPLOY_GAE.md) for full workflow (local check + test-before-commit on GAE).
 
 ### Clean Up Staging Storage
 

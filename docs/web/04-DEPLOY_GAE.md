@@ -1,4 +1,6 @@
-# Deploy to Google App Engine
+# 4. Deploy to Google App Engine
+
+> **Doc 4 of 7** · [← 3. Notifications](03-NOTIFICATIONS.md) · [Index](README.md) · [Next: 5. Development →](05-DEVELOPMENT.md)
 
 **You must deploy from inside each app's directory** so that `main.py` and `app.yaml` are at the application root. Deploying from `web/` with paths like `shellcast-web-nc/app.yaml` uses `web/` as the root, so GAE cannot find `main.py` and returns 502.
 

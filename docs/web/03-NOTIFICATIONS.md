@@ -1,29 +1,39 @@
-# Notifications
+# 3. Notifications (web)
 
-## Email
+> **Doc 3 of 7** · [← 2. State apps](02-STATE_APPS.md) · [Index](README.md) · [Next: 4. Deploy GAE →](04-DEPLOY_GAE.md)
 
-### Gmail API
+ShellCast splits notifications between **analysis** (forecast email) and **web** (SMS, unsubscribe pages). This document focuses on **web** behavior.
 
-#### Create access credentials
+## Email vs SMS — who does what
 
-[Create access credentials](https://developers.google.com/workspace/guides/create-credentials#desktop-app)
+| Channel | Sent from | Document |
+|---------|-----------|----------|
+| **Forecast email** (morning closure probabilities) | `analysis/shellcast-analysis` (Gmail API) | [analysis/06-NOTIFICATIONS_ANALYSIS.md](../analysis/06-NOTIFICATIONS_ANALYSIS.md) |
+| **Email unsubscribe** (`/u/<token>` in email links) | Each state **web** app | This doc + [02-STATE_APPS.md](02-STATE_APPS.md) |
+| **SMS** (Bandwidth) | **Web** — NC cron orchestrates NC, FL, SC | Below |
 
-To send notifications to users, the server requires impersonating a user. Physically interacting with authentication processes is not possible in this case. Therefore, automatic authentication should be implemented.
+### Why email is not sent from web
 
-In order to do this, two options are available: "OAuth client ID credentials" and "Service account credentials". For the "Service account credentials," domain-wide configurations are required, which require administrative privileges to setup. For this reason, ShellCast uses "OAuth client ID credentials". Email notifications are sent from the ShellCast Analysis server that does not have a web server setup, so follow the "Desktop app" instructions on the "Create access credentials" link.
+Originally all notification logic lived in the **NC web app**. Adding **SC** and **FL** by duplicating that codebase made it costly to maintain three copies. **Forecast emails** were implemented on the **analysis server** to centralize sending next to the daily database update. That is a practical choice, not a permanent architecture rule — see background in [analysis/06-NOTIFICATIONS_ANALYSIS.md](../analysis/06-NOTIFICATIONS_ANALYSIS.md).
 
-#### Generating Email Secret Key
-*Currently, email notifications are being sent from the analysis server as a temporary measure to prevent redundant updates on the NC, SC, and FL websites, optimizing time efficiency. However, the email notification functionality should ultimately be implemented on the web server.*
+### Email secret key (unsubscribe links)
 
-**Option 1: Run the script**
+Web and analysis must share the same `EMAIL_SECRET_KEY` per state so tokens in email links validate on `GET /u/<token>`.
+
+**Generate a key:**
+
 ```bash
 cd analysis/shellcast-analysis
 python src/generate_secret_key.py
+# or: python -c "import secrets; print(secrets.token_hex(32))"
 ```
-**Option 2: One-liner**
-```bash
-python -c "import secrets; print(secrets.token_hex(32))"
-```
+
+Set in:
+
+- Web: `.env` / `app.yaml` for each `shellcast-web-{state}`
+- Analysis: `[NC.Notification]` / `[SC.Notification]` / `[FL.Notification]` in `analysis_settings.ini`
+
+Gmail API credentials for **sending** mail live on the **analysis** machine only — [analysis/06-NOTIFICATIONS_ANALYSIS.md](../analysis/06-NOTIFICATIONS_ANALYSIS.md).
 
 ## SMS (Bandwidth) – centralized logging in NC
 

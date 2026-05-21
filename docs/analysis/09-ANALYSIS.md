@@ -1,16 +1,22 @@
-# ANALYSIS.md
+# 9. Analysis background and compile reference
 
-ShellCast analysis and setup are described in this file. The analysis includes North Carolina, South Carolina, and Florida as of May 2024. The outputs of the analysis are stored in the MySQL database of Google Cloud SQL. For information on how to set up the database, please refer to [DATABASE.md](DATABASE.md).
+> **Doc 9 of 9** · [← 8. Troubleshooting](08-TROUBLESHOOTING.md) · [Index](README.md)
+
+ShellCast analysis and setup are described in this file. The analysis includes North Carolina, South Carolina, and Florida as of May 2024. The outputs of the analysis are stored in the MySQL database of Google Cloud SQL. For information on how to set up the database, please refer to [DATABASE.md](../DATABASE.md).
+
+> **Guides 1–8:** For onboarding, operations, configuration, notifications, and troubleshooting, follow the [numbered guides](README.md#reading-order) (`01-` … `08-`). This file retains background, data specifications, and detailed compile/setup notes.
 
 ## Table of Contents
 
 0. [Background](#0-background)
 1. [List of Acronyms](#1-list-of-acronyms)
 2. [Description of Analysis Scripts](#2-description-of-analysis-scripts)
-3. [CRON Job Set Up](#4-cron-job-set-up)
-4. [Pushing Changes to GitHub](#7-pushing-changes-to-github)
-5. [Updating Leases](#8-updating-leases)
-6. [Contact Information](#9-contact-information)
+3. [Data](#3-data)
+4. [Development Environment Set Up](#4-development-environment-set-up)
+5. [CRON Job Set Up](#5-cron-job-set-up)
+6. [Pushing Changes to GitHub](#6-pushing-changes-to-github)
+7. [Updating Leases](#7-updating-leases)
+8. [Contact Information](#8-contact-information)
 
 ## 0. Background
 
@@ -18,7 +24,7 @@ The main purpose of the scripts in the analysis folder is to: (1) pull Probabili
 Forecasting (PQPF) data from a remote server at the NOAA, (2) do geospatial analysis based on given thresholds
 determined by organizations, (3) classify step 2 values, and (4) update the ShellCast MySQL database. For a schematic
 representation of this workflow, including how they relate to other major components of the ShellCast web application,
-see the ShellCast [architecture overview flowchart](/../../#2-architecture-overview). The current ShellCast forecast is
+see the ShellCast [architecture overview](../../README.md#3-architecture-overview). The current ShellCast forecast is
 for North Carolina, South Carolina, and Florida.
 
 The analysis daily CRON job ensures that the three steps described above will run every day at 6:40 am ET on the
@@ -59,12 +65,12 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 
 - `src`- all analysis code
   - `{state}_pqpf` - code for geospatial analysis specific to a state
-  - `pqpf_proc.py` and `utils.py` - code for common processes
+  - `pqpf_procs.py` and `utils.py` - code for common processes
 - `shellcast-analysis/{state}_main.py` - This script runs geospatial analysis and saves the output data to a remote MySQL server.
   - Prerequisites : create a virtual environment and connect to a remote MySQL server.
 - `setup_logging.py` and `{state}_logging.yaml` - Logs file settings
-- `config.ini` - A configuration file for analyzing data and setting up remote database servers.
-- `config.sh` - This script specifies the script path and the remote server name. The `analysis_run.sh` file refers to this file.
+- `analysis_settings.ini` - Python settings: databases, shapefile names, notification flags (read by `*_main.py` and `src/`).
+- `analysis_paths.sh` - Shell-only paths: Cloud SQL proxy, venv, and `*_main.py` locations (sourced by `analysis_run.sh`).
 - `analysis_run.sh` - This script is configured to run a cron job. The script activates the virtual environment, connects to the remote MySQL database, and runs `{state}_main.py`. Modifying this script file is recommended if you wish to run a state analysis only by commenting out the other states.
 
 ## 3. Data
@@ -129,7 +135,7 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 Clone the GitHub repository to your machine by running
 
 ```bash
-git clone https://github.ncsu.edu/biosystemsanalyticslab/shellcast.git`
+git clone https://github.com/Biosystems-Analytics-Lab/shellcast.git
 ```
 
 ### 4.2 Install and initialize Google Cloud SDK
@@ -167,38 +173,73 @@ To connect to Cloud SQL instance, `source ./{filename}.sh` in the terminal.
 
 Use environment management tool of your choice, however, Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
 
-### 4.5 Create config.ini and config.sh files
+### 4.5 Create analysis_settings.ini and analysis_paths.sh
 
-Create `config.ini` and `config.sh` files from `config_template.ini` and `config_template.sh`.
+ShellCast uses **two** local config files (see [02-CONFIGURATION.md](02-CONFIGURATION.md)):
 
-`config.ini` file should be updated whenever a change occurs in the fields, data names, or areas of interest.
+| File | Purpose |
+|------|---------|
+| `analysis_settings.ini` | Python: DB credentials, per-state shapefile names, email/notification flags |
+| `analysis_paths.sh` | Cron shell: proxy path, venv, paths to `nc_main.py` / `sc_main.py` / `fl_main.py` |
 
-### 4.5 Download and Compile Wgrib2
+Create them from the templates:
 
-Wgrib2 is used to crop CONUS PQPF data according to the area of interest.
+```bash
+cp analysis_settings.template.ini analysis_settings.ini
+cp analysis_paths.template.sh analysis_paths.sh
+```
 
-Download the application on [here](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2) and follow [these instructions](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING). For Mac user, this website [theweatherguy blog](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) might help. It is necessary to install the gcc/gfortran compilers for Wgrib2 before the compilation. You can download `gcc` using Homebrew on Mac by running `brew install gcc`. It contains gcc, g++, gfortran, etc.
-If you are new to compiling software, you might find the following resources helpful:
+Update `analysis_settings.ini` when fields, data names, or areas of interest change. Update `analysis_paths.sh` when install locations on the machine change.
 
-- https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/
-- https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/compile_questions.html
-- https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING
-- https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/_README.cygwin
-- https://theweatherguy.net/blog/weather-links-info/how-to-install-and-compile-wgrib2-on-mac-os-10-14-6-mojave/
+### 4.6 Download and compile wgrib2
 
-In case, you encounter a subprocess not running issue under cron on MacOS, you might want to try a few things.
+wgrib2 crops CONUS PQPF GRIB2 files to each state's area of interest (see `LON_WE` / `LAT_SN` in `analysis_settings.ini`).
 
-- Turn on Terminal in Full Disk Access - **System Settings** > **Privacy and Security** > **Full Disk Access** > turn on **Terminal**
+**Upstream source:** NOAA-EMC maintains wgrib2 on GitHub:
 
-- In the event that the subprocess is unable to call third-party applications, such as Wgrib2, use the full path to the application
+- [NOAA-EMC/wgrib2](https://github.com/NOAA-EMC/wgrib2) — official repository (README, prerequisites, `cmake` install steps, releases)
 
-- Add Full Disk Access to the application if the subprocess fails to call third-party applications such as Wgrib2.
+For any new install or upgrade, follow that repository's README and release notes; prerequisites and build steps are maintained there and may change over time.
 
-### 4.6 Download and Compile NCEPLIBS GRIB Utility and Dependencies (FL only)
+**ShellCast production note:** The analysis iMac was set up with a **wgrib2 build from the development period around 2023**. The links and compile notes below are **kept as historical project notes**. They may not match current NOAA-EMC releases, macOS versions, or your machine. Prefer the GitHub repo above for a new install; treat the following as optional background only.
 
-`cnvgrib` converts daily quality controlled rainfall estimates from Grib1 to Grib2 format.
+#### Historical / alternate references (may be outdated)
 
-Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util) website. The steps for compiling dependencies and utility can be found in `ncep-lib-utils/ncep_lib_utils.sh`. It is recommended that each dependency be compiled separately to ensure successful compilation. </br></br>
+- [CPC wgrib2 product page](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/)
+- [CPC compile questions](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/compile_questions.html)
+- [CPC INSTALLING notes](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING)
+- [theweatherguy — wgrib2 on macOS](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) (Monterey/Ventura era; may not apply to current macOS)
+
+A Fortran compiler and `gcc`/`gfortran` (e.g. `brew install gcc` on Mac) were required for older source builds.
+
+#### Cron on macOS (project experience — verify for your setup)
+
+`pqpf_procs.py` calls wgrib2 via **subprocess**. Under cron, wgrib2 sometimes failed to run until:
+
+- **Full Disk Access** was enabled for Terminal — **System Settings** > **Privacy and Security** > **Full Disk Access**
+- The **full path** to the `wgrib2` binary was used in code (not only `PATH`)
+- Full Disk Access was granted to the calling environment if subprocess errors persisted
+
+See also [08-TROUBLESHOOTING.md](08-TROUBLESHOOTING.md).
+
+### 4.7 Download and Compile NCEPLIBS GRIB Utility and Dependencies (FL only)
+
+Florida uses NOAA **XMRG** hourly total-precipitation files in **GRIB1** format (see [§3.2](#32-daily-quality-controlled-rainfall-estimates-fl-only)). After **`cnvgrib`** converts them to GRIB2, **`xmrg_proc.sh`** uses other tools to build multi-day rainfall totals: [CDO](#48-install-cdo-fl-only) (Climate Data Operators) for time-series merge and math on GRIB/NetCDF, GDAL for reprojection, **wgrib2** to crop to Florida, then GDAL again for GeoTIFF output. GRIB1→GRIB2 conversion is the first step and is done with **`cnvgrib`** from [NCEPLIBS-grib_util](https://github.com/NOAA-EMC/NCEPLIBS-grib_util).
+
+#### How ShellCast uses `cnvgrib`
+
+| Step | Component | Role |
+|------|-----------|------|
+| 1 | `fl_main.py` → `tp_xmrg.py` | Downloads `xmrg{MMDDYYYYHH}z.grb` from NOAA FTP into `data/tp/raw/` (about six days of hourly files, aligned to 7:00 AM Eastern). |
+| 2 | `src/fl_pqpf/xmrg_proc.sh` | For every file in `data/tp/raw/`, runs `cnvgrib -g12 <input.grb> <output.grb>` and writes GRIB2 copies under `data/tp/fl/intermediate/cnvgrib2/`. Exits with an error if the GRIB1 and GRIB2 file counts do not match. |
+| 3 | `xmrg_proc.sh` (continued) | See [§4.8](#48-install-cdo-fl-only): CDO merges hours and computes cumulative rain; GDAL reprojects; **wgrib2** crops; outputs `tp_24h.tif`, `tp_48h.tif`, … under `data/tp/fl/outputs/`. |
+| 4 | `fl_pqpf.py` | Samples those GeoTIFFs at lease/SHA points (`tp_accum`), subtracts observed rain from FDACS thresholds, and picks the PQPF probability layer for the forecast. |
+
+The script invokes the binary at `ncep-lib-utils/nceplibs/bin/cnvgrib` (see [§5.1](#51-executable-files) for cron `PATH` / full-path notes). ShellCast only requires **`cnvgrib`** from the grib_util package; other utilities in that repo can be omitted at compile time if they fail to build (see below).
+
+#### Compile NCEPLIBS-grib_util
+
+Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util). The steps for compiling dependencies and utility can be found in `ncep-lib-utils/ncep_lib_utils.sh`. It is recommended that each dependency be compiled separately to ensure successful compilation. </br></br>
 In the script you see `make -j4` which means that the compilation will be done in parallel using 4 threads. You can change the number of threads.
 The rule of thumb seems to be `-j <number of cores>` or `-j <number of cores * 1.5>`. Increasing too high may result in slower performance.</br></br>
 The third-party libraries `Jasper`, `libpng`, `zlib`, `BLAS`, and `LAPACK` must be installed before the dependencies are compiled.
@@ -206,13 +247,34 @@ On MacOS, you can install these dependencies using Homebrew: `brew install jaspe
 
 If you encounter compilation problems with tools other than the cnvgrib tool, you can disable compilation by commenting out tool names in ncep-lib-utils/NCEPLIBS-grib_util/src/CMakeLists.txt (e.g. # add_subdirectory(tocgrib)).
 
-### 4.7 Install CDO (FL only)
+### 4.8 Install CDO (FL only)
 
-Daily quality controlled rainfall estimates are processed using CDO.
+**CDO** ([Climate Data Operators](https://code.mpimet.mpg.de/projects/cdo)) is a command-line toolkit for processing gridded climate and weather data (GRIB, NetCDF, and related formats). ShellCast does not call CDO from Python; `src/fl_pqpf/xmrg_proc.sh` invokes the `cdo` executable after `cnvgrib` has produced GRIB2 files.
 
-You can download CDO using Homebrew on Mac by running `brew install cdo`
+#### Why Florida analysis needs CDO
+
+XMRG provides **one GRIB file per hour**. Florida logic needs **cumulative rainfall over 24, 48, 72, 96, and 120 hours** at each grid cell (mapped to `tp_24h.tif`, … for lease/SHA sampling in `fl_pqpf.py`). CDO is used for the time-axis work that is awkward to do in Python alone:
+
+| `xmrg_proc.sh` command (concept) | Purpose |
+|----------------------------------|---------|
+| `cdo -mergetime …` | Combine hourly GRIB2 files in `cnvgrib2/` into one multi-timestep file. |
+| `cdo -f nc copy …` | Convert cropped GRIB to NetCDF for the next steps. |
+| `cdo expr,…` | Convert 1-hour accumulation from millimeters to inches (`× 0.03937`). |
+| `cdo setattribute,…` | Set the `units=inches` metadata on the variable. |
+| `cdo timcumsum …` | Running sum over time → cumulative precipitation at each hour. |
+| `cdo seltimestep,N …` | Pull out the timestep that equals **N hours** of accumulation (24, 48, …). |
+
+Reprojection and cropping are **not** done by CDO in this script: **GDAL** (`gdalwarp`) reprojects polar stereographic GRIB to WGS84, and **wgrib2** (`-small_grib`) crops to the Florida bounding box before CDO works on the smaller grid.
+
+#### Install
+
+On macOS, a typical install is Homebrew: `brew install cdo`
+
+Ensure `cdo` is on `PATH` when cron runs `xmrg_proc.sh` (the script prepends `/usr/local/bin`; see [§5.1](#51-executable-files) if cron reports `cdo: command not found`).
 
 ## 5. CRON Job Set Up
+
+See also [05-DAILY_OPERATIONS.md](05-DAILY_OPERATIONS.md) for a concise production checklist.
 
 ### 5.1 Executable Files
 
@@ -221,7 +283,7 @@ The cron job environment differs from the development environment. It is importa
 `chmod +x {path to bash script}`
 
 - shellcast-analysis/analysis_run.sh
-- analysis/shellcast-analysis/config.sh
+- analysis/shellcast-analysis/analysis_paths.sh
 - shellcast-analysis/src/fl_pqpf/xmrg_proc.sh
 - shellcast-analysis/ncep-lib-utils/nceplibs/bin/cnvgrib
 
@@ -246,7 +308,7 @@ For example, your default editor is vi, type `i` to insert text, and then type t
 </br>
 `40 6 * * * source {path to }/analysis_run.sh >> ~Desktop/cron.log 2>&1`
 
-_Note that In **pqpf_proc.py**, **subprocess** is used to call **Wgrib2** to crop PQPF data. **Wgrib2** was unable to run when cron job was set. To work around this issue, the full path had to be included in the code._
+_Note that In **pqpf_procs.py**, **subprocess** is used to call **Wgrib2** to crop PQPF data. **Wgrib2** was unable to run when cron job was set. To work around this issue, the full path had to be included in the code._
 
 ### 5.3 File Permissions
 
@@ -257,7 +319,7 @@ In case you are not familiar with permission numbers, you can learn from [RedHat
 
 ## 6. Pushing Changes to GitHub
 
-When appropriate, changes need to be pushed to the NCSU Enterprise GitHub repository **as well as** the GitHub (public) respository as described in the [DEVELOPER.md documentation](/docs/DEVELOPER.md).
+When appropriate, push changes to [github.com/Biosystems-Analytics-Lab/shellcast](https://github.com/Biosystems-Analytics-Lab/shellcast) as described in [GETTING_STARTED.md](../../GETTING_STARTED.md) (clone, pre-commit, and push workflow).
 
 ## 7. Updating Leases
 
@@ -271,4 +333,4 @@ To mannually update the leases in the ShellCast SQL database, follow these steps
 
 ## 8. Contact Information
 
-If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit [GitHub issues](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
