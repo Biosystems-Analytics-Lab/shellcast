@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Unsubscribe - ShellCast</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='img/icon/favicon.ico') }}"
+    />
+    <link
+      href="https://cdn.ncsu.edu/brand-assets/bootstrap-4/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='common/css/common.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container py-5">
+      <div class="mx-auto" style="max-width: 680px">
+        <div class="text-center mb-4">
+          <img
+            src="{{ url_for('static', filename='img/shellcast_logo.png') }}"
+            alt="ShellCast logo"
+            style="height: 64px"
+          />
+        </div>
+        <div class="card">
+          <div class="card-body text-center">
+            {% if success %}
+            <h1 class="h4 mb-3">Unsubscribed Successfully</h1>
+            <p class="mb-4">{{ message }}</p>
+            <a href="/" class="btn btn-primary">Return to ShellCast</a>
+            {% else %}
+            <h1 class="h4 mb-3">Unable to Unsubscribe</h1>
+            <p class="mb-4">{{ message }}</p>
+            <a href="/feedback" class="btn btn-primary">Contact Us</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
