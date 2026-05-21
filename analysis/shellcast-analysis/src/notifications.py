@@ -25,6 +25,11 @@ logger = logging.getLogger(__name__)
 PROB_CATS = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High", 5: "Very High"}
 
 
+def user_wants_email_notifications(user):
+    """True when the user opted in to email alerts and has an address."""
+    return user.get("email_pref") == 1 and bool(user.get("email"))
+
+
 def generate_unsubscribe_token(user_id, email, secret_key):
     """
     Generate a secure unsubscribe token for a user.
@@ -48,38 +53,26 @@ def generate_unsubscribe_token(user_id, email, secret_key):
 
 def filter_users_by_preferences(users_data, prob_1d_only=False, state=None):
     """
-    Filter users based on their email/text preferences and probability thresholds
+    Filter users for email notification: email_pref, email address, and probability threshold.
+
+    email_consent is not used; only email_pref and a non-empty email are required.
 
     Args:
-        users_data: List of tuples containing user data
-        (user_id, email, phone, prob_pref, email_pref, text_pref, threshold,
-         lease_id, area_id, user_code, prob_1d_perc, prob_2d_perc, prob_3d_perc)
-        prob_1d_only: States where has only today's prediction (e.g. FL) to be true
-        state: State code (FL, SC, NC) to determine consent requirements
+        users_data: Rows from SelectUserLeaseProbsToday (dicts with email_pref, email, prob_*).
+        prob_1d_only: If True, only compare prob_1d_perc to prob_pref (e.g. FL).
+        state: State code (FL, SC, NC) — for logging only.
     Returns:
-        List of filtered user data tuples
+        List of user rows that qualify for an email today.
     """
     logger.info(f"Starting to filter {len(users_data)} users")
     filtered_users = []
 
     for user in users_data:
-        # Check if user has email notifications enabled
-        # For SC and FL: both email_pref AND email_consent must be true
-        # For NC: only email_pref needs to be true (consent not implemented yet)
-        if state and state.upper() in ["SC", "FL"]:
-            email_enabled = (
-                user.get("email_pref") == 1 and user.get("email_consent") == 1
-            )
-        else:
-            # NC or unknown state - only check email_pref
-            email_enabled = user.get("email_pref") == 1
-
-        # Text notifications are not implemented yet, so skip text checks
-        has_notification_enabled = email_enabled
+        email_enabled = user_wants_email_notifications(user)
 
         logger.debug(
             f"User {user.get('user_id')} notification preferences - email_pref: "
-            f"{user.get('email_pref')}, email_consent: {user.get('email_consent')}, "
+            f"{user.get('email_pref')}, email: {user.get('email')}, "
             f"state: {state}, email_enabled: {email_enabled}"
         )
 
@@ -109,8 +102,8 @@ def filter_users_by_preferences(users_data, prob_1d_only=False, state=None):
                 f"3D: {user.get('prob_3d_perc')}"
             )
 
-        # Include user if they have notifications enabled and meet probability thresholds
-        if has_notification_enabled and meets_probability_threshold:
+        # Include user if they have email notifications enabled and meet probability thresholds
+        if email_enabled and meets_probability_threshold:
             filtered_users.append(user)
             logger.debug(f"User {user.get('user_id')} added to filtered list")
 
@@ -202,66 +195,55 @@ class NotificationEmailContentGenerator:
         # Organize user data by user's email
         user_data_by_email = {}
         for data in self.data:
-            # Check if email preference is enabled and email exists
-            # For SC and FL: both email_pref AND email_consent must be true
-            # For NC: only email_pref needs to be true (consent not implemented yet)
-            if self.state and self.state.upper() in ["SC", "FL"]:
-                email_ok = (
-                    data.get("email_pref") == 1
-                    and data.get("email_consent") == 1
-                    and data.get("email")
-                )
-            else:
-                # NC or unknown state - only check email_pref
-                email_ok = data.get("email_pref") == 1 and data.get("email")
+            if not user_wants_email_notifications(data):
+                continue
 
-            if email_ok:
-                email = data["email"]
-                lease_id = data.get("lease_id")
+            email = data["email"]
+            lease_id = data.get("lease_id")
 
-                # Use setdefault to initialize the list if email is new
-                user_leases = user_data_by_email.setdefault(email, [])
+            # Use setdefault to initialize the list if email is new
+            user_leases = user_data_by_email.setdefault(email, [])
 
-                # Safely get probability values using .get()
-                prob_1d_perc = data.get("prob_1d_perc")
-                prob_2d_perc = data.get("prob_2d_perc")
-                prob_3d_perc = data.get("prob_3d_perc")
+            # Safely get probability values using .get()
+            prob_1d_perc = data.get("prob_1d_perc")
+            prob_2d_perc = data.get("prob_2d_perc")
+            prob_3d_perc = data.get("prob_3d_perc")
 
-                # Skip if no lease_id
-                if not lease_id:
-                    continue
+            # Skip if no lease_id
+            if not lease_id:
+                continue
 
-                lease_data = None
-                # Case 1: Only 1D probability exists (e.g. FL)
-                if (
-                    prob_1d_perc is not None
-                    and prob_2d_perc is None
-                    and prob_3d_perc is None
-                ):
-                    lease_data = {
-                        "lease": lease_id,
-                        "user_id": data.get("user_id"),
-                        "prob_1d_perc": prob_1d_perc,
-                        "prob_days": 1,
-                    }
-                # Case 2: All three probabilities exist
-                elif (
-                    prob_1d_perc is not None
-                    and prob_2d_perc is not None
-                    and prob_3d_perc is not None
-                ):
-                    lease_data = {
-                        "lease": lease_id,
-                        "user_id": data.get("user_id"),
-                        "prob_1d_perc": prob_1d_perc,
-                        "prob_2d_perc": prob_2d_perc,
-                        "prob_3d_perc": prob_3d_perc,
-                        "prob_days": 3,
-                    }
+            lease_data = None
+            # Case 1: Only 1D probability exists (e.g. FL)
+            if (
+                prob_1d_perc is not None
+                and prob_2d_perc is None
+                and prob_3d_perc is None
+            ):
+                lease_data = {
+                    "lease": lease_id,
+                    "user_id": data.get("user_id"),
+                    "prob_1d_perc": prob_1d_perc,
+                    "prob_days": 1,
+                }
+            # Case 2: All three probabilities exist
+            elif (
+                prob_1d_perc is not None
+                and prob_2d_perc is not None
+                and prob_3d_perc is not None
+            ):
+                lease_data = {
+                    "lease": lease_id,
+                    "user_id": data.get("user_id"),
+                    "prob_1d_perc": prob_1d_perc,
+                    "prob_2d_perc": prob_2d_perc,
+                    "prob_3d_perc": prob_3d_perc,
+                    "prob_days": 3,
+                }
 
-                # Append if lease_data was created in one of the specific cases
-                if lease_data:
-                    user_leases.append(lease_data)
+            # Append if lease_data was created in one of the specific cases
+            if lease_data:
+                user_leases.append(lease_data)
 
         return user_data_by_email
 
@@ -288,19 +270,15 @@ class NotificationEmailContentGenerator:
                 if not message:
                     continue
 
-                # Generate unsubscribe link for SC and FL
-                if self.state.upper() in ["SC", "FL"]:
-                    unsubscribe_link = self._generate_unsubscribe_link(
-                        first.get("user_id"), user_email
-                    )
-                    content = (
-                        message
-                        + self.notification_config.notification_footer
-                        + "<br><br>"
-                        + unsubscribe_link
-                    )
-                else:
-                    content = message + self.notification_config.notification_footer
+                unsubscribe_link = self._generate_unsubscribe_link(
+                    first.get("user_id"), user_email
+                )
+                content = (
+                    message
+                    + self.notification_config.notification_footer
+                    + "<br><br>"
+                    + unsubscribe_link
+                )
 
                 # Add to results if both subject and content are valid
                 if subject and content:
@@ -337,22 +315,23 @@ class NotificationEmailContentGenerator:
         return ""
 
     def _generate_unsubscribe_link(self, user_id, email):
-        """Generate unsubscribe link for the user with state-specific URL."""
+        """Generate one-click unsubscribe link (handled by each state's web app /u/<token>)."""
+        base_url = self.notification_config.web_base_url
         try:
             token = generate_unsubscribe_token(
                 user_id, email, self.notification_config.secret_key
             )
-            base_url = self.notification_config.web_base_url
             unsubscribe_url = f"{base_url}/u/{token}"
             return (
                 f"To unsubscribe from these notifications, <a href='{unsubscribe_url}'>Unsubscribe</a> or \n"
-                f"visit <a href='{base_url}'>go.ncsu.edu/shellcast</a> Preferences page."
+                f"visit <a href='{base_url}/preferences'>ShellCast Preferences</a>."
             )
         except Exception as e:
             logger.error(f"Error generating unsubscribe link for user {user_id}: {e}")
-            # Fallback to preferences page if token generation fails
-            base_url = self.notification_config.web_base_url
-            return f"To unsubscribe from these notifications, <a href='{base_url}/preferences'>visit here</a>"
+            return (
+                "To unsubscribe from these notifications, visit "
+                f"<a href='{base_url}/preferences'>ShellCast Preferences</a>."
+            )
 
 
 class GmailServices:
