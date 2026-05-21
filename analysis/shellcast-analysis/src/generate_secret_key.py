@@ -21,7 +21,7 @@ def main():
     print("=" * 60)
     print(f"Generated SECRET_KEY: {secret_key}")
     print()
-    print("Add this to your config.ini under [Web] section:")
+    print("Add this to analysis_settings.ini under [Web] section:")
     print(f"SECRET_KEY = {secret_key}")
     print()
     print("Also add the same key to your web application configurations:")

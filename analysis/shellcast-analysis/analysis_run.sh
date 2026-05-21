@@ -1,8 +1,8 @@
 #! /bin/sh
 
 echo $PWD
-# source config.sh file (in analysis directory)
-source $PWD"/config.sh"
+# Machine-specific paths for cron (venv, proxy, main scripts)
+source $PWD"/analysis_paths.sh"
 
 # Function to cleanup Cloud SQL proxy
 cleanup_cloud_sql() {

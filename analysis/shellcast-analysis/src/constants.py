@@ -9,8 +9,10 @@ PQPF_DATA_DIR = os.path.join(ROOT_DIR, "data/pqpf")
 TP_DATA_DIR = os.path.join(ROOT_DIR, "data/tp")
 TP_DATA_CATALOG_PATH = os.path.join(TP_DATA_DIR, "tpxmrg_inventory.json")
 
-# [ File path]
-CONFIG_INI = os.path.join(ROOT_DIR, "config.ini")
+# [ File path] — Python settings (DB, state shapefiles, notifications)
+ANALYSIS_SETTINGS_INI = os.path.join(ROOT_DIR, "analysis_settings.ini")
+# Backward-compatible alias for existing imports
+CONFIG_INI = ANALYSIS_SETTINGS_INI
 
 # [ FTP ]
 PQPF_FTP_URL = "ftp.wpc.ncep.noaa.gov"

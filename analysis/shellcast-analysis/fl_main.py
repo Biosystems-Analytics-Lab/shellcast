@@ -30,7 +30,7 @@ if __name__ == "__main__":
     logger.info(f"{'=' * 50}")
     logger.info("\tStart FL ShellCast Analysis")
     logger.info(f"{'=' * 50}")
-    # DB connection information in config.ini
+    # DB connection information in analysis_settings.ini
     db = "gcp.mysql"
 
     # # --- Download and process total precipitation XMRG dataset ---
