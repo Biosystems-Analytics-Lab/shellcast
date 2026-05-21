@@ -9,6 +9,8 @@ package.json
 package-lock.json
 cloud-sql-proxy*
 config*
+analysis_settings.ini
+analysis_paths.sh
 my-cloud-sql-proxy.sh
 run-web.sh
 sqlauth*
