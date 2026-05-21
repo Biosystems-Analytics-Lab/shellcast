@@ -13,8 +13,7 @@ This document is intended to help a developer understand the ShellCast database 
 
 ## 1. Database Design
 
-ShellCast uses a MySQL 5.7 instance hosted on Google Cloud SQL.</br>
-⚒️ _TODO: Upgrade to MySQL 8.0_
+ShellCast uses a MySQL 8.0 instance hosted on Google Cloud SQL.
 
 Database table descriptions as below. Each state has a slightly different set of table columns. The database table schema can be found in the `analysis/shellcast-analysis/db_scripts` directory in the sql files.
 
@@ -41,7 +40,7 @@ Database table descriptions as below. Each state has a slightly different set of
   - This table is used to determine the email-to-SMS gateway for a user's phone number. This is used to send text notifications to users.
 
 There are 3 "databases" in the Cloud SQL MySQL instance: `shellcast_fl`, `shellcast_nc`, and `shellcast_sc` production database that the live, public site uses. `shellcast_dev` is the development database that is used when running the application on a local machine. `shellcast_testing` is a database that is used for running the unit tests for the application. `shellcast_testing` is wiped clean after every test. </br></br>
-Alternatively, you can use locally installed MySQL or a Docker MySQL image for ShellCast analysis development. Modify the `config.ini` database connection variable and the database name in `[state]_main.py` to use the new database connection.
+Alternatively, you can use locally installed MySQL or a Docker MySQL image for ShellCast analysis development. Modify the `analysis_settings.ini` database connection variable and the database name in `[state]_main.py` to use the new database connection.
 
 Database diagrams for each state are shown below:
 
@@ -147,4 +146,4 @@ SHOW GRANTS FOR '<user name>'@'%';
 
 ## 5. Contact Information
 
-If you have any questions, feedback, or suggestions please submit issues [through the NCSU Enterprise GitHub](https://github.ncsu.edu/biosystemsanalyticslab/shellcast/issues) or [through GitHub (public)](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).
+If you have any questions, feedback, or suggestions please submit [GitHub issues](https://github.com/Biosystems-Analytics-Lab/shellcast/issues). You can also reach out to Sheila Saia (ssaia at ncsu dot edu) or Natalie Nelson (nnelson4 at ncsu dot edu).

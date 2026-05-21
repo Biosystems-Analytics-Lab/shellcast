@@ -1,6 +1,9 @@
-# ShellCast Scripts
+# SCRIPTS_README.md
 
-This directory contains utility scripts for managing ShellCast deployments and Google Cloud Storage cleanup.
+> **05-DEVELOPMENT** subsection · [← 5. Development](../05-DEVELOPMENT.md) · [Index](../README.md)
+> Command cheat sheet: [COMMANDS.md](COMMANDS.md)
+
+Utility scripts in the repository **`scripts/`** directory (repo root) for managing ShellCast deployments and Google Cloud Storage cleanup.
 
 ## Scripts Overview
 
