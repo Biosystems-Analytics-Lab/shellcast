@@ -13,7 +13,6 @@ def test_delete_account(client, db_session, add_mock_fb_user):
         email="blah1@gmail.com",
         phone_number="1234567890",
         email_pref=True,
-        email_consent=True,
         text_pref=True,
         text_consent=True,
         prob_pref=3,
@@ -24,7 +23,6 @@ def test_delete_account(client, db_session, add_mock_fb_user):
         email="blah2@gmail.com",
         phone_number="1234567890",
         email_pref=True,
-        email_consent=True,
         text_pref=True,
         text_consent=True,
         prob_pref=3,
@@ -49,7 +47,6 @@ def test_delete_account(client, db_session, add_mock_fb_user):
     assert users[0].email is None
     assert users[0].phone_number is None
     assert users[0].email_pref is User.DEFAULT_email_pref
-    assert users[0].email_consent is User.DEFAULT_email_consent
     assert users[0].text_pref is User.DEFAULT_text_pref
     assert users[0].text_consent is User.DEFAULT_text_consent
     assert users[0].prob_pref == User.DEFAULT_prob_pref
@@ -59,7 +56,6 @@ def test_delete_account(client, db_session, add_mock_fb_user):
     assert users[1].email == "blah2@gmail.com"
     assert users[1].phone_number == "1234567890"
     assert users[1].email_pref is True
-    assert users[1].email_consent is True
     assert users[1].text_pref is True
     assert users[1].text_consent is True
     assert users[1].prob_pref == 3
@@ -73,7 +69,6 @@ def test_delete_account(client, db_session, add_mock_fb_user):
     assert users[0].email is None
     assert users[0].phone_number is None
     assert users[0].email_pref is User.DEFAULT_email_pref
-    assert users[0].email_consent is User.DEFAULT_email_consent
     assert users[0].text_pref is User.DEFAULT_text_pref
     assert users[0].text_consent is User.DEFAULT_text_consent
     assert users[0].prob_pref == User.DEFAULT_prob_pref
@@ -83,7 +78,6 @@ def test_delete_account(client, db_session, add_mock_fb_user):
     assert users[1].email is None
     assert users[1].phone_number is None
     assert users[1].email_pref is User.DEFAULT_email_pref
-    assert users[1].email_consent is User.DEFAULT_email_consent
     assert users[1].text_pref is User.DEFAULT_text_pref
     assert users[1].text_consent is User.DEFAULT_text_consent
     assert users[1].prob_pref == User.DEFAULT_prob_pref
