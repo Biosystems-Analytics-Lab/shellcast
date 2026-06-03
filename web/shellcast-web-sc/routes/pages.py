@@ -139,9 +139,10 @@ def one_click_unsubscribe(token):
         )
 
     # Update user's email preferences and consent
-    user.email_consent = False
+    now = datetime.now(timezone.utc)
     user.email_pref = False
-    user.email_opt_out_date = datetime.now(timezone.utc)
+    user.email_opt_out_date = now
+    user.touch_updated(now)
     try:
         db.session.add(user)
         db.session.commit()

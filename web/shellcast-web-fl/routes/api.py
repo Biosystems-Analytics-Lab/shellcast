@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 import requests
 from core.notifications.inbound import handle_stop_start
@@ -29,7 +29,6 @@ def _construct_user_info_response(user_obj):
         "email_pref": user_obj.email_pref,
         "text_pref": user_obj.text_pref,
         "prob_pref": user_obj.prob_pref,
-        "email_consent": user_obj.email_consent,
         "text_consent": user_obj.text_consent,
         "phone_verified": getattr(user_obj, "phone_verified", False),
         "phone_verified_at": getattr(user_obj, "phone_verified_at", None),
@@ -54,6 +53,8 @@ def user_info(user):
         # validate the uploaded info
         validator = ProfileInfoValidator(request.json)
         if validator.validate():
+            now = datetime.now(timezone.utc)
+            prev_email_pref = user.email_pref
             if validator.email_pref:
                 user.email = validator.email or ""
             user.phone_number = validator.phone_number
@@ -61,6 +62,13 @@ def user_info(user):
             user.text_pref = validator.text_pref
             user.prob_pref = validator.prob_pref
             user.text_consent = validator.text_consent
+            if validator.email_pref != prev_email_pref:
+                if validator.email_pref:
+                    user.email_opt_in_date = now
+                    user.email_opt_out_date = None
+                else:
+                    user.email_opt_out_date = now
+            user.touch_updated(now)
             db.session.add(user)
             db.session.commit()
             return _construct_user_info_response(user)
@@ -151,6 +159,7 @@ def send_phone_verification(user):
         user.phone_verif_count_date = now
     user.phone_verified = True
     user.phone_verified_at = now
+    user.touch_updated(now)
     db.session.add(user)
     db.session.commit()
 
@@ -171,7 +180,8 @@ def send_phone_verification(user):
 @user_required
 def delete_account(user):
     """
-    Deletes the user's account.
+    Soft-delete: remove Firebase user, clear PII, set users.deleted=True.
+    Does not DELETE the users row (see docs/DATABASE_STORED_PROCEDURES.md).
     """
     try:
         # delete the user from Firebase
@@ -186,11 +196,11 @@ def delete_account(user):
         user.email_pref = User.DEFAULT_email_pref
         user.text_pref = User.DEFAULT_text_pref
         user.prob_pref = User.DEFAULT_prob_pref
-        user.email_consent = User.DEFAULT_email_consent
         user.text_consent = User.DEFAULT_text_consent
 
         # mark user record as deleted
         user.deleted = True
+        user.touch_updated()
 
         db.session.add(user)
         db.session.commit()
