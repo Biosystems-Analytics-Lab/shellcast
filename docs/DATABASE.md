@@ -5,11 +5,12 @@ This document is intended to help a developer understand the ShellCast database 
 ## Table of Contents
 
 1. [Database Design](#1-database-design)
-2. [Create a Dedicated Database User for Google App Engine]()
-3. [Connecting to Google Cloud SQL](#2-connecting-to-google-cloud-sql)
-4. [Downloading Database Tables](#3-downloading-database-tables)
-5. [Editing User Information and Leases](#4-editing-user-information-and-leases)
-6. [Contact Information](#5-contact-information)
+2. [Stored procedures (used vs unused)](DATABASE_STORED_PROCEDURES.md)
+3. [Create a Dedicated Database User for Google App Engine]()
+4. [Connecting to Google Cloud SQL](#2-connecting-to-google-cloud-sql)
+5. [Downloading Database Tables](#3-downloading-database-tables)
+6. [Editing User Information and Leases](#4-editing-user-information-and-leases)
+7. [Contact Information](#5-contact-information)
 
 ## 1. Database Design
 
@@ -17,9 +18,15 @@ ShellCast uses a MySQL 8.0 instance hosted on Google Cloud SQL.
 
 Database table descriptions as below. Each state has a slightly different set of table columns. The database table schema can be found in the `analysis/shellcast-analysis/db_scripts` directory in the sql files.
 
+**Stored procedures** (what exists in MySQL, what analysis vs web calls, and legacy unused procedures): [DATABASE_STORED_PROCEDURES.md](DATABASE_STORED_PROCEDURES.md).
+
 - users
   - Stores information about users.
   - User accounts and authentication are mainly handled by Firebase. In our database, we simply create a user record when a new user registers through Firebase and store the Firebase UID in the record along with other information.
+  - **Delete account in the web app does not remove the database row.** It deletes the Firebase user, clears **PII** (personally identifiable information: email, phone, Firebase UID — see [What is PII?](DATABASE_STORED_PROCEDURES.md#what-is-pii)) on the row, and sets `deleted = true`. The `users.id` record stays for audit/history until a separate purge (see [DATABASE_STORED_PROCEDURES.md](DATABASE_STORED_PROCEDURES.md) — recommended: future cron after a retention period).
+  - `created` is set once at first sign-in (registration) and is not changed afterward.
+  - `updated` is set whenever profile, contact, or notification preferences change (standard `updated_at` audit pattern).
+  - Email opt-in/out is tracked with `email_pref` and `email_opt_in_date` / `email_opt_out_date` (not `email_consent`, removed).
 - user_leases
   - Stores the leases that users have added to their accounts.
   - Leases are associated with a particular user. If two users create two of the exact same leases, then they will still be stored as two different records in the database.
@@ -35,9 +42,6 @@ Database table descriptions as below. Each state has a slightly different set of
 - notification_log
   - Stores a log of all notifications that are sent to users.
   - Each notification is associated with a user that the notification is sent to as well as the closure probability that triggered the notification.
-- phone_service_providers
-  - Stores information about phone service providers.
-  - This table is used to determine the email-to-SMS gateway for a user's phone number. This is used to send text notifications to users.
 
 There are 3 "databases" in the Cloud SQL MySQL instance: `shellcast_fl`, `shellcast_nc`, and `shellcast_sc` production database that the live, public site uses. `shellcast_dev` is the development database that is used when running the application on a local machine. `shellcast_testing` is a database that is used for running the unit tests for the application. `shellcast_testing` is wiped clean after every test. </br></br>
 Alternatively, you can use locally installed MySQL or a Docker MySQL image for ShellCast analysis development. Modify the `analysis_settings.ini` database connection variable and the database name in `[state]_main.py` to use the new database connection.
