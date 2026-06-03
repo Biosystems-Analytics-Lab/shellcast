@@ -91,7 +91,7 @@ Shared email settings:
 |-----|---------|
 | `GMAIL_API_CREDENTIAL_FILE` | OAuth client JSON filename (in `shellcast-analysis/`) |
 | `GMAIL_API_TOKEN_FILE` | Saved token after first Gmail auth |
-| `DB_STORED_PROCEDURE` | Usually `SelectUserLeaseProbsToday` |
+| `DB_STORED_PROCEDURE` | Usually `SelectUserLeaseProbsToday` (see [DATABASE_STORED_PROCEDURES.md](../DATABASE_STORED_PROCEDURES.md)) |
 | `EMAIL_SENDER` | From address (e.g. `shellcastapp@ncsu.edu`) |
 | `EMAIL_SECRET_KEY` | Fallback signing key for unsubscribe tokens |
 

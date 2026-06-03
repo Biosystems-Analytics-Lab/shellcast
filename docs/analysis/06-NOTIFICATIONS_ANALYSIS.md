@@ -40,9 +40,7 @@ Criteria in `user_wants_email_notifications()`:
 1. `email_pref == 1` in Cloud SQL
 2. Non-empty `email` address
 3. Today's forecast meets user's `prob_pref` (category threshold)
-4. User appears in `SelectUserLeaseProbsToday` (lease linked, today's `cmu_probabilities`)
-
-**`email_consent` is not used** for sending.
+4. User appears in `SelectUserLeaseProbsToday` (lease linked, today's `cmu_probabilities`) — procedure details: [DATABASE_STORED_PROCEDURES.md](../DATABASE_STORED_PROCEDURES.md)
 
 Florida uses **1-day** probability only in the filter (`prob_only_today=True`). NC and SC consider 1-, 2-, and 3-day columns.
 

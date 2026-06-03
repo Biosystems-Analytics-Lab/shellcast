@@ -89,7 +89,7 @@ Update `src/tests/test_email_notification.py` when filter logic changes.
 
 ## Changing database schema
 
-SQL reference scripts: `analysis/shellcast-analysis/db_scripts/`. Apply changes to Cloud SQL deliberately; update stored procedures if notification queries change. See [DATABASE.md](../DATABASE.md).
+SQL reference scripts: `analysis/shellcast-analysis/db_scripts/`. Apply changes to Cloud SQL deliberately; update stored procedures if notification queries change. See [DATABASE.md](../DATABASE.md) and [DATABASE_STORED_PROCEDURES.md](../DATABASE_STORED_PROCEDURES.md) (which procedures are used, unused, and state-specific).
 
 ## Related
 
