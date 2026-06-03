@@ -673,7 +673,6 @@ export function initNotificationForm(deps) {
     const newProfileInfo = {
       email: emailToSend,
       phone_number: phoneToSend,
-      service_provider_id: null,
       email_pref: emailPref,
       text_pref: textPref,
       prob_pref: selectedProb,

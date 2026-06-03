@@ -36,6 +36,7 @@ def handle_stop_start(
             user.text_pref = False
             user.text_consent = False
             user.text_opt_out_date = datetime.now(timezone.utc)
+            user.touch_updated()
             db_session.commit()
 
             log_inbound_fn(state, user.id, clean_number, message_id)
@@ -60,6 +61,7 @@ def handle_stop_start(
             user.text_pref = True
             user.text_consent = True
             user.text_opt_in_date = datetime.now(timezone.utc)
+            user.touch_updated()
             db_session.commit()
 
             log_inbound_fn(state, user.id, clean_number, message_id)

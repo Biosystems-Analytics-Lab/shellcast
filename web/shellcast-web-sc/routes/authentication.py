@@ -1,5 +1,6 @@
 import os
 import secrets
+from datetime import datetime, timezone
 from functools import wraps
 
 from firebase_admin import auth
@@ -23,8 +24,9 @@ def ensure_user_exists(fb_user_info):
     if user is not None:
         return user
 
-    # otherwise we need to create a new user
-    new_user = User(firebase_uid=fb_uid, email=email)
+    # otherwise we need to create a new user (created = registration time)
+    now = datetime.now(timezone.utc)
+    new_user = User(firebase_uid=fb_uid, email=email, created=now, updated=now)
     db.session.add(new_user)
     db.session.commit()
 
