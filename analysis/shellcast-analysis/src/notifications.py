@@ -55,7 +55,7 @@ def filter_users_by_preferences(users_data, prob_1d_only=False, state=None):
     """
     Filter users for email notification: email_pref, email address, and probability threshold.
 
-    email_consent is not used; only email_pref and a non-empty email are required.
+    Only email_pref and a non-empty email are required.
 
     Args:
         users_data: Rows from SelectUserLeaseProbsToday (dicts with email_pref, email, prob_*).
