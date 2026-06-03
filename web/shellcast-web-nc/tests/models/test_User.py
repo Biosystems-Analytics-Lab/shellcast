@@ -22,7 +22,6 @@ def test_user(db_session):
     assert res[0].email_pref is False
     assert res[0].text_pref is False
     assert res[0].prob_pref == user.prob_pref
-    assert res[0].email_consent is False
     assert res[0].text_consent is False
     assert res[0].email_verified is False
     assert res[0].phone_verified is False
@@ -42,7 +41,7 @@ def test_as_dict(gen_random_string):
     assert dict_form["phone_number"] == user.phone_number
     assert dict_form["email"] == user.email
     assert dict_form["email_pref"] == user.email_pref
-    assert dict_form["email_consent"] == user.email_consent
+    assert "email_consent" not in dict_form
     assert dict_form["text_pref"] == user.text_pref
     assert dict_form["text_consent"] == user.text_consent
     assert dict_form["prob_pref"] == user.prob_pref
