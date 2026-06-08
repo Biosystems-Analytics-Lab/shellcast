@@ -13,6 +13,7 @@ analysis_settings.ini
 analysis_paths.sh
 my-cloud-sql-proxy.sh
 run-web.sh
+scripts/create-lab-pr.sh
 sqlauth*
 *.grb
 tpxmrg_inventory.json
