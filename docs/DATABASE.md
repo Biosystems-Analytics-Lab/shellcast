@@ -46,16 +46,214 @@ Database table descriptions as below. Each state has a slightly different set of
 There are 3 "databases" in the Cloud SQL MySQL instance: `shellcast_fl`, `shellcast_nc`, and `shellcast_sc` production database that the live, public site uses. `shellcast_dev` is the development database that is used when running the application on a local machine. `shellcast_testing` is a database that is used for running the unit tests for the application. `shellcast_testing` is wiped clean after every test. </br></br>
 Alternatively, you can use locally installed MySQL or a Docker MySQL image for ShellCast analysis development. Modify the `analysis_settings.ini` database connection variable and the database name in `[state]_main.py` to use the new database connection.
 
-Database diagrams for each state are shown below:
+Canonical DDL: `analysis/shellcast-analysis/db_scripts/shellcast_create_db_{nc,sc,fl}.sql`.
 
-**DB Name: shellcast_nc**
-![shellcast_nc](/Users/makiko/CGAProjects/NCSUGitHubProjects/shellcast/docs/images/shellcast_nc_db.png)
+Entity-relationship diagrams below use [Mermaid](https://mermaid.js.org/syntax/entityRelationshipDiagram.html) (renders on GitHub). Solid lines are foreign keys declared in SQL; dotted lines are joins used by the app or stored procedures but not enforced as FKs.
 
-**DB Name: shellcast_sc**
-![shellcast_sc](/Users/makiko/CGAProjects/NCSUGitHubProjects/shellcast/docs/images/shellcast_sc_db.png)
+### North Carolina — `shellcast_nc`
 
-**DB Name: shellcast_fl**
-![`shellcast_fl`](images/shellcast_fl_db.png)
+NC stores closure probabilities **per CMU** (`cmu_probabilities.cmu_name`). Leases carry `cmu_name`; daily analysis joins lease → CMU probability. SMS delivery events for **all states** are logged in NC’s `notification_events` table.
+
+```mermaid
+erDiagram
+    users }o..o{ user_leases : "user_id"
+    leases }o..o{ user_leases : "lease_id"
+    users ||--o{ notification_log : "user_id FK"
+    users }o..o{ notification_events : "user_id"
+    leases }o..o{ cmu_probabilities : "cmu_name"
+    cmus }o..o{ cmu_probabilities : "cmu_name"
+
+    users {
+        int id PK
+        string firebase_uid
+        string email
+        string phone_number
+        boolean email_pref
+        boolean text_pref
+        tinyint prob_pref
+        boolean deleted
+        datetime created
+        datetime updated
+    }
+
+    user_leases {
+        int id PK
+        int user_id
+        string lease_id
+        tinyint deleted
+    }
+
+    leases {
+        string lease_id PK
+        string grow_area_name
+        string cmu_name
+        decimal rainfall_thresh_in
+        double latitude
+        double longitude
+    }
+
+    cmus {
+        int id PK
+        string cmu_name
+    }
+
+    cmu_probabilities {
+        int id PK
+        string cmu_name
+        tinyint prob_1d_perc
+        tinyint prob_2d_perc
+        tinyint prob_3d_perc
+        datetime created
+    }
+
+    notification_log {
+        int id PK
+        int user_id FK
+        string address
+        text notification_text
+        string notification_type
+        boolean send_success
+    }
+
+    notification_events {
+        int id PK
+        string state
+        int user_id
+        string notification_type
+        string phone_number
+        string email_address
+        string delivery_status
+        string message_id
+        datetime created
+    }
+```
+
+### South Carolina — `shellcast_sc`
+
+SC stores closure probabilities **per lease** (`cmu_probabilities.lease_id`). There is no `cmus` or `notification_log` table in the create script; SMS events are logged to **NC** `notification_events` via the orchestrator API.
+
+```mermaid
+erDiagram
+    users ||--o{ user_leases : "user_id FK"
+    leases ||--o{ user_leases : "lease_id FK"
+    leases ||--o{ cmu_probabilities : "lease_id FK"
+
+    users {
+        int id PK
+        string firebase_uid
+        string email
+        string phone_number
+        boolean email_pref
+        boolean text_pref
+        tinyint prob_pref
+        boolean deleted
+        datetime created
+        datetime updated
+    }
+
+    user_leases {
+        int id PK
+        int user_id FK
+        string lease_id FK
+        tinyint deleted
+    }
+
+    leases {
+        string lease_id PK
+        string grow_area_name
+        string cmu_name
+        decimal rainfall_thresh_in
+        double latitude
+        double longitude
+    }
+
+    cmu_probabilities {
+        int id PK
+        string lease_id FK
+        tinyint prob_1d_perc
+        tinyint prob_2d_perc
+        tinyint prob_3d_perc
+        datetime created
+    }
+```
+
+### Florida — `shellcast_fl`
+
+FL uses a rich **`cmus`** table (FDACS harvest areas, rainfall rules, seasons). Leases reference `cmus.id`; daily probabilities are **per CMU** with **today only** (`prob_1d_perc`). Forecast email uses `notification_log`; SMS events go to NC `notification_events` like SC.
+
+```mermaid
+erDiagram
+    users ||--o{ user_leases : "user_id FK"
+    users ||--o{ notification_log : "user_id FK"
+    cmus ||--o{ leases : "cmu_id FK"
+    cmus ||--o{ cmu_probabilities : "cmu_id FK"
+    leases }o..o{ user_leases : "lease_id join"
+
+    users {
+        int id PK
+        string firebase_uid
+        string email
+        string phone_number
+        boolean email_pref
+        boolean text_pref
+        tinyint prob_pref
+        boolean deleted
+        datetime created
+        datetime updated
+    }
+
+    user_leases {
+        int id PK
+        int user_id FK
+        string lease_id
+        tinyint deleted
+    }
+
+    cmus {
+        string id PK
+        string sh_id
+        string sh_name
+        int rainfall_thresh_days
+        decimal rainfall_thresh_in
+        string season
+    }
+
+    leases {
+        int id PK
+        string lease_id
+        string cmu_id FK
+        string parcel_name
+        string waterbody
+        double latitude
+        double longitude
+    }
+
+    cmu_probabilities {
+        int id PK
+        string cmu_id FK
+        tinyint prob_1d_perc
+        datetime created
+    }
+
+    notification_log {
+        int id PK
+        int user_id FK
+        string address
+        text notification_text
+        string notification_type
+        boolean send_success
+    }
+```
+
+### Cross-state comparison
+
+| | NC | SC | FL |
+|--|----|----|-----|
+| **Probability grain** | CMU (`cmu_name`) | Lease (`lease_id`) | CMU (`cmu_id`) |
+| **Forecast days in DB** | 3 (`prob_1d` … `prob_3d`) | 3 | 1 (`prob_1d` only) |
+| **`cmus` table** | Minimal name list | — | Full FDACS metadata |
+| **`notification_log`** | Yes (analysis email) | Commented out in DDL | Yes (analysis email) |
+| **`notification_events` (SMS)** | Yes (all states log here) | Via NC API | Via NC API |
 
 ## 2. Create a Dedicated Database User for Google App Engine
 
