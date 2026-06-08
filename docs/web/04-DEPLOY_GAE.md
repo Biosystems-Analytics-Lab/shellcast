@@ -8,18 +8,78 @@
 
 ## Check before deploying (no GAE deploy)
 
-You can confirm the app will start on GAE **without deploying** by running the same command GAE runs, locally:
+Google App Engine does **not** run `python main.py`. It runs **Gunicorn** with the entrypoint in `app.yaml`:
+
+```yaml
+entrypoint: gunicorn -b :$PORT main:app
+```
+
+You can run the same thing locally **before** deploying to catch startup errors (missing env vars, import failures, DB/Firebase misconfiguration) without uploading a broken version.
+
+### Step-by-step (from the app you will deploy)
 
 ```bash
-cd web/shellcast-web-nc   # or shellcast-web-fl, shellcast-web-sc
-# Use the same env as GAE (e.g. .env with required vars, or export from app.yaml)
+cd web/shellcast-web-fl   # or shellcast-web-nc, shellcast-web-sc
+source ../venv/bin/activate
+
+# Same prerequisites as normal local run:
+# - Cloud SQL proxy running (./my-cloud-sql-proxy.sh web from repo root)
+# - .env populated (or env vars exported)
+# - GOOGLE_APPLICATION_CREDENTIALS set if you test sign-in
+
 gunicorn -b :8080 main:app
 ```
 
-- If it **starts** and you can open http://localhost:8080 with no crash, the entrypoint and `main:app` are correct; GAE should not 502 for that reason.
-- If it **crashes** (import error, missing env var, Firebase/DB error), you see the traceback locally and can fix before any deploy.
+Leave that terminal open. In a browser, open **http://localhost:8080** and click through the home/map page. Stop the server with **Ctrl+C** when done.
 
-Requires: `pip install -r requirements.txt` and env vars (e.g. `.env` or same as in `app.yaml`). Stop with Ctrl+C.
+### Successful run — what you should see
+
+If startup succeeds, the terminal shows lines like this (version numbers may differ):
+
+```text
+[INFO] Starting gunicorn 26.0.0
+[INFO] Listening at: http://0.0.0.0:8080 (84517)
+[INFO] Using worker: sync
+[INFO] Booting worker with pid: 84518
+```
+
+| Line | Meaning |
+|------|---------|
+| `Starting gunicorn …` | Gunicorn itself started |
+| `Listening at: http://0.0.0.0:8080` | Your app is accepting connections on port **8080** — open that URL in a browser |
+| `Using worker: sync` | Normal for a local smoke test |
+| `Booting worker with pid: …` | A worker process loaded `main:app` **without crashing at import/startup** |
+
+**That is a successful pre-deploy check** for the entrypoint. GAE uses the same `main:app` pattern (on `$PORT` instead of 8080).
+
+You may also see `Control socket listening at …/gunicorn.ctl` — that is normal Gunicorn housekeeping; you can ignore it.
+
+### Failed run — what to look for
+
+If something is wrong, Gunicorn often prints a **Python traceback** immediately after `Booting worker`, or the process exits before `Listening at:` appears. Common messages:
+
+| Error | Likely fix |
+|-------|------------|
+| `Missing required environment variables: …` | Fill in `.env` (copy from `env.template`) |
+| `ModuleNotFoundError` | Activate `web/venv`; `pip install -r requirements.txt` |
+| Database / socket errors | Start `./my-cloud-sql-proxy.sh web`; check `DB_UNIX_SOCKET_PATH_PREFIX` in `.env` |
+| Firebase errors on sign-in | Set `GOOGLE_APPLICATION_CREDENTIALS` |
+
+Fix the error, run `gunicorn -b :8080 main:app` again, then deploy only after you get a clean startup and the site loads in the browser.
+
+### `gunicorn` vs `python main.py`
+
+Both use the same Flask app (`create_app()`), but they are **not identical**:
+
+| | `python main.py` | `gunicorn -b :8080 main:app` |
+|--|------------------|------------------------------|
+| Server | Flask development server | Gunicorn (production WSGI — **what GAE uses**) |
+| Port | `PORT` in `.env` (e.g. 3361) | **8080** (what you pass to `-b`) |
+| Best for | Day-to-day coding | **Pre-deploy smoke test** |
+
+Use `python main.py` while developing; use Gunicorn once before `gcloud app deploy` to match production.
+
+Requires: `pip install -r requirements.txt` (includes `gunicorn`).
 
 ## Using .env on GAE
 
@@ -44,6 +104,7 @@ If a webhook still fails: in Cloud Logging, find the failing request and check t
 - `gcloud` CLI installed and logged in: `gcloud auth login`
 - Project set: `gcloud config set project ncsu-shellcast` (or your project ID)
 - App Engine application created in the project (first-time: `gcloud app create` if prompted)
+- **`app.yaml`** in each app directory with production secrets (gitignored — copy from `app.yaml.template` or a project administrator). Cloud SQL on GAE uses `DB_UNIX_SOCKET_PATH_PREFIX: "/cloudsql/"`; you do not create that folder — see [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §4.
 
 ## Test deployment before committing (no traffic)
 

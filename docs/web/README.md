@@ -53,6 +53,14 @@ web/
 
 Each app has its own `main.py`, `app.yaml`, `routes/`, `templates/`, `static/`, and `env.template` → local `.env`.
 
+### Key dependency versions (web)
+
+| Component | Version | Where defined |
+|-----------|---------|---------------|
+| OpenLayers (`ol`) | **9.2.4** | `web/shellcast-web-nc/package.json` |
+| Cloud SQL Auth Proxy | **2.22.0** | `cloud-sql-proxy-setup.sh` |
+| Python runtime (GAE) | **3.11** | Each app's `app.yaml` (`runtime: python311`) |
+
 ## Related documentation
 
 - [docs/analysis/README.md](../analysis/README.md) — daily forecast analysis, database writes, **forecast email** sending

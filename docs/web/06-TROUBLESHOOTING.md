@@ -8,16 +8,18 @@ Symptoms when running or deploying `shellcast-web-{nc,sc,fl}`.
 
 | Symptom | Things to check |
 |---------|------------------|
-| **502 Bad Gateway** on GAE | Deployed from **inside** app dir? `gunicorn -b :$PORT main:app` in `app.yaml`? Run `gunicorn -b :8080 main:app` locally — [04-DEPLOY_GAE.md](04-DEPLOY_GAE.md) |
+| **502 Bad Gateway** on GAE | Deployed from **inside** app dir? `gunicorn -b :$PORT main:app` in `app.yaml`? Run `gunicorn -b :8080 main:app` locally — [04-DEPLOY_GAE.md](04-DEPLOY_GAE.md) § “Check before deploying” |
 | App crashes at startup | Cloud Logging traceback; missing env vars in `.env` / `app.yaml` vs `env.template` |
+| Gunicorn exits immediately locally | Read traceback after `Booting worker`; compare with successful log example in [04-DEPLOY_GAE.md](04-DEPLOY_GAE.md) |
 | **Host validation failed** (400) | `TRUSTED_HOSTS` in `main.py`; Bandwidth callback `Host` header — [04-DEPLOY_GAE.md](04-DEPLOY_GAE.md) |
 
 ## Database
 
 | Symptom | Things to check |
 |---------|------------------|
-| Cannot connect locally | Cloud SQL proxy running; `DB_HOST`/`DB_PORT` or Unix socket path |
-| Works locally, fails on GAE | `SQLALCHEMY` / socket URI for production; instance connection name |
+| Cannot connect locally | `./my-cloud-sql-proxy.sh web` running; `.env` has `DB_UNIX_SOCKET_PATH_PREFIX=/tmp/shellcast-csql/` |
+| `bind: invalid argument` (proxy) | macOS socket path too long — use `/tmp/shellcast-csql/`, not a path under the repo ([01-GETTING_STARTED.md](01-GETTING_STARTED.md) §2) |
+| Works locally, fails on GAE | `app.yaml` socket settings; Cloud SQL instance linked to GAE service |
 | Map empty / no probabilities | **Analysis** ran and `SAVE_TO_DB=true`; correct state database — [analysis/08-TROUBLESHOOTING.md](../analysis/08-TROUBLESHOOTING.md) |
 
 ## Authentication
@@ -42,7 +44,9 @@ Symptoms when running or deploying `shellcast-web-{nc,sc,fl}`.
 | Symptom | Things to check |
 |---------|------------------|
 | `ModuleNotFoundError` | Wrong venv; `pip install -r requirements.txt` from correct app |
-| Unix socket errors on Windows | Use TCP proxy + `DB_HOST=127.0.0.1` — [01-GETTING_STARTED.md](01-GETTING_STARTED.md) |
+| Missing env vars at startup | `python-dotenv` installed; `.env` in app directory — [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §3 |
+| **`ol is not defined`** (map page) | Run `npm install && npm run build` in `web/shellcast-web-nc`; copy `static/lib/ol.js` to SC/FL if needed — [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5 |
+| Terminal exits 127 when sourcing proxy | Use `./my-cloud-sql-proxy.sh web`, not `source`; run `sh cloud-sql-proxy-setup.sh` if binary missing |
 
 ## Getting help
 

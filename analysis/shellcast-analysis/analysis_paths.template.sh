@@ -7,7 +7,7 @@
 CLOUD_SQL_PATH="{your directory}/shellcast/analysis/shellcast-analysis/cloud-sql-proxy"
 
 # Name of Cloud SQL Instance
-CLOUD_SQL_INSTANCE_NAME=""
+CLOUD_SQL_INSTANCE_NAME="your-project:region:instance-name"
 
 # MySQL port
 CLOUD_SQL_PORT="3306"

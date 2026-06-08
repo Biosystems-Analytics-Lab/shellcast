@@ -118,7 +118,7 @@ pip install -r requirements.txt
 In a **separate terminal**, start the Cloud SQL proxy (credentials from a project administrator):
 
 ```bash
-./cloud-sql-proxy --port 3306 ncsu-shellcast:us-east1:ncsu-shellcast-database
+./cloud-sql-proxy --port 3306 your-project:region:instance-name
 ```
 
 Smoke test one state (with proxy running and venv active):
@@ -139,21 +139,27 @@ Full walkthrough: [docs/web/01-GETTING_STARTED.md](docs/web/01-GETTING_STARTED.m
 Summary:
 
 ```bash
+cd web
+python3 -m venv venv && source venv/bin/activate
+pip install -r shellcast-web-nc/requirements.txt
+
+# Cloud SQL proxy + OpenLayers (once per machine)
+sh ../cloud-sql-proxy-setup.sh
+cp ../my-cloud-sql-proxy.template.sh ../my-cloud-sql-proxy.sh
+# Edit instance_connection_name in my-cloud-sql-proxy.sh, then:
+chmod +x ../my-cloud-sql-proxy.sh
+cd shellcast-web-nc && npm install && npm run build
+
+cd ../..   # repo root
+./my-cloud-sql-proxy.sh web    # leave running (Terminal 1)
+
 cd web/shellcast-web-nc
-cp env.template .env
-# Edit .env with DB, Flask, and Firebase values from a project administrator
-
-python3 -m venv ../venv
-source ../venv/bin/activate
-pip install -r requirements.txt
-```
-
-Start the same Cloud SQL proxy as above (TCP: `DB_HOST=127.0.0.1`, `DB_PORT=3306` in `.env`). Set Firebase for local sign-in:
-
-```bash
+cp env.template .env           # edit with secrets from a project administrator
 export GOOGLE_APPLICATION_CREDENTIALS="/path/to/firebase-admin-sdk-credentials.json"
-python main.py
+python main.py                 # Terminal 2
 ```
+
+For deployment, create **`app.yaml`** from `app.yaml.template` (gitignored) — see [docs/web/04-DEPLOY_GAE.md](docs/web/04-DEPLOY_GAE.md).
 
 Open the URL in the console (NC often uses port **3361** — check `PORT` in `.env`). Repeat under `shellcast-web-sc` or `shellcast-web-fl` for other states.
 

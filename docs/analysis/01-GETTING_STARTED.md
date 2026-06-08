@@ -65,7 +65,7 @@ Download `cloud-sql-proxy` to the parent `analysis/` directory (see [09-ANALYSIS
 In one terminal:
 
 ```bash
-./cloud-sql-proxy --port 3306 ncsu-shellcast:us-east1:ncsu-shellcast-database
+./cloud-sql-proxy --port 3306 your-project:region:instance-name
 ```
 
 Match `HOST` / `PORT` in `analysis_settings.ini` `[gcp.mysql]` (typically `127.0.0.1:3306`).

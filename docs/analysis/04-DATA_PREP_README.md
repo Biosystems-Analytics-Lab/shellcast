@@ -2,17 +2,13 @@
 
 > **Doc 4 of 9** · [← 3. State guides](03-STATE_GUIDES.md) · [Index](README.md) · [Next: 5. Daily operations →](05-DAILY_OPERATIONS.md)
 
-ShellCast requires input data for analysis. North Carolina and South Carolina
-occasionally require data updates, which are done manually. Florida's shellfish harvest
-areas have seasonality dates. Most of them are all seasons, while some are spring or
-fall, or both. In addition, the dates may change. To reflect seasonality changes to
-ShellCast forecasting, shellfish harvest areas and leases data are downloaded from a
-web map server. Then, they are processed for ShellCast analysis input. This repository
-contains the scripts and data used to prepare the data for Florida ShellCast analysis.
+ShellCast analysis depends on **processed spatial inputs**, not raw agency datasets. For each state, source organizations publish growing areas, leases, and related boundaries on their own schedules. Those sources change over time — geometry, seasonality rules (notably in Florida), file names, and attribute field names can all shift. ShellCast cannot read those files directly; they must be prepared so the pipeline can load shapefiles under `data/pqpf/{nc,sc,fl}/inputs/`, identify **shellfish growing units (CMUs)** and **leases**, and write forecasts to the database.
 
-Uploading results to a GCS bucket was meant to automate analysis input updates; that approach did not remain reliable (changing source URLs and field names). **Local** `data/pqpf/fl/inputs/` is the practical path for daily runs — see [02-CONFIGURATION.md](02-CONFIGURATION.md) (`[gcp.bucket]`).
+**All three states need periodic input updates** when upstream data changes. Today that work is **manual** (or ad hoc scripts on a developer machine). Fully automating fetch → process → deploy would be ideal but was not completed — it would need dedicated time to build and maintain.
 
-> **Input dataset documentation** (shapefile layout, NC/SC manual updates, bucket layout, file lists) is planned as a separate guide. For daily analysis setup and how inputs are consumed at run time, see the [analysis documentation index](README.md) and [03-STATE_GUIDES.md](03-STATE_GUIDES.md).
+**Florida** is where automation was attempted: `data_prep/fl/` downloads harvest areas and leases from a web map service, processes them with ArcPy, and was designed to upload results to Google Cloud Storage so the analysis server could pull fresh files. In practice, upstream **URL, dataset name, and field-name changes** broke the pipeline often enough that automatic updates are **not reliable** for now. The bucket path remains in code as an optional experiment; **local** `data/pqpf/fl/inputs/` (same idea as NC and SC) is the practical choice for daily runs — see [02-CONFIGURATION.md](02-CONFIGURATION.md) (`[gcp.bucket]`).
+
+This document focuses on the **Florida ArcPy data-prep** scripts in the repository. North Carolina and South Carolina input updates follow similar manual steps (replace shapefiles under `data/pqpf/nc/inputs/` and `data/pqpf/sc/inputs/` when agencies publish revisions). Detailed file lists and layout for each state are still being documented separately.
 
 ## Requirements
 

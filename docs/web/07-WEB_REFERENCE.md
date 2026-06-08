@@ -46,7 +46,7 @@ Some steps below assume a **Unix** machine (Linux/macOS). Windows may work with 
 - [SQLAlchemy](https://www.sqlalchemy.org/) - SQLAlchemy is a Python framework used to interact with databases. It is used in this project mainly for its ORM functionality.
 - [Jinja](https://jinja.palletsprojects.com/en/2.11.x/) - Jinja is a templating language. It is used to build templates for the pages of the site.
 - [Python](https://www.python.org/download/releases/3.0/) - Python (version 3) is used here for data analysis. We recommend downloading Python using Miniconda as explained in [Setup Python and R for ShellCast Data Analysis](#47-setup-python-and-r-for-shellcast-data-analysis) below.
-- [OpenLayers](https://openlayers.org/) - OpenLayers is a Open Source JavaScript library used to display the map on the index page.
+- [OpenLayers](https://openlayers.org/) **9.2.4** (`ol` npm package) — JavaScript map library on the index/map pages. Built into `static/lib/ol.js` and `ol.css` via `npm run build` in `shellcast-web-nc` — see [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5.
 - [git](https://git-scm.com/) - We use git for version control and collaboration.
 - [Google App Engine](https://cloud.google.com/appengine) - Google App Engine is a platform as a service (PaaS) that allows you to build and deploy web applications on Google's infrastructure.
 - [Google Cloud SQL](https://cloud.google.com/sql) - Google Cloud SQL is a fully-managed relational database service for MySQL, PostgreSQL, and SQL Server. ShellCast uses a MySQL database for storing all persistent information.
@@ -81,6 +81,8 @@ The Google Cloud SDK is principally a command line tool that allows you to inter
 Install MySQL by following [these instructions](https://downloads.mysql.com/archives/community/).
 
 ### 4.5 Cloud SQL Proxy
+
+> **Current workflow:** [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §2–3 (web Unix socket at `/tmp/shellcast-csql/`; analysis TCP separately). The steps below are legacy detail.
 
 #### 4.5.1 Setup the Cloud SQL Proxy
 

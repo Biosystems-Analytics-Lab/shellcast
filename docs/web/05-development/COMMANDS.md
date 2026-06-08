@@ -9,6 +9,7 @@
 ```bash
 # Check without deploying: run same command GAE uses (from app dir, e.g. web/shellcast-web-nc)
 # If this starts and http://localhost:8080 works, GAE should not 502. Stop with Ctrl+C.
+# See 04-DEPLOY_GAE.md § "Check before deploying" for example successful log output.
 gunicorn -b :8080 main:app
 
 # Deploy and migrate traffic to new version
@@ -36,11 +37,31 @@ gsutil -m rm "gs://staging.PROJECT_NAME.appspot.com/containers/images/**"
 
 ### Cloud SQL Proxy Commands
 
+From **repository root** (see [01-GETTING_STARTED.md](../01-GETTING_STARTED.md) §2):
+
 ```bash
-# Start Cloud SQL proxy with TCP connection
-source my-cloud-sql-proxy-connection.sh
+# One-time: personal proxy script (gitignored)
+cp my-cloud-sql-proxy.template.sh my-cloud-sql-proxy.sh
+# Edit instance_connection_name, then:
+chmod +x my-cloud-sql-proxy.sh
+
+# One-time download of proxy binaries
+sh cloud-sql-proxy-setup.sh
+
+# Web local dev (Unix socket — leave running)
+./my-cloud-sql-proxy.sh web
+
+# Analysis local dev (TCP port 3306)
+./my-cloud-sql-proxy.sh analysis
 
 # Stop proxy: Ctrl+C
+```
+
+### OpenLayers build
+
+```bash
+cd web/shellcast-web-nc
+npm install && npm run build   # OpenLayers 9.2.4 → static/lib/ol.js, ol.css
 ```
 
 ### Project Information
