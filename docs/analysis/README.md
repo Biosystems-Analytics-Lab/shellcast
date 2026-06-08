@@ -11,8 +11,8 @@ Files in this folder are **numbered** (`01-` … `09-`) so you can read them in 
 | — | **README.md** (this file) | Index, system overview, layout |
 | 1 | [01-GETTING_STARTED.md](01-GETTING_STARTED.md) | First successful run on your machine |
 | 2 | [02-CONFIGURATION.md](02-CONFIGURATION.md) | `analysis_settings.ini`, `analysis_paths.sh`, secrets |
-| 3 | [03-STATE_GUIDES.md](03-STATE_GUIDES.md) | NC vs SC vs FL behavior |
-| 4 | [04-DATA_PREP_README.md](04-DATA_PREP_README.md) | Florida ArcPy data prep overview (inputs) |
+| 3 | [03-STATE_GUIDES.md](03-STATE_GUIDES.md) | NC vs SC vs FL behavior; **GIS flowcharts** |
+| 4 | [04-DATA_PREP_README.md](04-DATA_PREP_README.md) | Spatial input prep overview (all states; FL ArcPy scripts) |
 | 5 | [05-DAILY_OPERATIONS.md](05-DAILY_OPERATIONS.md) | Production cron on the analysis iMac |
 | 6 | [06-NOTIFICATIONS_ANALYSIS.md](06-NOTIFICATIONS_ANALYSIS.md) | Gmail emails from analysis; web unsubscribe |
 | 7 | [07-DEVELOPMENT.md](07-DEVELOPMENT.md) | Changing code and deploying to production |
@@ -33,7 +33,7 @@ Files in this folder are **numbered** (`01-` … `09-`) so you can read them in 
 | NC vs SC vs FL behavior | [03-STATE_GUIDES.md](03-STATE_GUIDES.md) |
 | Something failed | [08-TROUBLESHOOTING.md](08-TROUBLESHOOTING.md) |
 | Deep background, PQPF specs, wgrib2/NCEP compile | [09-ANALYSIS.md](09-ANALYSIS.md) |
-| Florida ArcPy data prep (overview) | [04-DATA_PREP_README.md](04-DATA_PREP_README.md) |
+| Spatial input prep (all states; FL ArcPy scripts) | [04-DATA_PREP_README.md](04-DATA_PREP_README.md) |
 
 ## System overview
 

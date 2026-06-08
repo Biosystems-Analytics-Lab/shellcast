@@ -71,8 +71,6 @@ def create_app(config=None):
         os.environ.setdefault("SECRET_KEY", "dev-secret-key")
 
         # Validate required environment variables
-        # DB_HOST / DB_PORT are required for local TCP connections.
-        # CLOUD_SQL_INSTANCE_NAME is required on GAE for Unix socket connections.
         required_vars = [
             "HOST",
             "PORT",
@@ -81,15 +79,12 @@ def create_app(config=None):
             "DB_USER",
             "DB_PASS",
             "DB_NAME",
+            "CLOUD_SQL_INSTANCE_NAME",
             "DB_POOL_SIZE",
             "DB_MAX_OVERFLOW",
             "DB_POOL_TIMEOUT",
             "DB_POOL_RECYCLE",
         ]
-        if RUNNING_ON_GAE:
-            required_vars.append("CLOUD_SQL_INSTANCE_NAME")
-        else:
-            required_vars.extend(["DB_HOST", "DB_PORT"])
 
         missing_vars = [var for var in required_vars if not os.environ.get(var)]
         if missing_vars:
@@ -133,44 +128,24 @@ def create_app(config=None):
             }
         )
 
-        # Database URI: use env override (e.g. tests with sqlite) or build from settings.
-        # - On GAE: connect via Unix socket /cloudsql/<instance_name>
-        # - Local dev: connect via TCP host:port from .env (no proxy required if DB is reachable)
+        # Database URI: use env override (e.g. tests with sqlite) or Unix socket (local + GAE).
         if os.environ.get("SQLALCHEMY_DATABASE_URI"):
             app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
                 "SQLALCHEMY_DATABASE_URI"
             )
         else:
-            if RUNNING_ON_GAE:
-                # Use Unix socket provided by App Engine standard.
-                socket_path = "{}{}".format(
-                    app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
-                    app.config["CLOUD_SQL_INSTANCE_NAME"],
+            socket_path = "{}{}".format(
+                app.config["DB_UNIX_SOCKET_PATH_PREFIX"],
+                app.config["CLOUD_SQL_INSTANCE_NAME"],
+            )
+            app.config["SQLALCHEMY_DATABASE_URI"] = (
+                "mysql+pymysql://{}:{}@/{}?unix_socket={}&ssl_disabled=true".format(
+                    app.config["DB_USER"],
+                    app.config["DB_PASS"],
+                    app.config["DB_NAME"],
+                    socket_path,
                 )
-                app.config["SQLALCHEMY_DATABASE_URI"] = (
-                    "mysql+pymysql://{}:{}@/{}?unix_socket={}&ssl_disabled=true".format(
-                        app.config["DB_USER"],
-                        app.config["DB_PASS"],
-                        app.config["DB_NAME"],
-                        socket_path,
-                    )
-                )
-            else:
-                # Local TCP connection (DB_HOST:DB_PORT) – uses values from .env
-                host = app.config["DB_HOST"]
-                port = app.config["DB_PORT"]
-                if port:
-                    hostport = f"{host}:{port}"
-                else:
-                    hostport = host
-                app.config["SQLALCHEMY_DATABASE_URI"] = (
-                    "mysql+pymysql://{}:{}@{}/{}".format(
-                        app.config["DB_USER"],
-                        app.config["DB_PASS"],
-                        hostport,
-                        app.config["DB_NAME"],
-                    )
-                )
+            )
 
     # Set Gmail redirect URI if provided
     app.config["GMAIL_REDIRECT_URI"] = os.environ.get("GMAIL_REDIRECT_URI")

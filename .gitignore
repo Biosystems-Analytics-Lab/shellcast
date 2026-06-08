@@ -32,10 +32,13 @@ data_prep/fl/final_outputs/
 node_modules/
 **/instance/
 # Frontend Node build metadata and scripts for web apps
-web/shellcast-web-*/package.json
 web/shellcast-web-*/package-lock.json
-# Do not push scripts/ in any shellcast-web-* app
-**/shellcast-web-**/scripts/
+# OpenLayers build (package.json + copy script) is committed under shellcast-web-nc
+!web/shellcast-web-nc/package.json
+!web/shellcast-web-nc/scripts/copy-ol-to-static.js
+# Ignore other scripts under shellcast-web-* (deploy helpers, etc.)
+web/shellcast-web-*/scripts/*
+!web/shellcast-web-nc/scripts/copy-ol-to-static.js
 # Other Node/npm/yarn files (do not push)
 **/yarn.lock
 **/.nvmrc

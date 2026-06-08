@@ -40,7 +40,7 @@ Sourced by `analysis_run.sh` before starting the proxy and Python:
 | Variable | Typical value |
 |----------|----------------|
 | `CLOUD_SQL_PATH` | `../cloud-sql-proxy` (parent of `shellcast-analysis`) |
-| `CLOUD_SQL_INSTANCE_NAME` | `ncsu-shellcast:us-east1:ncsu-shellcast-database` |
+| `CLOUD_SQL_INSTANCE_NAME` | `your-project:region:instance-name` (Cloud Console → SQL → **Connection name**) |
 | `VENV_ACTIVATE_PATH` | `../venv/bin/activate` |
 | `NC_MAIN_PY` / `SC_MAIN_PY` / `FL_MAIN_PY` | Absolute paths to `*_main.py` |
 

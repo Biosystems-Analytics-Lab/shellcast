@@ -91,6 +91,61 @@ In South Carolina analysis, SHA are considered lease areas. The mean PQPF for ea
 - pqpf*p24i_conus*{date}06f054.grb - 24 hour totals starting 12Z Tuesday and ending 12Z Wednesday (Day 2)
 - pqpf*p24i_conus*{date}06f078.grb - 24 hour totals starting 12Z Wednesday and ending 12Z Thursday (Day 3)
 
+#### Z time: why **06Z**, then why **`f030`**
+
+ShellCast emails go out around **7 AM Eastern**. PQPF comes from NOAA/WPC. Two different times are easy to mix up:
+
+| Clock | Z time | Eastern (typical) | Meaning |
+|-------|--------|-------------------|---------|
+| **When NOAA finishes the run** | **06Z** | **~1 AM EST** / **~2 AM EDT** | New PQPF GRIB files for today’s `{date}06…` cycle |
+| **What counts as one forecast “rain day”** | **12Z → 12Z** | **~7 AM EST** / **~8 AM EDT** | Each 24-hour exceedance period in the product |
+
+**06Z is not 7 AM.** They answer different questions.
+
+**Why ShellCast uses the 06Z cycle**
+
+The ShellCast analysis cron runs at **~6:40 AM Eastern** (see [05-DAILY_OPERATIONS.md](05-DAILY_OPERATIONS.md)). Subscribers get SMS around **7 AM Eastern**. ShellCast needs the **newest PQPF that is already on NOAA’s FTP** before that job runs.
+
+On a typical morning:
+
+```
+~1 AM ET (06Z)       NOAA starts the PQPF run
+~6:40 AM ET          Files on FTP; ShellCast cron downloads and runs analysis
+~7:00 AM ET (≈12Z)   SMS / email to growers
+```
+
+**06Z is used because it is the latest NOAA run ready before the 7 AM product** — not because 06Z equals 7 AM. A **12Z run** (commented alternative in `constants.py`: `Z_RUN = '12'`, `f024` / `f048` / `f072`) would **start** at 7 AM and finish hours later, so it cannot feed a 7 AM email. ShellCast uses **06Z year-round** (winter and summer); only the Eastern wall-clock label changes (1 AM vs 2 AM).
+
+Code: `Z_RUN = "06"` and filenames like `pqpf_p24i_conus_{YYYYMMDD}06f030.grb` in `analysis/shellcast-analysis/src/constants.py` and `pqpf_procs.py`.
+
+**Why `f030` (and then `f054`, `f078`)**
+
+The **`f` number is hours after the 06Z run**, not “24 hours of data.” Each file still holds **one 24-hour** probability product. NOAA defines those 24 hours on **12Z boundaries** (7 AM Eastern in standard time).
+
+From **06Z**, the first full **12Z → 12Z** bucket ends **30 hours** later:
+
+```
+06Z run  +  30 h  =  12Z  →  first forecast day  →  f030  →  ShellCast pqpf_24h (Day 1)
+06Z run  +  54 h  =  12Z  →  second day           →  f054  →  pqpf_48h (Day 2)
+06Z run  +  78 h  =  12Z  →  third day            →  f078  →  pqpf_72h (Day 3)
+```
+
+Each step adds **24 hours** to the lead time (30, 54, 78). Code renames files with `TO_HOUR = -6` because **06Z + 6 h = 12Z**: `f030` → `30 + (−6)` = **24h**, and so on for 48h and 72h.
+
+Example (run **Tuesday** morning, file date Tuesday, `…0606f030`):
+
+| File | 24 h window (Z) | ShellCast day |
+|------|-----------------|---------------|
+| **f030** | 12Z Tue → 12Z Wed | Day 1 (“today”) |
+| **f054** | 12Z Wed → 12Z Thu | Day 2 |
+| **f078** | 12Z Thu → 12Z Fri | Day 3 |
+
+Florida only crops **`f030`** (one email day); NC/SC use all three.
+
+**Summer (EDT) note:** PQPF “rain days” stay fixed at **12Z–12Z UTC** (8 AM–8 AM Eastern during daylight saving). ShellCast still runs at **~6:40 / 7 AM Eastern** and still downloads the **06Z** cycle. XMRG (Florida observed rain) anchors at **7 AM Eastern local** — so in summer there is about a **one-hour** offset between XMRG’s anchor and PQPF’s 12Z buckets. That is a long-standing quirk of NOAA’s UTC-fixed product, not a reason to switch away from 06Z.
+
+**One-line summary:** **06Z = when NOAA delivers the forecast (~1 AM ET); 12Z = what “today’s rain day” means in that forecast (~7 AM ET in winter).** ShellCast picks 06Z for timing and **`f030`** for the first 12Z–12Z day after that run.
+
 **GRIB file content**:
 
 - 0.25" |Total_precipitation_surface_24_Hour_Accumulation_probability_above_6p35
@@ -253,16 +308,24 @@ If you encounter compilation problems with tools other than the cnvgrib tool, yo
 
 #### Why Florida analysis needs CDO
 
-XMRG provides **one GRIB file per hour**. Florida logic needs **cumulative rainfall over 24, 48, 72, 96, and 120 hours** at each grid cell (mapped to `tp_24h.tif`, … for lease/SHA sampling in `fl_pqpf.py`). CDO is used for the time-axis work that is awkward to do in Python alone:
+XMRG provides **one GRIB file per hour** — each file is **only that hour’s rain**, not a multi-day total. Florida rules need **24 h, 48 h, 72 h, … totals** at each grid cell (`tp_24h.tif`, … for lease sampling in `fl_pqpf.py`). CDO sums consecutive hours on the time axis:
+
+| Hour (example) | Rain **this hour** | After **`timcumsum`** (running total) |
+|----------------|----------------------|----------------------------------------|
+| 1 | 0.10 in | 0.10 in |
+| 2 | 0.05 in | 0.15 in |
+| 3 | 0.20 in | 0.35 in |
+| … | … | … |
+| 24 | (hour 24 only) | **Sum of hours 1–24** → used for `tp_24h.tif` |
 
 | `xmrg_proc.sh` command (concept) | Purpose |
 |----------------------------------|---------|
-| `cdo -mergetime …` | Combine hourly GRIB2 files in `cnvgrib2/` into one multi-timestep file. |
+| `cdo -mergetime …` | Combine hourly GRIB2 files in `cnvgrib2/` into one multi-timestep file (oldest → newest). |
 | `cdo -f nc copy …` | Convert cropped GRIB to NetCDF for the next steps. |
 | `cdo expr,…` | Convert 1-hour accumulation from millimeters to inches (`× 0.03937`). |
 | `cdo setattribute,…` | Set the `units=inches` metadata on the variable. |
-| `cdo timcumsum …` | Running sum over time → cumulative precipitation at each hour. |
-| `cdo seltimestep,N …` | Pull out the timestep that equals **N hours** of accumulation (24, 48, …). |
+| `cdo timcumsum …` | **Sum hourly rain through time:** at each hour, store total rain from the **first hour through this hour** (not rain in that hour alone). |
+| `cdo seltimestep,N …` | Take the running total **at hour N** (24, 48, 72, 96, 120) → one map = **N hours of rain added together**. |
 
 Reprojection and cropping are **not** done by CDO in this script: **GDAL** (`gdalwarp`) reprojects polar stereographic GRIB to WGS84, and **wgrib2** (`-small_grib`) crops to the Florida bounding box before CDO works on the smaller grid.
 

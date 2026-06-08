@@ -6,10 +6,7 @@ Common tasks after [01-GETTING_STARTED.md](01-GETTING_STARTED.md). For exhaustiv
 
 ## Run locally
 
-1. Activate venv, start Cloud SQL proxy (TCP or Unix socket).
-2. `cd web/shellcast-web-{nc,sc,fl}`
-3. Ensure `.env` is populated.
-4. `python main.py` → open `http://localhost:<PORT>` (NC default often **3361**).
+Follow [01-GETTING_STARTED.md](01-GETTING_STARTED.md): venv → Cloud SQL proxy → `.env` → OpenLayers build → `python main.py`.
 
 Pre-deploy sanity check (same as GAE):
 
@@ -23,15 +20,20 @@ See [04-DEPLOY_GAE.md](04-DEPLOY_GAE.md).
 
 | Environment | Where |
 |-------------|--------|
-| Local | `.env` in the app directory (overrides `app.yaml` when `load_dotenv(override=True)` runs) |
+| Local | `.env` in the app directory (loaded via `python-dotenv`) |
 | GAE | `app.yaml` `env_variables` and/or deployed `.env` (if not in `.gcloudignore`) |
 
 After changing `EMAIL_SECRET_KEY`, update **analysis** `analysis_settings.ini` for that state and redeploy **both** analysis (if needed) and web.
 
 ## Database during development
 
-- **TCP:** proxy on port 3306, `DB_HOST=127.0.0.1` in `.env`.
-- **Unix socket:** `cloudsql/` under the app dir, proxy `--unix-socket` — matches production GAE pattern ([07-WEB_REFERENCE.md](07-WEB_REFERENCE.md) §4.5).
+- Start `./my-cloud-sql-proxy.sh web` from repo root (Unix socket at `/tmp/shellcast-csql/`).
+- In `.env`: `DB_UNIX_SOCKET_PATH_PREFIX=/tmp/shellcast-csql/` and `CLOUD_SQL_INSTANCE_NAME=...`
+- On GAE: `/cloudsql/` is mounted by App Engine — no local folder to create ([01-GETTING_STARTED.md](01-GETTING_STARTED.md) §4).
+
+## OpenLayers
+
+Map pages require `static/lib/ol.js` and `ol.css`. Build from `web/shellcast-web-nc` with `npm install && npm run build` (**OpenLayers 9.2.4**). See [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5.
 
 ## Deploy
 
