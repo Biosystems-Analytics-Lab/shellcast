@@ -17,7 +17,7 @@ Files in this folder are **numbered** (`01-` … `09-`) so you can read them in 
 | 6 | [06-NOTIFICATIONS_ANALYSIS.md](06-NOTIFICATIONS_ANALYSIS.md) | Gmail emails from analysis; web unsubscribe |
 | 7 | [07-DEVELOPMENT.md](07-DEVELOPMENT.md) | Changing code and deploying to production |
 | 8 | [08-TROUBLESHOOTING.md](08-TROUBLESHOOTING.md) | Common failures |
-| 9 | [09-ANALYSIS.md](09-ANALYSIS.md) | Background, PQPF/XMRG specs, wgrib2/NCEP compile (legacy detail) |
+| 9 | [09-ANALYSIS.md](09-ANALYSIS.md) | Background, PQPF/XMRG specs, GIS processing (Florida XMRG pipeline) |
 
 **Input datasets** (shapefiles, bucket layout, file lists) are documented separately — start with [04-DATA_PREP_README.md](04-DATA_PREP_README.md) and any input-data guide you maintain.
 
@@ -32,7 +32,9 @@ Files in this folder are **numbered** (`01-` … `09-`) so you can read them in 
 | `analysis_settings.ini` / `analysis_paths.sh` / secrets | [02-CONFIGURATION.md](02-CONFIGURATION.md) |
 | NC vs SC vs FL behavior | [03-STATE_GUIDES.md](03-STATE_GUIDES.md) |
 | Something failed | [08-TROUBLESHOOTING.md](08-TROUBLESHOOTING.md) |
-| Deep background, PQPF specs, wgrib2/NCEP compile | [09-ANALYSIS.md](09-ANALYSIS.md) |
+| Deep background, PQPF/XMRG specs, GIS processing | [09-ANALYSIS.md](09-ANALYSIS.md) |
+| Install wgrib2 (all states) | [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5 |
+| Install Florida tools (wgrib2, CDO, cnvgrib, GDAL) | [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §6 |
 | Spatial input prep (all states; FL ArcPy scripts) | [04-DATA_PREP_README.md](04-DATA_PREP_README.md) |
 
 ## System overview

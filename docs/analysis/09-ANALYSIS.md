@@ -4,7 +4,7 @@
 
 ShellCast analysis and setup are described in this file. The analysis includes North Carolina, South Carolina, and Florida as of May 2024. The outputs of the analysis are stored in the MySQL database of Google Cloud SQL. For information on how to set up the database, please refer to [DATABASE.md](../DATABASE.md).
 
-> **Guides 1–8:** For onboarding, operations, configuration, notifications, and troubleshooting, follow the [numbered guides](README.md#reading-order) (`01-` … `08-`). This file retains background, data specifications, and detailed compile/setup notes.
+> **Guides 1–8:** For onboarding, operations, configuration, notifications, and troubleshooting, follow the [numbered guides](README.md#reading-order) (`01-` … `08-`). This file retains background, data specifications, and GIS processing notes. **Tool installation** is in [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5–6.
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@ ShellCast analysis and setup are described in this file. The analysis includes N
 1. [List of Acronyms](#1-list-of-acronyms)
 2. [Description of Analysis Scripts](#2-description-of-analysis-scripts)
 3. [Data](#3-data)
-4. [Development Environment Set Up](#4-development-environment-set-up)
+4. [Geospatial processing (GIS)](#4-geospatial-processing-gis)
 5. [CRON Job Set Up](#5-cron-job-set-up)
 6. [Pushing Changes to GitHub](#6-pushing-changes-to-github)
 7. [Updating Leases](#7-updating-leases)
@@ -183,132 +183,36 @@ Florida only crops **`f030`** (one email day); NC/SC use all three.
 2. SC SHA shapefiles (SCDHEC)
 3. FL lease and SHA shapefiles (FDACS)
 
-## 4. Development Environment Set Up
+## 4. Geospatial processing (GIS)
 
-### 4.1 Clone the ShellCast GitHub repository
+> **Install and environment setup** (Cloud SQL proxy, Python venv, Florida external tools via `setup-florida-dev.sh`): [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §4–6. Florida needs wgrib2, `cnvgrib`, CDO, and GDAL (§6); NC/SC need wgrib2 for PQPF cropping (§5).
 
-Clone the GitHub repository to your machine by running
+**Flowcharts and per-state comparison:** [03-STATE_GUIDES.md](03-STATE_GUIDES.md).
 
-```bash
-git clone https://github.com/Biosystems-Analytics-Lab/shellcast.git
-```
+### 4.1 wgrib2 — PQPF crop (all states)
 
-### 4.2 Install and initialize Google Cloud SDK
+After NOAA PQPF GRIB2 files download to `data/pqpf/{state}/`, `pqpf_procs.py` calls **wgrib2** with `-small_grib` using `LON_WE` and `LAT_SN` from `analysis_settings.ini`. That keeps only the state's bounding box — smaller files, faster raster work. NC and SC then sample cropped grids at lease points and SHA means. Florida uses the same crop step for its single PQPF file (`f030` only).
 
-The Google Cloud SDK is principally a command line tool that allows you to interact with Google Cloud from your local machine and perform various tasks. You can download, install, and initialize the Google Cloud SDK by following [these instructions](https://cloud.google.com/sdk/docs/quickstart).
+### 4.2 Florida XMRG pipeline — observed multi-day rain
 
-### 4.3 Download Cloud SQL proxy
+Florida closure rules depend on **how much rain has already fallen** over multi-day windows, not only PQPF exceedance probabilities. ShellCast builds **observed** totals from NOAA **XMRG** (hourly GRIB1, [§3.2](#32-daily-quality-controlled-rainfall-estimates-fl-only)), then combines with PQPF in `fl_pqpf.py`.
 
-**Prerequisite**: MySQL need to be installed on your machine. If you don't have MySQL installed, download MySQL from [here](https://dev.mysql.com/downloads/mysql/).
+**End-to-end chain** (`fl_main.py` → `tp_xmrg.py` → `xmrg_proc.sh` → `fl_pqpf.py`):
 
-Download and setup the Cloud SQL proxy by following [these instructions](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test#install-proxy).
+| Step | Component | GIS role |
+|------|-----------|----------|
+| 1 | `tp_xmrg.py` | Download ~6 days of hourly `xmrg{MMDDYYYYHH}z.grb` into `data/tp/raw/` (aligned to 7:00 AM Eastern). |
+| 2 | **`cnvgrib`** | Convert each GRIB1 file → GRIB2 under `data/tp/fl/intermediate/cnvgrib2/` (CDO/GDAL expect GRIB2). |
+| 3 | **CDO `mergetime`** | Stack hourly GRIB2 into one multi-timestep series (oldest → newest). |
+| 4 | **GDAL `gdalwarp`** | Reproject polar stereographic GRIB → WGS84. |
+| 5 | **wgrib2 `-small_grib`** | Crop to Florida bounds (same idea as PQPF crop). |
+| 6 | **CDO** (`copy`, `expr`, `setattribute`, `timcumsum`, `seltimestep`) | Build **running multi-hour totals** and extract maps at 24, 48, 72, 96, 120 h. |
+| 7 | **GDAL** | Write `tp_24h.tif` … `tp_120h.tif` under `data/tp/fl/outputs/`. |
+| 8 | `fl_pqpf.py` | Sample GeoTIFFs at lease/SHA points; compare to FDACS duration thresholds; merge with PQPF probability. |
 
-```bash
-cd {path to}/shellcast
-curl -o cloud-sql-proxy {url to download the proxy}
-chmod +x ./cloud-sql-proxy
-```
+#### Why CDO is required (concept)
 
-TCP connection is used for connecting to the database. Run the following command to start the proxy.
-
-```bash
-./cloud-sql-proxy --port 3306 {instance name}
-```
-
-You can quit proxy by `Control + c`. It is recommended creating a bash file in the same directory including code below since you will be using it frequently.
-
-```bash
-#!/bin/sh
-./cloud-sql-proxy --port 3306 {instance name}
-```
-
-To connect to Cloud SQL instance, `source ./{filename}.sh` in the terminal.
-
-### 4.4 Setup Python virtual environment
-
-Use environment management tool of your choice, however, Set the latest version of Python that has been tested with [pygrib](https://pypi.org/project/pygrib/) package.
-
-### 4.5 Create analysis_settings.ini and analysis_paths.sh
-
-ShellCast uses **two** local config files (see [02-CONFIGURATION.md](02-CONFIGURATION.md)):
-
-| File | Purpose |
-|------|---------|
-| `analysis_settings.ini` | Python: DB credentials, per-state shapefile names, email/notification flags |
-| `analysis_paths.sh` | Cron shell: proxy path, venv, paths to `nc_main.py` / `sc_main.py` / `fl_main.py` |
-
-Create them from the templates:
-
-```bash
-cp analysis_settings.template.ini analysis_settings.ini
-cp analysis_paths.template.sh analysis_paths.sh
-```
-
-Update `analysis_settings.ini` when fields, data names, or areas of interest change. Update `analysis_paths.sh` when install locations on the machine change.
-
-### 4.6 Download and compile wgrib2
-
-wgrib2 crops CONUS PQPF GRIB2 files to each state's area of interest (see `LON_WE` / `LAT_SN` in `analysis_settings.ini`).
-
-**Upstream source:** NOAA-EMC maintains wgrib2 on GitHub:
-
-- [NOAA-EMC/wgrib2](https://github.com/NOAA-EMC/wgrib2) — official repository (README, prerequisites, `cmake` install steps, releases)
-
-For any new install or upgrade, follow that repository's README and release notes; prerequisites and build steps are maintained there and may change over time.
-
-**ShellCast production note:** The analysis iMac was set up with a **wgrib2 build from the development period around 2023**. The links and compile notes below are **kept as historical project notes**. They may not match current NOAA-EMC releases, macOS versions, or your machine. Prefer the GitHub repo above for a new install; treat the following as optional background only.
-
-#### Historical / alternate references (may be outdated)
-
-- [CPC wgrib2 product page](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/)
-- [CPC compile questions](https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/compile_questions.html)
-- [CPC INSTALLING notes](https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/INSTALLING)
-- [theweatherguy — wgrib2 on macOS](https://theweatherguy.net/blog/how-to-install-and-compile-wgrib2-on-macos-monterey-ventura/) (Monterey/Ventura era; may not apply to current macOS)
-
-A Fortran compiler and `gcc`/`gfortran` (e.g. `brew install gcc` on Mac) were required for older source builds.
-
-#### Cron on macOS (project experience — verify for your setup)
-
-`pqpf_procs.py` calls wgrib2 via **subprocess**. Under cron, wgrib2 sometimes failed to run until:
-
-- **Full Disk Access** was enabled for Terminal — **System Settings** > **Privacy and Security** > **Full Disk Access**
-- The **full path** to the `wgrib2` binary was used in code (not only `PATH`)
-- Full Disk Access was granted to the calling environment if subprocess errors persisted
-
-See also [08-TROUBLESHOOTING.md](08-TROUBLESHOOTING.md).
-
-### 4.7 Download and Compile NCEPLIBS GRIB Utility and Dependencies (FL only)
-
-Florida uses NOAA **XMRG** hourly total-precipitation files in **GRIB1** format (see [§3.2](#32-daily-quality-controlled-rainfall-estimates-fl-only)). After **`cnvgrib`** converts them to GRIB2, **`xmrg_proc.sh`** uses other tools to build multi-day rainfall totals: [CDO](#48-install-cdo-fl-only) (Climate Data Operators) for time-series merge and math on GRIB/NetCDF, GDAL for reprojection, **wgrib2** to crop to Florida, then GDAL again for GeoTIFF output. GRIB1→GRIB2 conversion is the first step and is done with **`cnvgrib`** from [NCEPLIBS-grib_util](https://github.com/NOAA-EMC/NCEPLIBS-grib_util).
-
-#### How ShellCast uses `cnvgrib`
-
-| Step | Component | Role |
-|------|-----------|------|
-| 1 | `fl_main.py` → `tp_xmrg.py` | Downloads `xmrg{MMDDYYYYHH}z.grb` from NOAA FTP into `data/tp/raw/` (about six days of hourly files, aligned to 7:00 AM Eastern). |
-| 2 | `src/fl_pqpf/xmrg_proc.sh` | For every file in `data/tp/raw/`, runs `cnvgrib -g12 <input.grb> <output.grb>` and writes GRIB2 copies under `data/tp/fl/intermediate/cnvgrib2/`. Exits with an error if the GRIB1 and GRIB2 file counts do not match. |
-| 3 | `xmrg_proc.sh` (continued) | See [§4.8](#48-install-cdo-fl-only): CDO merges hours and computes cumulative rain; GDAL reprojects; **wgrib2** crops; outputs `tp_24h.tif`, `tp_48h.tif`, … under `data/tp/fl/outputs/`. |
-| 4 | `fl_pqpf.py` | Samples those GeoTIFFs at lease/SHA points (`tp_accum`), subtracts observed rain from FDACS thresholds, and picks the PQPF probability layer for the forecast. |
-
-The script invokes the binary at `ncep-lib-utils/nceplibs/bin/cnvgrib` (see [§5.1](#51-executable-files) for cron `PATH` / full-path notes). ShellCast only requires **`cnvgrib`** from the grib_util package; other utilities in that repo can be omitted at compile time if they fail to build (see below).
-
-#### Compile NCEPLIBS-grib_util
-
-Clone `NCEPLIB-grib_util` from [NOAA-EMC GitHub](https://github.com/NOAA-EMC/NCEPLIBS-grib_util). The steps for compiling dependencies and utility can be found in `ncep-lib-utils/ncep_lib_utils.sh`. It is recommended that each dependency be compiled separately to ensure successful compilation. </br></br>
-In the script you see `make -j4` which means that the compilation will be done in parallel using 4 threads. You can change the number of threads.
-The rule of thumb seems to be `-j <number of cores>` or `-j <number of cores * 1.5>`. Increasing too high may result in slower performance.</br></br>
-The third-party libraries `Jasper`, `libpng`, `zlib`, `BLAS`, and `LAPACK` must be installed before the dependencies are compiled.
-On MacOS, you can install these dependencies using Homebrew: `brew install jasper`, `brew install libpng`, `brew install zlib`, and `brew install openblas`. The `openblas` installs both BLAS and LAPACK libraries. </br></br>
-
-If you encounter compilation problems with tools other than the cnvgrib tool, you can disable compilation by commenting out tool names in ncep-lib-utils/NCEPLIBS-grib_util/src/CMakeLists.txt (e.g. # add_subdirectory(tocgrib)).
-
-### 4.8 Install CDO (FL only)
-
-**CDO** ([Climate Data Operators](https://code.mpimet.mpg.de/projects/cdo)) is a command-line toolkit for processing gridded climate and weather data (GRIB, NetCDF, and related formats). ShellCast does not call CDO from Python; `src/fl_pqpf/xmrg_proc.sh` invokes the `cdo` executable after `cnvgrib` has produced GRIB2 files.
-
-#### Why Florida analysis needs CDO
-
-XMRG provides **one GRIB file per hour** — each file is **only that hour’s rain**, not a multi-day total. Florida rules need **24 h, 48 h, 72 h, … totals** at each grid cell (`tp_24h.tif`, … for lease sampling in `fl_pqpf.py`). CDO sums consecutive hours on the time axis:
+XMRG is **one file per hour** — each file is rain in **that hour only**. Florida needs **cumulative** totals (e.g. sum of the last 48 hours at each grid cell). CDO's `timcumsum` walks the time axis:
 
 | Hour (example) | Rain **this hour** | After **`timcumsum`** (running total) |
 |----------------|----------------------|----------------------------------------|
@@ -316,24 +220,18 @@ XMRG provides **one GRIB file per hour** — each file is **only that hour’s r
 | 2 | 0.05 in | 0.15 in |
 | 3 | 0.20 in | 0.35 in |
 | … | … | … |
-| 24 | (hour 24 only) | **Sum of hours 1–24** → used for `tp_24h.tif` |
+| 24 | (hour 24 only) | **Sum of hours 1–24** → `tp_24h.tif` |
 
 | `xmrg_proc.sh` command (concept) | Purpose |
 |----------------------------------|---------|
-| `cdo -mergetime …` | Combine hourly GRIB2 files in `cnvgrib2/` into one multi-timestep file (oldest → newest). |
-| `cdo -f nc copy …` | Convert cropped GRIB to NetCDF for the next steps. |
-| `cdo expr,…` | Convert 1-hour accumulation from millimeters to inches (`× 0.03937`). |
-| `cdo setattribute,…` | Set the `units=inches` metadata on the variable. |
-| `cdo timcumsum …` | **Sum hourly rain through time:** at each hour, store total rain from the **first hour through this hour** (not rain in that hour alone). |
-| `cdo seltimestep,N …` | Take the running total **at hour N** (24, 48, 72, 96, 120) → one map = **N hours of rain added together**. |
+| `cdo -mergetime …` | Combine hourly GRIB2 in `cnvgrib2/` into one multi-timestep file. |
+| `cdo -f nc copy …` | GRIB → NetCDF for subsequent operators. |
+| `cdo expr,…` | mm → inches (`× 0.03937`). |
+| `cdo setattribute,…` | Set `units=inches` metadata. |
+| `cdo timcumsum …` | Running sum from first hour through each timestep. |
+| `cdo seltimestep,N …` | Grid at hour N (24, 48, 72, 96, 120) = **N-hour total**. |
 
-Reprojection and cropping are **not** done by CDO in this script: **GDAL** (`gdalwarp`) reprojects polar stereographic GRIB to WGS84, and **wgrib2** (`-small_grib`) crops to the Florida bounding box before CDO works on the smaller grid.
-
-#### Install
-
-On macOS, a typical install is Homebrew: `brew install cdo`
-
-Ensure `cdo` is on `PATH` when cron runs `xmrg_proc.sh` (the script prepends `/usr/local/bin`; see [§5.1](#51-executable-files) if cron reports `cdo: command not found`).
+Reprojection and geographic crop use **GDAL** and **wgrib2**, not CDO — see step table above.
 
 ## 5. CRON Job Set Up
 
@@ -349,6 +247,8 @@ The cron job environment differs from the development environment. It is importa
 - analysis/shellcast-analysis/analysis_paths.sh
 - shellcast-analysis/src/fl_pqpf/xmrg_proc.sh
 - shellcast-analysis/ncep-lib-utils/nceplibs/bin/cnvgrib
+
+**wgrib2 (system install, not the build tree):** after compiling, install the command as **`/usr/local/bin/wgrib2`**. ShellCast does not run `wgrib2/build/src/wgrib2` from the clone directory. On macOS, `pqpf_procs.py` calls `/usr/local/bin/wgrib2` explicitly; Florida `xmrg_proc.sh` expects `wgrib2` on `PATH` (it prepends `/usr/local/bin`). Use `./setup-florida-dev.sh` or see [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5.
 
 ### 5.2 Terminal Permission
 

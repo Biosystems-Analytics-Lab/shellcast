@@ -117,7 +117,7 @@ flowchart LR
 | **CDO `seltimestep,N`** | Pick the grid at hour **N** from that running total (N = 24, 48, 72, 96, 120) → one map per **multi-day total** (e.g. 48 h = sum of 48 consecutive hourly files). |
 | **GDAL → GeoTIFF** | Write `tp_24h.tif` … `tp_120h.tif` for Python/rasterio to sample at lease points. |
 
-Install notes: [09-ANALYSIS.md](09-ANALYSIS.md) §4.6–4.8 (`wgrib2`, `cnvgrib`, CDO).
+Install notes: [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §6 (`setup-florida-dev.sh` — wgrib2, cnvgrib, CDO, GDAL). GIS detail: [09-ANALYSIS.md](09-ANALYSIS.md) §4.
 
 #### From XMRG GeoTIFFs to closure risk (Python)
 
@@ -239,7 +239,7 @@ So: **XMRG = backward-looking totals; PQPF = forward-looking probabilities.** Th
 
 See **Florida — observed rain (XMRG) + PQPF + seasons** above for flowcharts and tool table.
 
-**Legacy detail:** optional GCS input download, compile paths — [09-ANALYSIS.md](09-ANALYSIS.md) §3.2, §4.6–4.8 · [04-DATA_PREP_README.md](04-DATA_PREP_README.md)
+**Legacy detail:** optional GCS input download — [09-ANALYSIS.md](09-ANALYSIS.md) §3.2, §4 · [04-DATA_PREP_README.md](04-DATA_PREP_README.md) · tool install — [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5–6
 
 **Key config (`[FL]`):** `LEASE_SHP`, lease `days` / `rain_in` columns, `LON_WE` / `LAT_SN`, season fields.
 

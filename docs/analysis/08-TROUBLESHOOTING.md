@@ -1,6 +1,6 @@
 # 8. Troubleshooting analysis
 
-> **Doc 8 of 9** · [← 7. Development](07-DEVELOPMENT.md) · [Index](README.md) · [Next: 9. Background & compile →](09-ANALYSIS.md)
+> **Doc 8 of 9** · [← 7. Development](07-DEVELOPMENT.md) · [Index](README.md) · [Next: 9. Background & GIS →](09-ANALYSIS.md)
 
 Common issues when running `shellcast-analysis` on a workstation or the production iMac.
 
@@ -17,8 +17,8 @@ Common issues when running `shellcast-analysis` on a workstation or the producti
 | Symptom | Things to check |
 |---------|------------------|
 | GRB download failed | NOAA FTP reachable; today's files not yet published (run after ~6:40 ET after 06Z cycle) |
-| wgrib2 not found | Installed and on `PATH`; cron may need **full path** (see [09-ANALYSIS.md](09-ANALYSIS.md) §5) |
-| wgrib2 fails under cron only | macOS Full Disk Access for Terminal; full path to wgrib2 in code |
+| wgrib2 not found | Install to **`/usr/local/bin/wgrib2`** (`./setup-florida-dev.sh`); build tree `wgrib2/build/src/wgrib2` is not enough — see [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5.3–5.4 |
+| wgrib2 fails under cron only | macOS Full Disk Access for Terminal; `pqpf_procs.py` uses `/usr/local/bin/wgrib2` on Darwin — [09-ANALYSIS.md](09-ANALYSIS.md) §5 |
 | Empty or missing TIFFs | Earlier GRIB step failed — check `error.log` |
 
 ## Florida-specific
@@ -27,7 +27,7 @@ Common issues when running `shellcast-analysis` on a workstation or the producti
 |---------|------------------|
 | No TP outputs | XMRG step in `fl_main.py` / `tp_xmrg.py`; `data/tp/` inventory |
 | Download failed / “19 files” | See [GCS bucket download (19 files)](#gcs-bucket-download-19-files) below |
-| cnvgrib / CDO errors | [09-ANALYSIS.md](09-ANALYSIS.md) §4.7–4.8 compile steps |
+| cnvgrib / CDO errors | [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §6 install; [09-ANALYSIS.md](09-ANALYSIS.md) §4 GIS role |
 
 ### GCS bucket download (19 files)
 
