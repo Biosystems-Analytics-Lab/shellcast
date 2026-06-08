@@ -137,17 +137,91 @@ export function initNotificationForm(deps) {
     setSavedProfileData,
   } = deps;
 
+  const notificationUi = window.SHELLCAST_NOTIFICATION_UI || {};
+  const textUiEnabled = notificationUi.textEnabled !== false;
+  const textUiDisabledMessage =
+    notificationUi.textDisabledMessage || "Text notifications are currently disabled.";
+
+  function getTextNotificationSection() {
+    return document.getElementById("text-pref")?.closest(".notification-accordion") || null;
+  }
+
+  function ensureTextUiDisabledBanner() {
+    const textSection = getTextNotificationSection();
+    if (!textSection) return;
+
+    let banner = textSection.querySelector(".text-ui-disabled-banner");
+    if (textUiEnabled) {
+      banner?.remove();
+      return;
+    }
+
+    if (!banner) {
+      banner = document.createElement("div");
+      banner.className = "text-ui-disabled-banner";
+      const header = textSection.querySelector(".accordion-header");
+      if (header) {
+        header.insertAdjacentElement("afterend", banner);
+      }
+    }
+    banner.textContent = textUiDisabledMessage;
+  }
+
+  function applyTextUiLock() {
+    if (textUiEnabled) return;
+
+    const refs = getFormRefs();
+    if (!refs) return;
+
+    const { elements } = refs;
+    const textSection = getTextNotificationSection();
+    if (textSection) {
+      textSection.id = "text-notification-section";
+      textSection.classList.add("text-notifications-ui-disabled");
+    }
+
+    ensureTextUiDisabledBanner();
+    updateAccordionVisibility(Boolean(elements.emailPref?.checked), true);
+
+    if (elements.textPref) {
+      elements.textPref.checked = false;
+      elements.textPref.disabled = true;
+    }
+    if (elements.textConsent) {
+      elements.textConsent.checked = false;
+      elements.textConsent.disabled = true;
+    }
+    if (elements.phone) {
+      elements.phone.disabled = true;
+    }
+
+    for (const id of ["text-expand-btn", "text-collapse-btn"]) {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.disabled = true;
+        btn.style.pointerEvents = "none";
+      }
+    }
+
+    const resendVerify = elements.resendVerify;
+    if (resendVerify) {
+      resendVerify.disabled = true;
+      resendVerify.style.display = "none";
+    }
+  }
+
   function getCurrentFormValues() {
     const refs = getFormRefs();
     if (!refs) return normalizeProfileData({});
     const { elements } = refs;
     const phoneDigits = (elements.phone?.value || "").replace(/\D/g, "");
+    const savedPhone = String(getSavedProfileData()?.phone_number || "").replace(/\D/g, "");
     return normalizeProfileData({
       email: elements.email?.value,
-      phone_number: phoneDigits,
+      phone_number: textUiEnabled ? phoneDigits : savedPhone,
       email_pref: elements.emailPref?.checked,
-      text_pref: elements.textPref?.checked,
-      text_consent: elements.textConsent?.checked,
+      text_pref: textUiEnabled ? elements.textPref?.checked : false,
+      text_consent: textUiEnabled ? elements.textConsent?.checked : false,
       prob_pref: getSelectedProb(elements.probRadios),
     });
   }
@@ -157,13 +231,16 @@ export function initNotificationForm(deps) {
     if (!saved || Object.keys(saved).length === 0) return false;
     const current = getCurrentFormValues();
     const s = normalizeProfileData(saved);
-    return (
+    const baseChanged =
       current.email !== s.email ||
-      current.phone_number !== s.phone_number ||
       current.email_pref !== s.email_pref ||
+      current.prob_pref !== s.prob_pref;
+    if (!textUiEnabled) return baseChanged;
+    return (
+      baseChanged ||
+      current.phone_number !== s.phone_number ||
       current.text_pref !== s.text_pref ||
-      current.text_consent !== s.text_consent ||
-      current.prob_pref !== s.prob_pref
+      current.text_consent !== s.text_consent
     );
   }
 
@@ -265,6 +342,13 @@ export function initNotificationForm(deps) {
     const statusMessage = document.getElementById("text-status-message");
     if (!statusEmoji || !statusMessage || !refs) return;
 
+    if (!textUiEnabled) {
+      statusEmoji.textContent = "ℹ️";
+      statusMessage.textContent = textUiDisabledMessage;
+      updateVerificationButtonState();
+      return;
+    }
+
     const {
       textPref: textCheckbox,
       textConsent: textConsentCheckbox,
@@ -343,6 +427,8 @@ export function initNotificationForm(deps) {
   }
 
   function validateTextSection(elements) {
+    if (!textUiEnabled) return false;
+
     // Only require valid phone (and consent) when text_pref is checked.
     let textBlocksSubmit = false;
     if (elements.textPref?.checked) {
@@ -446,10 +532,12 @@ export function initNotificationForm(deps) {
       collapseEmail();
     });
     textExpandBtn?.addEventListener("click", (e) => {
+      if (!textUiEnabled) return;
       e.stopPropagation();
       expandText();
     });
     textCollapseBtn?.addEventListener("click", (e) => {
+      if (!textUiEnabled) return;
       e.stopPropagation();
       collapseText();
     });
@@ -469,15 +557,17 @@ export function initNotificationForm(deps) {
     elements.email.value = normalized.email;
     elements.phone.value = maskPhoneNumber(normalized.phone_number);
     elements.emailPref.checked = normalized.email_pref;
-    elements.textPref.checked = normalized.text_pref;
-    elements.noNotifications.checked = !normalized.email_pref && !normalized.text_pref;
+    elements.textPref.checked = textUiEnabled ? normalized.text_pref : false;
+    elements.noNotifications.checked =
+      !normalized.email_pref && (textUiEnabled ? normalized.text_pref : false);
 
     if (elements.textConsent) {
-      elements.textConsent.checked = normalized.text_consent;
-      elements.textConsent.disabled = !elements.textPref.checked;
+      elements.textConsent.checked = textUiEnabled ? normalized.text_consent : false;
+      elements.textConsent.disabled = !textUiEnabled || !elements.textPref.checked;
     }
 
-    updateAccordionVisibility(normalized.email_pref, true);
+    const textExpanded = !textUiEnabled || normalized.text_pref;
+    updateAccordionVisibility(normalized.email_pref, textExpanded);
 
     const probValue = String(normalized.prob_pref);
     for (let radio of elements.probRadios || []) {
@@ -506,6 +596,7 @@ export function initNotificationForm(deps) {
       setupExpandCollapseButtons();
     }
 
+    applyTextUiLock();
     updateEmailNotificationStatus();
     updateTextNotificationStatus();
     updateVerificationButtonState();
@@ -529,6 +620,18 @@ export function initNotificationForm(deps) {
     if (helpText) {
       helpText.innerHTML = "";
       helpText.style.color = "";
+    }
+
+    if (
+      !textUiEnabled &&
+      (e.target === textCheckbox ||
+        e.target === textConsentCheckbox ||
+        e.target === form.elements[FORM_IDS.phone])
+    ) {
+      applyTextUiLock();
+      updateTextNotificationStatus();
+      validateForm();
+      return;
     }
 
     if (e.target === noNotificationsCheckbox) {
@@ -596,6 +699,8 @@ export function initNotificationForm(deps) {
   }
 
   async function resendVerification() {
+    if (!textUiEnabled) return;
+
     const helpText = document.getElementById("profile-form-help-text");
     const resendVerify = document.getElementById(FORM_IDS.resendVerifyBtn);
     if (resendVerify) resendVerify.disabled = true;
@@ -653,14 +758,20 @@ export function initNotificationForm(deps) {
 
     const current = getCurrentFormValues();
     const emailPref = refs.elements.emailPref.checked;
-    const textPref = refs.elements.textPref.checked;
-    const textConsentChecked = Boolean(refs.elements.textConsent?.checked);
+    const textPref = textUiEnabled ? refs.elements.textPref.checked : false;
+    const textConsentChecked = textUiEnabled
+      ? Boolean(refs.elements.textConsent?.checked)
+      : false;
     const selectedProb = getSelectedProb(refs.elements.probRadios);
 
     const savedRaw = getSavedProfileData();
     const saved = normalizeProfileData(savedRaw);
     const emailToSend = (current.email || "").trim() || "";
-    const phoneToSend = current.phone_number ? current.phone_number : null;
+    const phoneToSend = textUiEnabled
+      ? current.phone_number
+        ? current.phone_number
+        : null
+      : saved.phone_number || null;
 
     const newProfileInfo = {
       email: emailToSend,

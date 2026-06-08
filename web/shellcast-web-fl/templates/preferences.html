@@ -3,6 +3,12 @@ additional_head %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='lib/ol.css') }}" />
 <script src="{{ url_for('static', filename='lib/ol.js') }}"></script>
+<script>
+  window.SHELLCAST_NOTIFICATION_UI = {
+    textEnabled: {{ text_notifications_ui_enabled | tojson }},
+    textDisabledMessage: {{ text_notifications_disabled_message | tojson }}
+  };
+</script>
 <!-- Custom JS -->
 <script defer src="{{ url_for('static', filename='common/js/common.js') }}" type="module"></script>
 <script

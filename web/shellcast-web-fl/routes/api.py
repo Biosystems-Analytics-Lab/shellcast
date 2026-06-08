@@ -7,7 +7,7 @@ from core.notifications.inbound import handle_stop_start
 
 # Removed unused imports to fix F401
 from firebase_admin import auth
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from models import db
 from models.CMUProbability import CMUProbability
 from models.Lease import Lease
@@ -51,13 +51,19 @@ def user_info(user):
         return _construct_user_info_response(user)
     else:  # request.method == 'POST'
         # validate the uploaded info
-        validator = ProfileInfoValidator(request.json)
+        validator = ProfileInfoValidator(
+            request.json,
+            text_notifications_ui_enabled=current_app.config[
+                "TEXT_NOTIFICATIONS_UI_ENABLED"
+            ],
+        )
         if validator.validate():
             now = datetime.now(timezone.utc)
             prev_email_pref = user.email_pref
             if validator.email_pref:
                 user.email = validator.email or ""
-            user.phone_number = validator.phone_number
+            if validator.text_notifications_ui_enabled:
+                user.phone_number = validator.phone_number
             user.email_pref = validator.email_pref
             user.text_pref = validator.text_pref
             user.prob_pref = validator.prob_pref
@@ -88,6 +94,16 @@ def send_phone_verification(user):
     """
     if user.deleted:
         return {"errors": ["User account is deleted."]}, 400
+
+    if not current_app.config.get("TEXT_NOTIFICATIONS_UI_ENABLED", True):
+        return {
+            "errors": [
+                current_app.config.get(
+                    "TEXT_NOTIFICATIONS_DISABLED_MESSAGE",
+                    "Text notifications are currently disabled.",
+                )
+            ]
+        }, 403
 
     payload = request.get_json(silent=True) or {}
     phone_number = (payload.get("phone_number") or user.phone_number or "").strip()

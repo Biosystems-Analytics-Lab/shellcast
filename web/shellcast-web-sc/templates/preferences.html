@@ -1,5 +1,11 @@
 {% extends "base.html" %} {% block title %}Preferences - ShellCast{% endblock %} {% block
 additional_head %}
+<script>
+  window.SHELLCAST_NOTIFICATION_UI = {
+    textEnabled: {{ text_notifications_ui_enabled | tojson }},
+    textDisabledMessage: {{ text_notifications_disabled_message | tojson }}
+  };
+</script>
 <!-- Custom JS -->
 <script defer src="{{ url_for('static', filename='common/js/common.js') }}" type="module"></script>
 <script

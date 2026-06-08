@@ -35,6 +35,84 @@ Set in:
 
 Gmail API credentials for **sending** mail live on the **analysis** machine only — [analysis/06-NOTIFICATIONS_ANALYSIS.md](../analysis/06-NOTIFICATIONS_ANALYSIS.md).
 
+## Text notification Preferences UI (developer toggle)
+
+Use this when you need to **pause new text opt-ins** on the Preferences page while SMS sending and testing continue elsewhere. Typical case: Bandwidth or phone verification is not ready for production signups yet, but you still want closure-alert SMS to go to users who are already opted in.
+
+### What this does **not** do
+
+| Still runs when UI is disabled | Why |
+|--------------------------------|-----|
+| **SMS cron** (`/send-bandwidth-message` on NC, FL, SC) | Cron reads `users.text_pref` / consent from the database; it does not check `TEXT_NOTIFICATIONS_UI_ENABLED`. |
+| **Outbound SMS to already-opted-in users** | Users with `text_pref=true`, consent, and a verified phone keep receiving closure alerts. |
+| **Inbound STOP / START / HELP** | Bandwidth callbacks and opt-out handling are unchanged. |
+
+This toggle is **not** a global “stop all SMS” switch. To stop sending entirely you would change cron selection logic or user data — not these env vars.
+
+### What this **does** do (Preferences page only)
+
+When `TEXT_NOTIFICATIONS_UI_ENABLED=false`:
+
+- The **Text** accordion on `/preferences` is locked: checkbox, consent, phone field, expand/collapse, and resend-verification are disabled.
+- An amber banner under the **Text** header shows `TEXT_NOTIFICATIONS_DISABLED_MESSAGE`.
+- `POST /user-info` forces `text_pref` and `text_consent` to `false` (stored phone numbers are preserved).
+- `POST /verify-phone/send` returns **403** with the disabled message.
+
+**Intent:** put **new text notification signups on hold** — visitors cannot opt in through the web UI. Users who were already opted in before the lock was enabled continue to get SMS from cron until they change preferences (a save while locked clears text opt-in).
+
+### Environment variables
+
+Set in **each** state app (`shellcast-web-nc`, `shellcast-web-sc`, `shellcast-web-fl`):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `TEXT_NOTIFICATIONS_UI_ENABLED` | `true` | `false` locks the text section on Preferences. |
+| `TEXT_NOTIFICATIONS_DISABLED_MESSAGE` | `Text notifications are currently disabled.` | Shown in the amber banner and in API 403 responses. |
+
+**Local development** — `.env` (see `env.template` in each app):
+
+```bash
+TEXT_NOTIFICATIONS_UI_ENABLED=false
+TEXT_NOTIFICATIONS_DISABLED_MESSAGE=Text notifications are temporarily unavailable.
+```
+
+**Google App Engine** — `app.yaml` `env_variables` (see `app.yaml.template`):
+
+```yaml
+TEXT_NOTIFICATIONS_UI_ENABLED: "false"
+TEXT_NOTIFICATIONS_DISABLED_MESSAGE: "Text notifications are temporarily unavailable."
+```
+
+Restart the local Flask app after changing `.env`. Redeploy to GAE after changing `app.yaml`.
+
+### Implementation (for developers)
+
+| Layer | Location |
+|-------|----------|
+| Config | `main.py` → `TEXT_NOTIFICATIONS_UI_ENABLED`, `TEXT_NOTIFICATIONS_DISABLED_MESSAGE` |
+| Template | `templates/preferences.html` injects `window.SHELLCAST_NOTIFICATION_UI` |
+| Shared HTML | `templates/_notification_preferences.html` (Text accordion; same across NC/FL/SC) |
+| Client | `static/common/js/notification_prefs.js` — `applyTextUiLock()`, banner, save guards |
+| Styles | `static/common/css/notification_prefs.css` — `.text-ui-disabled-banner`, `.text-notifications-ui-disabled` |
+| API | `routes/api.py` — `ProfileInfoValidator` flag on `POST /user-info`; guard on `POST /verify-phone/send` |
+| Validator | `routes/validators/profile_info_validator.py` — forces `text_pref` / `text_consent` false when UI disabled |
+
+Flow when disabled:
+
+```
+Preferences page load
+    → Jinja sets window.SHELLCAST_NOTIFICATION_UI
+    → notification_prefs.js disables Text controls + shows banner
+    → User cannot check Text / enter phone / verify
+
+User saves other prefs (e.g. email)
+    → JS sends text_pref: false, text_consent: false
+    → Server validator enforces same; phone_number in DB unchanged
+    → Cron unchanged; already-opted-in users still notified until they save while locked
+```
+
+To **re-enable** signups, set `TEXT_NOTIFICATIONS_UI_ENABLED=true` (or remove the var) in `.env` / `app.yaml` for each state and restart or redeploy.
+
 ## SMS (Bandwidth) – centralized logging in NC
 
 All SMS notification events (NC, FL, SC) are logged in the **NC** database table `notification_events`. Bandwidth has a single callback URL pointing at the NC app; NC forwards callbacks to FL/SC when needed.
