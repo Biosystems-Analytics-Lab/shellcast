@@ -24,13 +24,15 @@ class ProfileInfoValidator:
     # Valid probability preference values
     VALID_PROB_VALUES = [3, 4, 5]
 
-    def __init__(self, json_data):
+    def __init__(self, json_data, text_notifications_ui_enabled=True):
         """
         Initialize the validator with JSON data.
 
         Args:
             json_data (dict): JSON data containing profile information
+            text_notifications_ui_enabled (bool): When False, text opt-in cannot be saved
         """
+        self.text_notifications_ui_enabled = text_notifications_ui_enabled
         self.email = json_data.get("email")
         self.phone_number = json_data.get("phone_number")
         self.email_pref = json_data.get("email_pref")
@@ -67,6 +69,10 @@ class ProfileInfoValidator:
             self._validate_prob_pref,
             self._validate_text_consent,
         ]
+
+        if not self.text_notifications_ui_enabled:
+            self.text_pref = False
+            self.text_consent = False
 
         is_valid = True
         for validator in validators:
@@ -119,7 +125,8 @@ class ProfileInfoValidator:
 
         # If text preference is not checked, phone number is optional
         if not self.text_pref:
-            self.phone_number = None
+            if self.text_notifications_ui_enabled:
+                self.phone_number = None
             return True
 
         # Validate phone number format if provided

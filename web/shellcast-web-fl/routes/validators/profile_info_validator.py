@@ -13,7 +13,8 @@ class ProfileInfoValidator:
     one field is actually being updated.
     """
 
-    def __init__(self, json):
+    def __init__(self, json, text_notifications_ui_enabled=True):
+        self.text_notifications_ui_enabled = text_notifications_ui_enabled
         self.email = json.get("email")
         self.phone_number = json.get("phone_number")
         self.email_pref = json.get("email_pref")
@@ -36,6 +37,10 @@ class ProfileInfoValidator:
             self._validate_prob_pref,
             self._validate_text_consent,
         ]
+        if not self.text_notifications_ui_enabled:
+            self.text_pref = False
+            self.text_consent = False
+
         valid = True
         for validator in validators:
             if not validator():

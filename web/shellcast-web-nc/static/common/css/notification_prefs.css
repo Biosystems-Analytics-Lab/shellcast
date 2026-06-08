@@ -393,3 +393,33 @@
   background-color: transparent;
   padding-left: 1rem;
 }
+
+/* ============================================================================
+   TEXT UI LOCK (TEXT_NOTIFICATIONS_UI_ENABLED=false)
+   ============================================================================ */
+
+.text-notifications-ui-disabled .accordion-header {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.text-notifications-ui-disabled .accordion-header:hover {
+  background-color: #f8f9fa;
+}
+
+.text-notifications-ui-disabled .form-check-input:disabled,
+.text-notifications-ui-disabled .form-control:disabled,
+.text-notifications-ui-disabled .accordion-controls .btn:disabled {
+  cursor: not-allowed;
+}
+
+.text-ui-disabled-banner {
+  padding: 0.625rem 1rem 0.625rem 2rem;
+  background-color: #fff3cd;
+  border-bottom: 1px solid #ffc107;
+  border-left: 4px solid #ffc107;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #856404;
+  line-height: 1.4;
+}

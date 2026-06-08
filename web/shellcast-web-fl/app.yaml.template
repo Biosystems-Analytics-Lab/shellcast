@@ -1,7 +1,7 @@
 runtime: python311
 entrypoint: gunicorn -b :$PORT main:app
 
-service: shellcast-sc
+service: shellcast-fl
 
 handlers:
   # This configures Google App Engine to serve the files in the app's static
@@ -20,6 +20,10 @@ env_variables:
   DEBUG: "false"
   TESTING: "false"
   EMAIL_SECRET_KEY: "your-email-secret-key-here"
+
+  # Preferences UI (false = lock text opt-in on Preferences page; does not pause SMS cron)
+  TEXT_NOTIFICATIONS_UI_ENABLED: "true"
+  TEXT_NOTIFICATIONS_DISABLED_MESSAGE: "Text notifications are temporarily unavailable while we complete testing."
 
   # Database Configuration
   DB_HOST: "127.0.0.1"

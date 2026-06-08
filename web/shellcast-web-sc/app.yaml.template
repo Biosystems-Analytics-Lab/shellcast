@@ -21,6 +21,10 @@ env_variables:
   TESTING: "false"
   EMAIL_SECRET_KEY: "your-email-secret-key-here"
 
+  # Preferences UI (false = lock text opt-in on Preferences page; does not pause SMS cron)
+  TEXT_NOTIFICATIONS_UI_ENABLED: "true"
+  TEXT_NOTIFICATIONS_DISABLED_MESSAGE: "Text notifications are temporarily unavailable while we complete testing."
+
   # Database Configuration
   DB_HOST: "127.0.0.1"
   DB_PORT: "3306"

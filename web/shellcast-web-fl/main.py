@@ -102,6 +102,15 @@ def create_app():
                 "pool_timeout": int(os.environ.get("DB_POOL_TIMEOUT")),
                 "pool_recycle": int(os.environ.get("DB_POOL_RECYCLE")),
             },
+            # Preferences UI: set TEXT_NOTIFICATIONS_UI_ENABLED=false to lock text opt-in during testing
+            "TEXT_NOTIFICATIONS_UI_ENABLED": os.environ.get(
+                "TEXT_NOTIFICATIONS_UI_ENABLED", "true"
+            ).lower()
+            == "true",
+            "TEXT_NOTIFICATIONS_DISABLED_MESSAGE": os.environ.get(
+                "TEXT_NOTIFICATIONS_DISABLED_MESSAGE",
+                "Text notifications are currently disabled.",
+            ),
         }
     )
 

@@ -6,7 +6,7 @@ import requests
 from core.notifications.inbound import handle_stop_start
 from core.notifications.phone_utils import clean_inbound_phone
 from firebase_admin import auth
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from models import db
 from models.CMU import CMU
 from models.CMUProbability import CMUProbability
@@ -56,13 +56,19 @@ def user_info(user):
         if request.json is None:
             return {"errors": ["Request body must be JSON."]}, 400
         # validate the uploaded info
-        validator = ProfileInfoValidator(request.json)
+        validator = ProfileInfoValidator(
+            request.json,
+            text_notifications_ui_enabled=current_app.config[
+                "TEXT_NOTIFICATIONS_UI_ENABLED"
+            ],
+        )
         if validator.validate():
             now = datetime.now(timezone.utc)
             prev_email_pref = user.email_pref
             prev_text_consent = user.text_consent
             # Persist preferences and contact info
-            user.phone_number = validator.phone_number
+            if validator.text_notifications_ui_enabled:
+                user.phone_number = validator.phone_number
             user.email_pref = validator.email_pref
             user.text_pref = validator.text_pref
             user.text_consent = validator.text_consent
@@ -104,6 +110,16 @@ def send_phone_verification(user):
     """
     if user.deleted:
         return {"errors": ["User account is deleted."]}, 400
+
+    if not current_app.config.get("TEXT_NOTIFICATIONS_UI_ENABLED", True):
+        return {
+            "errors": [
+                current_app.config.get(
+                    "TEXT_NOTIFICATIONS_DISABLED_MESSAGE",
+                    "Text notifications are currently disabled.",
+                )
+            ]
+        }, 403
 
     # Allow frontend to pass current form values so the user can verify
     # a new number before saving preferences.

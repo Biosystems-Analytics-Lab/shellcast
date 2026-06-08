@@ -92,6 +92,12 @@ def preferences_page():
     return render_template(
         "preferences.html",
         probOptions=prob_options,
+        text_notifications_ui_enabled=current_app.config[
+            "TEXT_NOTIFICATIONS_UI_ENABLED"
+        ],
+        text_notifications_disabled_message=current_app.config[
+            "TEXT_NOTIFICATIONS_DISABLED_MESSAGE"
+        ],
     )
 
 
