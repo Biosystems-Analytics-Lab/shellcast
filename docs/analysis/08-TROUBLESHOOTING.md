@@ -37,7 +37,7 @@ When `FLPQPF.main()` calls `get_input_files()` in `pqpf_procs.py`, it downloads 
 if len(os.listdir(self.inputs_dir)) == 19:
 ```
 
-**What “19 files” means:** That number is the **expected count of Florida spatial input artifacts** after a full **data prep** upload (`data_prep/fl/` → bucket). It is not 19 days of weather data. A complete set at one time looked like:
+**What “19 files” means:** That number is the **expected count of Florida spatial input artifacts** after a full **bucket upload** of prepared Florida inputs. It is not 19 days of weather data. A complete set at one time looked like:
 
 | Group | Typical files (basename in `inputs/`) |
 |-------|----------------------------------------|

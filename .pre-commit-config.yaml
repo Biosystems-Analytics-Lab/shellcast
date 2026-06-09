@@ -27,11 +27,11 @@ repos:
         name: ruff (lint + autofix)
         args: ["--fix"]
         files: \.py$
-        exclude: ^(analysis/shellcast-analysis/analysisenv/|web/webvenv/|analysis/shellcast-analysis/data/|data_prep/fl/final_outputs/).*$
+        exclude: ^(analysis/shellcast-analysis/analysisenv/|web/webvenv/|analysis/shellcast-analysis/data/).*$
       - id: ruff-format
         name: ruff (format)
         files: \.py$
-        exclude: ^(analysis/shellcast-analysis/analysisenv/|web/webvenv/|analysis/shellcast-analysis/data/|data_prep/fl/final_outputs/).*$
+        exclude: ^(analysis/shellcast-analysis/analysisenv/|web/webvenv/|analysis/shellcast-analysis/data/).*$
 
   # JavaScript, CSS, and HTML formatting (Prettier)
   - repo: https://github.com/pre-commit/mirrors-prettier

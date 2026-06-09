@@ -75,13 +75,13 @@ BUCKET_NAME = shellcast_data_bucket1
 
 This section is used only when **Florida** calls `get_input_files()` in `pqpf_procs.py`, which can download lease/SHA-related files from Google Cloud Storage into `data/pqpf/fl/inputs/` before the PQPF run.
 
-**Original intent:** FDACS updates lease and related spatial data on a periodic schedule. The Florida **data prep** pipeline (`data_prep/fl/`) was meant to automate fetching those sources, processing them, and uploading results to a bucket so the analysis machine could pull fresh inputs without manual copy steps.
+**Original intent:** Florida spatial inputs were occasionally refreshed on a periodic schedule. An automated prep-and-upload path to Google Cloud Storage was meant to let the analysis machine pull fresh files without manual copy steps.
 
 **What happened in practice:** Source URLs and attribute/field names from the upstream data can change without notice, so the automated prep-and-upload path did not stay reliable. Treat the bucket workflow as a **historical example**, not a requirement for running ShellCast.
 
 **Recommended approach:** Keep Florida spatial inputs **locally** under `data/pqpf/fl/inputs/`, the same way North Carolina and South Carolina use `data/pqpf/nc/inputs/` and `data/pqpf/sc/inputs/`. Update shapefiles manually (or with your own process) when organizations publish new boundaries. If you do not use bucket download, ensure `get_input_files()` is not called (or is commented out) in your `fl_pqpf` flow so the run does not depend on GCS credentials or bucket contents.
 
-See [04-DATA_PREP_README.md](04-DATA_PREP_README.md) for the ArcPy/bucket upload side; see input-data documentation for file names and layout.
+See [04-DATA_PREP_README.md](04-DATA_PREP_README.md) for spatial prep overview; see operator notes for file names and layout.
 
 ### `[Notification]`
 

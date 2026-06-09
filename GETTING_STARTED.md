@@ -80,7 +80,7 @@ pre-commit run --all-files
 | Daily forecast math, database upload, morning emails | `analysis/` (especially `analysis/shellcast-analysis/`) | [docs/analysis/README.md](docs/analysis/README.md) |
 | The public website (map, sign-in, preferences, SMS) | `web/` (`shellcast-web-nc`, `shellcast-web-sc`, or `shellcast-web-fl`) | [docs/web/README.md](docs/web/README.md) |
 
-Florida-only data prep: `data_prep/`. Database scripts: `analysis/shellcast-analysis/db_scripts/` ([docs/DATABASE.md](docs/DATABASE.md)).
+Spatial input prep is documented in [docs/analysis/04-DATA_PREP_README.md](docs/analysis/04-DATA_PREP_README.md). Database scripts: `analysis/shellcast-analysis/db_scripts/` ([docs/DATABASE.md](docs/DATABASE.md)).
 
 ---
 
