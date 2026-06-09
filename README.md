@@ -60,7 +60,7 @@ flowchart TB
   end
 
   subgraph spatial ["Lease boundary inputs - preprocessed per state"]
-    PREP["NC: NCDMF R scripts, spatial tidy<br/>SC: SCDHEC manual updates<br/>FL: data_prep ArcPy pipeline"]
+    PREP["NC: manual spatial prep<br/>SC: manual spatial prep<br/>FL: manual spatial prep"]
     INPUTS["Lease and SHA boundary datasets<br/>data/pqpf/nc, sc, fl/inputs"]
     PREP --> INPUTS
   end
@@ -109,7 +109,7 @@ If the diagram above is blank in your editor, open **Markdown preview** (in Curs
 **Flow summary**
 
 1. **External data** — NOAA **PQPF** (all states) and **XMRG** daily rainfall (**Florida only**). See [docs/analysis/03-STATE_GUIDES.md](docs/analysis/03-STATE_GUIDES.md) and [09-ANALYSIS.md](docs/analysis/09-ANALYSIS.md) §3.2.
-2. **Lease boundary inputs** — Each state maintains **preprocessed** lease and SHA boundary data (shapefiles under `data/pqpf/{nc,sc,fl}/inputs/`). NC uses NCDMF/NCDEQ workflows (R tidy scripts); SC is updated manually from SCDHEC; FL is built with `data_prep/fl/` (ArcPy) when boundaries or seasonality change. See [docs/analysis/04-DATA_PREP_README.md](docs/analysis/04-DATA_PREP_README.md) and [09-ANALYSIS.md](docs/analysis/09-ANALYSIS.md) §3.3.
+2. **Lease boundary inputs** — Each state maintains **preprocessed** lease and SHA boundary data (shapefiles under `data/pqpf/{nc,sc,fl}/inputs/`). Updates are manual when organizations publish new boundaries. See [docs/analysis/04-DATA_PREP_README.md](docs/analysis/04-DATA_PREP_README.md) and [09-ANALYSIS.md](docs/analysis/09-ANALYSIS.md) §3.3.
 3. **Analysis** — The production iMac runs `nc_main`, `sc_main`, and `fl_main`, combining those inputs with daily weather data to compute closure probabilities. See [docs/analysis/README.md](docs/analysis/README.md).
 4. **Database** — Results are written to **MySQL 8.0** on Cloud SQL. See [docs/DATABASE.md](docs/DATABASE.md).
 5. **Web** — State Flask apps on App Engine read the database and serve the map and account UI. See [docs/web/README.md](docs/web/README.md).

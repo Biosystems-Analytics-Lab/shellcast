@@ -4,5 +4,4 @@ extend-ignore = E203,W503,E501,F401,F541,E402,E711,E712,E713,F523,F841,W605
 exclude =
     analysis/shellcast-analysis/analysisenv,
     web/webvenv,
-    analysis/shellcast-analysis/data,
-    data_prep/fl/final_outputs
+    analysis/shellcast-analysis/data
