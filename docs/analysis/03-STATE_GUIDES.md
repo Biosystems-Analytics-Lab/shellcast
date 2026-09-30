@@ -239,7 +239,7 @@ So: **XMRG = backward-looking totals; PQPF = forward-looking probabilities.** Th
 
 See **Florida — observed rain (XMRG) + PQPF + seasons** above for flowcharts and tool table.
 
-**Legacy detail:** optional GCS input download — [09-ANALYSIS.md](09-ANALYSIS.md) §3.2, §4 · [04-DATA_PREP_README.md](04-DATA_PREP_README.md) · tool install — [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5–6
+**Further reading:** XMRG and GIS — [09-ANALYSIS.md](09-ANALYSIS.md) §3.2, §4 · spatial inputs (local files; GCS download optional) — [04-DATA_PREP_README.md](04-DATA_PREP_README.md) · tool install — [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5–6
 
 **Key config (`[FL]`):** `LEASE_SHP`, lease `days` / `rain_in` columns, `LON_WE` / `LAT_SN`, season fields.
 
@@ -269,5 +269,5 @@ analysis_run.sh
 ## Related
 
 - [09-ANALYSIS.md](09-ANALYSIS.md) — PQPF and XMRG data specifications
-- Input shapefiles — your input-dataset documentation (in progress)
+- Input shapefiles — [04-DATA_PREP_README.md](04-DATA_PREP_README.md); full inventory locally: [INPUT_DATA_INTERNAL.md](INPUT_DATA_INTERNAL.md) (gitignored)
 - [06-NOTIFICATIONS_ANALYSIS.md](06-NOTIFICATIONS_ANALYSIS.md)
