@@ -81,7 +81,7 @@ This section is used only when **Florida** calls `get_input_files()` in `pqpf_pr
 
 **Recommended approach:** Keep Florida spatial inputs **locally** under `data/pqpf/fl/inputs/`, the same way North Carolina and South Carolina use `data/pqpf/nc/inputs/` and `data/pqpf/sc/inputs/`. Update shapefiles manually (or with your own process) when organizations publish new boundaries. If you do not use bucket download, ensure `get_input_files()` is not called (or is commented out) in your `fl_pqpf` flow so the run does not depend on GCS credentials or bucket contents.
 
-See [04-DATA_PREP_README.md](04-DATA_PREP_README.md) for spatial prep overview; see operator notes for file names and layout.
+See [04-DATA_PREP_README.md](04-DATA_PREP_README.md) for spatial prep overview; file names and layout are in local [INPUT_DATA_INTERNAL.md](INPUT_DATA_INTERNAL.md) (gitignored).
 
 ### `[Notification]`
 
