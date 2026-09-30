@@ -2,7 +2,7 @@
 
 Documentation for **daily forecast analysis** (`analysis/shellcast-analysis`) and how it connects to the database and web apps.
 
-Files in this folder are **numbered** (`01-` … `09-`) so you can read them in order. **README.md** (this file) is the index and is not numbered.
+Files in this folder are **numbered** (`01-` … `09-`) so you can read them in order. **README.md** (this file) is the index and is not numbered. Operators may also keep a gitignored [INPUT_DATA_INTERNAL.md](INPUT_DATA_INTERNAL.md) (shapefile inventory; not part of the `01`–`09` series).
 
 ## Reading order
 
@@ -19,7 +19,7 @@ Files in this folder are **numbered** (`01-` … `09-`) so you can read them in 
 | 8 | [08-TROUBLESHOOTING.md](08-TROUBLESHOOTING.md) | Common failures |
 | 9 | [09-ANALYSIS.md](09-ANALYSIS.md) | Background, PQPF/XMRG specs, GIS processing (Florida XMRG pipeline) |
 
-**Input datasets** (shapefiles, bucket layout, file lists) are documented separately — start with [04-DATA_PREP_README.md](04-DATA_PREP_README.md) and any input-data guide you maintain.
+**Input datasets:** public overview is [04-DATA_PREP_README.md](04-DATA_PREP_README.md). File lists and schemas are in local [INPUT_DATA_INTERNAL.md](INPUT_DATA_INTERNAL.md) (gitignored).
 
 ## Who should read what
 
@@ -36,6 +36,7 @@ Files in this folder are **numbered** (`01-` … `09-`) so you can read them in 
 | Install wgrib2 (all states) | [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §5 |
 | Install Florida tools (wgrib2, CDO, cnvgrib, GDAL) | [01-GETTING_STARTED.md](01-GETTING_STARTED.md) §6 |
 | Spatial input prep (all states; FL ArcPy scripts) | [04-DATA_PREP_README.md](04-DATA_PREP_README.md) |
+| Shapefile inventory / schemas (local, gitignored) | [INPUT_DATA_INTERNAL.md](INPUT_DATA_INTERNAL.md) |
 
 ## System overview
 

@@ -108,3 +108,6 @@ ncep-lib-utils/
 
 # NC standalone text notification tests (local / manual use)
 web/shellcast-web-nc/text_notification_standalone_tests/
+
+# Internal analysis input inventory (share out of band; not in the public repo)
+docs/analysis/INPUT_DATA_INTERNAL.md

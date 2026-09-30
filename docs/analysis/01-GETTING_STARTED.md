@@ -350,7 +350,7 @@ Copy the value into `analysis_settings.ini` and the matching web app `.env` / `a
 
 ## 8. Input data
 
-Spatial inputs must exist under `data/pqpf/{nc,sc,fl}/inputs/` before PQPF runs. **Documenting how to create/update those datasets is separate** — see [04-DATA_PREP_README.md](04-DATA_PREP_README.md) and your input-data documentation.
+Spatial inputs must exist under `data/pqpf/{nc,sc,fl}/inputs/` before PQPF runs. Overview: [04-DATA_PREP_README.md](04-DATA_PREP_README.md). File lists and schemas: local [INPUT_DATA_INTERNAL.md](INPUT_DATA_INTERNAL.md) (gitignored).
 
 Florida may optionally refresh inputs from GCS at run time (`get_input_files()` in `fl_pqpf`).
 

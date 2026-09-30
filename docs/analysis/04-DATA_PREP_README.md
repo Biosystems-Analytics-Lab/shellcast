@@ -10,11 +10,23 @@ ShellCast analysis depends on **processed spatial inputs**, not raw upstream dat
 
 North Carolina and South Carolina input updates follow similar manual steps (replace shapefiles under `data/pqpf/nc/inputs/` and `data/pqpf/sc/inputs/` when revisions are available).
 
-## Optional GCS bucket (Florida legacy)
+File names, schemas, and the production inventory live in the **local** companion [INPUT_DATA_INTERNAL.md](INPUT_DATA_INTERNAL.md) (gitignored; not in the public repo).
+
+## Optional GCS bucket (Florida)
 
 Some deployments still support downloading prepared Florida inputs from a bucket before PQPF runs. Operators who use **local files only** should not call `get_input_files()` in the Florida analysis flow.
 
 ## ToDo
 
-- Document per-state shapefile schemas and refresh cadence in operator notes.
 - Consider an open-source GIS stack for any future automated prep workflow.
+
+
+
+## Data Sources
+
+**NC**
+
+**Shellfish Growing Area Classifications**
+
+- [https://data-ncdenr.opendata.arcgis.com/search?collection=dataset&layout=grid&tags=fisheries](https://data-ncdenr.opendata.arcgis.com/search?collection=dataset&layout=grid&tags=fisheries)
+
