@@ -379,7 +379,7 @@ def search_leases(user):
     ncdmf_lease_ids = (
         db.session.query(Lease.lease_id)
         .filter(
-            Lease.lease_id.like("%%" + search_term + "%%"),
+            Lease.lease_id.contains(search_term, autoescape=True),
             ~Lease.lease_id.in_(list(map(lambda x: x[0], user_lease_ids))),
         )
         .all()
