@@ -1,9 +1,9 @@
 name: Link check
 
 on:
-  # Weekly check for links that moved or went away
+  # Monthly check for links that moved or went away
   schedule:
-    - cron: "0 13 * * 1" # Mondays 13:00 UTC
+    - cron: "0 6 1 * *" # 1st of every month, 06:00 UTC (2 AM EDT in summer, 1 AM EST in winter)
   workflow_dispatch:
   pull_request:
     paths:
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write # to open an issue when the weekly run finds broken links
+      issues: write # to open an issue when the monthly run finds broken links
     steps:
       - uses: actions/checkout@v4
 

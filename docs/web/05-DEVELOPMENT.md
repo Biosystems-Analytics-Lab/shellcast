@@ -79,7 +79,7 @@ External links in templates live in **`web/shared/links.json`**. Each entry has 
 
 `python3 scripts/sync_links.py --check` (also run by pre-commit and CI) fails if a copy differs or a template uses a key that does not exist.
 
-A weekly GitHub Action (`.github/workflows/link-check.yml`) checks every URL with [lychee](https://lychee.cli.rs) and opens an issue when links break. Run it locally with `lychee --config .lychee.toml web/shared/links.json "web/shellcast-web-*/templates/**/*.html"`. Links to the app's own `*.appspot.com` pages are still hardcoded in templates.
+A monthly GitHub Action (`.github/workflows/link-check.yml`, runs on the 1st; you can also start it manually from the Actions tab) checks every URL with [lychee](https://lychee.cli.rs) and opens an issue when links break. Run it locally with `lychee --config .lychee.toml web/shared/links.json "web/shellcast-web-*/templates/**/*.html"`. Links to the app's own `*.appspot.com` pages are still hardcoded in templates.
 
 ## When you change notifications
 
