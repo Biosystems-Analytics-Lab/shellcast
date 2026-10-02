@@ -84,11 +84,11 @@
     "url": "https://docs.google.com/document/d/e/2PACX-1vRWCpV0MJbKJNFmPC8etjjRQEw75XyHlA_bnfVn7KbNjNMJ90RH-3jTe6YPs0RVL-UO27yv9c2OGF4L/pub"
   },
   "scdes_map": {
-    "name": "SCDES Conditional Shellfish Harvest Closures Application (formerly SCDHEC)",
+    "name": "SCDES Conditional Shellfish Harvest Closures Application",
     "url": "https://gis.des.sc.gov/ShellfishClosures/"
   },
   "scdes": {
-    "name": "South Carolina Department of Environmental Services (SCDES) (formerly SCDHEC)",
+    "name": "South Carolina Department of Environmental Services (SCDES, formerly SCDHEC)",
     "url": "https://des.sc.gov/programs/bureau-water/aquatic-science/shellfish-monitoring-program-overview"
   },
   "scdnr_leasing_app": {

@@ -35,7 +35,7 @@ temporary project computer (iMac).
 - North Carolina State University (NCSU)
 - North Carolina Division of Marine Fisheries (NCDMF)
 - North Carolina Department of Environmental Quality (NCDEQ)
-- South Carolina Department of Health and Environmental Control (SCDHEC)
+- South Carolina Department of Environmental Services (SCDES, formerly SCDHEC)
 - Florida Department of Agriculture and Consumer Services (FDACS)
 - National Oceanic and Atmospheric Administration (NOAA)
 - Probabilistic Quantitative Precipitation Forecasting (PQPF)
@@ -180,7 +180,7 @@ Florida only crops **`f030`** (one email day); NC/SC use all three.
 ### 3.3 Input Data
 
 1. NC lease and SHA shapefiles (NCDEQ)
-2. SC SHA shapefiles (SCDHEC)
+2. SC SHA shapefiles (SCDES, formerly SCDHEC)
 3. FL lease and SHA shapefiles (FDACS)
 
 ## 4. Geospatial processing (GIS)
