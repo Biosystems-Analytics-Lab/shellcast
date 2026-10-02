@@ -69,6 +69,18 @@ Use your branch name instead of `main` if your team works on branches. See [GETT
 
 Unit tests under each app's `tests/` are **out of date** in places. See [07-WEB_REFERENCE.md](07-WEB_REFERENCE.md) §6 before relying on CI.
 
+## External links (shared across NC/SC/FL)
+
+External links in templates live in **`web/shared/links.json`**. Each entry has a `name` (person or organization) and a `url`, and is used as `{{ links.<key>.url }}` / `{{ links.<key>.name }}` (for example `<a href="{{ links.ncdmf.url }}">{{ links.ncdmf.name }}</a>`). To change or add a link:
+
+1. Edit `web/shared/links.json` (keep the `{"name": ..., "url": ...}` shape).
+2. Run `python3 scripts/sync_links.py` to copy it into each app (`web/shellcast-web-*/links.json`). Each app needs its own copy because it is deployed separately.
+3. Commit the shared file and all three copies.
+
+`python3 scripts/sync_links.py --check` (also run by pre-commit and CI) fails if a copy differs or a template uses a key that does not exist.
+
+A weekly GitHub Action (`.github/workflows/link-check.yml`) checks every URL with [lychee](https://lychee.cli.rs) and opens an issue when links break. Run it locally with `lychee --config .lychee.toml web/shared/links.json "web/shellcast-web-*/templates/**/*.html"`. Links to the app's own `*.appspot.com` pages are still hardcoded in templates.
+
 ## When you change notifications
 
 | Change | Also update |

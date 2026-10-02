@@ -1,0 +1,24 @@
+# Link checker configuration (https://lychee.cli.rs)
+# Used by .github/workflows/link-check.yml. To run locally:
+#   lychee --config .lychee.toml web/shared/links.json "web/shellcast-web-*/templates/**/*.html"
+
+max_retries = 2
+retry_wait_time = 5
+timeout = 20
+max_concurrency = 8
+user_agent = "Mozilla/5.0 (compatible; ShellCast-LinkCheck/1.0; +https://github.com/Biosystems-Analytics-Lab/shellcast)"
+
+# Many .gov/.edu sites and ArcGIS apps answer bots with 403/429 even when the link works.
+accept = ["200..=299", "403", "429"]
+
+exclude = [
+  '^https?://localhost',
+  '^https?://127\.0\.0\.1',
+  # Jinja placeholders in templates
+  '\{\{',
+  '%7B%7B',
+]
+
+# Don't verify '#fragment' anchors (e.g. Chrome text fragments "#:~:text=...").
+include_fragments = false
+no_progress = true

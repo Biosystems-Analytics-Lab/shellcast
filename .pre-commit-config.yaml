@@ -40,6 +40,17 @@ repos:
       - id: prettier
         files: \.(js|jsx|ts|tsx|css|scss|html|htm)$
 
+  # Shared external links: web/shared/links.json is copied into each web app.
+  # Fails if a copy drifts or a template uses an unknown {{ links.<key> }}.
+  - repo: local
+    hooks:
+      - id: sync-links-check
+        name: shared links in sync (python3 scripts/sync_links.py)
+        entry: python3 scripts/sync_links.py --check
+        language: system
+        pass_filenames: false
+        files: ^(web/shared/links\.json|web/shellcast-web-[a-z]+/(links\.json|templates/.*\.html))$
+
   # Shell script linting (optional - only if shellcheck is installed)
   - repo: local
     hooks:
