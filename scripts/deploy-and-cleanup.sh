@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# ShellCast Deploy and Cleanup Script
-# This script deploys to Google App Engine and then cleans up staging files
+# ShellCast Deploy Script
+# This script deploys to Google App Engine.
+# NOTE: Staging bucket cleanup was removed from this script (it could hang).
+# The standalone cleanup-staging*.sh scripts can still be run manually if needed.
 
 set -e  # Exit on any error
 
@@ -31,14 +33,10 @@ print_header() {
 
 # Function to show usage
 show_usage() {
-    echo "Usage: $0 [OPTIONS] [DEPLOY_OPTIONS]"
+    echo "Usage: $0 -d DIR [DEPLOY_OPTIONS]"
     echo ""
     echo "Options:"
     echo "  -d, --directory DIR          Specify the web app directory to deploy"
-    echo "  -p, --project PROJECT_NAME   Specify project name (default: current gcloud project)"
-    echo "  -f, --force                  Force cleanup without confirmation"
-    echo "  -n, --no-cleanup            Skip staging cleanup after deployment"
-    echo "  -c, --cleanup-only          Only run cleanup, skip deployment"
     echo "  -h, --help                  Show this help message"
     echo ""
     echo "Deploy Options:"
@@ -47,11 +45,8 @@ show_usage() {
     echo "  --version VERSION           Deploy specific version"
     echo ""
     echo "Examples:"
-    echo "  $0 -d web/shellcast-web-fl                    # Deploy FL app and cleanup"
+    echo "  $0 -d web/shellcast-web-fl                    # Deploy FL app"
     echo "  $0 -d web/shellcast-web-nc --no-promote       # Deploy NC app without promoting"
-    echo "  $0 -d web/shellcast-web-sc -f                 # Deploy SC app with force cleanup"
-    echo "  $0 -c -p ncsu-shellcast                       # Only cleanup staging"
-    echo "  $0 -n -d web/shellcast-web-fl                 # Deploy without cleanup"
 }
 
 # Function to check if directory exists and contains app.yaml
@@ -103,51 +98,9 @@ deploy_app() {
     cd - > /dev/null
 }
 
-# Function to run cleanup
-run_cleanup() {
-    local project_name="$1"
-    local force_cleanup="$2"
-
-    print_header "Running Staging Cleanup"
-
-    # Get the directory of this script
-    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    local cleanup_script="$script_dir/cleanup-staging-enhanced.sh"
-
-    if [ ! -f "$cleanup_script" ]; then
-        print_error "Cleanup script not found: $cleanup_script"
-        exit 1
-    fi
-
-    # Build cleanup command
-    local cleanup_cmd="$cleanup_script"
-
-    if [ -n "$project_name" ]; then
-        cleanup_cmd="$cleanup_cmd -p $project_name"
-    fi
-
-    if [ "$force_cleanup" = true ]; then
-        cleanup_cmd="$cleanup_cmd -f"
-    fi
-
-    print_status "Running: $cleanup_cmd"
-
-    # Execute cleanup
-    if eval "$cleanup_cmd"; then
-        print_status "Cleanup completed successfully!"
-    else
-        print_error "Cleanup failed!"
-        exit 1
-    fi
-}
-
 # Main script logic
 main() {
     local deploy_dir=""
-    local project_name=""
-    local force_cleanup=false
-    local skip_cleanup=false
-    local cleanup_only=false
     local deploy_opts=""
 
     # Parse command line arguments
@@ -156,22 +109,6 @@ main() {
             -d|--directory)
                 deploy_dir="$2"
                 shift 2
-                ;;
-            -p|--project)
-                project_name="$2"
-                shift 2
-                ;;
-            -f|--force)
-                force_cleanup=true
-                shift
-                ;;
-            -n|--no-cleanup)
-                skip_cleanup=true
-                shift
-                ;;
-            -c|--cleanup-only)
-                cleanup_only=true
-                shift
                 ;;
             -h|--help)
                 show_usage
@@ -193,18 +130,12 @@ main() {
         esac
     done
 
-    print_header "ShellCast Deploy and Cleanup Script"
+    print_header "ShellCast Deploy Script"
 
     # Check if gcloud is available
     if ! command -v gcloud &> /dev/null; then
         print_error "gcloud CLI is not installed. Please install it first."
         exit 1
-    fi
-
-    # Handle cleanup-only mode
-    if [ "$cleanup_only" = true ]; then
-        run_cleanup "$project_name" "$force_cleanup"
-        exit 0
     fi
 
     # Validate deploy directory
@@ -218,15 +149,7 @@ main() {
     # Deploy the application
     deploy_app "$deploy_dir" "$deploy_opts"
 
-    # Run cleanup if not skipped
-    if [ "$skip_cleanup" != true ]; then
-        echo ""
-        run_cleanup "$project_name" "$force_cleanup"
-    else
-        print_warning "Skipping staging cleanup as requested"
-    fi
-
-    print_status "Deploy and cleanup process completed successfully!"
+    print_status "Deploy process completed successfully!"
 }
 
 # Run main function with all arguments
