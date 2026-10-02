@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import sys
@@ -157,6 +158,15 @@ def create_app():
 
     # initialize database connection
     db.init_app(app)
+
+    # shared external links (web/shared/links.json, synced by scripts/sync_links.py);
+    # use in templates as {{ links.<key>.url }} / {{ links.<key>.name }}
+    with open(os.path.join(os.path.dirname(__file__), "links.json"), encoding="utf-8") as f:
+        external_links = json.load(f)
+
+    @app.context_processor
+    def inject_links():
+        return {"links": external_links}
 
     # application to convert the probability to risk factor in html.jinja
     @app.context_processor

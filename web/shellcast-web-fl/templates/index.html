@@ -157,21 +157,21 @@
       <footer>
         <p>ShellCast is supported by</p>
         <div class="support-logos">
-          <a href="https://ncseagrant.ncsu.edu/"
+          <a href="{{ links.ncseagrant.url }}"
             ><img
               src="{{ url_for('static', filename='img/nc_sea_grant_logo.png') }}"
               alt="NC Sea Grant"
               loading="lazy"
               height="100"
           /></a>
-          <a href="https://www.bae.ncsu.edu/"
+          <a href="{{ links.bae_ncsu.url }}"
             ><img
               src="{{ url_for('static', filename='img/nc_state_bae_logo.png') }}"
               alt="NC State Biological and Agricultural Engineering"
               loading="lazy"
               height="100"
           /></a>
-          <a href="https://secoora.org/"
+          <a href="{{ links.secoora.url }}"
             ><img
               src="{{ url_for('static', filename='img/secoora_logo.png') }}"
               alt="SECOORA"
@@ -189,7 +189,7 @@
           <a href="#" onclick="$('#disclaimer-privacy-modal').modal('show')">Disclaimer</a>
           |
           <a
-            href="https://docs.google.com/document/d/e/2PACX-1vRWCpV0MJbKJNFmPC8etjjRQEw75XyHlA_bnfVn7KbNjNMJ90RH-3jTe6YPs0RVL-UO27yv9c2OGF4L/pub"
+            href="{{ links.privacy_policy_doc.url }}"
             target="_blank"
             rel="noopener noreferrer"
             >Privacy Policy</a
@@ -199,7 +199,7 @@
         <p>
           ShellCast is open source software. Find the code
           <a
-            href="https://github.com/Biosystems-Analytics-Lab/shellcast"
+            href="{{ links.github_repo.url }}"
             target="_blank"
             rel="noopener noreferrer"
             >here</a

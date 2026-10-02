@@ -51,9 +51,8 @@ additional_head %}
       <div class="lease-info">
         <p class="lease-description">
           You can search for your lease ID number on the
-          <a href="https://arcg.is/1ieXrX">NC DMF Shellfish Leasing Application</a>. Use the number
-          labeled as "Lease ID". Please note that leases outside of conditionally approved areas
-          will not be searchable because ShellCast cannot generate a forecast for these leases.
+          <a href="{{ links.scdnr_leasing_app.url }}">SCDNR CommercialShellfish Leasing Application</a>. Use the number
+          labeled as "Name".
         </p>
       </div>
 
@@ -64,8 +63,8 @@ additional_head %}
             id="lease-search-text-input"
             type="text"
             class="form-control search-input"
-            placeholder="Search for a lease by its NCDMF ID..."
-            aria-label="Search for a lease by its NCDMF ID..."
+            placeholder="Search by State Shellfish Ground name..."
+            aria-label="Search for a State Shellfish Ground by its name (ID) from the SCDNR map"
           />
           <div class="input-group-append">
             <button class="btn btn-primary" type="button" id="lease-search-btn">Search</button>

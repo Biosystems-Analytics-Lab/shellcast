@@ -1,0 +1,72 @@
+name: Link check
+
+on:
+  # Weekly check for links that moved or went away
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 13:00 UTC
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "web/shared/links.json"
+      - "web/shellcast-web-*/links.json"
+      - "web/shellcast-web-*/templates/**"
+      - "scripts/sync_links.py"
+      - ".lychee.toml"
+  push:
+    branches: [main]
+    paths:
+      - "web/shared/links.json"
+      - "web/shellcast-web-*/links.json"
+      - "web/shellcast-web-*/templates/**"
+
+permissions:
+  contents: read
+
+jobs:
+  links-in-sync:
+    name: Shared links in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python3 scripts/sync_links.py --check
+
+  check-urls:
+    name: Check external URLs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # to open an issue when the weekly run finds broken links
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run lychee
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --config .lychee.toml
+            --format markdown
+            --output ./lychee-report.md
+            web/shared/links.json
+            "web/shellcast-web-*/templates/**/*.html"
+          fail: false
+          jobSummary: true
+
+      # GitHub emails people who watch the repo's issues, or who are assigned/mentioned.
+      # To be sure you get the email, add `assignees: your-github-username` below.
+      - name: Open an issue for broken links (scheduled/manual runs)
+        if: steps.lychee.outputs.exit_code != 0 && github.event_name != 'pull_request'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Broken links found by link check"
+          content-filepath: ./lychee-report.md
+          labels: link-check
+
+      - name: Fail on broken links
+        if: steps.lychee.outputs.exit_code != 0
+        run: |
+          echo "Broken links found. See the job summary or lychee-report.md." >&2
+          exit 1

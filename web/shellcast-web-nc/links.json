@@ -1,0 +1,122 @@
+{
+  "aquaculture_ces": {
+    "name": "NC State Extension Aquaculture Hub",
+    "url": "https://aquaculture.ces.ncsu.edu/"
+  },
+  "bae_ncsu": {
+    "name": "NC State Biological and Agricultural Engineering Department",
+    "url": "https://www.bae.ncsu.edu/"
+  },
+  "climate_office": {
+    "name": "North Carolina State Climate Office",
+    "url": "https://climate.ncsu.edu/"
+  },
+  "fdacs_aquaculture": {
+    "name": "Florida Department of Agriculture and Consumer Services (FDACS) Aquaculture",
+    "url": "https://www.fdacs.gov/Agriculture-Industry/Aquaculture"
+  },
+  "fdacs_harvesting_area_info": {
+    "name": "FDACS Shellfish Harvesting Area Information",
+    "url": "https://www.fdacs.gov/Agriculture-Industry/Aquaculture/Shellfish-Harvesting-Area-Classification/Shellfish-Harvesting-Area-Information"
+  },
+  "fdacs_lease_map": {
+    "name": "FDACS Shellfish Harvesting Area and Aquaculture Lease Map",
+    "url": "https://www.fdacs.gov/Agriculture-Industry/Aquaculture/Shellfish-Harvesting-Area-and-Aquaculture-Lease-Map"
+  },
+  "feedback_form": {
+    "name": "ShellCast Feedback Form (Google Form)",
+    "url": "https://forms.gle/Zfyya8sTXN98JAF87"
+  },
+  "github_repo": {
+    "name": "ShellCast GitHub Repository (Biosystems Analytics Lab)",
+    "url": "https://github.com/Biosystems-Analytics-Lab/shellcast"
+  },
+  "hpc": {
+    "name": "NC State High Performance Computing (HPC) Services",
+    "url": "https://hpc.ncsu.edu/main.php"
+  },
+  "how_it_works_doc": {
+    "name": "ShellCast How It Works document (Google Doc)",
+    "url": "https://docs.google.com/document/d/e/2PACX-1vRDinh1XpTbPWNxSFtXT2wdzGU8QVkUVk5Pj718cFop_q1Hg53alTxVCUKM9x69rG7Pkx-vJ0RbS_8L/pub"
+  },
+  "ncdmf": {
+    "name": "North Carolina Division of Marine Fisheries (NCDMF)",
+    "url": "https://www.deq.nc.gov/about/divisions/marine-fisheries"
+  },
+  "ncdmf_closure_viewer": {
+    "name": "NC Shellfish Sanitation Temporary Closure Public Viewer",
+    "url": "https://data-ncdenr.opendata.arcgis.com/apps/ncdenr::shellfish-sanitation-temporary-closure-public-viewer/explore"
+  },
+  "ncdmf_leasing_app": {
+    "name": "NCDMF Shellfish Leasing Application",
+    "url": "https://arcg.is/1ieXrX"
+  },
+  "ncdmf_map": {
+    "name": "NCDMF Shellfish Sanitation Temporary Closure Public Viewer (web app)",
+    "url": "https://ncdenr.maps.arcgis.com/apps/webappviewer/index.html?id=5759aa19d7484a3b82a8e440fba643aa"
+  },
+  "ncdmf_proclamations": {
+    "name": "NCDMF Closure Proclamations",
+    "url": "https://www.deq.nc.gov/about/divisions/marine-fisheries/rules-proclamations-and-size-and-bag-limits/polluted-area-proclamations"
+  },
+  "ncdmf_sanitation": {
+    "name": "NCDMF Shellfish Sanitation Program",
+    "url": "https://www.deq.nc.gov/about/divisions/marine-fisheries/shellfish-sanitation-and-recreational-water-quality/shellfish-growing-areas"
+  },
+  "ncseagrant": {
+    "name": "North Carolina Sea Grant",
+    "url": "https://ncseagrant.ncsu.edu/"
+  },
+  "ncsga": {
+    "name": "North Carolina Shellfish Growers Association",
+    "url": "https://www.ncshellfish.org/"
+  },
+  "nws": {
+    "name": "National Weather Service",
+    "url": "https://www.weather.gov/"
+  },
+  "occ": {
+    "name": "Outreach, Communications, and Consulting (OCC) Unit, NC State Office of Information Technology",
+    "url": "https://oit.ncsu.edu/leadership-and-units/outreach-communications-and-consulting/"
+  },
+  "privacy_policy_doc": {
+    "name": "ShellCast Privacy Policy (Google Doc)",
+    "url": "https://docs.google.com/document/d/e/2PACX-1vRWCpV0MJbKJNFmPC8etjjRQEw75XyHlA_bnfVn7KbNjNMJ90RH-3jTe6YPs0RVL-UO27yv9c2OGF4L/pub"
+  },
+  "scdes_map": {
+    "name": "SCDES Conditional Shellfish Harvest Closures Application (formerly SCDHEC)",
+    "url": "https://gis.des.sc.gov/ShellfishClosures/"
+  },
+  "scdes": {
+    "name": "South Carolina Department of Environmental Services (SCDES) (formerly SCDHEC)",
+    "url": "https://des.sc.gov/programs/bureau-water/aquatic-science/shellfish-monitoring-program-overview"
+  },
+  "scdnr_leasing_app": {
+    "name": "SCDNR Commercial Shellfish Leasing Application",
+    "url": "https://scdnr.maps.arcgis.com/apps/webappviewer/index.html?id=e5b6b8007d504a11aae774443bde6fc4"
+  },
+  "secoora": {
+    "name": "Southeast Coastal Ocean Observing Regional Association (SECOORA)",
+    "url": "https://secoora.org/"
+  },
+  "team_makiko_shukunobe": {
+    "name": "Makiko Shukunobe",
+    "url": "https://cnr.ncsu.edu/directory/makiko-shukonobe/"
+  },
+  "team_natalie_nelson": {
+    "name": "Natalie Nelson",
+    "url": "https://www.bae.ncsu.edu/people/nnelson4"
+  },
+  "team_sheila_saia": {
+    "name": "Sheila Saia",
+    "url": "https://sheilasaia.rbind.io/"
+  },
+  "team_stanton_parham": {
+    "name": "Stanton Parham",
+    "url": "https://stparham.com/"
+  },
+  "vcl": {
+    "name": "NC State Virtual Computing Lab (VCL) Services",
+    "url": "https://vcl.ncsu.edu/"
+  }
+}
