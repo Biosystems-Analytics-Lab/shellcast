@@ -46,10 +46,12 @@ jobs:
         id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
+          # NOTE: `format` and `output` are action inputs; do not also put
+          # --format/--output in args (the action errors out if both are set).
+          format: markdown
+          output: ./lychee-report.md
           args: >-
             --config .lychee.toml
-            --format markdown
-            --output ./lychee-report.md
             web/shared/links.json
             "web/shellcast-web-*/templates/**/*.html"
           fail: false
