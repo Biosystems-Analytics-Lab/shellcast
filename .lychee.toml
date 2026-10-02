@@ -19,6 +19,5 @@ exclude = [
   '%7B%7B',
 ]
 
-# Don't verify '#fragment' anchors (e.g. Chrome text fragments "#:~:text=...").
-include_fragments = false
+# '#fragment' anchors are not verified by default, which is what we want.
 no_progress = true
