@@ -11,6 +11,9 @@ user_agent = "Mozilla/5.0 (compatible; ShellCast-LinkCheck/1.0; +https://github.
 # Only check real web URLs. Internal links in the templates ("/about", "/signin",
 # "static/..." paths, Jinja url_for output) cannot be resolved without running the app.
 scheme = ["https", "http"]
+# Root-relative links like "/about" are resolved against this dir (then dropped by `scheme`)
+# instead of being reported as errors.
+root_dir = "."
 
 # Many .gov/.edu sites and ArcGIS apps answer bots with 403/429 even when the link works.
 accept = ["200..=299", "403", "429"]
